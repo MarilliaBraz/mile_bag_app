@@ -1,0 +1,14 @@
+import { enviarFormulario, requisitar } from "../../../../shared/api/httpClient";
+import type { BdoResponse, CamposExtraidosBdo } from "../types";
+
+/** POST /api/v1/bdos (HU01, FR-002/FR-003/FR-006). */
+export function capturarBdo(imagem: File): Promise<BdoResponse> {
+  const dados = new FormData();
+  dados.append("imagem", imagem);
+  return enviarFormulario<BdoResponse>("/api/v1/bdos", dados);
+}
+
+/** PATCH /api/v1/bdos/{id}/conferencia (HU01, FR-004/FR-005). */
+export function confirmarConferencia(id: string, campos: CamposExtraidosBdo): Promise<BdoResponse> {
+  return requisitar<BdoResponse>(`/api/v1/bdos/${id}/conferencia`, { metodo: "PATCH", corpo: campos });
+}

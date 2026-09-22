@@ -1,0 +1,84 @@
+:root {
+  --texto: #334155;
+  --texto-titulo: #0f172a;
+  --fundo: #ffffff;
+  --borda: #cbd5e1;
+  --acao: #2563eb;
+  --confirmacao: #16a34a;
+  --erro: #dc2626;
+  --aviso: #d97706;
+
+  color-scheme: light dark;
+  font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
+  color: var(--texto);
+  background: var(--fundo);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --texto: #cbd5e1;
+    --texto-titulo: #f8fafc;
+    --fundo: #0f172a;
+    --borda: #334155;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--texto-titulo);
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--borda);
+  border-radius: 6px;
+  background: var(--fundo);
+  color: var(--texto);
+}
+
+button {
+  min-height: 44px;
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--acao);
+  color: #fff;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.secundario {
+  background: transparent;
+  color: var(--acao);
+  border: 1px solid var(--acao);
+}
