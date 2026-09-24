@@ -82,6 +82,20 @@ export function DetalheEntrega() {
             </Link>
           </section>
 
+          {/* HU06/HU07: os dois desfechos possíveis da entrega - ambos somem
+              quando ela já foi encerrada com comprovante. */}
+          {entrega.status !== "ENCERRADA_COM_SUCESSO" && (
+            <section style={{ marginTop: "1.5rem" }}>
+              <h2>Encerrar entrega</h2>
+              <p>
+                <Link to={`/motorista/entregas/${entrega.entregaId}/comprovante`}>Registrar comprovante de entrega →</Link>
+              </p>
+              <p>
+                <Link to={`/motorista/entregas/${entrega.entregaId}/ocorrencia`}>Registrar ocorrência de não entrega →</Link>
+              </p>
+            </section>
+          )}
+
           {/* HU21 (FR-004/RI15): mesmo espaço reservado à conversa da entrega
               (HU18), que ainda não existe neste front-end. */}
           <section style={{ marginTop: "1.5rem" }}>
