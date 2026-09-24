@@ -20,7 +20,7 @@ export function LoginDev() {
       return;
     }
     definirToken(token.trim());
-    navigate("/motorista/captura-bdo");
+    navigate("/motorista");
   }
 
   return (

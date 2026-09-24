@@ -82,3 +82,16 @@ button.secundario {
   color: var(--acao);
   border: 1px solid var(--acao);
 }
+
+dl {
+  margin: 1rem 0;
+}
+
+dt {
+  font-weight: 600;
+  margin-top: 0.75rem;
+}
+
+dd {
+  margin: 0;
+}
