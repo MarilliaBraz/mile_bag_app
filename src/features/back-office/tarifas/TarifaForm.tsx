@@ -1,5 +1,7 @@
 import { useId, useState } from "react";
 import { hojeIso, mensagemDeErro } from "../../../shared/format/formatar";
+import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { listarMotoristas } from "../motoristas/motoristasApi";
 import type { EscopoTarifa, NovaTarifa, Tarifa } from "./tarifasApi";
 
 const ROTULO_ESCOPO: Record<EscopoTarifa, string> = {
@@ -23,6 +25,7 @@ type Props = {
 /** Formulário de tarifa (HU09): exige valor fixo e/ou por km (FR-005) e o alvo do escopo escolhido. */
 export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
   const uid = useId();
+  const { dados: motoristas } = useRecurso(listarMotoristas, "Não foi possível carregar os motoristas.");
   const [escopo, setEscopo] = useState<EscopoTarifa>(tarifa?.escopo ?? "PADRAO");
   const [motoristaId, setMotoristaId] = useState(tarifa?.motoristaId ?? "");
   const [regiao, setRegiao] = useState(tarifa?.regiao ?? "");
@@ -81,8 +84,16 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
 
       {!tarifa && escopo === "MOTORISTA" && (
         <div>
-          <label htmlFor={`${uid}-motoristaId`}>Identificador do motorista</label>
-          <input id={`${uid}-motoristaId`} value={motoristaId} onChange={(e) => setMotoristaId(e.target.value)} placeholder="UUID do motorista" />
+          <label htmlFor={`${uid}-motoristaId`}>Motorista</label>
+          <select id={`${uid}-motoristaId`} value={motoristaId} onChange={(e) => setMotoristaId(e.target.value)}>
+            <option value="">Escolha um motorista</option>
+            {motoristas?.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nome}
+                {m.ativo ? "" : " (desativado)"}
+              </option>
+            ))}
+          </select>
         </div>
       )}
 

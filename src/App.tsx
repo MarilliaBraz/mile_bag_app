@@ -4,6 +4,7 @@ import { IdentidadeVisualForm } from "./features/back-office/configuracao-tenant
 import { TelaConfiguracoes } from "./features/back-office/configuracao-tenant/TelaConfiguracoes";
 import { DetalheFechamento } from "./features/back-office/fechamento/DetalheFechamento";
 import { TelaFechamentos } from "./features/back-office/fechamento/TelaFechamentos";
+import { TelaMotoristas } from "./features/back-office/motoristas/TelaMotoristas";
 import { TelaPedagios } from "./features/back-office/pedagios/TelaPedagios";
 import { PlanosLista } from "./features/back-office/planos/PlanosLista";
 import { TelaTarifas } from "./features/back-office/tarifas/TelaTarifas";
@@ -90,6 +91,7 @@ export function App() {
         }
       >
         <Route index element={<Navigate to="tarifas" replace />} />
+        <Route path="motoristas" element={<TelaMotoristas />} />
         <Route path="tarifas" element={<TelaTarifas />} />
         <Route path="pedagios" element={<TelaPedagios />} />
         <Route path="configuracoes" element={<TelaConfiguracoes />} />

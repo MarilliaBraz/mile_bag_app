@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { formatarData, formatarMoeda, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { listarMotoristas, nomeDoMotorista, type Motorista } from "../motoristas/motoristasApi";
 import { TarifaForm } from "./TarifaForm";
 import { atualizarTarifa, criarTarifa, listarTarifas, removerTarifa, type EscopoTarifa, type Tarifa } from "./tarifasApi";
 
 const ROTULO_ESCOPO: Record<EscopoTarifa, string> = { PADRAO: "Padrão", MOTORISTA: "Motorista", REGIAO: "Região" };
 
-function alvoDe(tarifa: Tarifa): string {
+function alvoDe(tarifa: Tarifa, motoristas: Motorista[] | null): string {
   if (tarifa.escopo === "MOTORISTA") {
-    return tarifa.motoristaId ?? "—";
+    return nomeDoMotorista(motoristas, tarifa.motoristaId);
   }
   return tarifa.escopo === "REGIAO" ? (tarifa.regiao ?? "—") : "Todos";
 }
@@ -16,6 +17,7 @@ function alvoDe(tarifa: Tarifa): string {
 /** Tabelas de tarifa da empresa (HU09): a mais específica vale (motorista > região > padrão, FR-004). */
 export function TelaTarifas() {
   const { dados: tarifas, erro, carregando, recarregar } = useRecurso(listarTarifas, "Não foi possível carregar as tarifas.");
+  const { dados: motoristas } = useRecurso(listarMotoristas, "Não foi possível carregar os motoristas.");
   const [editando, setEditando] = useState<string | null>(null);
   const [excluindo, setExcluindo] = useState<string | null>(null);
   const [erroAcao, setErroAcao] = useState<string | null>(null);
@@ -65,7 +67,7 @@ export function TelaTarifas() {
             {tarifas.map((tarifa) => (
               <tr key={tarifa.id} style={{ verticalAlign: "top" }}>
                 <td>{ROTULO_ESCOPO[tarifa.escopo]}</td>
-                <td style={{ wordBreak: "break-all" }}>{alvoDe(tarifa)}</td>
+                <td style={{ wordBreak: "break-all" }}>{alvoDe(tarifa, motoristas)}</td>
                 <td>{formatarMoeda(tarifa.valorFixo)}</td>
                 <td>{formatarMoeda(tarifa.valorPorKm)}</td>
                 <td>{formatarData(tarifa.vigenteDesde)}</td>

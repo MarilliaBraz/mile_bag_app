@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { formatarData, formatarMoeda } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { listarMotoristas, nomeDoMotorista } from "../motoristas/motoristasApi";
 import { detalharFechamento } from "./fechamentoApi";
 import { FechamentoRelatorioCard } from "./FechamentoRelatorioCard";
 
@@ -8,6 +9,8 @@ import { FechamentoRelatorioCard } from "./FechamentoRelatorioCard";
 export function DetalheFechamento() {
   const { fechamentoId } = useParams<{ fechamentoId: string }>();
   const { dados, erro, carregando } = useRecurso(() => detalharFechamento(fechamentoId ?? ""), "Não foi possível carregar o fechamento.");
+
+  const { dados: motoristas } = useRecurso(listarMotoristas, "Não foi possível carregar os motoristas.");
 
   return (
     <main>
@@ -51,7 +54,7 @@ export function DetalheFechamento() {
                   const pendente = item.statusItem === "PENDENTE";
                   return (
                     <tr key={item.id} style={pendente ? { outline: "2px solid var(--aviso)", outlineOffset: -2 } : undefined}>
-                      <td title={item.motoristaId}>{item.motoristaId.slice(0, 8)}</td>
+                      <td title={item.motoristaId}>{nomeDoMotorista(motoristas, item.motoristaId)}</td>
                       <td title={item.entregaId}>{item.entregaId.slice(0, 8)}</td>
                       <td>{formatarMoeda(item.valorPagamentoEntrega)}</td>
                       <td>{formatarMoeda(item.valorReembolsoPedagio)}</td>

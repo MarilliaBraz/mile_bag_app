@@ -32,6 +32,7 @@ export function AdminLayout({ titulo, itens }: { titulo: string; itens: Item[] }
 }
 
 export const ITENS_TENANT: Item[] = [
+  { para: "/admin/motoristas", rotulo: "Motoristas" },
   { para: "/admin/tarifas", rotulo: "Tarifas" },
   { para: "/admin/pedagios", rotulo: "Pedágios" },
   { para: "/admin/configuracoes", rotulo: "Configurações" },
