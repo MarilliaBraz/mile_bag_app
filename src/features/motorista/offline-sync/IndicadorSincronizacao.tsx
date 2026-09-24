@@ -6,8 +6,8 @@ import { useSincronizacaoAutomatica } from "./useSincronizacaoAutomatica";
  * não teria como distinguir um registro já confirmado pelo servidor de um
  * que ainda está só no aparelho.
  */
-export function IndicadorSincronizacao() {
-  const { online, pendentes } = useSincronizacaoAutomatica();
+export function IndicadorSincronizacao({ aoSincronizar }: { aoSincronizar?: () => void }) {
+  const { online, pendentes } = useSincronizacaoAutomatica(aoSincronizar);
 
   if (online && pendentes === 0) {
     return null;

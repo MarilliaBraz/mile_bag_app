@@ -1,3 +1,4 @@
+import { liveQuery } from "dexie";
 import { useCallback, useEffect, useState } from "react";
 import { contarPendentes } from "./fila";
 import { sincronizar } from "./sincronizador";
@@ -10,13 +11,21 @@ const INTERVALO_REFORCO_MS = 60_000;
  * transição para online e, como reforço enquanto online, em intervalo
  * periódico (para os registros que o servidor recusou e continuam na fila).
  * O motorista nunca precisa acionar nada manualmente.
+ *
+ * <p>A contagem de pendentes é reativa ({@code liveQuery}): reflete um
+ * registro enfileirado na hora, na mesma tela, sem depender de a tela ser
+ * remontada (FR-003).</p>
  */
-export function useSincronizacaoAutomatica() {
+export function useSincronizacaoAutomatica(aoSincronizar?: () => void) {
   const online = useConectividade();
   const [pendentes, setPendentes] = useState(0);
 
-  const atualizarContagem = useCallback(async () => {
-    setPendentes(await contarPendentes());
+  useEffect(() => {
+    const assinatura = liveQuery(() => contarPendentes()).subscribe({
+      next: setPendentes,
+      error: () => undefined,
+    });
+    return () => assinatura.unsubscribe();
   }, []);
 
   const sincronizarAgora = useCallback(async () => {
@@ -24,17 +33,18 @@ export function useSincronizacaoAutomatica() {
       return;
     }
     try {
-      await sincronizar();
+      const { enviados } = await sincronizar();
+      // A tela que chamou mostra dados do servidor: depois que algo foi
+      // efetivado (ex.: uma autoatribuição feita offline), ela precisa
+      // recarregar para refletir o estado real.
+      if (enviados > 0) {
+        aoSincronizar?.();
+      }
     } catch {
       // Sem conexão de novo no meio do envio: a fila continua intacta e a
       // próxima tentativa reenvia (FR-007).
     }
-    await atualizarContagem();
-  }, [atualizarContagem]);
-
-  useEffect(() => {
-    atualizarContagem();
-  }, [atualizarContagem, online]);
+  }, [aoSincronizar]);
 
   useEffect(() => {
     if (!online) {
@@ -45,5 +55,5 @@ export function useSincronizacaoAutomatica() {
     return () => clearInterval(intervalo);
   }, [online, sincronizarAgora]);
 
-  return { online, pendentes, sincronizarAgora, atualizarContagem };
+  return { online, pendentes, sincronizarAgora };
 }

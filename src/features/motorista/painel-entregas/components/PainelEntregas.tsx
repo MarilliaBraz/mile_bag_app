@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { IndicadorSincronizacao } from "../../offline-sync/IndicadorSincronizacao";
@@ -21,11 +21,7 @@ export function PainelEntregas() {
   const [bdosDisponiveis, setBdosDisponiveis] = useState<BdosDisponiveis | null>(null);
   const [erro, setErro] = useState<string | null>(null);
 
-  useEffect(() => {
-    carregar();
-  }, []);
-
-  async function carregar() {
+  const carregar = useCallback(async () => {
     setErro(null);
     try {
       const [painelResposta, bdosResposta] = await Promise.all([consultarPainel(), consultarBdosDisponiveis()]);
@@ -34,7 +30,11 @@ export function PainelEntregas() {
     } catch (excecao) {
       setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível carregar o painel. Tente novamente.");
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    carregar();
+  }, [carregar]);
 
   // FR-009: ao assumir um BDO, ele some da lista de disponíveis e a lista de
   // pendentes/contador precisam refletir a nova entrega - reconsulta o
@@ -51,7 +51,7 @@ export function PainelEntregas() {
 
   return (
     <main style={{ maxWidth: 560, margin: "2rem auto", padding: "0 1rem" }}>
-      <IndicadorSincronizacao />
+      <IndicadorSincronizacao aoSincronizar={carregar} />
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
         <h1>Minhas entregas</h1>
