@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { BotaoSair } from "../../../../shared/auth/BotaoSair";
 import { IndicadorSincronizacao } from "../../offline-sync/IndicadorSincronizacao";
 import { consultarBdosDisponiveis, consultarPainel } from "../services/painelService";
 import type { BdosDisponiveis, ItemPainel, PainelEntregas as PainelEntregasResposta } from "../types";
@@ -58,6 +59,7 @@ export function PainelEntregas() {
         <span style={{ display: "flex", gap: "1rem" }}>
           <Link to="/motorista/relatorio">Relatório</Link>
           <Link to="/motorista/captura-bdo">Capturar BDO</Link>
+          <BotaoSair />
         </span>
       </div>
 

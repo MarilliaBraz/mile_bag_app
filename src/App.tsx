@@ -17,13 +17,13 @@ import { RegistrarComprovante } from "./features/motorista/comprovante-entrega/R
 import { RegistrarOcorrencia } from "./features/motorista/ocorrencia/RegistrarOcorrencia";
 import { RelatorioQuinzenal } from "./features/motorista/relatorio-quinzenal/RelatorioQuinzenal";
 import { TelaRota } from "./features/motorista/rota/components/TelaRota";
-import { LoginDev } from "./shared/auth/LoginDev";
+import { Login } from "./shared/auth/Login";
 import { RequireAuth } from "./shared/auth/RequireAuth";
 
 export function App() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginDev />} />
+      <Route path="/login" element={<Login />} />
       <Route
         path="/motorista"
         element={

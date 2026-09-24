@@ -1,5 +1,5 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { limparToken } from "../../shared/auth/authStorage";
+import { NavLink, Outlet } from "react-router-dom";
+import { BotaoSair } from "../../shared/auth/BotaoSair";
 
 type Item = { para: string; rotulo: string };
 
@@ -13,13 +13,6 @@ const ESTILO_LINK = ({ isActive }: { isActive: boolean }) => ({
 
 /** Moldura das áreas administrativas: navegação por papel + área de conteúdo. */
 export function AdminLayout({ titulo, itens }: { titulo: string; itens: Item[] }) {
-  const navigate = useNavigate();
-
-  function sair() {
-    limparToken();
-    navigate("/login");
-  }
-
   return (
     <div style={{ maxWidth: 960, margin: "0 auto", padding: "1rem" }}>
       <header style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center", marginBottom: "1rem" }}>
@@ -31,9 +24,7 @@ export function AdminLayout({ titulo, itens }: { titulo: string; itens: Item[] }
             </NavLink>
           ))}
         </nav>
-        <button type="button" onClick={sair}>
-          Sair
-        </button>
+        <BotaoSair />
       </header>
       <Outlet />
     </div>
