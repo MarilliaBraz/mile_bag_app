@@ -1,6 +1,8 @@
 import { MapaBase } from "../../../../shared/mapa/MapaBase";
 import type { CalculoRotas, RotaAlternativa } from "../types";
 
+const REAL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+
 export function formatarDistancia(metros: number): string {
   return `${(metros / 1000).toFixed(1).replace(".", ",")} km`;
 }
@@ -62,6 +64,16 @@ export function MapaRotas({
                 >
                   <strong>{formatarDistancia(alternativa.distanciaMetros)}</strong> · {formatarDuracao(alternativa.duracaoSegundos)}
                   {alternativa.possuiPedagio ? " · 🛣️ com pedágio" : " · sem pedágio"}
+                  {alternativa.pracasPedagio.length > 0 && (
+                    <div style={{ fontSize: "0.85rem", marginTop: "0.25rem" }}>
+                      {alternativa.pracasPedagio
+                        .map((praca) => (praca.valor === null ? praca.nome : `${praca.nome} (${REAL.format(praca.valor)})`))
+                        .join(" · ")}
+                    </div>
+                  )}
+                  {alternativa.possuiPedagio && alternativa.pracasPedagio.length === 0 && (
+                    <div style={{ fontSize: "0.85rem", marginTop: "0.25rem" }}>Nenhuma praça cadastrada neste trecho: o reembolso ficará pendente.</div>
+                  )}
                 </button>
               </li>
             );

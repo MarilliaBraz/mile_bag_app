@@ -16,7 +16,12 @@ export type RotaAlternativa = {
   distanciaMetros: number;
   duracaoSegundos: number;
   possuiPedagio: boolean;
+  /** Praças cadastradas (HU10) por onde o traçado passa (HU24); `valor` é o vigente por passagem, só para exibir. */
+  pracasPedagio: PracaNaRota[];
 };
+
+/** Espelha com.marillia.milebag.core.geo.PracaNaRota. */
+export type PracaNaRota = { pracaId: string; nome: string; valor: number | null };
 
 /** Espelha com.marillia.milebag.business.rota.model.CalcularRotaResponse. */
 export type CalculoRotas = {
@@ -44,6 +49,9 @@ export type TipoCheckpoint = "PARTIDA" | "A_CAMINHO" | "CHEGADA" | "COMPROVANTE"
 export type TrechoPedagio = {
   descricao: string;
   valorCadastrado: boolean;
+  /** Trecho por praça (HU24): valor por passagem congelado quando o cálculo foi registrado. Sem `pracaId`, é só o indicador do motor de rotas. */
+  pracaId?: string | null;
+  valorUnitario?: number | null;
 };
 
 /** Espelha com.marillia.milebag.business.viagem.model.CheckpointResponse. */
