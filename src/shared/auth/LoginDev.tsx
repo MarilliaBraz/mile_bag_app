@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { definirToken } from "./authStorage";
+import { definirToken, obterPapel, rotaInicialDo } from "./authStorage";
 
 /**
  * Tela de autenticacao PROVISORIA: mile_bag_api ainda nao tem uma HU de
@@ -20,7 +20,7 @@ export function LoginDev() {
       return;
     }
     definirToken(token.trim());
-    navigate("/motorista");
+    navigate(rotaInicialDo(obterPapel()));
   }
 
   return (

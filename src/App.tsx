@@ -1,4 +1,15 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { AdminLayout, ITENS_PLATAFORMA, ITENS_TENANT } from "./features/back-office/AdminLayout";
+import { IdentidadeVisualForm } from "./features/back-office/configuracao-tenant/IdentidadeVisualForm";
+import { TelaConfiguracoes } from "./features/back-office/configuracao-tenant/TelaConfiguracoes";
+import { DetalheFechamento } from "./features/back-office/fechamento/DetalheFechamento";
+import { TelaFechamentos } from "./features/back-office/fechamento/TelaFechamentos";
+import { TelaPedagios } from "./features/back-office/pedagios/TelaPedagios";
+import { PlanosLista } from "./features/back-office/planos/PlanosLista";
+import { TelaTarifas } from "./features/back-office/tarifas/TelaTarifas";
+import { AtivarConviteForm } from "./features/back-office/tenant-onboarding/AtivarConviteForm";
+import { TelaEmpresas } from "./features/back-office/tenant-onboarding/TelaEmpresas";
+import { TenantCadastradoConfirmacao } from "./features/back-office/tenant-onboarding/TenantCadastradoConfirmacao";
 import { CapturaBdo } from "./features/motorista/captura-bdo/components/CapturaBdo";
 import { DetalheEntrega } from "./features/motorista/painel-entregas/components/DetalheEntrega";
 import { PainelEntregas } from "./features/motorista/painel-entregas/components/PainelEntregas";
@@ -16,7 +27,7 @@ export function App() {
       <Route
         path="/motorista"
         element={
-          <RequireAuth>
+          <RequireAuth papeis={["MOTORISTA"]}>
             <PainelEntregas />
           </RequireAuth>
         }
@@ -69,6 +80,36 @@ export function App() {
           </RequireAuth>
         }
       />
+      <Route path="/convite/:token" element={<AtivarConviteForm />} />
+      <Route
+        path="/admin"
+        element={
+          <RequireAuth papeis={["ADMINISTRADOR_TENANT"]}>
+            <AdminLayout titulo="Milebag — Administração" itens={ITENS_TENANT} />
+          </RequireAuth>
+        }
+      >
+        <Route index element={<Navigate to="tarifas" replace />} />
+        <Route path="tarifas" element={<TelaTarifas />} />
+        <Route path="pedagios" element={<TelaPedagios />} />
+        <Route path="configuracoes" element={<TelaConfiguracoes />} />
+        <Route path="fechamentos" element={<TelaFechamentos />} />
+        <Route path="fechamentos/:fechamentoId" element={<DetalheFechamento />} />
+        <Route path="identidade-visual" element={<IdentidadeVisualForm />} />
+      </Route>
+      <Route
+        path="/plataforma"
+        element={
+          <RequireAuth papeis={["ADMINISTRADOR_PLATAFORMA"]}>
+            <AdminLayout titulo="Milebag — Plataforma" itens={ITENS_PLATAFORMA} />
+          </RequireAuth>
+        }
+      >
+        <Route index element={<Navigate to="empresas" replace />} />
+        <Route path="empresas" element={<TelaEmpresas />} />
+        <Route path="empresas/:tenantId" element={<TenantCadastradoConfirmacao />} />
+        <Route path="planos" element={<PlanosLista />} />
+      </Route>
       <Route path="*" element={<Navigate to="/motorista" replace />} />
     </Routes>
   );

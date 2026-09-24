@@ -46,12 +46,31 @@ export async function requisitar<T>(
   return tratarResposta<T>(resposta);
 }
 
-/** multipart/form-data - usado por captura de BDO (HU01) e comprovante de entrega (HU06). */
-export async function enviarFormulario<T>(caminho: string, dados: FormData): Promise<T> {
+/** multipart/form-data - usado por captura de BDO (HU01), comprovante de entrega (HU06) e identidade visual (HU13, PUT). */
+export async function enviarFormulario<T>(caminho: string, dados: FormData, metodo = "POST"): Promise<T> {
   const resposta = await fetch(`${BASE_URL}${caminho}`, {
-    method: "POST",
+    method: metodo,
     headers: cabecalhoAutorizacao(),
     body: dados,
   });
   return tratarResposta<T>(resposta);
+}
+
+/**
+ * GET de um arquivo binário (PDF, imagem) que exige o cabeçalho de
+ * autorização - por isso não dá para usar um link ou <img src> direto.
+ */
+export async function baixarArquivo(caminho: string): Promise<Blob> {
+  const resposta = await fetch(`${BASE_URL}${caminho}`, { headers: cabecalhoAutorizacao() });
+  if (!resposta.ok) {
+    const texto = await resposta.text();
+    let detalhe: ProblemDetail | undefined;
+    try {
+      detalhe = texto ? (JSON.parse(texto) as ProblemDetail) : undefined;
+    } catch {
+      detalhe = undefined;
+    }
+    throw new ApiError(resposta.status, detalhe?.detail ?? resposta.statusText, detalhe?.type);
+  }
+  return resposta.blob();
 }
