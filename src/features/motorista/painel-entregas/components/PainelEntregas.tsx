@@ -62,6 +62,7 @@ export function PainelEntregas() {
         <span style={{ display: "flex", gap: "1rem" }}>
           <Link to="/motorista/relatorio">Relatório</Link>
           <Link to="/motorista/captura-bdo">Capturar BDO</Link>
+          <Link to="/conta/senha">Minha senha</Link>
           <BotaoSair />
         </span>
       </div>

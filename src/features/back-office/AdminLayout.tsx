@@ -24,6 +24,9 @@ export function AdminLayout({ titulo, itens }: { titulo: string; itens: Item[] }
             </NavLink>
           ))}
         </nav>
+        <NavLink to="/conta/senha" style={ESTILO_LINK}>
+          Minha senha
+        </NavLink>
         <BotaoSair />
       </header>
       <Outlet />

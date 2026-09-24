@@ -18,7 +18,10 @@ import { RegistrarComprovante } from "./features/motorista/comprovante-entrega/R
 import { RegistrarOcorrencia } from "./features/motorista/ocorrencia/RegistrarOcorrencia";
 import { RelatorioQuinzenal } from "./features/motorista/relatorio-quinzenal/RelatorioQuinzenal";
 import { TelaRota } from "./features/motorista/rota/components/TelaRota";
+import { EsqueciSenha } from "./shared/auth/EsqueciSenha";
 import { Login } from "./shared/auth/Login";
+import { RedefinirSenha } from "./shared/auth/RedefinirSenha";
+import { TrocarSenha } from "./shared/auth/TrocarSenha";
 import { RequireAuth } from "./shared/auth/RequireAuth";
 
 export function App() {
@@ -81,7 +84,19 @@ export function App() {
           </RequireAuth>
         }
       />
+      {/* O e-mail de convite (HU15) usa /convites/{token}; /convite/{token} continua valendo por compatibilidade. */}
+      <Route path="/convites/:token" element={<AtivarConviteForm />} />
       <Route path="/convite/:token" element={<AtivarConviteForm />} />
+      <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+      <Route path="/redefinir-senha/:token" element={<RedefinirSenha />} />
+      <Route
+        path="/conta/senha"
+        element={
+          <RequireAuth>
+            <TrocarSenha />
+          </RequireAuth>
+        }
+      />
       <Route
         path="/admin"
         element={

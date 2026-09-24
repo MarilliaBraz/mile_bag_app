@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { requisitar } from "../api/httpClient";
 import { mensagemDeErro } from "../format/formatar";
 import { definirToken, obterPapel, obterToken, rotaInicialDo, type Papel } from "./authStorage";
@@ -57,6 +57,9 @@ export function Login() {
           </button>
         </div>
       </form>
+      <p>
+        <Link to="/esqueci-senha">Esqueci minha senha</Link>
+      </p>
     </main>
   );
 }
