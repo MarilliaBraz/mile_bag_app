@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { BotaoSair } from "../../../../shared/auth/BotaoSair";
 import { IndicadorSincronizacao } from "../../offline-sync/IndicadorSincronizacao";
+import { listarMotivos } from "../../ocorrencia/ocorrenciaService";
 import { consultarBdosDisponiveis, consultarPainel } from "../services/painelService";
 import type { BdosDisponiveis, ItemPainel, PainelEntregas as PainelEntregasResposta } from "../types";
 import { ListaBdosDisponiveis } from "./ListaBdosDisponiveis";
@@ -35,6 +36,8 @@ export function PainelEntregas() {
 
   useEffect(() => {
     carregar();
+    // Aquece a cópia local dos motivos de ocorrência enquanto há conexão: sem ela o motorista não conseguiria registrar uma ocorrência offline.
+    listarMotivos().catch(() => undefined);
   }, [carregar]);
 
   // FR-009: ao assumir um BDO, ele some da lista de disponíveis e a lista de

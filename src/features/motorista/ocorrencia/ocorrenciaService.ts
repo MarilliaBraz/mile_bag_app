@@ -1,4 +1,6 @@
+import { ApiError } from "../../../shared/api/ApiError";
 import { requisitar } from "../../../shared/api/httpClient";
+import { obterTenantId } from "../../../shared/auth/authStorage";
 
 /** Espelha com.marillia.milebag.business.configuracao.model.MotivoOcorrenciaResponse (só motivos ativos). */
 export type MotivoOcorrencia = {
@@ -15,9 +17,46 @@ export type OcorrenciaResponse = {
   entregaStatus: string;
 };
 
-/** GET /api/v1/configuracoes/motivos-ocorrencia (HU11) - lista configurada pelo administrador do tenant, lida pelo motorista. */
-export function listarMotivos(): Promise<MotivoOcorrencia[]> {
-  return requisitar<MotivoOcorrencia[]>("/api/v1/configuracoes/motivos-ocorrencia");
+const chaveCacheMotivos = () => `milebag.motivosOcorrencia.${obterTenantId() ?? "sem-empresa"}`;
+
+function lerCacheMotivos(): MotivoOcorrencia[] | null {
+  try {
+    const texto = localStorage.getItem(chaveCacheMotivos());
+    return texto ? (JSON.parse(texto) as MotivoOcorrencia[]) : null;
+  } catch {
+    return null;
+  }
+}
+
+function guardarCacheMotivos(motivos: MotivoOcorrencia[]): void {
+  try {
+    localStorage.setItem(chaveCacheMotivos(), JSON.stringify(motivos));
+  } catch {
+    // Sem armazenamento local a tela só perde o modo offline dos motivos; nada a fazer.
+  }
+}
+
+/**
+ * GET /api/v1/configuracoes/motivos-ocorrencia (HU11) - lista configurada pelo administrador do tenant, lida pelo motorista.
+ * Cada leitura com sucesso atualiza uma cópia no aparelho (por empresa): sem conexão, a ocorrência offline (HU07/HU08)
+ * ainda consegue listar os motivos. Erro da API (ex.: 403) não cai no cache - só falha de rede.
+ */
+export async function listarMotivosComOrigem(): Promise<{ motivos: MotivoOcorrencia[]; doCache: boolean }> {
+  try {
+    const motivos = await requisitar<MotivoOcorrencia[]>("/api/v1/configuracoes/motivos-ocorrencia");
+    guardarCacheMotivos(motivos);
+    return { motivos, doCache: false };
+  } catch (excecao) {
+    const copia = excecao instanceof ApiError ? null : lerCacheMotivos();
+    if (copia) {
+      return { motivos: copia, doCache: true };
+    }
+    throw excecao;
+  }
+}
+
+export async function listarMotivos(): Promise<MotivoOcorrencia[]> {
+  return (await listarMotivosComOrigem()).motivos;
 }
 
 /** POST /api/v1/entregas/{entregaId}/ocorrencias (HU07) - reabre a entrega para nova tentativa. */

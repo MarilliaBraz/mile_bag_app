@@ -8,6 +8,8 @@ export const criarMotorista = (corpo: { nome: string; login: string; senha: stri
   requisitar<Motorista>("/api/v1/motoristas", { metodo: "POST", corpo });
 export const definirAtivoMotorista = (id: string, ativo: boolean) =>
   requisitar<Motorista>(`/api/v1/motoristas/${id}`, { metodo: "PATCH", corpo: { ativo } });
+export const renomearMotorista = (id: string, nome: string) =>
+  requisitar<Motorista>(`/api/v1/motoristas/${id}`, { metodo: "PATCH", corpo: { nome } });
 export const redefinirSenhaMotorista = (id: string, senha: string) =>
   requisitar<void>(`/api/v1/motoristas/${id}/senha`, { metodo: "PUT", corpo: { senha } });
 

@@ -18,23 +18,31 @@ export function limparToken(): void {
   localStorage.removeItem(CHAVE_TOKEN);
 }
 
-/**
- * Papel (claim `papel`) do token guardado. Só orienta a navegação - quem
- * autoriza de verdade é a API; um token adulterado apenas mostraria telas
- * cujas chamadas voltariam 403.
- */
-export function obterPapel(): Papel | null {
+function lerClaims(): { papel?: string; tenantId?: string } | null {
   const token = obterToken();
   if (!token) {
     return null;
   }
   try {
     const carga = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-    const claims = JSON.parse(atob(carga)) as { papel?: string };
-    return (claims.papel as Papel | undefined) ?? null;
+    return JSON.parse(atob(carga)) as { papel?: string; tenantId?: string };
   } catch {
     return null;
   }
+}
+
+/**
+ * Papel (claim `papel`) do token guardado. Só orienta a navegação - quem
+ * autoriza de verdade é a API; um token adulterado apenas mostraria telas
+ * cujas chamadas voltariam 403.
+ */
+export function obterPapel(): Papel | null {
+  return (lerClaims()?.papel as Papel | undefined) ?? null;
+}
+
+/** Empresa do usuário logado (claim `tenantId`) - chave de dados guardados no aparelho que dependem da empresa. */
+export function obterTenantId(): string | null {
+  return lerClaims()?.tenantId ?? null;
 }
 
 export function rotaInicialDo(papel: Papel | null): string {

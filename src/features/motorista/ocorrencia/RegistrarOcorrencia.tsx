@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "../../../shared/api/ApiError";
 import { executarOuEnfileirar } from "../offline-sync/fila";
 import { IndicadorSincronizacao } from "../offline-sync/IndicadorSincronizacao";
-import { listarMotivos, registrarOcorrencia, type MotivoOcorrencia } from "./ocorrenciaService";
+import { listarMotivosComOrigem, registrarOcorrencia, type MotivoOcorrencia } from "./ocorrenciaService";
 
 /**
  * Registro de ocorrência de não entrega (HU07) - o motorista escolhe um dos
@@ -16,6 +16,7 @@ export function RegistrarOcorrencia() {
   const navegar = useNavigate();
 
   const [motivos, setMotivos] = useState<MotivoOcorrencia[] | null>(null);
+  const [motivosDoCache, setMotivosDoCache] = useState(false);
   const [motivoOcorrenciaId, setMotivoOcorrenciaId] = useState("");
   const [descricaoAdicional, setDescricaoAdicional] = useState("");
   const [idLocal] = useState(() => crypto.randomUUID());
@@ -23,8 +24,11 @@ export function RegistrarOcorrencia() {
   const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
-    listarMotivos()
-      .then(setMotivos)
+    listarMotivosComOrigem()
+      .then((resposta) => {
+        setMotivos(resposta.motivos);
+        setMotivosDoCache(resposta.doCache);
+      })
       .catch((excecao) => {
         setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível carregar os motivos de ocorrência.");
         setMotivos([]);
@@ -82,6 +86,11 @@ export function RegistrarOcorrencia() {
 
       {motivos && motivos.length > 0 && (
         <>
+          {motivosDoCache && (
+            <p role="status" style={{ fontSize: "0.85rem", color: "var(--aviso)" }}>
+              Sem conexão: usando a lista de motivos salva neste aparelho. Se o administrador mudou os motivos, o registro pode ser recusado ao sincronizar.
+            </p>
+          )}
           <label htmlFor="motivo">Motivo *</label>
           <select id="motivo" value={motivoOcorrenciaId} onChange={(evento) => setMotivoOcorrenciaId(evento.target.value)}>
             <option value="">Selecione o motivo</option>

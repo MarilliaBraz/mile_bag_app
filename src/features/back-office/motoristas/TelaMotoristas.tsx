@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
-import { criarMotorista, definirAtivoMotorista, listarMotoristas, redefinirSenhaMotorista, type Motorista } from "./motoristasApi";
+import { criarMotorista, definirAtivoMotorista, listarMotoristas, redefinirSenhaMotorista, renomearMotorista, type Motorista } from "./motoristasApi";
 
 const TAMANHO_MINIMO_SENHA = 8;
 
@@ -58,6 +58,40 @@ function NovoMotoristaForm({ aoCriar }: { aoCriar: () => Promise<void> }) {
   );
 }
 
+function RenomearForm({ motorista, aoConcluir }: { motorista: Motorista; aoConcluir: () => Promise<void> }) {
+  const uid = useId();
+  const [nome, setNome] = useState(motorista.nome);
+  const [erro, setErro] = useState<string | null>(null);
+
+  async function enviar(evento: React.FormEvent) {
+    evento.preventDefault();
+    setErro(null);
+    try {
+      await renomearMotorista(motorista.id, nome.trim());
+      await aoConcluir();
+    } catch (excecao) {
+      setErro(mensagemDeErro(excecao, "Não foi possível alterar o nome."));
+    }
+  }
+
+  return (
+    <form onSubmit={enviar} style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "end", marginTop: "0.5rem" }}>
+      <div>
+        <label htmlFor={`${uid}-nome`}>Nome</label>
+        <input id={`${uid}-nome`} value={nome} onChange={(e) => setNome(e.target.value)} />
+      </div>
+      <button type="submit" disabled={!nome.trim() || nome.trim() === motorista.nome}>
+        Salvar nome
+      </button>
+      {erro && (
+        <span role="alert" style={{ color: "var(--erro)" }}>
+          {erro}
+        </span>
+      )}
+    </form>
+  );
+}
+
 function NovaSenhaForm({ motorista, aoConcluir }: { motorista: Motorista; aoConcluir: () => void }) {
   const uid = useId();
   const [senha, setSenha] = useState("");
@@ -103,14 +137,15 @@ function NovaSenhaForm({ motorista, aoConcluir }: { motorista: Motorista; aoConc
 }
 
 /**
- * Motoristas da empresa (HU23). Desativar bloqueia novas entradas, mas não apaga
- * nada: as entregas e ajustes do motorista continuam apontando para ele. Quem já
- * estiver com o app aberto segue até o token expirar (60 min por padrão).
+ * Motoristas da empresa (HU23). Desativar (ou trocar a senha) derruba também as sessões
+ * já abertas, mas não apaga nada: as entregas e ajustes do motorista continuam
+ * apontando para ele.
  */
 export function TelaMotoristas() {
   const { dados: motoristas, erro, carregando, recarregar } = useRecurso(listarMotoristas, "Não foi possível carregar os motoristas.");
   const [erroAcao, setErroAcao] = useState<string | null>(null);
   const [redefinindo, setRedefinindo] = useState<string | null>(null);
+  const [renomeando, setRenomeando] = useState<string | null>(null);
 
   async function alternar(motorista: Motorista) {
     setErroAcao(null);
@@ -144,6 +179,9 @@ export function TelaMotoristas() {
                   <div style={{ fontSize: "0.9rem" }}>Login: {motorista.login}</div>
                 </div>
                 <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <button type="button" className="secundario" onClick={() => setRenomeando(renomeando === motorista.id ? null : motorista.id)}>
+                    Renomear
+                  </button>
                   <button type="button" className="secundario" onClick={() => setRedefinindo(redefinindo === motorista.id ? null : motorista.id)}>
                     Nova senha
                   </button>
@@ -152,6 +190,15 @@ export function TelaMotoristas() {
                   </button>
                 </div>
               </div>
+              {renomeando === motorista.id && (
+                <RenomearForm
+                  motorista={motorista}
+                  aoConcluir={async () => {
+                    setRenomeando(null);
+                    await recarregar();
+                  }}
+                />
+              )}
               {redefinindo === motorista.id && <NovaSenhaForm motorista={motorista} aoConcluir={() => setRedefinindo(null)} />}
             </li>
           ))}
