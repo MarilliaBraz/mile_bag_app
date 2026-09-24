@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { VincularBagagemCarona } from "../../captura-bdo/bagagem-carona/VincularBagagemCarona";
 import { BotaoLigar } from "../../mensageria/components/BotaoLigar";
+import { HistoricoOcorrencias } from "../../ocorrencia/HistoricoOcorrencias";
 import { consultarDetalhe } from "../services/painelService";
 import type { ItemPainelDetalhe } from "../types";
 
@@ -81,6 +82,8 @@ export function DetalheEntrega() {
               {entrega.temTrajetoIniciado ? "Acompanhar viagem em andamento →" : "Calcular rota e iniciar viagem →"}
             </Link>
           </section>
+
+          <HistoricoOcorrencias entregaId={entrega.entregaId} />
 
           {/* HU06/HU07: os dois desfechos possíveis da entrega - ambos somem
               quando ela já foi encerrada com comprovante. */}
