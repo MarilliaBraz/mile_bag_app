@@ -1,7 +1,8 @@
 import { useId, useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
-import { criarMotorista, definirAtivoMotorista, listarMotoristas, redefinirSenhaMotorista, renomearMotorista, type Motorista } from "./motoristasApi";
+import { LoteMotoristas } from "./LoteMotoristas";
+import { criarMotorista, definirAtivoMotorista, listarMotoristas, redefinirSenhaMotorista, atualizarMotorista, type Motorista } from "./motoristasApi";
 
 const TAMANHO_MINIMO_SENHA = 8;
 
@@ -58,19 +59,26 @@ function NovoMotoristaForm({ aoCriar }: { aoCriar: () => Promise<void> }) {
   );
 }
 
-function RenomearForm({ motorista, aoConcluir }: { motorista: Motorista; aoConcluir: () => Promise<void> }) {
+function EditarForm({ motorista, aoConcluir }: { motorista: Motorista; aoConcluir: () => Promise<void> }) {
   const uid = useId();
   const [nome, setNome] = useState(motorista.nome);
+  const [login, setLogin] = useState(motorista.login);
   const [erro, setErro] = useState<string | null>(null);
+
+  const nomeMudou = nome.trim() !== "" && nome.trim() !== motorista.nome;
+  const loginMudou = login.trim() !== "" && login.trim() !== motorista.login;
 
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
     setErro(null);
     try {
-      await renomearMotorista(motorista.id, nome.trim());
+      await atualizarMotorista(motorista.id, {
+        ...(nomeMudou ? { nome: nome.trim() } : {}),
+        ...(loginMudou ? { login: login.trim() } : {}),
+      });
       await aoConcluir();
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível alterar o nome."));
+      setErro(mensagemDeErro(excecao, "Não foi possível salvar as alterações."));
     }
   }
 
@@ -80,9 +88,18 @@ function RenomearForm({ motorista, aoConcluir }: { motorista: Motorista; aoConcl
         <label htmlFor={`${uid}-nome`}>Nome</label>
         <input id={`${uid}-nome`} value={nome} onChange={(e) => setNome(e.target.value)} />
       </div>
-      <button type="submit" disabled={!nome.trim() || nome.trim() === motorista.nome}>
-        Salvar nome
+      <div>
+        <label htmlFor={`${uid}-login`}>Login</label>
+        <input id={`${uid}-login`} autoCapitalize="none" value={login} onChange={(e) => setLogin(e.target.value)} />
+      </div>
+      <button type="submit" disabled={!nomeMudou && !loginMudou}>
+        Salvar
       </button>
+      {loginMudou && (
+        <span style={{ fontSize: "0.85rem", flexBasis: "100%" }}>
+          O motorista passa a entrar com o login novo. Um pedido de redefinição de senha que estava pendente é cancelado.
+        </span>
+      )}
       {erro && (
         <span role="alert" style={{ color: "var(--erro)" }}>
           {erro}
@@ -180,7 +197,7 @@ export function TelaMotoristas() {
                 </div>
                 <div style={{ display: "flex", gap: "0.5rem" }}>
                   <button type="button" className="secundario" onClick={() => setRenomeando(renomeando === motorista.id ? null : motorista.id)}>
-                    Renomear
+                    Editar
                   </button>
                   <button type="button" className="secundario" onClick={() => setRedefinindo(redefinindo === motorista.id ? null : motorista.id)}>
                     Nova senha
@@ -191,7 +208,7 @@ export function TelaMotoristas() {
                 </div>
               </div>
               {renomeando === motorista.id && (
-                <RenomearForm
+                <EditarForm
                   motorista={motorista}
                   aoConcluir={async () => {
                     setRenomeando(null);
@@ -208,6 +225,11 @@ export function TelaMotoristas() {
       <section style={{ marginTop: "2rem" }}>
         <h2>Novo motorista</h2>
         <NovoMotoristaForm aoCriar={recarregar} />
+      </section>
+
+      <section style={{ marginTop: "2rem" }}>
+        <h2>Cadastrar vários de uma vez</h2>
+        <LoteMotoristas aoConcluir={async () => { await recarregar(); }} />
       </section>
     </main>
   );
