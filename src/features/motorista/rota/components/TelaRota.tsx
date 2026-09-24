@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import { IndicadorSincronizacao } from "../../offline-sync/IndicadorSincronizacao";
 import { useRota } from "../hooks/useRota";
 import { AjusteDestinoManual } from "./AjusteDestinoManual";
 import { IniciarViagem } from "./IniciarViagem";
@@ -30,12 +31,19 @@ export function TelaRota() {
 
   return (
     <main style={{ maxWidth: 560, margin: "2rem auto", padding: "0 1rem" }}>
+      <IndicadorSincronizacao />
       <Link to={`/motorista/entregas/${entregaId}`}>← Voltar para a entrega</Link>
       <h1>Rota da entrega</h1>
 
       {rota.erro && (
         <p role="alert" style={{ color: "var(--erro)" }}>
           {rota.erro}
+        </p>
+      )}
+
+      {rota.pendenteDeSincronizacao && (
+        <p role="status" style={{ color: "var(--aviso)" }}>
+          Registro salvo no aparelho e será enviado quando houver conexão.
         </p>
       )}
 

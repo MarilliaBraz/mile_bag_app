@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "../../../shared/api/ApiError";
 import { obterPosicaoAtual } from "../../../shared/geo/posicaoAtual";
 import type { Coordenada } from "../../../shared/mapa/MapaBase";
+import { arquivoParaBase64, executarOuEnfileirar } from "../offline-sync/fila";
+import { IndicadorSincronizacao } from "../offline-sync/IndicadorSincronizacao";
 import { JustificativaDivergencia } from "../rota/components/JustificativaDivergencia";
 import { registrarComprovante } from "./comprovanteService";
 
@@ -48,15 +50,34 @@ export function RegistrarComprovante() {
     }
     setErro(null);
     setEnviando(true);
+    const dataHora = new Date().toISOString();
     try {
-      await registrarComprovante(entregaId, {
-        foto,
-        identificacaoRecebedor: identificacaoRecebedor.trim(),
-        dataHora: new Date().toISOString(),
-        posicao,
-        idLocal,
-        justificativaDivergencia,
-      });
+      // Offline (HU08, FR-001): a foto vai para a fila em base64, que é o
+      // formato que o lote de sincronização aceita (PayloadComprovanteRegistrado).
+      await executarOuEnfileirar(
+        () =>
+          registrarComprovante(entregaId, {
+            foto,
+            identificacaoRecebedor: identificacaoRecebedor.trim(),
+            dataHora,
+            posicao,
+            idLocal,
+            justificativaDivergencia,
+          }),
+        {
+          tipoEvento: "COMPROVANTE_REGISTRADO",
+          payload: {
+            entregaId,
+            fotoBase64: await arquivoParaBase64(foto),
+            nomeArquivo: foto.name,
+            identificacaoRecebedor: identificacaoRecebedor.trim(),
+            dataHora,
+            latitude: posicao?.latitude ?? null,
+            longitude: posicao?.longitude ?? null,
+            justificativaDivergencia,
+          },
+        },
+      );
       navegar("/motorista");
     } catch (excecao) {
       if (excecao instanceof ApiError && excecao.status === 422 && excecao.tipo?.includes(TIPO_DIVERGENCIA)) {
@@ -73,6 +94,7 @@ export function RegistrarComprovante() {
 
   return (
     <main style={{ maxWidth: 560, margin: "2rem auto", padding: "0 1rem" }}>
+      <IndicadorSincronizacao />
       <Link to={`/motorista/entregas/${entregaId}`}>← Voltar para a entrega</Link>
       <h1>Comprovante de entrega</h1>
 

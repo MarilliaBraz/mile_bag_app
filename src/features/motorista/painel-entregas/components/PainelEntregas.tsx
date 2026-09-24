@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { IndicadorSincronizacao } from "../../offline-sync/IndicadorSincronizacao";
 import { consultarBdosDisponiveis, consultarPainel } from "../services/painelService";
 import type { BdosDisponiveis, ItemPainel, PainelEntregas as PainelEntregasResposta } from "../types";
 import { ListaBdosDisponiveis } from "./ListaBdosDisponiveis";
@@ -50,6 +51,8 @@ export function PainelEntregas() {
 
   return (
     <main style={{ maxWidth: 560, margin: "2rem auto", padding: "0 1rem" }}>
+      <IndicadorSincronizacao />
+
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
         <h1>Minhas entregas</h1>
         <Link to="/motorista/captura-bdo">Capturar BDO</Link>

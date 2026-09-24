@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { arquivoParaBase64, enfileirar } from "../../offline-sync/fila";
+import { IndicadorSincronizacao } from "../../offline-sync/IndicadorSincronizacao";
 import { capturarBdo, confirmarConferencia } from "../services/bdoService";
 import type { BdoResponse, CamposExtraidosBdo } from "../types";
 
-type Etapa = "captura" | "conferencia" | "enviando" | "concluido";
+type Etapa = "captura" | "conferencia" | "enviando" | "concluido" | "enfileirado";
 
 const CAMPO_VAZIO: CamposExtraidosBdo = {
   numero: "",
@@ -40,6 +42,14 @@ export function CapturaBdo() {
       setCampos({ ...CAMPO_VAZIO, ...resposta.camposExtraidos });
       setEtapa("conferencia");
     } catch (excecao) {
+      // Offline (HU08, FR-001): a foto vai para a fila e o OCR roda no
+      // servidor na sincronização - a conferência dos campos (FR-003 de
+      // HU01) só pode acontecer depois, porque depende desse resultado.
+      if (!(excecao instanceof ApiError)) {
+        await enfileirar("BDO_CAPTURADO", { imagemBase64: await arquivoParaBase64(arquivo), nomeArquivo: arquivo.name });
+        setEtapa("enfileirado");
+        return;
+      }
       setErro(mensagemDeErro(excecao));
       setEtapa("captura");
     }
@@ -85,8 +95,23 @@ export function CapturaBdo() {
     );
   }
 
+  if (etapa === "enfileirado") {
+    return (
+      <main style={{ maxWidth: 480, margin: "2rem auto", padding: "0 1rem" }}>
+        <IndicadorSincronizacao />
+        <h1>Foto salva no aparelho</h1>
+        <p role="status">
+          Sem conexão agora: a foto do BDO foi salva e será enviada automaticamente quando houver rede. A conferência dos campos
+          ficará disponível depois que o servidor processar a imagem.
+        </p>
+        <button onClick={() => setEtapa("captura")}>Capturar outro BDO</button>
+      </main>
+    );
+  }
+
   return (
     <main style={{ maxWidth: 480, margin: "2rem auto", padding: "0 1rem" }}>
+      <IndicadorSincronizacao />
       <h1>Capturar BDO</h1>
 
       {erro && (

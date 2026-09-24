@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { obterPosicaoAtual } from "../../../../shared/geo/posicaoAtual";
+import { executarOuEnfileirar } from "../../offline-sync/fila";
 import { calcularRotas, selecionarRota } from "../services/rotaService";
 import { consultarTrajeto, encerrarTrajeto, iniciarViagem } from "../services/viagemService";
 import type { CalculoRotas, Coordenada, RotaAlternativa, RotaSelecionada, TrajetoDetalhado } from "../types";
@@ -20,6 +21,8 @@ export function useRota(entregaId: string) {
   const [trajeto, setTrajeto] = useState<TrajetoDetalhado | null>(null);
   const [precisaDestinoManual, setPrecisaDestinoManual] = useState(false);
   const [divergenciaPendente, setDivergenciaPendente] = useState<string | null>(null);
+  /** Ação registrada na fila offline (HU08): já vale para o motorista, mas ainda não existe no servidor. */
+  const [pendenteDeSincronizacao, setPendenteDeSincronizacao] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [ocupado, setOcupado] = useState(false);
 
@@ -74,7 +77,23 @@ export function useRota(entregaId: string) {
     setErro(null);
     setOcupado(true);
     try {
-      setSelecao(await selecionarRota(entregaId, parametros));
+      const { enfileirado, resultado } = await executarOuEnfileirar(() => selecionarRota(entregaId, parametros), {
+        tipoEvento: "ROTA_ESCOLHIDA",
+        payload: {
+          entregaId,
+          tipoSelecao: parametros.tipoSelecao,
+          alternativaId: parametros.alternativaId ?? null,
+          tracadoManual: parametros.tracadoManual ?? null,
+          justificativa: parametros.justificativa ?? null,
+        },
+      });
+
+      if (enfileirado) {
+        setPendenteDeSincronizacao(true);
+        return;
+      }
+
+      setSelecao(resultado ?? null);
       // Com a viagem em execução, a seleção vira um novo cálculo no
       // histórico do trajeto (HU03/HU04) - recarrega para refleti-lo.
       if (trajeto) {
@@ -92,7 +111,15 @@ export function useRota(entregaId: string) {
     setOcupado(true);
     try {
       const posicao = await obterPosicaoAtual();
-      await iniciarViagem(entregaId, posicao);
+      const { enfileirado } = await executarOuEnfileirar(() => iniciarViagem(entregaId, posicao), {
+        tipoEvento: "VIAGEM_INICIADA",
+        payload: { entregaId, lat: posicao?.latitude ?? null, lng: posicao?.longitude ?? null },
+      });
+
+      if (enfileirado) {
+        setPendenteDeSincronizacao(true);
+        return;
+      }
       setTrajeto(await consultarTrajeto(entregaId));
     } catch (excecao) {
       setErro(mensagemDeErro(excecao, "Não foi possível iniciar a viagem."));
@@ -126,6 +153,7 @@ export function useRota(entregaId: string) {
     trajeto,
     precisaDestinoManual,
     divergenciaPendente,
+    pendenteDeSincronizacao,
     erro,
     ocupado,
     recalcular,

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { executarOuEnfileirar } from "../../offline-sync/fila";
 import { consultarBdosDisponiveis } from "../../painel-entregas/services/painelService";
 import type { BagagemCaronaResumo, ItemBdoDisponivel } from "../../painel-entregas/types";
 import { desvincularBagagemCarona, vincularBagagemCarona } from "./bagagemCaronaService";
@@ -46,8 +47,18 @@ export function VincularBagagemCarona({
     setErro(null);
     setOcupado(true);
     try {
-      await vincularBagagemCarona(entregaId, bdoId);
+      // Offline (HU08, FR-001): o vínculo fica na fila e é efetivado na
+      // sincronização - o desvínculo, por não ter evento equivalente no
+      // contrato de sincronização, continua exigindo conexão.
+      const { enfileirado } = await executarOuEnfileirar(() => vincularBagagemCarona(entregaId, bdoId), {
+        tipoEvento: "BAGAGEM_CARONA_VINCULADA",
+        payload: { entregaId, bdoId },
+      });
       setCandidatos(null);
+      if (enfileirado) {
+        setErro("Vínculo salvo no aparelho e será enviado quando houver conexão.");
+        return;
+      }
       aoAlterar();
     } catch (excecao) {
       setErro(mensagem(excecao, "Não foi possível vincular esta bagagem carona."));

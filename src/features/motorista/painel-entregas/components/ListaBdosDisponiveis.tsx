@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { executarOuEnfileirar } from "../../offline-sync/fila";
 import { autoatribuir } from "../services/painelService";
 import type { ItemBdoDisponivel } from "../types";
 
@@ -22,7 +23,12 @@ export function ListaBdosDisponiveis({
     setErro(null);
     setAtribuindo(bdoId);
     try {
-      await autoatribuir(bdoId);
+      // Offline, a atribuição fica na fila (HU08, FR-001) e o item sai da
+      // lista do mesmo jeito - o servidor a efetiva na sincronização.
+      await executarOuEnfileirar(() => autoatribuir(bdoId), {
+        tipoEvento: "ENTREGA_AUTOATRIBUIDA",
+        payload: { bdoId },
+      });
       aoAutoatribuir(bdoId);
     } catch (excecao) {
       setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível assumir esta entrega. Tente novamente.");

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "../../../shared/api/ApiError";
+import { executarOuEnfileirar } from "../offline-sync/fila";
+import { IndicadorSincronizacao } from "../offline-sync/IndicadorSincronizacao";
 import { listarMotivos, registrarOcorrencia, type MotivoOcorrencia } from "./ocorrenciaService";
 
 /**
@@ -36,11 +38,20 @@ export function RegistrarOcorrencia() {
     setErro(null);
     setEnviando(true);
     try {
-      await registrarOcorrencia(entregaId, {
-        motivoOcorrenciaId,
-        descricaoAdicional: descricaoAdicional.trim() || null,
-        idLocal,
-      });
+      // Offline (HU08, FR-001): a ocorrência é registrada na fila com os
+      // motivos já sincronizados e volta ao painel do mesmo jeito.
+      await executarOuEnfileirar(
+        () =>
+          registrarOcorrencia(entregaId, {
+            motivoOcorrenciaId,
+            descricaoAdicional: descricaoAdicional.trim() || null,
+            idLocal,
+          }),
+        {
+          tipoEvento: "OCORRENCIA_REGISTRADA",
+          payload: { entregaId, motivoOcorrenciaId, descricaoAdicional: descricaoAdicional.trim() || null },
+        },
+      );
       navegar("/motorista");
     } catch (excecao) {
       setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível registrar a ocorrência.");
@@ -51,6 +62,7 @@ export function RegistrarOcorrencia() {
 
   return (
     <main style={{ maxWidth: 560, margin: "2rem auto", padding: "0 1rem" }}>
+      <IndicadorSincronizacao />
       <Link to={`/motorista/entregas/${entregaId}`}>← Voltar para a entrega</Link>
       <h1>Ocorrência de não entrega</h1>
 
