@@ -1,35 +1,39 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { VincularBagagemCarona } from "../../captura-bdo/bagagem-carona/VincularBagagemCarona";
 import { BotaoLigar } from "../../mensageria/components/BotaoLigar";
 import { consultarDetalhe } from "../services/painelService";
 import type { ItemPainelDetalhe } from "../types";
 
 /**
  * Detalhe completo de uma entrega (HU19, FR-003) - passageiro, endereço,
- * dados do BDO e bagagens carona vinculadas, mais a ligação direta ao
- * passageiro (HU21). Ainda não integra os demais fluxos por entrega
- * (rota/viagem — HU03/HU04, comprovante — HU06, ocorrência — HU07,
- * mensageria — HU18, marcos de progresso — HU20): essas telas não existem
- * neste front-end ainda.
+ * dados do BDO e bagagens carona vinculadas (HU05), com acesso à rota e
+ * viagem (HU03/HU04) e à ligação direta ao passageiro (HU21). Ainda não
+ * integra comprovante (HU06), ocorrência (HU07), mensageria (HU18) e
+ * marcos de progresso (HU20): essas telas não existem neste front-end ainda.
  */
 export function DetalheEntrega() {
   const { entregaId } = useParams<{ entregaId: string }>();
   const [entrega, setEntrega] = useState<ItemPainelDetalhe | null>(null);
   const [erro, setErro] = useState<string | null>(null);
 
-  useEffect(() => {
+  const carregar = useCallback(() => {
     if (!entregaId) {
       return;
     }
     setErro(null);
-    setEntrega(null);
     consultarDetalhe(entregaId)
       .then(setEntrega)
       .catch((excecao) => {
         setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível carregar esta entrega.");
       });
   }, [entregaId]);
+
+  useEffect(() => {
+    setEntrega(null);
+    carregar();
+  }, [carregar]);
 
   return (
     <main style={{ maxWidth: 560, margin: "2rem auto", padding: "0 1rem" }}>
@@ -64,16 +68,12 @@ export function DetalheEntrega() {
             <dd>{entrega.telefone ?? "Não informado"}</dd>
           </dl>
 
-          {entrega.bagagensCarona.length > 0 && (
-            <section>
-              <h2>Bagagens carona</h2>
-              <ul>
-                {entrega.bagagensCarona.map((bagagem) => (
-                  <li key={bagagem.id}>{bagagem.etiquetaBagagem ?? "Sem etiqueta"}</li>
-                ))}
-              </ul>
-            </section>
-          )}
+          <VincularBagagemCarona
+            entregaId={entrega.entregaId}
+            bagagens={entrega.bagagensCarona}
+            encerrada={entrega.status === "ENCERRADA_COM_SUCESSO"}
+            aoAlterar={carregar}
+          />
 
           <section style={{ marginTop: "1.5rem" }}>
             <h2>Rota e viagem</h2>
