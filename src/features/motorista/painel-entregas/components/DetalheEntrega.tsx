@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { BotaoLigar } from "../../mensageria/components/BotaoLigar";
 import { consultarDetalhe } from "../services/painelService";
 import type { ItemPainelDetalhe } from "../types";
 
 /**
  * Detalhe completo de uma entrega (HU19, FR-003) - passageiro, endereço,
- * dados do BDO e bagagens carona vinculadas. Ainda não integra os demais
- * fluxos por entrega (rota/viagem — HU03/HU04, comprovante — HU06,
- * ocorrência — HU07, ligação — HU21, mensageria — HU18): essas telas não
- * existem neste front-end ainda.
+ * dados do BDO e bagagens carona vinculadas, mais a ligação direta ao
+ * passageiro (HU21). Ainda não integra os demais fluxos por entrega
+ * (rota/viagem — HU03/HU04, comprovante — HU06, ocorrência — HU07,
+ * mensageria — HU18, marcos de progresso — HU20): essas telas não existem
+ * neste front-end ainda.
  */
 export function DetalheEntrega() {
   const { entregaId } = useParams<{ entregaId: string }>();
@@ -72,6 +74,13 @@ export function DetalheEntrega() {
               </ul>
             </section>
           )}
+
+          {/* HU21 (FR-004/RI15): mesmo espaço reservado à conversa da entrega
+              (HU18), que ainda não existe neste front-end. */}
+          <section style={{ marginTop: "1.5rem" }}>
+            <h2>Contato com o passageiro</h2>
+            <BotaoLigar telefone={entrega.telefone} />
+          </section>
         </>
       )}
     </main>
