@@ -75,6 +75,13 @@ export function DetalheEntrega() {
             </section>
           )}
 
+          <section style={{ marginTop: "1.5rem" }}>
+            <h2>Rota e viagem</h2>
+            <Link to={`/motorista/entregas/${entrega.entregaId}/rota`}>
+              {entrega.temTrajetoIniciado ? "Acompanhar viagem em andamento →" : "Calcular rota e iniciar viagem →"}
+            </Link>
+          </section>
+
           {/* HU21 (FR-004/RI15): mesmo espaço reservado à conversa da entrega
               (HU18), que ainda não existe neste front-end. */}
           <section style={{ marginTop: "1.5rem" }}>

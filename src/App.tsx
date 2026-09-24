@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { CapturaBdo } from "./features/motorista/captura-bdo/components/CapturaBdo";
 import { DetalheEntrega } from "./features/motorista/painel-entregas/components/DetalheEntrega";
 import { PainelEntregas } from "./features/motorista/painel-entregas/components/PainelEntregas";
+import { TelaRota } from "./features/motorista/rota/components/TelaRota";
 import { LoginDev } from "./shared/auth/LoginDev";
 import { RequireAuth } from "./shared/auth/RequireAuth";
 
@@ -22,6 +23,14 @@ export function App() {
         element={
           <RequireAuth>
             <DetalheEntrega />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/motorista/entregas/:entregaId/rota"
+        element={
+          <RequireAuth>
+            <TelaRota />
           </RequireAuth>
         }
       />
