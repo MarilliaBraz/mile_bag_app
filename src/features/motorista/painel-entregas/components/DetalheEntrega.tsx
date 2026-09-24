@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { VincularBagagemCarona } from "../../captura-bdo/bagagem-carona/VincularBagagemCarona";
 import { BotaoLigar } from "../../mensageria/components/BotaoLigar";
+import { Conversa } from "../../mensageria/components/Conversa";
 import { HistoricoOcorrencias } from "../../ocorrencia/HistoricoOcorrencias";
 import { consultarDetalhe } from "../services/painelService";
 import type { ItemPainelDetalhe } from "../types";
@@ -10,9 +11,8 @@ import type { ItemPainelDetalhe } from "../types";
 /**
  * Detalhe completo de uma entrega (HU19, FR-003) - passageiro, endereço,
  * dados do BDO e bagagens carona vinculadas (HU05), com acesso à rota e
- * viagem (HU03/HU04) e à ligação direta ao passageiro (HU21). Ainda não
- * integra comprovante (HU06), ocorrência (HU07), mensageria (HU18) e
- * marcos de progresso (HU20): essas telas não existem neste front-end ainda.
+ * viagem (HU03/HU04), comprovante (HU06), ocorrência (HU07), ligação direta
+ * (HU21) e conversa com o passageiro (HU18).
  */
 export function DetalheEntrega() {
   const { entregaId } = useParams<{ entregaId: string }>();
@@ -99,11 +99,11 @@ export function DetalheEntrega() {
             </section>
           )}
 
-          {/* HU21 (FR-004/RI15): mesmo espaço reservado à conversa da entrega
-              (HU18), que ainda não existe neste front-end. */}
+          {/* HU21 (FR-004/RI15): ligação e conversa (HU18) lado a lado. */}
           <section style={{ marginTop: "1.5rem" }}>
             <h2>Contato com o passageiro</h2>
             <BotaoLigar telefone={entrega.telefone} />
+            <Conversa entregaId={entrega.entregaId} />
           </section>
         </>
       )}

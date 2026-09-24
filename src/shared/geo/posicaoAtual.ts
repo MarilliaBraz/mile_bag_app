@@ -15,9 +15,19 @@ export function obterPosicaoAtual(tempoLimiteMs = 10_000): Promise<Coordenada | 
   }
 
   return new Promise((resolver) => {
+    // A opção `timeout` do navegador só conta depois da resposta ao prompt de
+    // permissão; com o prompt aberto a promessa nunca resolveria. O limite
+    // próprio abaixo cobre esse caso (resolver duas vezes é inofensivo).
+    const limite = setTimeout(() => resolver(null), tempoLimiteMs + 1_000);
     navigator.geolocation.getCurrentPosition(
-      (posicao) => resolver({ latitude: posicao.coords.latitude, longitude: posicao.coords.longitude }),
-      () => resolver(null),
+      (posicao) => {
+        clearTimeout(limite);
+        resolver({ latitude: posicao.coords.latitude, longitude: posicao.coords.longitude });
+      },
+      () => {
+        clearTimeout(limite);
+        resolver(null);
+      },
       { enableHighAccuracy: true, timeout: tempoLimiteMs },
     );
   });

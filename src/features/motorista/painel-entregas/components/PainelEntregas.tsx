@@ -55,7 +55,10 @@ export function PainelEntregas() {
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
         <h1>Minhas entregas</h1>
-        <Link to="/motorista/captura-bdo">Capturar BDO</Link>
+        <span style={{ display: "flex", gap: "1rem" }}>
+          <Link to="/motorista/relatorio">Relatório</Link>
+          <Link to="/motorista/captura-bdo">Capturar BDO</Link>
+        </span>
       </div>
 
       {erro && (

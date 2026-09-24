@@ -95,3 +95,22 @@ dt {
 dd {
   margin: 0;
 }
+
+/* Relatório do motorista (HU17, RI11): na impressão, some tudo que não é o relatório. */
+@media print {
+  .nao-imprimir {
+    display: none !important;
+  }
+
+  :root {
+    --texto: #000;
+    --texto-titulo: #000;
+    --fundo: #fff;
+    --borda: #999;
+  }
+}
+
+table th,
+table td {
+  padding: 0.5rem 0.5rem 0.5rem 0;
+}

@@ -5,6 +5,7 @@ import { AjusteDestinoManual } from "./AjusteDestinoManual";
 import { IniciarViagem } from "./IniciarViagem";
 import { JustificativaDivergencia } from "./JustificativaDivergencia";
 import { MapaRotas } from "./MapaRotas";
+import { MarcosProgresso } from "./MarcosProgresso";
 import { ResumoViagem } from "./ResumoViagem";
 import { RotaPropria } from "./RotaPropria";
 
@@ -75,6 +76,8 @@ export function TelaRota() {
       )}
 
       {!rota.trajeto && rota.selecao && <IniciarViagem selecao={rota.selecao} aoIniciar={rota.iniciar} ocupado={rota.ocupado} />}
+
+      {emExecucao && <MarcosProgresso entregaId={entregaId} aoRegistrar={rota.recarregarTrajeto} />}
 
       {rota.trajeto && <ResumoViagem trajeto={rota.trajeto} />}
 

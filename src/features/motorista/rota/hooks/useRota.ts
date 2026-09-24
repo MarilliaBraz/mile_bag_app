@@ -65,6 +65,15 @@ export function useRota(entregaId: string) {
     };
   }, [entregaId, recalcular]);
 
+  /** Recarrega o trajeto (ex.: depois de um marco de progresso, HU20, que entra no histórico de checkpoints). */
+  const recarregarTrajeto = useCallback(async () => {
+    try {
+      setTrajeto(await consultarTrajeto(entregaId));
+    } catch {
+      // Falha de rede aqui não invalida o que já está na tela.
+    }
+  }, [entregaId]);
+
   async function selecionarSugerida(alternativa: RotaAlternativa) {
     await registrarSelecao({ tipoSelecao: "SUGERIDA", alternativaId: alternativa.id });
   }
@@ -157,6 +166,7 @@ export function useRota(entregaId: string) {
     erro,
     ocupado,
     recalcular,
+    recarregarTrajeto,
     selecionarSugerida,
     selecionarPropria,
     iniciar,

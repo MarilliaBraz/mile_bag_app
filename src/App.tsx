@@ -4,6 +4,7 @@ import { DetalheEntrega } from "./features/motorista/painel-entregas/components/
 import { PainelEntregas } from "./features/motorista/painel-entregas/components/PainelEntregas";
 import { RegistrarComprovante } from "./features/motorista/comprovante-entrega/RegistrarComprovante";
 import { RegistrarOcorrencia } from "./features/motorista/ocorrencia/RegistrarOcorrencia";
+import { RelatorioQuinzenal } from "./features/motorista/relatorio-quinzenal/RelatorioQuinzenal";
 import { TelaRota } from "./features/motorista/rota/components/TelaRota";
 import { LoginDev } from "./shared/auth/LoginDev";
 import { RequireAuth } from "./shared/auth/RequireAuth";
@@ -49,6 +50,14 @@ export function App() {
         element={
           <RequireAuth>
             <RegistrarOcorrencia />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/motorista/relatorio"
+        element={
+          <RequireAuth>
+            <RelatorioQuinzenal />
           </RequireAuth>
         }
       />
