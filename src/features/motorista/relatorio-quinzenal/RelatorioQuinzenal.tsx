@@ -1,3 +1,5 @@
+import { Ajuda } from "../../../shared/ui/Ajuda";
+import { Icone } from "../../../shared/ui/Icone";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ApiError } from "../../../shared/api/ApiError";
@@ -61,6 +63,9 @@ export function RelatorioQuinzenal() {
         ← Voltar para o painel
       </Link>
       <h1>Relatório quinzenal</h1>
+      <Ajuda>
+        <p>Confira as quilometragens, tarifas e pedágios do período. Para corrigir um valor, use “Corrigir” e explique o motivo: o valor original continua visível no histórico. “Imprimir” gera uma versão limpa para papel ou PDF.</p>
+      </Ajuda>
 
       <div className="nao-imprimir" style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "end" }}>
         <div>
@@ -72,7 +77,7 @@ export function RelatorioQuinzenal() {
           <input id="fim" type="date" value={periodo.fim} onChange={(e) => setPeriodo({ ...periodo, fim: e.target.value })} />
         </div>
         <button onClick={() => window.print()} disabled={!relatorio || relatorio.entregas.length === 0}>
-          🖨️ Imprimir
+          <Icone nome="impressora" /> Imprimir
         </button>
       </div>
 
@@ -91,15 +96,16 @@ export function RelatorioQuinzenal() {
           {relatorio.entregas.length === 0 ? (
             <p>Nenhuma entrega encerrada neste período.</p>
           ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <div className="tabela-rolavel">
+<table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ textAlign: "left", borderBottom: "2px solid var(--borda)" }}>
-                  <th>BDO</th>
-                  <th>Ida</th>
-                  <th>Volta</th>
-                  <th>Tarifa</th>
-                  <th>Pedágio</th>
-                  <th className="nao-imprimir" />
+                  <th scope="col">BDO</th>
+                  <th scope="col">Ida</th>
+                  <th scope="col">Volta</th>
+                  <th scope="col">Tarifa</th>
+                  <th scope="col">Pedágio</th>
+                  <th scope="col" className="nao-imprimir" />
                 </tr>
               </thead>
               <tbody>
@@ -148,6 +154,7 @@ export function RelatorioQuinzenal() {
                 ))}
               </tbody>
             </table>
+</div>
           )}
         </>
       )}

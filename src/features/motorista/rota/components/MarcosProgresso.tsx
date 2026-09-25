@@ -1,12 +1,13 @@
+import { Icone, type NomeIcone } from "../../../../shared/ui/Icone";
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { obterPosicaoAtual } from "../../../../shared/geo/posicaoAtual";
 import { registrarCheckpoint } from "../services/viagemService";
 import type { TipoCheckpoint } from "../types";
 
-const MARCOS: { tipo: Extract<TipoCheckpoint, "A_CAMINHO" | "CHEGADA">; rotulo: string; confirmacao: string }[] = [
-  { tipo: "A_CAMINHO", rotulo: "🚚 Estou a caminho", confirmacao: "Marco \"a caminho\" registrado." },
-  { tipo: "CHEGADA", rotulo: "📍 Cheguei", confirmacao: "Marco \"chegada\" registrado." },
+const MARCOS: { tipo: Extract<TipoCheckpoint, "A_CAMINHO" | "CHEGADA">; icone: NomeIcone; rotulo: string; confirmacao: string }[] = [
+  { tipo: "A_CAMINHO", icone: "carro", rotulo: "Estou a caminho", confirmacao: "Marco \"a caminho\" registrado." },
+  { tipo: "CHEGADA", icone: "pino", rotulo: "Cheguei", confirmacao: "Marco \"chegada\" registrado." },
 ];
 
 /**
@@ -53,7 +54,7 @@ export function MarcosProgresso({ entregaId, aoRegistrar }: { entregaId: string;
       <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
         {MARCOS.map((marco) => (
           <button key={marco.tipo} onClick={() => registrar(marco.tipo, marco.confirmacao)} disabled={ocupado !== null} style={{ flex: 1, minWidth: 160 }}>
-            {ocupado === marco.tipo ? "Registrando…" : marco.rotulo}
+            <Icone nome={marco.icone} /> {ocupado === marco.tipo ? "Registrando…" : marco.rotulo}
           </button>
         ))}
       </div>

@@ -1,3 +1,4 @@
+import { Ajuda } from "../../../../shared/ui/Ajuda";
 import { Link, useParams } from "react-router-dom";
 import { IndicadorSincronizacao } from "../../offline-sync/IndicadorSincronizacao";
 import { useRota } from "../hooks/useRota";
@@ -35,6 +36,9 @@ export function TelaRota() {
       <IndicadorSincronizacao />
       <Link to={`/motorista/entregas/${entregaId}`}>← Voltar para a entrega</Link>
       <h1>Rota da entrega</h1>
+      <Ajuda>
+        <p>Calcule as rotas, compare distância e tempo e escolha uma. Você também pode traçar uma rota própria. Ao recalcular, o cálculo anterior fica guardado no histórico da viagem.</p>
+      </Ajuda>
 
       {rota.erro && (
         <p role="alert" style={{ color: "var(--erro)" }}>

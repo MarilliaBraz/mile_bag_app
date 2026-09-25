@@ -1,3 +1,4 @@
+import { Ajuda } from "../../../shared/ui/Ajuda";
 import { useState } from "react";
 import { formatarData, formatarMoeda, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
@@ -36,6 +37,9 @@ export function TelaTarifas() {
   return (
     <main>
       <h1>Tarifas</h1>
+      <Ajuda>
+        <p>A tarifa define quanto o motorista recebe por entrega: um valor fixo, um valor por km ou os dois. Sem tarifa padrão, o fechamento marca as entregas como pendentes. Só valores e vigência podem ser editados depois de criada.</p>
+      </Ajuda>
 
       {erro && (
         <p role="alert" style={{ color: "var(--erro)" }}>
@@ -52,15 +56,16 @@ export function TelaTarifas() {
       {tarifas && tarifas.length === 0 && <p>Nenhuma tarifa cadastrada. Sem tarifa padrão, o fechamento marca as entregas como pendentes.</p>}
 
       {tarifas && tarifas.length > 0 && (
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <div className="tabela-rolavel">
+<table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ textAlign: "left" }}>
-              <th>Escopo</th>
-              <th>Alvo</th>
-              <th>Valor fixo</th>
-              <th>Por km</th>
-              <th>Vigente desde</th>
-              <th />
+              <th scope="col">Escopo</th>
+              <th scope="col">Alvo</th>
+              <th scope="col">Valor fixo</th>
+              <th scope="col">Por km</th>
+              <th scope="col">Vigente desde</th>
+              <th scope="col" />
             </tr>
           </thead>
           <tbody>
@@ -96,6 +101,7 @@ export function TelaTarifas() {
             ))}
           </tbody>
         </table>
+</div>
       )}
 
       {tarifas

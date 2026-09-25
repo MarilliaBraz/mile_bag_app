@@ -1,3 +1,4 @@
+import { Ajuda } from "../../../shared/ui/Ajuda";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CadastroTenantForm } from "./CadastroTenantForm";
@@ -10,6 +11,9 @@ export function TelaEmpresas() {
   return (
     <main>
       <h1>Empresas assinantes</h1>
+      <Ajuda>
+        <p>Cadastre a empresa e o e-mail do primeiro administrador: ele recebe um convite para definir a própria senha. Não é preciso configurar mais nada para a empresa começar a operar.</p>
+      </Ajuda>
 
       <h2>Cadastrar empresa</h2>
       <CadastroTenantForm aoCadastrar={(tenant) => navigate(`/plataforma/empresas/${tenant.id}`)} />

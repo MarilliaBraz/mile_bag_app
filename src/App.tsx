@@ -18,6 +18,8 @@ import { RegistrarComprovante } from "./features/motorista/comprovante-entrega/R
 import { RegistrarOcorrencia } from "./features/motorista/ocorrencia/RegistrarOcorrencia";
 import { RelatorioQuinzenal } from "./features/motorista/relatorio-quinzenal/RelatorioQuinzenal";
 import { TelaRota } from "./features/motorista/rota/components/TelaRota";
+import { RegistrosLocais } from "./features/motorista/offline-sync/RegistrosLocais";
+import { AcessibilidadeDeRota } from "./shared/ui/AcessibilidadeDeRota";
 import { EsqueciSenha } from "./shared/auth/EsqueciSenha";
 import { Login } from "./shared/auth/Login";
 import { RedefinirSenha } from "./shared/auth/RedefinirSenha";
@@ -26,8 +28,10 @@ import { RequireAuth } from "./shared/auth/RequireAuth";
 
 export function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
+    <>
+      <AcessibilidadeDeRota />
+      <Routes>
+        <Route path="/login" element={<Login />} />
       <Route
         path="/motorista"
         element={
@@ -73,6 +77,14 @@ export function App() {
         element={
           <RequireAuth>
             <RelatorioQuinzenal />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/motorista/registros"
+        element={
+          <RequireAuth>
+            <RegistrosLocais />
           </RequireAuth>
         }
       />
@@ -129,5 +141,6 @@ export function App() {
       </Route>
       <Route path="*" element={<Navigate to="/motorista" replace />} />
     </Routes>
+    </>
   );
 }

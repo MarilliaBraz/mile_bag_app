@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { Icone } from "../../../shared/ui/Icone";
 import { useSincronizacaoAutomatica } from "./useSincronizacaoAutomatica";
 
 /**
@@ -18,17 +20,18 @@ export function IndicadorSincronizacao({ aoSincronizar }: { aoSincronizar?: () =
   return (
     <p
       role="status"
+      className="texto-apoio"
       style={{
         margin: "0 0 1rem",
         padding: "0.5rem 0.75rem",
         borderRadius: 6,
         border: `1px solid ${cor}`,
         color: cor,
-        fontSize: "0.9rem",
       }}
     >
-      {online ? "📶 Conectado" : "📴 Sem conexão — os registros ficam salvos no aparelho"}
-      {pendentes > 0 && ` · ${pendentes} registro(s) aguardando sincronização`}
+      <Icone nome={online ? "conexao" : "semConexao"} /> {online ? "Conectado" : "Sem conexão — os registros ficam salvos no aparelho"}
+      {pendentes > 0 && ` · ${pendentes} registro(s) aguardando sincronização`}{" "}
+      <Link to="/motorista/registros">Ver cada registro</Link>
     </p>
   );
 }

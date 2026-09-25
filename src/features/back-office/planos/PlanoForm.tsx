@@ -1,3 +1,4 @@
+import { Icone } from "../../../shared/ui/Icone";
 import { useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 
@@ -8,6 +9,7 @@ export function PlanoForm({ aoSalvar }: { aoSalvar: (dados: { nome: string; limi
   const [bdos, setBdos] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
+  const [salvo, setSalvo] = useState(false);
 
   const limiteMotoristas = Number(motoristas);
   const limiteBdos = Number(bdos);
@@ -16,12 +18,14 @@ export function PlanoForm({ aoSalvar }: { aoSalvar: (dados: { nome: string; limi
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
     setErro(null);
+    setSalvo(false);
     setSalvando(true);
     try {
       await aoSalvar({ nome: nome.trim(), limiteMotoristasAtivos: limiteMotoristas, limiteVolumeMensalBdos: limiteBdos });
       setNome("");
       setMotoristas("");
       setBdos("");
+      setSalvo(true);
     } catch (excecao) {
       setErro(mensagemDeErro(excecao, "Não foi possível criar o plano."));
     } finally {
@@ -52,6 +56,9 @@ export function PlanoForm({ aoSalvar }: { aoSalvar: (dados: { nome: string; limi
         <button type="submit" disabled={invalido || salvando}>
           {salvando ? "Salvando…" : "Criar plano"}
         </button>
+        {salvo && <span role="status" style={{ color: "var(--confirmacao)", alignSelf: "center" }}>
+            <Icone nome="checkCirculo" /> Plano criado.
+          </span>}
       </div>
     </form>
   );

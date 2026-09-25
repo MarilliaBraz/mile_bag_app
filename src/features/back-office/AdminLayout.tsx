@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { BotaoSair } from "../../shared/auth/BotaoSair";
+import { PreferenciasAcessibilidade } from "../../shared/ui/PreferenciasAcessibilidade";
 
 type Item = { para: string; rotulo: string };
 
@@ -17,9 +18,9 @@ export function AdminLayout({ titulo, itens }: { titulo: string; itens: Item[] }
     <div style={{ maxWidth: 960, margin: "0 auto", padding: "1rem" }}>
       <header style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center", marginBottom: "1rem" }}>
         <strong style={{ marginRight: "1rem" }}>{titulo}</strong>
-        <nav aria-label="Seções" style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", flex: 1 }}>
-          {itens.map((item) => (
-            <NavLink key={item.para} to={item.para} end style={ESTILO_LINK}>
+        <nav aria-label="Seções" className="menu-admin">
+          {itens.map((item, indice) => (
+            <NavLink key={item.para} to={item.para} end style={ESTILO_LINK} accessKey={String(indice + 1)} title={`Atalho: Alt+Shift+${indice + 1}`}>
               {item.rotulo}
             </NavLink>
           ))}
@@ -29,6 +30,7 @@ export function AdminLayout({ titulo, itens }: { titulo: string; itens: Item[] }
         </NavLink>
         <BotaoSair />
       </header>
+      <PreferenciasAcessibilidade />
       <Outlet />
     </div>
   );

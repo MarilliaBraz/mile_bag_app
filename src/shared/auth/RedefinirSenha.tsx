@@ -50,8 +50,8 @@ export function RedefinirSenha() {
           </div>
           <div>
             <label htmlFor="confirmacao">Repita a senha</label>
-            <input id="confirmacao" type="password" autoComplete="new-password" value={confirmacao} onChange={(e) => setConfirmacao(e.target.value)} />
-            {confirmacao && senha !== confirmacao && <span style={{ color: "var(--erro)", fontSize: "0.85rem" }}>As senhas não conferem.</span>}
+            <input id="confirmacao" type="password" autoComplete="new-password" aria-invalid={!!confirmacao && senha !== confirmacao} aria-describedby={!!confirmacao && senha !== confirmacao ? "confirmacao-erro" : undefined} value={confirmacao} onChange={(e) => setConfirmacao(e.target.value)} />
+            {confirmacao && senha !== confirmacao && <span id="confirmacao-erro" role="alert" className="texto-erro">As senhas não conferem.</span>}
           </div>
           <div>
             <button type="submit" disabled={invalido || enviando}>

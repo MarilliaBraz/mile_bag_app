@@ -1,3 +1,4 @@
+import { Ajuda } from "../../../shared/ui/Ajuda";
 import { useId, useState } from "react";
 import { formatarData, formatarMoeda, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
@@ -92,6 +93,9 @@ export function TelaPedagios() {
   return (
     <main>
       <h1>Praças de pedágio</h1>
+      <Ajuda>
+        <p>Cadastre cada praça com o valor de ida e a data em que ele passa a valer. O reembolso ao motorista é calculado com ida e volta, usando o valor vigente na data da viagem.</p>
+      </Ajuda>
 
       {erro && (
         <p role="alert" style={{ color: "var(--erro)" }}>

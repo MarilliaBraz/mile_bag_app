@@ -66,13 +66,13 @@ export function ListaBdosDisponiveis({
           >
             <div>
               <strong>{bdo.bdoNumero ?? "BDO sem número"}</strong>
-              <div style={{ fontSize: "0.9rem" }}>{bdo.passageiroNome ?? "Passageiro não identificado"}</div>
-              <div style={{ fontSize: "0.85rem", color: "var(--texto)" }}>{bdo.endereco}</div>
+              <div className="texto-apoio">{bdo.passageiroNome ?? "Passageiro não identificado"}</div>
+              <div className="texto-apoio">{bdo.endereco}</div>
               {bdo.origem === "EMAIL_AUTOMATICO" && (
-                <span style={{ fontSize: "0.75rem", color: "var(--acao)" }}>Recebido por e-mail</span>
+                <span className="texto-apoio" style={{ color: "var(--acao)" }}>Recebido por e-mail</span>
               )}
             </div>
-            <button onClick={() => atribuir(bdo.bdoId)} disabled={atribuindo === bdo.bdoId}>
+            <button type="button" onClick={() => atribuir(bdo.bdoId)} disabled={atribuindo === bdo.bdoId} aria-label={`Assumir BDO ${bdo.bdoNumero ?? "sem número"}`}>
               {atribuindo === bdo.bdoId ? "Assumindo…" : "Assumir"}
             </button>
           </li>

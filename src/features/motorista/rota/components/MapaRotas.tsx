@@ -57,15 +57,15 @@ export function MapaRotas({
                   style={{
                     width: "100%",
                     textAlign: "left",
-                    background: selecionada ? "var(--acao)" : "transparent",
+                    background: selecionada ? "var(--acao-fundo)" : "transparent",
                     color: selecionada ? "#fff" : "var(--texto)",
-                    border: `1px solid ${selecionada ? "var(--acao)" : "var(--borda)"}`,
+                    border: `1px solid ${selecionada ? "var(--acao-fundo)" : "var(--borda)"}`,
                   }}
                 >
                   <strong>{formatarDistancia(alternativa.distanciaMetros)}</strong> · {formatarDuracao(alternativa.duracaoSegundos)}
-                  {alternativa.possuiPedagio ? " · 🛣️ com pedágio" : " · sem pedágio"}
+                  {alternativa.possuiPedagio ? " · com pedágio" : " · sem pedágio"}
                   {alternativa.pracasPedagio.length > 0 && (
-                    <div style={{ fontSize: "0.85rem", marginTop: "0.25rem" }}>
+                    <div className="texto-apoio" style={{ marginTop: "0.25rem" }}>
                       {alternativa.pracasPedagio
                         .map((praca) => (praca.valor === null ? praca.nome : `${praca.nome} (${REAL.format(praca.valor)})`))
                         .join(" · ")}

@@ -1,3 +1,4 @@
+import { Ajuda } from "../../../shared/ui/Ajuda";
 import { useEffect, useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
@@ -41,6 +42,9 @@ export function IdentidadeVisualForm() {
   return (
     <main>
       <h1>Identidade visual</h1>
+      <Ajuda>
+        <p>Envie o logotipo (PNG ou JPEG) e o texto do cabeçalho. Eles aparecem nos relatórios em PDF da sua empresa. A prévia mostra como o relatório vai ficar.</p>
+      </Ajuda>
       <p>O logotipo e o cabeçalho aparecem no topo dos relatórios em PDF do fechamento.</p>
 
       {(erro || erroAcao) && (

@@ -1,3 +1,4 @@
+import { Icone } from "../../../../shared/ui/Icone";
 import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { consultarConversa, type CanalMensagem, type Conversa as ConversaDados, type Mensagem } from "../services/mensagemService";
@@ -106,15 +107,15 @@ export function Conversa({ entregaId }: { entregaId: string }) {
                     borderStyle: mensagem.autor === "SISTEMA" ? "dashed" : "solid",
                   }}
                 >
-                  <div style={{ fontSize: "0.75rem", opacity: 0.8 }}>
+                  <div className="texto-apoio">
                     {ROTULO_AUTOR[mensagem.autor]} ·{" "}
                     {new Date(mensagem.criadoEm).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
                   </div>
                   <div>{mensagem.conteudo}</div>
-                  <div style={{ fontSize: "0.7rem", marginTop: "0.25rem" }}>
+                  <div className="texto-apoio" style={{ marginTop: "0.25rem" }}>
                     {canais.map(({ canal, falhou }) => (
                       <span key={canal} style={{ marginRight: "0.5rem", color: falhou ? "var(--erro)" : "inherit" }}>
-                        {ROTULO_CANAL[canal]}
+                        <Icone nome={canal === "EMAIL" ? "email" : "enviar"} /> {ROTULO_CANAL[canal]}
                         {falhou ? " (falhou)" : ""}
                       </span>
                     ))}

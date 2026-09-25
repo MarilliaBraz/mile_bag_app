@@ -1,6 +1,8 @@
+import { Ajuda } from "../../../shared/ui/Ajuda";
 import { useId, useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { LoteMotoristas } from "./LoteMotoristas";
 import { criarMotorista, definirAtivoMotorista, listarMotoristas, redefinirSenhaMotorista, atualizarMotorista, type Motorista } from "./motoristasApi";
 
@@ -13,16 +15,19 @@ function NovoMotoristaForm({ aoCriar }: { aoCriar: () => Promise<void> }) {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
+  const [criado, setCriado] = useState(false);
 
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
     setErro(null);
+    setCriado(false);
     setSalvando(true);
     try {
       await criarMotorista({ nome: nome.trim(), login: login.trim(), senha });
       setNome("");
       setLogin("");
       setSenha("");
+      setCriado(true);
       await aoCriar();
     } catch (excecao) {
       setErro(mensagemDeErro(excecao, "Não foi possível cadastrar o motorista."));
@@ -54,6 +59,11 @@ function NovoMotoristaForm({ aoCriar }: { aoCriar: () => Promise<void> }) {
         <button type="submit" disabled={!nome.trim() || !login.trim() || senha.length < TAMANHO_MINIMO_SENHA || salvando}>
           {salvando ? "Cadastrando…" : "Cadastrar motorista"}
         </button>
+        {criado && (
+          <span role="status" style={{ marginLeft: "0.75rem", color: "var(--confirmacao)" }}>
+            Motorista cadastrado.
+          </span>
+        )}
       </div>
     </form>
   );
@@ -96,7 +106,7 @@ function EditarForm({ motorista, aoConcluir }: { motorista: Motorista; aoConclui
         Salvar
       </button>
       {loginMudou && (
-        <span style={{ fontSize: "0.85rem", flexBasis: "100%" }}>
+        <span className="texto-apoio" style={{ flexBasis: "100%" }}>
           O motorista passa a entrar com o login novo. Um pedido de redefinição de senha que estava pendente é cancelado.
         </span>
       )}
@@ -114,9 +124,9 @@ function NovaSenhaForm({ motorista, aoConcluir }: { motorista: Motorista; aoConc
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [salva, setSalva] = useState(false);
+  const [confirmando, setConfirmando] = useState(false);
 
-  async function enviar(evento: React.FormEvent) {
-    evento.preventDefault();
+  async function enviar() {
     setErro(null);
     try {
       await redefinirSenhaMotorista(motorista.id, senha);
@@ -124,11 +134,21 @@ function NovaSenhaForm({ motorista, aoConcluir }: { motorista: Motorista; aoConc
       setSalva(true);
     } catch (excecao) {
       setErro(mensagemDeErro(excecao, "Não foi possível redefinir a senha."));
+    } finally {
+      setConfirmando(false);
     }
   }
 
   return (
-    <form onSubmit={enviar} style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "end", marginTop: "0.5rem" }}>
+    <form onSubmit={(evento) => { evento.preventDefault(); setConfirmando(true); }} style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "end", marginTop: "0.5rem" }}>
+      <ConfirmarAcao
+        aberto={confirmando}
+        titulo={`Trocar a senha de ${motorista.nome}?`}
+        descricao="As sessões abertas deste motorista serão encerradas e ele precisará entrar de novo com a senha nova."
+        rotuloConfirmar="Trocar senha"
+        aoConfirmar={enviar}
+        aoCancelar={() => setConfirmando(false)}
+      />
       <div>
         <label htmlFor={`${uid}-nova`}>Nova senha de {motorista.nome}</label>
         <input id={`${uid}-nova`} type="password" autoComplete="new-password" value={senha} onChange={(e) => setSenha(e.target.value)} />
@@ -163,24 +183,38 @@ export function TelaMotoristas() {
   const [erroAcao, setErroAcao] = useState<string | null>(null);
   const [redefinindo, setRedefinindo] = useState<string | null>(null);
   const [renomeando, setRenomeando] = useState<string | null>(null);
+  const [desativando, setDesativando] = useState<Motorista | null>(null);
+  const [resultado, setResultado] = useState<string | null>(null);
 
   async function alternar(motorista: Motorista) {
     setErroAcao(null);
+    setResultado(null);
     try {
       await definirAtivoMotorista(motorista.id, !motorista.ativo);
       await recarregar();
+      setResultado(motorista.ativo ? `${motorista.nome} foi desativado.` : `${motorista.nome} foi reativado.`);
     } catch (excecao) {
       setErroAcao(mensagemDeErro(excecao, "Não foi possível alterar o motorista."));
+    } finally {
+      setDesativando(null);
     }
   }
 
   return (
     <main>
       <h1>Motoristas</h1>
+      <Ajuda>
+        <p>Cadastre quem faz as entregas. Desativar um motorista encerra as sessões dele, mas mantém entregas e ajustes. Para trocar o acesso, use “Nova senha”. Para muitos motoristas de uma vez, use o cadastro em lote no fim da página.</p>
+      </Ajuda>
 
       {(erro || erroAcao) && (
         <p role="alert" style={{ color: "var(--erro)" }}>
           {erro ?? erroAcao}
+        </p>
+      )}
+      {resultado && (
+        <p role="status" style={{ color: "var(--confirmacao)" }}>
+          {resultado}
         </p>
       )}
       {carregando && <p role="status">Carregando…</p>}
@@ -193,7 +227,7 @@ export function TelaMotoristas() {
               <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "0.5rem" }}>
                 <div>
                   <strong>{motorista.nome}</strong> {!motorista.ativo && <span style={{ color: "var(--aviso)" }}>· desativado</span>}
-                  <div style={{ fontSize: "0.9rem" }}>Login: {motorista.login}</div>
+                  <div className="texto-apoio">Login: {motorista.login}</div>
                 </div>
                 <div style={{ display: "flex", gap: "0.5rem" }}>
                   <button type="button" className="secundario" onClick={() => setRenomeando(renomeando === motorista.id ? null : motorista.id)}>
@@ -202,7 +236,7 @@ export function TelaMotoristas() {
                   <button type="button" className="secundario" onClick={() => setRedefinindo(redefinindo === motorista.id ? null : motorista.id)}>
                     Nova senha
                   </button>
-                  <button type="button" className="secundario" onClick={() => alternar(motorista)}>
+                  <button type="button" className="secundario" onClick={() => (motorista.ativo ? setDesativando(motorista) : alternar(motorista))}>
                     {motorista.ativo ? "Desativar" : "Reativar"}
                   </button>
                 </div>
@@ -221,6 +255,16 @@ export function TelaMotoristas() {
           ))}
         </ul>
       )}
+
+      <ConfirmarAcao
+        aberto={desativando !== null}
+        titulo={`Desativar ${desativando?.nome ?? "motorista"}?`}
+        descricao="As sessões abertas deste motorista serão encerradas e ele não conseguirá mais entrar. As entregas e ajustes dele são mantidos, e você pode reativá-lo depois."
+        rotuloConfirmar="Desativar motorista"
+        perigo
+        aoConfirmar={() => desativando && alternar(desativando)}
+        aoCancelar={() => setDesativando(null)}
+      />
 
       <section style={{ marginTop: "2rem" }}>
         <h2>Novo motorista</h2>

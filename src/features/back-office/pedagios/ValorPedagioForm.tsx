@@ -1,3 +1,4 @@
+import { Icone } from "../../../shared/ui/Icone";
 import { useId, useState } from "react";
 import { hojeIso, mensagemDeErro } from "../../../shared/format/formatar";
 
@@ -19,6 +20,7 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
   const [longitude, setLongitude] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
+  const [salvo, setSalvo] = useState(false);
 
   const numero = Number(valor.trim().replace(",", "."));
   const lat = latitude.trim() === "" ? null : Number(latitude.trim().replace(",", "."));
@@ -31,6 +33,7 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
     setErro(null);
+    setSalvo(false);
     setSalvando(true);
     try {
       await aoSalvar({
@@ -43,6 +46,7 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
       setValor("");
       setLatitude("");
       setLongitude("");
+      setSalvo(true);
     } catch (excecao) {
       setErro(mensagemDeErro(excecao, "Não foi possível salvar."));
     } finally {
@@ -95,6 +99,9 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
         <button type="submit" disabled={invalido || salvando}>
           {salvando ? "Salvando…" : rotuloAcao}
         </button>
+        {salvo && <span role="status" style={{ color: "var(--confirmacao)", alignSelf: "center" }}>
+            <Icone nome="checkCirculo" /> Valor salvo.
+          </span>}
         {aoCancelar && (
           <button type="button" className="secundario" onClick={aoCancelar}>
             Cancelar

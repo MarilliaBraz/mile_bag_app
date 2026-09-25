@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { listarPlanos, trocarPlanoDoTenant, type ResultadoTrocaPlano } from "./planosApi";
 
 /**
@@ -14,9 +15,9 @@ export function TrocarPlanoTenant({ tenantId, planoAtualId, aoTrocar }: { tenant
   const [resultado, setResultado] = useState<ResultadoTrocaPlano | null>(null);
   const [erroAcao, setErroAcao] = useState<string | null>(null);
   const [trocando, setTrocando] = useState(false);
+  const [confirmando, setConfirmando] = useState(false);
 
-  async function trocar(evento: React.FormEvent) {
-    evento.preventDefault();
+  async function trocar() {
     setErroAcao(null);
     setResultado(null);
     setTrocando(true);
@@ -27,11 +28,12 @@ export function TrocarPlanoTenant({ tenantId, planoAtualId, aoTrocar }: { tenant
       setErroAcao(mensagemDeErro(excecao, "Não foi possível trocar o plano."));
     } finally {
       setTrocando(false);
+      setConfirmando(false);
     }
   }
 
   return (
-    <form onSubmit={trocar} style={{ display: "grid", gap: "0.75rem", maxWidth: 420 }}>
+    <form onSubmit={(evento) => { evento.preventDefault(); setConfirmando(true); }} style={{ display: "grid", gap: "0.75rem", maxWidth: 420 }}>
       {(erro || erroAcao) && (
         <p role="alert" style={{ color: "var(--erro)", margin: 0 }}>
           {erro ?? erroAcao}
@@ -55,6 +57,15 @@ export function TrocarPlanoTenant({ tenantId, planoAtualId, aoTrocar }: { tenant
           {trocando ? "Trocando…" : "Trocar plano"}
         </button>
       </div>
+      <ConfirmarAcao
+        aberto={confirmando}
+        titulo="Trocar o plano da empresa?"
+        descricao="A troca vale imediatamente. Se o uso atual da empresa já passa dos limites do novo plano, você será avisado, mas a troca acontece mesmo assim."
+        rotuloConfirmar="Trocar plano"
+        ocupado={trocando}
+        aoConfirmar={trocar}
+        aoCancelar={() => setConfirmando(false)}
+      />
       {resultado && (
         <p role="status" style={{ margin: 0, color: resultado.usoExcedeuLimiteNaTroca ? "var(--aviso)" : "var(--confirmacao)" }}>
           Plano alterado para {resultado.planoVigente.nome}.

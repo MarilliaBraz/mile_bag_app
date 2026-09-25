@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "../../../shared/api/ApiError";
 import { executarOuEnfileirar } from "../offline-sync/fila";
 import { IndicadorSincronizacao } from "../offline-sync/IndicadorSincronizacao";
+import { Ajuda } from "../../../shared/ui/Ajuda";
+import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { listarMotivosComOrigem, registrarOcorrencia, type MotivoOcorrencia } from "./ocorrenciaService";
 
 /**
@@ -22,6 +24,7 @@ export function RegistrarOcorrencia() {
   const [idLocal] = useState(() => crypto.randomUUID());
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+  const [confirmando, setConfirmando] = useState(false);
 
   useEffect(() => {
     listarMotivosComOrigem()
@@ -44,7 +47,7 @@ export function RegistrarOcorrencia() {
     try {
       // Offline (HU08, FR-001): a ocorrência é registrada na fila com os
       // motivos já sincronizados e volta ao painel do mesmo jeito.
-      await executarOuEnfileirar(
+      const { enfileirado } = await executarOuEnfileirar(
         () =>
           registrarOcorrencia(entregaId, {
             motivoOcorrenciaId,
@@ -56,8 +59,15 @@ export function RegistrarOcorrencia() {
           payload: { entregaId, motivoOcorrenciaId, descricaoAdicional: descricaoAdicional.trim() || null },
         },
       );
-      navegar("/motorista");
+      navegar("/motorista", {
+        state: {
+          aviso: enfileirado
+            ? "Ocorrência salva neste aparelho. Ela será enviada assim que houver conexão."
+            : "Ocorrência registrada. A entrega voltou para a lista de pendentes.",
+        },
+      });
     } catch (excecao) {
+      setConfirmando(false);
       setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível registrar a ocorrência.");
     } finally {
       setEnviando(false);
@@ -69,6 +79,9 @@ export function RegistrarOcorrencia() {
       <IndicadorSincronizacao />
       <Link to={`/motorista/entregas/${entregaId}`}>← Voltar para a entrega</Link>
       <h1>Ocorrência de não entrega</h1>
+      <Ajuda>
+        <p>Use quando não for possível entregar a bagagem. Escolha o motivo e, se quiser, descreva o que aconteceu. A entrega volta para a sua lista de pendentes para uma nova tentativa, sem perder o histórico.</p>
+      </Ajuda>
 
       {erro && (
         <p role="alert" style={{ color: "var(--erro)" }}>
@@ -87,12 +100,14 @@ export function RegistrarOcorrencia() {
       {motivos && motivos.length > 0 && (
         <>
           {motivosDoCache && (
-            <p role="status" style={{ fontSize: "0.85rem", color: "var(--aviso)" }}>
+            <p role="status" className="texto-apoio" style={{ color: "var(--aviso)" }}>
               Sem conexão: usando a lista de motivos salva neste aparelho. Se o administrador mudou os motivos, o registro pode ser recusado ao sincronizar.
             </p>
           )}
-          <label htmlFor="motivo">Motivo *</label>
-          <select id="motivo" value={motivoOcorrenciaId} onChange={(evento) => setMotivoOcorrenciaId(evento.target.value)}>
+          <label htmlFor="motivo">
+            Motivo <span className="campo-obrigatorio" aria-hidden="true">*</span>
+          </label>
+          <select id="motivo" required aria-required="true" value={motivoOcorrenciaId} onChange={(evento) => setMotivoOcorrenciaId(evento.target.value)}>
             <option value="">Selecione o motivo</option>
             {motivos.map((motivo) => (
               <option key={motivo.id} value={motivo.id}>
@@ -112,9 +127,19 @@ export function RegistrarOcorrencia() {
             />
           </div>
 
-          <button onClick={enviar} disabled={!motivoOcorrenciaId || enviando} style={{ marginTop: "1rem" }}>
+          <button type="button" onClick={() => setConfirmando(true)} disabled={!motivoOcorrenciaId || enviando} style={{ marginTop: "1rem" }}>
             {enviando ? "Registrando…" : "Registrar ocorrência e reabrir entrega"}
           </button>
+          {!motivoOcorrenciaId && <p className="texto-apoio">Escolha um motivo para continuar.</p>}
+          <ConfirmarAcao
+            aberto={confirmando}
+            titulo="Registrar ocorrência?"
+            descricao="A entrega será marcada como não realizada e voltará para a lista de pendentes. Isso não pode ser desfeito por aqui."
+            rotuloConfirmar="Registrar ocorrência"
+            ocupado={enviando}
+            aoConfirmar={enviar}
+            aoCancelar={() => setConfirmando(false)}
+          />
         </>
       )}
     </main>

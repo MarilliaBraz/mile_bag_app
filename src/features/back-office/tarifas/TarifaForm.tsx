@@ -1,3 +1,4 @@
+import { Icone } from "../../../shared/ui/Icone";
 import { useId, useState } from "react";
 import { hojeIso, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
@@ -34,6 +35,7 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
   const [vigenteDesde, setVigenteDesde] = useState(tarifa?.vigenteDesde ?? hojeIso());
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
+  const [salvo, setSalvo] = useState(false);
 
   const fixo = paraNumero(valorFixo);
   const porKm = paraNumero(valorPorKm);
@@ -44,6 +46,7 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
     setErro(null);
+    setSalvo(false);
     setSalvando(true);
     try {
       await aoSalvar({
@@ -54,6 +57,7 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
         valorPorKm: porKm,
         vigenteDesde,
       });
+      setSalvo(true);
     } catch (excecao) {
       setErro(mensagemDeErro(excecao, "Não foi possível salvar a tarifa."));
     } finally {
@@ -123,6 +127,9 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
         <button type="submit" disabled={invalido || salvando}>
           {salvando ? "Salvando…" : tarifa ? "Salvar alterações" : "Cadastrar tarifa"}
         </button>
+        {salvo && <span role="status" style={{ color: "var(--confirmacao)", alignSelf: "center" }}>
+            <Icone nome="checkCirculo" /> Tarifa salva.
+          </span>}
         {aoCancelar && (
           <button type="button" className="secundario" onClick={aoCancelar}>
             Cancelar

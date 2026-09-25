@@ -1,3 +1,4 @@
+import { Ajuda } from "../../../shared/ui/Ajuda";
 import { useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
@@ -24,6 +25,9 @@ export function PlanosLista() {
   return (
     <main>
       <h1>Planos de assinatura</h1>
+      <Ajuda>
+        <p>Um plano define o limite de motoristas ativos e de BDOs por mês. Cadastre um plano antes de cadastrar empresas. Para mudar o plano de uma empresa, abra a empresa em “Empresas”.</p>
+      </Ajuda>
 
       {(erro || erroAcao) && (
         <p role="alert" style={{ color: "var(--erro)" }}>
@@ -34,14 +38,15 @@ export function PlanosLista() {
       {dados && dados.length === 0 && <p>Nenhum plano cadastrado. Cadastre um plano antes de cadastrar empresas.</p>}
 
       {dados && dados.length > 0 && (
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <div className="tabela-rolavel">
+<table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ textAlign: "left" }}>
-              <th>Plano</th>
-              <th>Motoristas ativos</th>
-              <th>BDOs/mês</th>
-              <th>Empresas</th>
-              <th />
+              <th scope="col">Plano</th>
+              <th scope="col">Motoristas ativos</th>
+              <th scope="col">BDOs/mês</th>
+              <th scope="col">Empresas</th>
+              <th scope="col" />
             </tr>
           </thead>
           <tbody>
@@ -71,6 +76,7 @@ export function PlanosLista() {
             ))}
           </tbody>
         </table>
+</div>
       )}
 
       <section style={{ marginTop: "2rem" }}>

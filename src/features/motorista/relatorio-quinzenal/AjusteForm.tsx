@@ -56,13 +56,17 @@ export function AjusteForm({ viagemId, aoSalvar, aoCancelar }: { viagemId: strin
       </select>
 
       <div style={{ marginTop: "0.75rem" }}>
-        <label htmlFor={`valor-${viagemId}`}>Valor correto *</label>
-        <input id={`valor-${viagemId}`} type="number" step="any" min="0" value={valorNovo} onChange={(e) => setValorNovo(e.target.value)} />
+        <label htmlFor={`valor-${viagemId}`}>
+          Valor correto <span className="campo-obrigatorio" aria-hidden="true">*</span>
+        </label>
+        <input id={`valor-${viagemId}`} aria-required="true" type="number" step="any" min="0" value={valorNovo} onChange={(e) => setValorNovo(e.target.value)} />
       </div>
 
       <div style={{ marginTop: "0.75rem" }}>
-        <label htmlFor={`just-${viagemId}`}>Justificativa *</label>
-        <textarea id={`just-${viagemId}`} rows={2} value={justificativa} onChange={(e) => setJustificativa(e.target.value)} placeholder="Por que este valor está errado?" />
+        <label htmlFor={`just-${viagemId}`}>
+          Justificativa <span className="campo-obrigatorio" aria-hidden="true">*</span>
+        </label>
+        <textarea id={`just-${viagemId}`} aria-required="true" rows={2} value={justificativa} onChange={(e) => setJustificativa(e.target.value)} placeholder="Por que este valor está errado?" />
       </div>
 
       <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.75rem" }}>

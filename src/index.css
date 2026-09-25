@@ -2,11 +2,15 @@
   --texto: #334155;
   --texto-titulo: #0f172a;
   --fundo: #ffffff;
-  --borda: #cbd5e1;
+  --borda: #7b8794;
+  --borda-suave: #cbd5e1;
   --acao: #2563eb;
-  --confirmacao: #16a34a;
+  --acao-fundo: #2563eb;
+  --confirmacao: #15803d;
+  --confirmacao-fundo: #15803d;
   --erro: #dc2626;
-  --aviso: #d97706;
+  --aviso: #b45309;
+  --foco: #1d4ed8;
 
   color-scheme: light dark;
   font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
@@ -19,7 +23,13 @@
     --texto: #cbd5e1;
     --texto-titulo: #f8fafc;
     --fundo: #0f172a;
-    --borda: #334155;
+    --borda: #6b7c93;
+    --borda-suave: #334155;
+    --acao: #60a5fa;
+    --confirmacao: #4ade80;
+    --erro: #f87171;
+    --aviso: #fbbf24;
+    --foco: #93c5fd;
   }
 }
 
@@ -67,7 +77,7 @@ button {
   padding: 0.5rem 1.25rem;
   border: none;
   border-radius: 6px;
-  background: var(--acao);
+  background: var(--acao-fundo);
   color: #fff;
   cursor: pointer;
 }
@@ -113,4 +123,232 @@ dd {
 table th,
 table td {
   padding: 0.5rem 0.5rem 0.5rem 0;
+}
+
+a {
+  color: var(--acao);
+  text-underline-offset: 0.2em;
+}
+
+/* Foco visível para navegação por teclado (WCAG 2.4.7): vale para links, botões e campos. */
+:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 2px;
+}
+
+/* Campo em erro: a borda muda e o texto de erro associado explica o motivo (não depende só de cor). */
+[aria-invalid="true"] {
+  border-color: var(--erro);
+  border-width: 2px;
+}
+
+.texto-apoio {
+  font-size: 0.875rem;
+}
+
+.texto-erro {
+  color: var(--erro);
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0;
+}
+
+/* Tabelas largas rolam na horizontal em vez de estourar a tela do celular. */
+.tabela-rolavel {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Link "pular para o conteúdo": só aparece quando recebe foco pelo teclado. */
+.pular-conteudo {
+  position: absolute;
+  left: 0.5rem;
+  top: -4rem;
+  padding: 0.5rem 1rem;
+  background: var(--fundo);
+  border: 2px solid var(--foco);
+  border-radius: 6px;
+  z-index: 1000;
+}
+
+.pular-conteudo:focus {
+  top: 0.5rem;
+}
+
+.campo-obrigatorio {
+  color: var(--erro);
+}
+
+.cartao-link {
+  display: block;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.cartao-link:hover {
+  border-color: var(--acao);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+dialog.confirmacao {
+  max-width: min(28rem, calc(100vw - 2rem));
+  padding: 1.25rem;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: var(--fundo);
+  color: var(--texto);
+}
+
+dialog.confirmacao::backdrop {
+  background: rgb(0 0 0 / 0.5);
+}
+
+dialog.confirmacao .acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+button.perigo {
+  background: #b91c1c;
+}
+
+details.ajuda {
+  margin: 0.75rem 0;
+  border: 1px solid var(--borda-suave);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+}
+
+details.ajuda summary {
+  cursor: pointer;
+  font-weight: 600;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+/* Ícones de traço (components/Icone.tsx): acompanham o tamanho do texto e a cor atual. */
+.icone {
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  vertical-align: -0.2em;
+  flex: none;
+  overflow: visible;
+}
+
+/* Ao aparecer, o traço é "desenhado" (como nos ícones line animados). */
+.icone :is(path, line, polyline, polygon, rect, circle) {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: icone-tracar 0.7s ease-out forwards;
+}
+
+@keyframes icone-tracar {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes icone-pulo {
+  40% {
+    transform: translateY(-2px) scale(1.12);
+  }
+}
+
+@keyframes icone-giro {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+:is(button, a):not(:disabled):is(:hover, :focus-visible) .icone {
+  animation: icone-pulo 0.5s ease;
+}
+
+:is(button, a):not(:disabled):is(:hover, :focus-visible) .icone-sincronizar {
+  animation: icone-giro 0.7s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icone :is(path, line, polyline, polygon, rect, circle) {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* O <main> recebe foco por código ao trocar de tela (AcessibilidadeDeRota): sem contorno, pois não é um controle. */
+main:focus {
+  outline: none;
+}
+
+/* Alto contraste: escolhido pelo motorista/admin (PreferenciasAcessibilidade) ou pedido pelo sistema operacional. */
+:root[data-alto-contraste="true"] {
+  color-scheme: light;
+  --texto: #000;
+  --texto-titulo: #000;
+  --fundo: #fff;
+  --borda: #000;
+  --borda-suave: #000;
+  --acao: #0000b8;
+  --acao-fundo: #0000b8;
+  --confirmacao: #005a00;
+  --confirmacao-fundo: #005a00;
+  --erro: #a80000;
+  --aviso: #6b3300;
+  --foco: #000;
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --texto: #000;
+    --texto-titulo: #000;
+    --fundo: #fff;
+    --borda: #000;
+    --borda-suave: #000;
+    --acao: #0000b8;
+    --acao-fundo: #0000b8;
+    --confirmacao: #005a00;
+    --confirmacao-fundo: #005a00;
+    --erro: #a80000;
+    --aviso: #6b3300;
+    --foco: #000;
+    color-scheme: light;
+  }
+}
+
+:root[data-alto-contraste="true"] button.secundario {
+  border-width: 2px;
+}
+
+/* Menu do back-office: quebra em linhas no desktop e vira uma faixa rolável no celular (menos altura ocupada). */
+.menu-admin {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  .menu-admin {
+    flex-wrap: nowrap;
+    flex-basis: 100%;
+    order: 3;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+
+  .menu-admin a {
+    white-space: nowrap;
+  }
 }

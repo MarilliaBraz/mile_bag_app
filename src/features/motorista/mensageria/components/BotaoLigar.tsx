@@ -22,12 +22,13 @@ export function BotaoLigar({ telefone }: { telefone: string | null }) {
         minHeight: 44,
         padding: "0.5rem 1.25rem",
         borderRadius: 6,
-        background: "var(--confirmacao)",
+        background: "var(--confirmacao-fundo)",
         color: "#fff",
         textDecoration: "none",
       }}
     >
-      📞 Ligar para o passageiro
+      <Icone nome="telefone" />&nbsp;Ligar para o passageiro
     </a>
   );
-}
+}import { Icone } from "../../../../shared/ui/Icone";
+

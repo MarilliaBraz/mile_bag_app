@@ -42,15 +42,19 @@ export function MapaBase({
   marcadores = [],
   zoom = 13,
   altura = 280,
+  descricao = "Mapa",
   children,
 }: {
   centro: Coordenada;
   marcadores?: MarcadorMapa[];
   zoom?: number;
   altura?: number;
+  /** Nome do mapa para leitores de tela; a mesma informação deve existir em texto na tela. */
+  descricao?: string;
   children?: ReactNode;
 }) {
   return (
+    <div role="region" aria-label={descricao}>
     <MapContainer
       center={[centro.latitude, centro.longitude]}
       zoom={zoom}
@@ -71,5 +75,6 @@ export function MapaBase({
       ))}
       {children}
     </MapContainer>
+    </div>
   );
 }

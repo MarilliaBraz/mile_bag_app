@@ -1,3 +1,4 @@
+import { Icone } from "../../../../shared/ui/Icone";
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { enviarMensagem } from "../services/mensagemService";
@@ -12,6 +13,7 @@ export function CampoMensagem({ entregaId, aoEnviar }: { entregaId: string; aoEn
   const [texto, setTexto] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [enviada, setEnviada] = useState(false);
 
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
@@ -19,10 +21,12 @@ export function CampoMensagem({ entregaId, aoEnviar }: { entregaId: string; aoEn
       return;
     }
     setErro(null);
+    setEnviada(false);
     setEnviando(true);
     try {
       await enviarMensagem(entregaId, texto.trim());
       setTexto("");
+      setEnviada(true);
       aoEnviar();
     } catch (excecao) {
       setErro(
@@ -47,6 +51,11 @@ export function CampoMensagem({ entregaId, aoEnviar }: { entregaId: string; aoEn
       <button type="submit" disabled={!texto.trim() || enviando} style={{ marginTop: "0.5rem" }}>
         {enviando ? "Enviando…" : "Enviar"}
       </button>
+      {enviada && (
+        <span role="status" style={{ marginLeft: "0.75rem", color: "var(--confirmacao)" }}>
+          <Icone nome="checkCirculo" /> Mensagem enviada.
+        </span>
+      )}
     </form>
   );
 }

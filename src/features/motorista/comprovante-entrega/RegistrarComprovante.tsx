@@ -1,11 +1,14 @@
+import { Icone } from "../../../shared/ui/Icone";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "../../../shared/api/ApiError";
-import { obterPosicaoAtual } from "../../../shared/geo/posicaoAtual";
+import { obterPosicaoDetalhada, ORIENTACAO_FALHA_POSICAO, type MotivoFalhaPosicao } from "../../../shared/geo/posicaoAtual";
 import type { Coordenada } from "../../../shared/mapa/MapaBase";
 import { arquivoParaBase64, executarOuEnfileirar } from "../offline-sync/fila";
 import { IndicadorSincronizacao } from "../offline-sync/IndicadorSincronizacao";
 import { JustificativaDivergencia } from "../rota/components/JustificativaDivergencia";
+import { Ajuda } from "../../../shared/ui/Ajuda";
+import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { registrarComprovante } from "./comprovanteService";
 
 const TIPO_DIVERGENCIA = "divergencia-trajeto-sem-justificativa";
@@ -29,10 +32,12 @@ export function RegistrarComprovante() {
   const [identificacaoRecebedor, setIdentificacaoRecebedor] = useState("");
   const [posicao, setPosicao] = useState<Coordenada | null>(null);
   const [capturandoPosicao, setCapturandoPosicao] = useState(true);
+  const [motivoFalhaPosicao, setMotivoFalhaPosicao] = useState<MotivoFalhaPosicao | null>(null);
   const [idLocal] = useState(() => crypto.randomUUID());
   const [erro, setErro] = useState<string | null>(null);
   const [divergencia, setDivergencia] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+  const [confirmando, setConfirmando] = useState(false);
 
   useEffect(() => {
     capturarPosicao();
@@ -40,7 +45,10 @@ export function RegistrarComprovante() {
 
   async function capturarPosicao() {
     setCapturandoPosicao(true);
-    setPosicao(await obterPosicaoAtual());
+    setMotivoFalhaPosicao(null);
+    const resultado = await obterPosicaoDetalhada();
+    setPosicao(resultado.posicao);
+    setMotivoFalhaPosicao(resultado.motivo);
     setCapturandoPosicao(false);
   }
 
@@ -54,7 +62,7 @@ export function RegistrarComprovante() {
     try {
       // Offline (HU08, FR-001): a foto vai para a fila em base64, que é o
       // formato que o lote de sincronização aceita (PayloadComprovanteRegistrado).
-      await executarOuEnfileirar(
+      const { enfileirado } = await executarOuEnfileirar(
         () =>
           registrarComprovante(entregaId, {
             foto,
@@ -78,8 +86,15 @@ export function RegistrarComprovante() {
           },
         },
       );
-      navegar("/motorista");
+      navegar("/motorista", {
+        state: {
+          aviso: enfileirado
+            ? "Comprovante salvo neste aparelho. Ele será enviado assim que houver conexão."
+            : "Comprovante enviado e entrega encerrada.",
+        },
+      });
     } catch (excecao) {
+      setConfirmando(false);
       if (excecao instanceof ApiError && excecao.status === 422 && excecao.tipo?.includes(TIPO_DIVERGENCIA)) {
         setDivergencia(excecao.message);
       } else {
@@ -97,6 +112,9 @@ export function RegistrarComprovante() {
       <IndicadorSincronizacao />
       <Link to={`/motorista/entregas/${entregaId}`}>← Voltar para a entrega</Link>
       <h1>Comprovante de entrega</h1>
+      <Ajuda>
+        <p>Tire uma foto do documento assinado e informe quem recebeu a bagagem. A data, a hora e a localização são registradas automaticamente. Sem internet, o comprovante fica salvo no aparelho e é enviado depois.</p>
+      </Ajuda>
 
       {erro && (
         <p role="alert" style={{ color: "var(--erro)" }}>
@@ -104,9 +122,13 @@ export function RegistrarComprovante() {
         </p>
       )}
 
-      <label htmlFor="foto-comprovante">Foto do documento assinado *</label>
+      <label htmlFor="foto-comprovante">
+        Foto do documento assinado <span className="campo-obrigatorio" aria-hidden="true">*</span>
+      </label>
       <input
         id="foto-comprovante"
+        required
+        aria-required="true"
         type="file"
         accept="image/*"
         capture="environment"
@@ -114,9 +136,13 @@ export function RegistrarComprovante() {
       />
 
       <div style={{ marginTop: "1rem" }}>
-        <label htmlFor="recebedor">Quem recebeu *</label>
+        <label htmlFor="recebedor">
+          Quem recebeu <span className="campo-obrigatorio" aria-hidden="true">*</span>
+        </label>
         <input
           id="recebedor"
+          required
+          aria-required="true"
           type="text"
           value={identificacaoRecebedor}
           onChange={(evento) => setIdentificacaoRecebedor(evento.target.value)}
@@ -127,14 +153,21 @@ export function RegistrarComprovante() {
       {/* Edge case do spec: falha de GPS não pode custar os campos já
           preenchidos - o formulário continua montado e só a captura é
           refeita. */}
-      <p style={{ marginTop: "1rem", fontSize: "0.9rem" }} role="status">
+      <p className="texto-apoio" style={{ marginTop: "1rem" }} role="status">
         {capturandoPosicao
           ? "Capturando a localização…"
           : posicao
-            ? `Localização capturada (${posicao.latitude.toFixed(5)}, ${posicao.longitude.toFixed(5)})`
+            ? (
+              <>
+                <Icone nome="pino" /> Localização capturada ({posicao.latitude.toFixed(5)}, {posicao.longitude.toFixed(5)})
+              </>
+            )
             : "Não foi possível capturar a localização, e ela é obrigatória no comprovante."}
+        {!capturandoPosicao && motivoFalhaPosicao && (
+          <span style={{ display: "block", marginTop: "0.25rem" }}>{ORIENTACAO_FALHA_POSICAO[motivoFalhaPosicao]}</span>
+        )}
         {!capturandoPosicao && !posicao && (
-          <button className="secundario" onClick={capturarPosicao} style={{ marginLeft: "0.5rem" }}>
+          <button type="button" className="secundario" onClick={capturarPosicao} style={{ marginLeft: "0.5rem" }}>
             Tentar novamente
           </button>
         )}
@@ -143,9 +176,25 @@ export function RegistrarComprovante() {
       {divergencia ? (
         <JustificativaDivergencia mensagem={divergencia} aoReenviar={(justificativa) => enviar(justificativa)} ocupado={enviando} />
       ) : (
-        <button onClick={() => enviar()} disabled={!podeEnviar} style={{ marginTop: "1rem" }}>
-          {enviando ? "Registrando…" : "Registrar comprovante e encerrar entrega"}
-        </button>
+        <>
+          <button type="button" onClick={() => setConfirmando(true)} disabled={!podeEnviar} style={{ marginTop: "1rem" }}>
+            {enviando ? "Registrando…" : "Registrar comprovante e encerrar entrega"}
+          </button>
+          {!podeEnviar && !enviando && (
+            <p className="texto-apoio">
+              Para continuar: {[!foto && "tire a foto", !identificacaoRecebedor.trim() && "informe quem recebeu", !posicao && (capturandoPosicao ? "aguarde a localização" : "libere a localização")].filter(Boolean).join(", ")}.
+            </p>
+          )}
+          <ConfirmarAcao
+            aberto={confirmando}
+            titulo="Encerrar a entrega?"
+            descricao="O comprovante será registrado e a entrega será encerrada. Confira a foto e o nome de quem recebeu antes de continuar."
+            rotuloConfirmar="Encerrar entrega"
+            ocupado={enviando}
+            aoConfirmar={() => enviar()}
+            aoCancelar={() => setConfirmando(false)}
+          />
+        </>
       )}
     </main>
   );

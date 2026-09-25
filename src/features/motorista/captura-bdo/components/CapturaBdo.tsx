@@ -1,3 +1,4 @@
+import { Ajuda } from "../../../../shared/ui/Ajuda";
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { arquivoParaBase64, enfileirar } from "../../offline-sync/fila";
@@ -113,6 +114,9 @@ export function CapturaBdo() {
     <main style={{ maxWidth: 480, margin: "2rem auto", padding: "0 1rem" }}>
       <IndicadorSincronizacao />
       <h1>Capturar BDO</h1>
+      <Ajuda>
+        <p>Fotografe o documento do BDO. O sistema lê os campos, e você confere e corrige tudo antes de confirmar. Nada é salvo sem a sua conferência.</p>
+      </Ajuda>
 
       {erro && (
         <p role="alert" style={{ color: "var(--erro)" }}>

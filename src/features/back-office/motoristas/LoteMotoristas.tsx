@@ -117,14 +117,15 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
               </button>
             </p>
           )}
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <div className="tabela-rolavel">
+<table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ textAlign: "left" }}>
-                <th>Linha</th>
-                <th>Nome</th>
-                <th>Login</th>
-                <th>Situação</th>
-                <th>Senha gerada</th>
+                <th scope="col">Linha</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Login</th>
+                <th scope="col">Situação</th>
+                <th scope="col">Senha gerada</th>
               </tr>
             </thead>
             <tbody>
@@ -139,6 +140,7 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
               ))}
             </tbody>
           </table>
+</div>
         </section>
       )}
     </div>

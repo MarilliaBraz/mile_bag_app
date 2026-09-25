@@ -39,14 +39,15 @@ export function DetalheFechamento() {
           {dados.itens.length === 0 ? (
             <p>Nenhuma entrega concluída neste período.</p>
           ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <div className="tabela-rolavel">
+<table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ textAlign: "left" }}>
-                  <th>Motorista</th>
-                  <th>Entrega</th>
-                  <th>Pagamento</th>
-                  <th>Pedágio</th>
-                  <th>Situação</th>
+                  <th scope="col">Motorista</th>
+                  <th scope="col">Entrega</th>
+                  <th scope="col">Pagamento</th>
+                  <th scope="col">Pedágio</th>
+                  <th scope="col">Situação</th>
                 </tr>
               </thead>
               <tbody>
@@ -64,6 +65,7 @@ export function DetalheFechamento() {
                 })}
               </tbody>
             </table>
+</div>
           )}
         </>
       )}

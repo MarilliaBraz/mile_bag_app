@@ -1,3 +1,4 @@
+import { Icone } from "../ui/Icone";
 import { useNavigate } from "react-router-dom";
 import { limparToken } from "./authStorage";
 
@@ -13,7 +14,7 @@ export function BotaoSair() {
         navigate("/login", { replace: true });
       }}
     >
-      Sair
+      <Icone nome="sair" /> Sair
     </button>
   );
 }

@@ -1,3 +1,4 @@
+import { Icone } from "../../../../shared/ui/Icone";
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { executarOuEnfileirar } from "../../offline-sync/fila";
@@ -28,6 +29,7 @@ export function VincularBagagemCarona({
 }) {
   const [candidatos, setCandidatos] = useState<ItemBdoDisponivel[] | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
   const [ocupado, setOcupado] = useState(false);
 
   async function abrirCandidatos() {
@@ -45,6 +47,7 @@ export function VincularBagagemCarona({
 
   async function vincular(bdoId: string) {
     setErro(null);
+    setAviso(null);
     setOcupado(true);
     try {
       // Offline (HU08, FR-001): o vínculo fica na fila e é efetivado na
@@ -56,9 +59,10 @@ export function VincularBagagemCarona({
       });
       setCandidatos(null);
       if (enfileirado) {
-        setErro("Vínculo salvo no aparelho e será enviado quando houver conexão.");
+        setAviso("Vínculo salvo no aparelho e será enviado quando houver conexão.");
         return;
       }
+      setAviso("Bagagem carona vinculada.");
       aoAlterar();
     } catch (excecao) {
       setErro(mensagem(excecao, "Não foi possível vincular esta bagagem carona."));
@@ -69,9 +73,11 @@ export function VincularBagagemCarona({
 
   async function desvincular(bagagemCaronaId: string) {
     setErro(null);
+    setAviso(null);
     setOcupado(true);
     try {
       await desvincularBagagemCarona(entregaId, bagagemCaronaId);
+      setAviso("Vínculo removido.");
       aoAlterar();
     } catch (excecao) {
       setErro(mensagem(excecao, "Não foi possível remover este vínculo."));
@@ -90,15 +96,21 @@ export function VincularBagagemCarona({
         </p>
       )}
 
+      {aviso && (
+        <p role="status" style={{ color: "var(--confirmacao)" }}>
+          <Icone nome="checkCirculo" /> {aviso}
+        </p>
+      )}
+
       {bagagens.length === 0 ? (
-        <p style={{ fontSize: "0.9rem" }}>Nenhuma bagagem carona vinculada a esta entrega.</p>
+        <p className="texto-apoio">Nenhuma bagagem carona vinculada a esta entrega.</p>
       ) : (
         <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
           {bagagens.map((bagagem) => (
             <li key={bagagem.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", marginBottom: "0.5rem" }}>
               <span>{bagagem.etiquetaBagagem ?? "Sem etiqueta"}</span>
               {!encerrada && (
-                <button className="secundario" onClick={() => desvincular(bagagem.id)} disabled={ocupado}>
+                <button type="button" className="secundario" onClick={() => desvincular(bagagem.id)} disabled={ocupado} aria-label={`Desvincular bagagem ${bagagem.etiquetaBagagem ?? "sem etiqueta"}`}>
                   Desvincular
                 </button>
               )}
@@ -119,7 +131,7 @@ export function VincularBagagemCarona({
         <div style={{ marginTop: "0.75rem" }}>
           <h3>Escolha o BDO que vai junto</h3>
           {candidatos.length === 0 ? (
-            <p style={{ fontSize: "0.9rem" }}>Nenhum BDO disponível para vincular no momento.</p>
+            <p className="texto-apoio">Nenhum BDO disponível para vincular no momento.</p>
           ) : (
             <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
               {candidatos.map((bdo) => (

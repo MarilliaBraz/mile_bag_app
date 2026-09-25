@@ -79,8 +79,8 @@ export function AtivarConviteForm() {
           </div>
           <div>
             <label htmlFor="confirmacaoSenha">Repita a senha</label>
-            <input id="confirmacaoSenha" type="password" autoComplete="new-password" value={confirmacao} onChange={(e) => setConfirmacao(e.target.value)} />
-            {confirmacao && senha !== confirmacao && <span style={{ color: "var(--erro)", fontSize: "0.85rem" }}>As senhas não conferem.</span>}
+            <input id="confirmacaoSenha" type="password" autoComplete="new-password" aria-invalid={!!confirmacao && senha !== confirmacao} aria-describedby={!!confirmacao && senha !== confirmacao ? "confirmacaoSenha-erro" : undefined} value={confirmacao} onChange={(e) => setConfirmacao(e.target.value)} />
+            {confirmacao && senha !== confirmacao && <span id="confirmacaoSenha-erro" role="alert" className="texto-erro">As senhas não conferem.</span>}
           </div>
           <div>
             <button type="submit" disabled={invalido || enviando}>
