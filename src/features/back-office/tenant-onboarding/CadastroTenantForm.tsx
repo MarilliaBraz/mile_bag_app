@@ -37,7 +37,7 @@ export function CadastroTenantForm({ aoCadastrar }: { aoCadastrar: (tenant: Tena
   }
 
   return (
-    <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", maxWidth: 480 }}>
+    <form onSubmit={enviar} className="formulario">
       {(erro || erroPlanos) && (
         <Alerta tipo="erro">
           {erro ?? erroPlanos}
@@ -45,7 +45,7 @@ export function CadastroTenantForm({ aoCadastrar }: { aoCadastrar: (tenant: Tena
       )}
       <div>
         <label htmlFor="identificadorEmpresa">Identificador da empresa</label>
-        <input id="identificadorEmpresa" value={identificador} onChange={(e) => setIdentificador(e.target.value)} placeholder="Ex.: transportes-alfa" />
+        <input id="identificadorEmpresa" value={identificador} spellCheck={false} autoCapitalize="none" onChange={(e) => setIdentificador(e.target.value)} placeholder="Ex.: transportes-alfa" />
       </div>
       <div>
         <label htmlFor="nomeEmpresa">Nome</label>
@@ -65,13 +65,11 @@ export function CadastroTenantForm({ aoCadastrar }: { aoCadastrar: (tenant: Tena
       <div>
         <label htmlFor="emailAdministrador">E-mail do primeiro administrador</label>
         <input id="emailAdministrador" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <span style={{ fontSize: "0.85rem" }}>Esse e-mail recebe o convite para definir a senha.</span>
+        <span className="texto-apoio">Esse e-mail recebe o convite para definir a senha.</span>
       </div>
-      <div>
-        <button type="submit" disabled={invalido || salvando}>
-          {salvando ? "Cadastrando…" : "Cadastrar empresa"}
-        </button>
-      </div>
+      <button type="submit" disabled={invalido || salvando}>
+        {salvando ? "Cadastrando…" : "Cadastrar empresa e enviar convite"}
+      </button>
     </form>
   );
 }

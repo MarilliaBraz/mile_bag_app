@@ -3,6 +3,7 @@ import { formatarData, hojeIso, mensagemDeErro } from "../../../shared/format/fo
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { agendarPeriodicidade, consultarPeriodicidade } from "./configuracoesTenantApi";
 import { Alerta } from "../../../shared/ui/Alerta";
+import { Painel } from "../layout/Pagina";
 
 const ROTULO: Record<string, string> = { QUINZENAL: "Quinzenal" };
 
@@ -24,25 +25,20 @@ export function SecaoPeriodicidade() {
   }
 
   return (
-    <section aria-labelledby="titulo-periodicidade">
-      <h2 id="titulo-periodicidade">Periodicidade do fechamento</h2>
-      {(erro || erroAcao) && (
-        <Alerta tipo="erro">
-          {erro ?? erroAcao}
-        </Alerta>
-      )}
+    <Painel titulo="Periodicidade do fechamento" descricao="A troca é agendada para uma data futura, nunca vale para trás.">
+      {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
       {dados && (
         <p>
-          Vigente: <strong>{ROTULO[dados.vigente] ?? dados.vigente}</strong>
+          Vigente: <span className="selo selo-info">{ROTULO[dados.vigente] ?? dados.vigente}</span>
           {dados.proxima && (
             <>
               {" "}
-              — próxima: {ROTULO[dados.proxima] ?? dados.proxima} a partir de {formatarData(dados.proximaVigenteDesde)}
+              · próxima: <strong>{ROTULO[dados.proxima] ?? dados.proxima}</strong> a partir de {formatarData(dados.proximaVigenteDesde)}
             </>
           )}
         </p>
       )}
-      <form onSubmit={agendar} style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "end", maxWidth: 520 }}>
+      <form onSubmit={agendar} className="form-linha">
         <div>
           <label htmlFor="periodicidade">Periodicidade</label>
           <select id="periodicidade" defaultValue="QUINZENAL">
@@ -57,6 +53,6 @@ export function SecaoPeriodicidade() {
           Agendar
         </button>
       </form>
-    </section>
+    </Painel>
   );
 }

@@ -3,6 +3,8 @@ import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { criarMotivo, desativarMotivo, listarMotivos } from "./configuracoesTenantApi";
 import { Alerta } from "../../../shared/ui/Alerta";
+import { Icone } from "../../../shared/ui/Icone";
+import { Painel } from "../layout/Pagina";
 
 /**
  * Motivos de não entrega (HU11, FR-009): nunca se apaga, só se desativa - as
@@ -25,22 +27,17 @@ export function SecaoMotivos() {
   }
 
   return (
-    <section aria-labelledby="titulo-motivos">
-      <h2 id="titulo-motivos">Motivos de não entrega</h2>
-      {(erro || erroAcao) && (
-        <Alerta tipo="erro">
-          {erro ?? erroAcao}
-        </Alerta>
-      )}
-      {dados && dados.length === 0 && <p>Nenhum motivo ativo.</p>}
-      <ul style={{ paddingLeft: "1.25rem" }}>
+    <Painel titulo="Motivos de não entrega" descricao="O que o motorista escolhe ao registrar uma ocorrência. Desativar mantém as ocorrências antigas.">
+      {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
+      {dados && dados.length === 0 && <p className="texto-apoio">Nenhum motivo ativo. Sem motivos, o motorista não consegue registrar ocorrências.</p>}
+      <ul className="lista-simples">
         {dados?.map((motivo) => (
-          <li key={motivo.id} style={{ marginBottom: "0.25rem" }}>
-            {motivo.descricao}{" "}
+          <li key={motivo.id}>
+            <span>{motivo.descricao}</span>
             <button
               type="button"
-              className="secundario"
-              style={{ minHeight: 32, padding: "0 0.75rem" }}
+              className="fantasma compacto"
+              aria-label={`Desativar motivo ${motivo.descricao}`}
               onClick={() => executar(() => desativarMotivo(motivo.id), "Não foi possível desativar o motivo.")}
             >
               Desativar
@@ -49,7 +46,7 @@ export function SecaoMotivos() {
         ))}
       </ul>
       <form
-        style={{ display: "flex", gap: "0.5rem", maxWidth: 480 }}
+        className="form-linha"
         onSubmit={(evento) => {
           evento.preventDefault();
           executar(async () => {
@@ -58,11 +55,16 @@ export function SecaoMotivos() {
           }, "Não foi possível criar o motivo.");
         }}
       >
-        <input aria-label="Novo motivo" placeholder="Novo motivo" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+        <div>
+          <label htmlFor="novo-motivo" className="visualmente-oculto">
+            Novo motivo
+          </label>
+          <input id="novo-motivo" placeholder="Novo motivo" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+        </div>
         <button type="submit" disabled={!descricao.trim()}>
-          Adicionar
+          <Icone nome="mais" /> Adicionar
         </button>
       </form>
-    </section>
+    </Painel>
   );
 }

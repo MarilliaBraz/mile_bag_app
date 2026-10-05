@@ -40,13 +40,20 @@ export function PreviaIdentidadeVisual({ identidade, versao = 0, arquivoLocal }:
   }, [temLogotipo, versao, arquivoLocal]);
 
   if (!temLogotipo && !identidade.cabecalho && !arquivoLocal) {
-    return <p style={{ fontSize: "0.9rem" }}>Sem identidade visual configurada: os relatórios saem com o cabeçalho padrão do sistema.</p>;
+    return <p className="texto-apoio">Sem identidade visual configurada: os relatórios saem com o cabeçalho padrão do sistema.</p>;
   }
 
   return (
-    <div aria-label="Prévia do relatório" style={{ border: "1px dashed var(--borda)", borderRadius: 8, padding: "0.75rem", textAlign: "center", maxWidth: 420 }}>
-      {urlLogotipo && <img src={urlLogotipo} alt="Logotipo da empresa" style={{ maxHeight: 64, maxWidth: "100%" }} />}
-      {identidade.cabecalho && <div style={{ marginTop: "0.5rem", whiteSpace: "pre-line" }}>{identidade.cabecalho}</div>}
+    <div role="img" aria-label="Prévia do topo do relatório em PDF" className="folha-previa">
+      {urlLogotipo && <img src={urlLogotipo} alt="" style={{ maxHeight: 64, maxWidth: "100%" }} />}
+      {identidade.cabecalho && <div style={{ marginTop: "0.5rem", whiteSpace: "pre-line", fontWeight: 600 }}>{identidade.cabecalho}</div>}
+      <div className="linhas-falsas" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+      </div>
     </div>
   );
 }

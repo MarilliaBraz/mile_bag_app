@@ -1,11 +1,13 @@
-import { Ajuda } from "../../../shared/ui/Ajuda";
 import { useState } from "react";
 import { formatarData, formatarMoeda, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { listarMotoristas, nomeDoMotorista, type Motorista } from "../motoristas/motoristasApi";
 import { TarifaForm } from "./TarifaForm";
 import { atualizarTarifa, criarTarifa, listarTarifas, removerTarifa, type EscopoTarifa, type Tarifa } from "./tarifasApi";
-import { Alerta } from "../../../shared/ui/Alerta";
+import { Alerta, Carregando, Vazio } from "../../../shared/ui/Alerta";
+import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
+import { Icone } from "../../../shared/ui/Icone";
+import { Gaveta, Pagina, Painel } from "../layout/Pagina";
 
 const ROTULO_ESCOPO: Record<EscopoTarifa, string> = { PADRAO: "Padrão", MOTORISTA: "Motorista", REGIAO: "Região" };
 
@@ -16,127 +18,151 @@ function alvoDe(tarifa: Tarifa, motoristas: Motorista[] | null): string {
   return tarifa.escopo === "REGIAO" ? (tarifa.regiao ?? "—") : "Todos";
 }
 
+const TOM_ESCOPO: Record<EscopoTarifa, string> = { PADRAO: "selo-info", MOTORISTA: "selo-sucesso", REGIAO: "selo-aviso" };
+
 /** Tabelas de tarifa da empresa (HU09): a mais específica vale (motorista > região > padrão, FR-004). */
 export function TelaTarifas() {
   const { dados: tarifas, erro, carregando, recarregar } = useRecurso(listarTarifas, "Não foi possível carregar as tarifas.");
   const { dados: motoristas } = useRecurso(listarMotoristas, "Não foi possível carregar os motoristas.");
-  const [editando, setEditando] = useState<string | null>(null);
-  const [excluindo, setExcluindo] = useState<string | null>(null);
+  const [criando, setCriando] = useState(false);
+  const [editando, setEditando] = useState<Tarifa | null>(null);
+  const [excluindo, setExcluindo] = useState<Tarifa | null>(null);
   const [erroAcao, setErroAcao] = useState<string | null>(null);
+  const [resultado, setResultado] = useState<string | null>(null);
 
   async function excluir(id: string) {
     setErroAcao(null);
     try {
       await removerTarifa(id);
       setExcluindo(null);
+      setResultado("Tarifa excluída.");
       await recarregar();
     } catch (excecao) {
+      setExcluindo(null);
       setErroAcao(mensagemDeErro(excecao, "Não foi possível excluir a tarifa."));
     }
   }
 
+  const semPadrao = tarifas !== null && !tarifas.some((tarifa) => tarifa.escopo === "PADRAO");
+
   return (
-    <main>
-      <h1>Tarifas</h1>
-      <Ajuda>
-        <p>A tarifa define quanto o motorista recebe por entrega: um valor fixo, um valor por km ou os dois. Sem tarifa padrão, o fechamento marca as entregas como pendentes. Só valores e vigência podem ser editados depois de criada.</p>
-      </Ajuda>
-
-      {erro && (
-        <Alerta tipo="erro">
-          {erro}
+    <Pagina
+      titulo="Tarifas"
+      descricao="Quanto o motorista recebe por entrega: valor fixo, valor por km ou os dois. Vale a mais específica: motorista, depois região, depois a padrão."
+      acoes={
+        <button type="button" onClick={() => setCriando(true)}>
+          <Icone nome="mais" /> Nova tarifa
+        </button>
+      }
+    >
+      {erro && <Alerta tipo="erro">{erro}</Alerta>}
+      {erroAcao && <Alerta tipo="erro">{erroAcao}</Alerta>}
+      {resultado && (
+        <Alerta tipo="sucesso" aoFechar={() => setResultado(null)}>
+          {resultado}
         </Alerta>
       )}
-      {erroAcao && (
-        <Alerta tipo="erro">
-          {erroAcao}
+      {semPadrao && (
+        <Alerta tipo="aviso">
+          <strong>Não há tarifa padrão.</strong> Entregas de motoristas e regiões sem tarifa própria ficam pendentes no fechamento.
         </Alerta>
       )}
-      {carregando && <p role="status">Carregando…</p>}
+      {carregando && <Carregando texto="Carregando tarifas…" />}
 
-      {tarifas && tarifas.length === 0 && <p>Nenhuma tarifa cadastrada. Sem tarifa padrão, o fechamento marca as entregas como pendentes.</p>}
+      {tarifas && tarifas.length === 0 && (
+        <Vazio icone="moeda" titulo="Nenhuma tarifa cadastrada">
+          Comece pela tarifa padrão da empresa.
+        </Vazio>
+      )}
 
       {tarifas && tarifas.length > 0 && (
-        <div className="tabela-rolavel">
-<table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ textAlign: "left" }}>
-              <th scope="col">Escopo</th>
-              <th scope="col">Alvo</th>
-              <th scope="col">Valor fixo</th>
-              <th scope="col">Por km</th>
-              <th scope="col">Vigente desde</th>
-              <th scope="col" />
-            </tr>
-          </thead>
-          <tbody>
-            {tarifas.map((tarifa) => (
-              <tr key={tarifa.id} style={{ verticalAlign: "top" }}>
-                <td>{ROTULO_ESCOPO[tarifa.escopo]}</td>
-                <td style={{ wordBreak: "break-all" }}>{alvoDe(tarifa, motoristas)}</td>
-                <td>{formatarMoeda(tarifa.valorFixo)}</td>
-                <td>{formatarMoeda(tarifa.valorPorKm)}</td>
-                <td>{formatarData(tarifa.vigenteDesde)}</td>
-                <td>
-                  {editando === tarifa.id ? null : excluindo === tarifa.id ? (
-                    <span style={{ display: "inline-flex", gap: "0.5rem" }}>
-                      <button type="button" style={{ background: "var(--erro)" }} onClick={() => excluir(tarifa.id)}>
-                        Confirmar exclusão
-                      </button>
-                      <button type="button" className="secundario" onClick={() => setExcluindo(null)}>
-                        Cancelar
-                      </button>
-                    </span>
-                  ) : (
-                    <span style={{ display: "inline-flex", gap: "0.5rem" }}>
-                      <button type="button" className="secundario" onClick={() => setEditando(tarifa.id)}>
-                        Editar
-                      </button>
-                      <button type="button" className="secundario" onClick={() => setExcluindo(tarifa.id)}>
-                        Excluir
-                      </button>
-                    </span>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-</div>
+        <Painel className="sem-recuo">
+          <div className="tabela-rolavel">
+            <table className="tabela">
+              <thead>
+                <tr>
+                  <th scope="col">Aplica a</th>
+                  <th scope="col" className="numero">Valor fixo</th>
+                  <th scope="col" className="numero">Por km</th>
+                  <th scope="col">Vigente desde</th>
+                  <th scope="col" className="coluna-acoes">
+                    <span className="visualmente-oculto">Ações</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {tarifas.map((tarifa) => (
+                  <tr key={tarifa.id}>
+                    <td>
+                      <span className={`selo ${TOM_ESCOPO[tarifa.escopo]}`}>{ROTULO_ESCOPO[tarifa.escopo]}</span>{" "}
+                      <strong style={{ wordBreak: "break-word" }}>{alvoDe(tarifa, motoristas)}</strong>
+                    </td>
+                    <td className="numero">{formatarMoeda(tarifa.valorFixo)}</td>
+                    <td className="numero">{formatarMoeda(tarifa.valorPorKm)}</td>
+                    <td>{formatarData(tarifa.vigenteDesde)}</td>
+                    <td className="coluna-acoes">
+                      <span className="acoes-linha">
+                        <button type="button" className="fantasma compacto" onClick={() => setEditando(tarifa)} aria-label={`Editar tarifa ${ROTULO_ESCOPO[tarifa.escopo]} ${alvoDe(tarifa, motoristas)}`}>
+                          <Icone nome="lapis" /> Editar
+                        </button>
+                        <button type="button" className="fantasma compacto" onClick={() => setExcluindo(tarifa)} aria-label={`Excluir tarifa ${ROTULO_ESCOPO[tarifa.escopo]} ${alvoDe(tarifa, motoristas)}`}>
+                          <Icone nome="lixeira" /> Excluir
+                        </button>
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Painel>
       )}
 
-      {tarifas
-        ?.filter((tarifa) => tarifa.id === editando)
-        .map((tarifa) => (
-          <section key={tarifa.id} style={{ marginTop: "1rem" }}>
-            <h2>Editar tarifa ({ROTULO_ESCOPO[tarifa.escopo]})</h2>
-            <p style={{ fontSize: "0.85rem" }}>Só valores e vigência mudam; viagens já encerradas e fechamentos emitidos não são recalculados.</p>
-            <TarifaForm
-              tarifa={tarifa}
-              aoCancelar={() => setEditando(null)}
-              aoSalvar={async (dados) => {
-                await atualizarTarifa(tarifa.id, {
-                  valorFixo: dados.valorFixo,
-                  valorPorKm: dados.valorPorKm,
-                  vigenteDesde: dados.vigenteDesde,
-                });
-                setEditando(null);
-                await recarregar();
-              }}
-            />
-          </section>
-        ))}
+      <ConfirmarAcao
+        aberto={excluindo !== null}
+        titulo="Excluir esta tarifa?"
+        descricao={excluindo ? `A tarifa ${ROTULO_ESCOPO[excluindo.escopo].toLowerCase()} (${alvoDe(excluindo, motoristas)}) deixa de valer para os próximos cálculos. Fechamentos já emitidos não mudam.` : ""}
+        rotuloConfirmar="Excluir tarifa"
+        perigo
+        aoConfirmar={() => excluindo && excluir(excluindo.id)}
+        aoCancelar={() => setExcluindo(null)}
+      />
 
-      <section style={{ marginTop: "2rem" }}>
-        <h2>Nova tarifa</h2>
+      <Gaveta aberta={criando} titulo="Nova tarifa" aoFechar={() => setCriando(false)}>
         <TarifaForm
-          key={tarifas?.length ?? 0}
           aoSalvar={async (dados) => {
             await criarTarifa(dados);
+            setCriando(false);
+            setResultado("Tarifa cadastrada.");
             await recarregar();
           }}
+          aoCancelar={() => setCriando(false)}
         />
-      </section>
-    </main>
+      </Gaveta>
+
+      <Gaveta
+        aberta={editando !== null}
+        titulo={editando ? `Editar tarifa · ${ROTULO_ESCOPO[editando.escopo]}` : "Editar tarifa"}
+        descricao="Só valores e vigência mudam. Viagens já encerradas e fechamentos emitidos não são recalculados."
+        aoFechar={() => setEditando(null)}
+      >
+        {editando && (
+          <TarifaForm
+            tarifa={editando}
+            aoCancelar={() => setEditando(null)}
+            aoSalvar={async (dados) => {
+              await atualizarTarifa(editando.id, {
+                valorFixo: dados.valorFixo,
+                valorPorKm: dados.valorPorKm,
+                vigenteDesde: dados.vigenteDesde,
+              });
+              setEditando(null);
+              setResultado("Tarifa atualizada.");
+              await recarregar();
+            }}
+          />
+        )}
+      </Gaveta>
+    </Pagina>
   );
 }

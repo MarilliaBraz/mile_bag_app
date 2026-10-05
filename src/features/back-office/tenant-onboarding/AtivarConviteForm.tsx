@@ -4,7 +4,7 @@ import { ApiError } from "../../../shared/api/ApiError";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { ativarConvite, consultarConvite } from "./tenantsApi";
-import { Alerta } from "../../../shared/ui/Alerta";
+import { Alerta, Carregando } from "../../../shared/ui/Alerta";
 
 const TAMANHO_MINIMO_SENHA = 8;
 
@@ -41,10 +41,13 @@ export function AtivarConviteForm() {
 
   return (
     <div className="tela-entrada">
-      <main className="cartao">
+      <main>
+      <div className="marca">
+        <img src="/icone-app.svg" alt="" /> Milebag
+      </div>
       <h1>Ativar acesso</h1>
 
-      {carregando && <p role="status">Verificando o convite…</p>}
+      {carregando && <Carregando texto="Verificando o convite…" />}
       {erro && (
         <Alerta tipo="erro">
           {erro} Peça um novo convite a quem cadastrou a empresa.
@@ -66,7 +69,7 @@ export function AtivarConviteForm() {
       )}
 
       {convite && convite.status === "PENDENTE" && !ativado && (
-        <form onSubmit={ativar} style={{ display: "grid", gap: "0.75rem" }}>
+        <form onSubmit={ativar} className="cartao formulario">
           <p style={{ margin: 0 }}>
             Você foi convidado a administrar <strong>{convite.tenantNome}</strong> com o e-mail <strong>{convite.emailDestinatario}</strong>.
           </p>
@@ -84,11 +87,9 @@ export function AtivarConviteForm() {
             <input id="confirmacaoSenha" type="password" autoComplete="new-password" aria-invalid={!!confirmacao && senha !== confirmacao} aria-describedby={!!confirmacao && senha !== confirmacao ? "confirmacaoSenha-erro" : undefined} value={confirmacao} onChange={(e) => setConfirmacao(e.target.value)} />
             {confirmacao && senha !== confirmacao && <span id="confirmacaoSenha-erro" role="alert" className="texto-erro">As senhas não conferem.</span>}
           </div>
-          <div>
-            <button type="submit" disabled={invalido || enviando}>
-              {enviando ? "Ativando…" : "Ativar acesso"}
-            </button>
-          </div>
+          <button type="submit" className="grande bloco" disabled={invalido || enviando}>
+            {enviando ? "Ativando…" : "Ativar acesso"}
+          </button>
         </form>
       )}
       </main>

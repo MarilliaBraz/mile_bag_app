@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { formatarData, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { TrocarPlanoTenant } from "../planos/TrocarPlanoTenant";
 import { buscarTenant, reenviarConvite } from "./tenantsApi";
-import { Alerta } from "../../../shared/ui/Alerta";
+import { Alerta, Carregando } from "../../../shared/ui/Alerta";
+import { Icone } from "../../../shared/ui/Icone";
+import { Pagina, Painel } from "../layout/Pagina";
 
 /**
  * Empresa cadastrada (HU14) - a mesma página serve de confirmação logo após o
@@ -29,53 +31,52 @@ export function TenantCadastradoConfirmacao() {
   }
 
   return (
-    <main>
-      <Link to="/plataforma/empresas">← Empresas</Link>
-      {erro && (
-        <Alerta tipo="erro">
-          {erro}
-        </Alerta>
-      )}
-      {carregando && <p role="status">Carregando…</p>}
+    <Pagina titulo={dados?.nome ?? "Empresa"} voltarPara="/plataforma/empresas" rotuloVoltar="Empresas">
+      {erro && <Alerta tipo="erro">{erro}</Alerta>}
+      {carregando && <Carregando texto="Carregando empresa…" />}
 
       {dados && (
         <>
-          <h1>{dados.nome}</h1>
-          <dl>
-            <dt>Identificador</dt>
-            <dd>{dados.identificadorEmpresa}</dd>
-            <dt>Situação</dt>
-            <dd>{dados.status}</dd>
-            <dt>Cadastrada em</dt>
-            <dd>{formatarData(dados.criadoEm)}</dd>
-            <dt>Código da empresa</dt>
-            <dd style={{ wordBreak: "break-all" }}>{dados.id}</dd>
-          </dl>
+          <Painel>
+            <dl className="dados-grade">
+              <div>
+                <dt>Identificador</dt>
+                <dd className="codigo">{dados.identificadorEmpresa}</dd>
+              </div>
+              <div>
+                <dt>Situação</dt>
+                <dd>
+                  <span className={`selo ${dados.status === "ATIVO" ? "selo-sucesso" : "selo-aviso"}`}>{dados.status}</span>
+                </dd>
+              </div>
+              <div>
+                <dt>Cadastrada em</dt>
+                <dd>{formatarData(dados.criadoEm)}</dd>
+              </div>
+              <div>
+                <dt>Código da empresa</dt>
+                <dd className="codigo" style={{ wordBreak: "break-all", fontSize: "0.9375rem" }}>
+                  {dados.id}
+                </dd>
+              </div>
+            </dl>
+          </Painel>
 
-          <section>
-            <h2>Convite do administrador</h2>
-            <p>Se o convite não chegou ou expirou, gere um novo. O anterior deixa de valer.</p>
-            {erroConvite && (
-              <Alerta tipo="erro">
-                {erroConvite}
-              </Alerta>
-            )}
-            {conviteReenviado && (
-              <Alerta tipo="sucesso">
-                Novo convite enviado.
-              </Alerta>
-            )}
-            <button type="button" className="secundario" onClick={reenviar}>
-              Reenviar convite
-            </button>
-          </section>
+          <div className="grade-paineis" style={{ marginTop: "1.25rem" }}>
+            <Painel titulo="Convite do administrador" descricao="Se o convite não chegou ou expirou, gere um novo. O anterior deixa de valer.">
+              {erroConvite && <Alerta tipo="erro">{erroConvite}</Alerta>}
+              {conviteReenviado && <Alerta tipo="sucesso">Novo convite enviado.</Alerta>}
+              <button type="button" className="secundario" onClick={reenviar}>
+                <Icone nome="email" /> Reenviar convite
+              </button>
+            </Painel>
 
-          <section style={{ marginTop: "2rem" }}>
-            <h2>Plano</h2>
-            <TrocarPlanoTenant tenantId={dados.id} planoAtualId={dados.planoId} aoTrocar={recarregar} />
-          </section>
+            <Painel titulo="Plano">
+              <TrocarPlanoTenant tenantId={dados.id} planoAtualId={dados.planoId} aoTrocar={recarregar} />
+            </Painel>
+          </div>
         </>
       )}
-    </main>
+    </Pagina>
   );
 }

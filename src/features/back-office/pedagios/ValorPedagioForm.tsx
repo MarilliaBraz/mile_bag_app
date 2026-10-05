@@ -56,7 +56,7 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
   }
 
   return (
-    <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", maxWidth: 420 }}>
+    <form onSubmit={enviar} className="formulario">
       {erro && (
         <Alerta tipo="erro">
           {erro}
@@ -68,22 +68,24 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
           <input id={`${uid}-nomePraca`} value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex.: Pedágio Rodovia dos Bandeirantes km 30" />
         </div>
       )}
-      <div>
-        <label htmlFor={`${uid}-valorPedagio`}>Valor (R$)</label>
-        <input id={`${uid}-valorPedagio`} inputMode="decimal" value={valor} onChange={(e) => setValor(e.target.value)} />
-      </div>
-      <div>
-        <label htmlFor={`${uid}-vigenciaPedagio`}>Vigente desde</label>
-        <input id={`${uid}-vigenciaPedagio`} type="date" value={vigenteDesde} onChange={(e) => setVigenteDesde(e.target.value)} />
+      <div className="form-linha">
+        <div>
+          <label htmlFor={`${uid}-valorPedagio`}>Valor por passagem (R$)</label>
+          <input id={`${uid}-valorPedagio`} inputMode="decimal" placeholder="0,00" value={valor} onChange={(e) => setValor(e.target.value)} />
+        </div>
+        <div>
+          <label htmlFor={`${uid}-vigenciaPedagio`}>Vigente desde</label>
+          <input id={`${uid}-vigenciaPedagio`} type="date" value={vigenteDesde} onChange={(e) => setVigenteDesde(e.target.value)} />
+        </div>
       </div>
       {pedirNome && (
-        <fieldset style={{ border: "1px solid var(--borda)", borderRadius: 8 }}>
-          <legend>Localização da praça (opcional)</legend>
-          <p style={{ fontSize: "0.85rem", marginTop: 0 }}>
+        <fieldset style={{ border: "1px solid var(--borda-suave)", borderRadius: "var(--raio)", padding: "0.75rem 1rem 1rem", margin: 0 }}>
+          <legend style={{ fontWeight: 600, padding: "0 0.25rem" }}>Localização da praça (opcional)</legend>
+          <p className="texto-apoio" style={{ marginTop: 0 }}>
             Sem a localização, a praça não é detectada nas rotas e o reembolso do pedágio fica pendente. No Google Maps, clique com o botão direito no local
             da praça e copie as coordenadas.
           </p>
-          <div style={{ display: "flex", gap: "0.5rem" }}>
+          <div className="form-linha">
             <div>
               <label htmlFor={`${uid}-lat`}>Latitude</label>
               <input id={`${uid}-lat`} inputMode="decimal" placeholder="-16.6869" value={latitude} onChange={(e) => setLatitude(e.target.value)} />
@@ -93,14 +95,14 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
               <input id={`${uid}-lon`} inputMode="decimal" placeholder="-49.2648" value={longitude} onChange={(e) => setLongitude(e.target.value)} />
             </div>
           </div>
-          {localizacaoInvalida && <p style={{ color: "var(--erro)", margin: "0.5rem 0 0" }}>Informe as duas coordenadas, dentro dos limites válidos.</p>}
+          {localizacaoInvalida && <p className="texto-erro">Informe as duas coordenadas, dentro dos limites válidos.</p>}
         </fieldset>
       )}
-      <div style={{ display: "flex", gap: "0.5rem" }}>
+      <div className="linha-acoes">
         <button type="submit" disabled={invalido || salvando}>
           {salvando ? "Salvando…" : rotuloAcao}
         </button>
-        {salvo && <span role="status" style={{ color: "var(--confirmacao)", alignSelf: "center" }}>
+        {salvo && !aoCancelar && <span role="status" style={{ color: "var(--confirmacao)", alignSelf: "center" }}>
             <Icone nome="checkCirculo" /> Valor salvo.
           </span>}
         {aoCancelar && (

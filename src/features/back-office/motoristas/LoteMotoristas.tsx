@@ -2,6 +2,7 @@ import { useId, useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { criarMotoristasEmLote, type LinhaLote, type ResultadoLote } from "./motoristasApi";
 import { Alerta } from "../../../shared/ui/Alerta";
+import { Icone } from "../../../shared/ui/Icone";
 
 const MAXIMO_POR_LOTE = 100;
 
@@ -77,7 +78,7 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
 
   return (
     <div>
-      <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", maxWidth: 640 }}>
+      <form onSubmit={enviar} className="formulario">
         {erro && (
           <Alerta tipo="erro">
             {erro}
@@ -91,18 +92,17 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
             placeholder={"Maria Souza;maria@empresa.com\nJoão Lima;joao.lima;senha-inicial-123"}
-            style={{ fontFamily: "monospace" }}
+            style={{ fontFamily: "ui-monospace, Consolas, monospace" }}
+            aria-describedby={`${uid}-lote-ajuda`}
           />
-          <span style={{ fontSize: "0.85rem" }}>
+          <span id={`${uid}-lote-ajuda`} className="texto-apoio">
             A senha é opcional: sem ela o sistema gera uma de 12 caracteres. Até {MAXIMO_POR_LOTE} por vez. Pode colar direto de uma planilha.
           </span>
         </div>
-        <div>
-          <button type="submit" disabled={linhas.length === 0 || excedeu || enviando}>
-            {enviando ? "Cadastrando…" : `Cadastrar ${linhas.length} motorista(s)`}
-          </button>
-          {excedeu && <span style={{ color: "var(--erro)", marginLeft: "0.75rem" }}>Máximo de {MAXIMO_POR_LOTE} por vez.</span>}
-        </div>
+        {excedeu && <Alerta tipo="erro">Máximo de {MAXIMO_POR_LOTE} motoristas por vez.</Alerta>}
+        <button type="submit" className="bloco" disabled={linhas.length === 0 || excedeu || enviando}>
+          {enviando ? "Cadastrando…" : `Cadastrar ${linhas.length} motorista(s)`}
+        </button>
       </form>
 
       {resultados && (
@@ -113,15 +113,15 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
           {comSenhaGerada && (
             <Alerta tipo="aviso">
               As senhas geradas aparecem só agora e não ficam guardadas em claro: entregue-as aos motoristas ou baixe o CSV.{" "}
-              <button type="button" className="secundario" onClick={() => baixarSenhas(resultados)}>
-                Baixar CSV com as senhas
+              <button type="button" className="secundario compacto" onClick={() => baixarSenhas(resultados)}>
+                <Icone nome="baixar" /> Baixar CSV com as senhas
               </button>
             </Alerta>
           )}
           <div className="tabela-rolavel">
-<table style={{ width: "100%", borderCollapse: "collapse" }}>
+<table className="tabela">
             <thead>
-              <tr style={{ textAlign: "left" }}>
+              <tr>
                 <th scope="col">Linha</th>
                 <th scope="col">Nome</th>
                 <th scope="col">Login</th>
@@ -131,12 +131,12 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
             </thead>
             <tbody>
               {resultados.map((r) => (
-                <tr key={r.linha} style={r.criado ? undefined : { color: "var(--erro)" }}>
+                <tr key={r.linha}>
                   <td>{r.linha}</td>
                   <td>{r.nome}</td>
                   <td>{r.login}</td>
-                  <td>{r.criado ? "Criado" : r.mensagem}</td>
-                  <td style={{ fontFamily: "monospace" }}>{r.senhaGerada ?? ""}</td>
+                  <td>{r.criado ? <span className="selo selo-sucesso">Criado</span> : <span className="selo selo-erro">{r.mensagem ?? "Erro"}</span>}</td>
+                  <td style={{ fontFamily: "ui-monospace, Consolas, monospace" }}>{r.senhaGerada ?? ""}</td>
                 </tr>
               ))}
             </tbody>

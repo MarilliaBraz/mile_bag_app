@@ -1073,6 +1073,7 @@ table td {
 
 /* Tabelas largas rolam na horizontal em vez de estourar a tela do celular. */
 .tabela-rolavel {
+  position: relative;
   overflow-x: auto;
   max-width: 100%;
 }
@@ -1288,60 +1289,68 @@ details.ajuda.sem-icone summary::before {
 
 /* ---------- Back-office ---------- */
 
+/*
+ * Administrador da empresa/plataforma: uso principal no computador, então
+ * barra lateral fixa com as seções; no celular ela vira uma faixa no topo.
+ */
 .admin {
-  max-width: 72rem;
-  margin: 0 auto;
-  padding: 0 1rem 2rem;
+  min-height: 100dvh;
 }
 
-.admin-topo {
+.admin-lateral {
   position: sticky;
   top: 0;
   z-index: 20;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1rem;
   align-items: center;
-  margin: 0 -1rem 1.25rem;
-  padding: 0.625rem 1rem;
-  background: color-mix(in srgb, var(--fundo-app) 90%, transparent);
+  gap: 0.25rem 0.75rem;
+  padding: 0.625rem 1rem 0.375rem;
+  background: color-mix(in srgb, var(--superficie) 92%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--borda-suave);
 }
 
-.admin-topo-acoes {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  margin-left: auto;
+.admin-area {
+  display: none;
 }
 
-/* Menu do back-office: faixa própria abaixo da marca; no celular rola na horizontal (menos altura ocupada). */
 .menu-admin {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.25rem;
   order: 3;
   flex-basis: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
   margin: 0 -0.5rem;
+  padding: 0.125rem 0.5rem 0.25rem;
 }
 
 .menu-admin a,
-.admin-topo-acoes a {
+.admin-link-conta {
   display: inline-flex;
   align-items: center;
+  gap: 0.625rem;
   min-height: 44px;
   padding: 0.5rem 0.875rem;
-  border-radius: 999px;
+  border-radius: var(--raio);
   color: var(--texto);
   font-weight: 600;
   text-decoration: none;
+  white-space: nowrap;
   transition: background-color var(--rapido) var(--curva), color var(--rapido) var(--curva);
 }
 
+.menu-admin a .icone,
+.admin-link-conta .icone {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--texto-suave);
+}
+
 .menu-admin a:hover,
-.admin-topo-acoes a:hover {
+.admin-link-conta:hover {
   background: var(--superficie-2);
 }
 
@@ -1350,30 +1359,573 @@ details.ajuda.sem-icone summary::before {
   color: var(--acao);
 }
 
-.admin-conteudo {
-  background: var(--superficie);
-  border: 1px solid var(--borda-suave);
-  border-radius: var(--raio-g);
-  padding: 0.5rem 1.25rem 1.25rem;
-  box-shadow: var(--sombra-1);
-  animation: entrar var(--medio) var(--curva) both;
+.menu-admin a.active .icone {
+  color: var(--acao);
 }
 
-@media (max-width: 640px) {
-  .menu-admin {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: 0.25rem;
-    scrollbar-width: none;
+.admin-lateral-rodape {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+/* No celular, "Minha senha" fica só com o ícone (o nome segue para leitores de tela). */
+.admin-link-conta span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.admin-conteudo {
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem;
+}
+
+.admin-preferencias {
+  max-width: 28rem;
+  margin-top: 2.5rem;
+}
+
+@media (min-width: 960px) {
+  .admin {
+    display: grid;
+    grid-template-columns: 16rem minmax(0, 1fr);
   }
 
-  .menu-admin a {
-    white-space: nowrap;
+  .admin-lateral {
+    height: 100dvh;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 0.25rem;
+    padding: 1.25rem 0.875rem;
+    border-bottom: none;
+    border-right: 1px solid var(--borda-suave);
+    background: var(--superficie);
+    backdrop-filter: none;
+  }
+
+  .admin-lateral .marca {
+    padding: 0 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  .admin-area {
+    display: block;
+    padding: 0 0.5rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .menu-admin {
+    flex-direction: column;
+    flex-basis: auto;
+    order: 0;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+  }
+
+  .admin-lateral-rodape {
+    flex-direction: column;
+    align-items: stretch;
+    margin: auto 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--borda-suave);
+  }
+
+  .admin-link-conta span {
+    position: static;
+    width: auto;
+    height: auto;
+    clip: auto;
+  }
+
+  .admin-sair {
+    justify-content: flex-start;
+    padding-left: 0.875rem;
+    color: var(--texto);
   }
 
   .admin-conteudo {
-    padding: 0.25rem 1rem 1rem;
+    padding: 2rem 2.5rem 3rem;
+    margin: 0;
   }
+}
+
+/* Estrutura de página */
+
+.pagina {
+  animation: entrar var(--medio) var(--curva) both;
+}
+
+.pagina-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 40px;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.pagina-cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.pagina-cabecalho h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.pagina-cabecalho > div:first-child {
+  flex: 1 1 24rem;
+}
+
+.pagina-cabecalho .texto-apoio {
+  margin: 0.375rem 0 0;
+  max-width: 44rem;
+}
+
+.pagina-acoes,
+.painel-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.painel {
+  background: var(--superficie);
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--raio-g);
+  padding: 1.25rem;
+  box-shadow: var(--sombra-1);
+}
+
+/* Espaço entre blocos da página (não depende de vizinhança direta: diálogos fechados ficam entre eles). */
+.pagina > :is(.painel, .grade-paineis, .indicadores) {
+  margin-top: 1.25rem;
+}
+
+.pagina > .pagina-cabecalho + :is(.painel, .grade-paineis, .indicadores) {
+  margin-top: 0;
+}
+
+.indicadores + .painel {
+  margin-top: 1.25rem;
+}
+
+.painel-cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.painel-cabecalho h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.painel-cabecalho .texto-apoio {
+  margin: 0.25rem 0 0;
+}
+
+/* Painel cuja tabela encosta nas bordas. */
+.painel.sem-recuo {
+  padding: 0;
+  overflow: hidden;
+}
+
+.painel.sem-recuo > .painel-cabecalho {
+  padding: 1.25rem 1.25rem 0;
+}
+
+.grade-paineis {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  align-items: start;
+}
+
+.grade-paineis > .painel {
+  margin: 0;
+}
+
+/* Indicadores numéricos */
+
+.indicadores {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+}
+
+.indicador {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem 1.125rem;
+  background: var(--superficie);
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--raio-g);
+  box-shadow: var(--sombra-1);
+}
+
+.indicador-rotulo {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.indicador-valor {
+  font-size: 1.625rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--texto-titulo);
+  font-variant-numeric: tabular-nums;
+}
+
+.indicador-aviso { border-left: 4px solid var(--aviso); }
+.indicador-sucesso { border-left: 4px solid var(--confirmacao); }
+.indicador-erro { border-left: 4px solid var(--erro); }
+
+/* Tabelas administrativas */
+
+.tabela th,
+.tabela td {
+  padding: 0.75rem 1rem;
+}
+
+.tabela th {
+  background: var(--superficie-2);
+  border-bottom: 1px solid var(--borda-suave);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  vertical-align: bottom;
+}
+
+.tabela tbody tr {
+  transition: background-color var(--rapido) var(--curva);
+}
+
+.tabela tbody tr:hover {
+  background: color-mix(in srgb, var(--acao-suave) 45%, transparent);
+}
+
+.tabela tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela .numero,
+.tabela .coluna-acoes {
+  text-align: right;
+}
+
+.tabela td.numero,
+.tabela td.coluna-acoes {
+  white-space: nowrap;
+}
+
+.tabela .coluna-acoes {
+  width: 1%;
+}
+
+.tabela tr.linha-pendente {
+  background: var(--aviso-suave);
+}
+
+.tabela tr.linha-detalhe > td {
+  background: var(--superficie-2);
+}
+
+.acoes-linha {
+  display: inline-flex;
+  gap: 0.25rem;
+  justify-content: flex-end;
+}
+
+/* Botão compacto das linhas de tabela (o back-office é usado com mouse; 40px ainda é confortável ao toque). */
+button.compacto,
+.botao.compacto {
+  min-height: 40px;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.9375rem;
+  border-radius: var(--raio-p);
+}
+
+button.compacto.botao-icone {
+  width: 40px;
+  padding: 0;
+}
+
+.pessoa {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 12rem;
+}
+
+.pessoa strong {
+  display: block;
+  color: var(--texto-titulo);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--acao-suave);
+  color: var(--acao);
+  font-weight: 800;
+  font-size: 0.9375rem;
+}
+
+.avatar-apagado {
+  background: var(--superficie-2);
+  color: var(--texto-suave);
+}
+
+/* Barra de busca e filtro acima de uma lista */
+
+.barra-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--borda-suave);
+}
+
+.campo-busca {
+  position: relative;
+  flex: 1 1 16rem;
+}
+
+.campo-busca .icone {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--texto-suave);
+  pointer-events: none;
+}
+
+.campo-busca input {
+  padding-left: 2.5rem;
+}
+
+.segmentado {
+  display: inline-flex;
+  padding: 0.25rem;
+  gap: 0.25rem;
+  background: var(--superficie-2);
+  border-radius: var(--raio);
+}
+
+.segmentado button {
+  min-height: 38px;
+  padding: 0.375rem 0.875rem;
+  white-space: nowrap;
+  background: transparent;
+  color: var(--texto);
+  border-radius: var(--raio-p);
+  font-weight: 600;
+}
+
+.segmentado button:not(:disabled):hover {
+  background: var(--superficie);
+}
+
+.segmentado button[aria-pressed="true"] {
+  background: var(--superficie);
+  color: var(--acao);
+  box-shadow: var(--sombra-1);
+}
+
+@media (max-width: 480px) {
+  .segmentado {
+    width: 100%;
+  }
+
+  .segmentado button {
+    flex: 1;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Lista simples dentro de painel (motivos, companhias...) */
+
+.lista-simples {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+
+.lista-simples li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--borda-suave);
+}
+
+.lista-simples li:last-child {
+  border-bottom: none;
+}
+
+.form-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.form-linha > div {
+  flex: 1 1 10rem;
+}
+
+.form-linha > button {
+  flex: none;
+}
+
+.interruptor {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  margin: 0;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Gaveta (painel lateral de criação/edição) */
+
+dialog.gaveta {
+  width: min(30rem, 100vw);
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0 0 0 auto;
+  padding: 0;
+  border: none;
+  background: var(--superficie);
+  color: var(--texto);
+  box-shadow: -16px 0 40px rgb(0 0 0 / 0.2);
+}
+
+dialog.gaveta.gaveta-larga {
+  width: min(48rem, 100vw);
+}
+
+dialog.gaveta[open] {
+  animation: gaveta-entrar 240ms var(--curva) both;
+}
+
+@keyframes gaveta-entrar {
+  from {
+    transform: translateX(32px);
+    opacity: 0;
+  }
+}
+
+dialog.gaveta::backdrop {
+  background: rgb(2 6 23 / 0.45);
+}
+
+.gaveta-corpo {
+  min-height: 100%;
+  padding: 1.25rem 1.5rem 2rem;
+}
+
+.gaveta-cabecalho {
+  position: sticky;
+  top: -1.25rem;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: -1.25rem -1.5rem 1.25rem;
+  padding: 1.25rem 1.5rem 1rem;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--borda-suave);
+}
+
+.gaveta-cabecalho h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.gaveta-cabecalho .texto-apoio {
+  margin: 0.25rem 0 0;
+}
+
+/* No celular a gaveta vira uma folha que sobe do rodapé. */
+@media (max-width: 640px) {
+  dialog.gaveta {
+    width: 100vw;
+    height: auto;
+    max-height: 92dvh;
+    margin: auto 0 0;
+    border-radius: var(--raio-g) var(--raio-g) 0 0;
+  }
+
+  dialog.gaveta[open] {
+    animation-name: folha-entrar;
+  }
+
+  @keyframes folha-entrar {
+    from {
+      transform: translateY(32px);
+      opacity: 0;
+    }
+  }
+}
+
+/* Prévia do cabeçalho do PDF: parece uma folha de papel. */
+.folha-previa {
+  max-width: 26rem;
+  aspect-ratio: 1 / 1.1;
+  padding: 1.5rem;
+  background: #fff;
+  color: #111;
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--raio-p);
+  box-shadow: var(--sombra-2);
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.folha-previa .linhas-falsas {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.folha-previa .linhas-falsas span {
+  height: 0.5rem;
+  border-radius: 4px;
+  background: #e5e7eb;
+}
+
+.folha-previa .linhas-falsas span:nth-child(2n) {
+  width: 80%;
 }
 
 /* Telas de entrada (login, senha, convite). */
@@ -1515,7 +2067,7 @@ details.ajuda.sem-icone summary::before {
   }
 }
 
-:root[data-alto-contraste="true"] :is(button.secundario, .cartao, .cartao-link, .alerta, .selo) {
+:root[data-alto-contraste="true"] :is(button.secundario, .cartao, .cartao-link, .alerta, .selo, .painel, .indicador, .admin-lateral) {
   border-width: 2px;
   border-color: #000;
 }
@@ -1531,7 +2083,8 @@ details.ajuda.sem-icone summary::before {
   .nao-imprimir,
   .nav-inferior,
   .barra-topo .botao-icone,
-  .admin-topo {
+  .admin-lateral,
+  .admin-preferencias {
     display: none !important;
   }
 
@@ -1553,7 +2106,7 @@ details.ajuda.sem-icone summary::before {
   }
 
   .cartao,
-  .admin-conteudo {
+  .painel {
     box-shadow: none;
     border: none;
     padding: 0;

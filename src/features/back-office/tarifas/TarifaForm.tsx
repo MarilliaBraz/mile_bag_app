@@ -67,7 +67,7 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
   }
 
   return (
-    <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", maxWidth: 480 }}>
+    <form onSubmit={enviar} className="formulario">
       {erro && (
         <Alerta tipo="erro">
           {erro}
@@ -109,28 +109,32 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
         </div>
       )}
 
-      <div>
-        <label htmlFor={`${uid}-valorFixo`}>Valor fixo por entrega (R$)</label>
-        <input id={`${uid}-valorFixo`} inputMode="decimal" value={valorFixo} onChange={(e) => setValorFixo(e.target.value)} />
+      <div className="form-linha">
+        <div>
+          <label htmlFor={`${uid}-valorFixo`}>Valor fixo por entrega (R$)</label>
+          <input id={`${uid}-valorFixo`} inputMode="decimal" placeholder="0,00" value={valorFixo} onChange={(e) => setValorFixo(e.target.value)} />
+        </div>
+        <div>
+          <label htmlFor={`${uid}-valorPorKm`}>Valor por km (R$)</label>
+          <input id={`${uid}-valorPorKm`} inputMode="decimal" placeholder="0,00" value={valorPorKm} onChange={(e) => setValorPorKm(e.target.value)} />
+        </div>
       </div>
-      <div>
-        <label htmlFor={`${uid}-valorPorKm`}>Valor por km (R$)</label>
-        <input id={`${uid}-valorPorKm`} inputMode="decimal" value={valorPorKm} onChange={(e) => setValorPorKm(e.target.value)} />
-      </div>
-      {semValor && <p style={{ margin: 0, fontSize: "0.85rem" }}>Informe o valor fixo, o valor por km ou os dois.</p>}
+      {semValor && <p className="texto-apoio" style={{ margin: 0 }}>Informe o valor fixo, o valor por km ou os dois.</p>}
 
       <div>
         <label htmlFor={`${uid}-vigenteDesde`}>Vigente desde</label>
         <input id={`${uid}-vigenteDesde`} type="date" value={vigenteDesde} onChange={(e) => setVigenteDesde(e.target.value)} />
       </div>
 
-      <div style={{ display: "flex", gap: "0.5rem" }}>
+      <div className="linha-acoes">
         <button type="submit" disabled={invalido || salvando}>
           {salvando ? "Salvando…" : tarifa ? "Salvar alterações" : "Cadastrar tarifa"}
         </button>
-        {salvo && <span role="status" style={{ color: "var(--confirmacao)", alignSelf: "center" }}>
+        {salvo && !aoCancelar && (
+          <span role="status" style={{ color: "var(--confirmacao)", alignSelf: "center" }}>
             <Icone nome="checkCirculo" /> Tarifa salva.
-          </span>}
+          </span>
+        )}
         {aoCancelar && (
           <button type="button" className="secundario" onClick={aoCancelar}>
             Cancelar

@@ -3,6 +3,7 @@ import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { listarCamposBaixa, salvarCamposBaixa, type CampoBaixa, type CampoObrigatorio } from "./configuracoesTenantApi";
 import { Alerta } from "../../../shared/ui/Alerta";
+import { Painel } from "../layout/Pagina";
 
 const ROTULO: Record<CampoBaixa, string> = {
   POD_FOTO_DOCUMENTO: "Comprovante: foto do documento",
@@ -38,35 +39,31 @@ export function SecaoCamposBaixa() {
   }
 
   return (
-    <section aria-labelledby="titulo-campos">
-      <h2 id="titulo-campos">Campos obrigatórios na baixa</h2>
-      {(erro || erroAcao) && (
-        <Alerta tipo="erro">
-          {erro ?? erroAcao}
+    <Painel titulo="Campos obrigatórios na baixa" descricao="O que o motorista precisa preencher no comprovante e na ocorrência.">
+      {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
+      {salvo && (
+        <Alerta tipo="sucesso" aoFechar={() => setSalvo(false)}>
+          Campos salvos.
         </Alerta>
       )}
-      {campos.map((item) => (
-        <label key={item.campo} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 400 }}>
-          <input
-            type="checkbox"
-            style={{ width: "auto", minHeight: 0 }}
-            checked={item.obrigatorio}
-            onChange={(e) => {
-              setSalvo(false);
-              setCampos(campos.map((c) => (c.campo === item.campo ? { ...c, obrigatorio: e.target.checked } : c)));
-            }}
-          />
-          {ROTULO[item.campo]}
-        </label>
-      ))}
-      <button type="button" style={{ marginTop: "0.75rem" }} onClick={salvar} disabled={campos.length === 0}>
+      <div style={{ display: "grid", gap: "0.125rem", marginBottom: "1rem" }}>
+        {campos.map((item) => (
+          <label key={item.campo} className="interruptor">
+            <input
+              type="checkbox"
+              checked={item.obrigatorio}
+              onChange={(e) => {
+                setSalvo(false);
+                setCampos(campos.map((c) => (c.campo === item.campo ? { ...c, obrigatorio: e.target.checked } : c)));
+              }}
+            />
+            {ROTULO[item.campo]}
+          </label>
+        ))}
+      </div>
+      <button type="button" onClick={salvar} disabled={campos.length === 0}>
         Salvar campos
       </button>
-      {salvo && (
-        <span role="status" style={{ marginLeft: "0.75rem", color: "var(--confirmacao)" }}>
-          Salvo.
-        </span>
-      )}
-    </section>
+    </Painel>
   );
 }

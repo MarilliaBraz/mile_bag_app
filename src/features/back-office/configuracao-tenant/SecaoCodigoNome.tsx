@@ -3,6 +3,8 @@ import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { criarCodigoNome, listarCodigoNome, removerCodigoNome, type CategoriaCodigoNome } from "./configuracoesTenantApi";
 import { Alerta } from "../../../shared/ui/Alerta";
+import { Icone } from "../../../shared/ui/Icone";
+import { Painel } from "../layout/Pagina";
 
 /** Lista com código IATA + nome, usada para bases aeroportuárias e companhias atendidas (HU11) - mesmo formato nos dois endpoints. */
 export function SecaoCodigoNome({ categoria, titulo, rotuloCodigo }: { categoria: CategoriaCodigoNome; titulo: string; rotuloCodigo: string }) {
@@ -22,22 +24,19 @@ export function SecaoCodigoNome({ categoria, titulo, rotuloCodigo }: { categoria
   }
 
   return (
-    <section aria-label={titulo}>
-      <h2>{titulo}</h2>
-      {(erro || erroAcao) && (
-        <Alerta tipo="erro">
-          {erro ?? erroAcao}
-        </Alerta>
-      )}
-      {dados && dados.length === 0 && <p>Nenhuma cadastrada.</p>}
-      <ul style={{ paddingLeft: "1.25rem" }}>
+    <Painel titulo={titulo}>
+      {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
+      {dados && dados.length === 0 && <p className="texto-apoio">Nenhuma cadastrada.</p>}
+      <ul className="lista-simples">
         {dados?.map((item) => (
-          <li key={item.id} style={{ marginBottom: "0.25rem" }}>
-            <strong>{item.codigoIata}</strong> — {item.nome}{" "}
+          <li key={item.id}>
+            <span>
+              <span className="selo selo-info codigo">{item.codigoIata}</span> {item.nome}
+            </span>
             <button
               type="button"
-              className="secundario"
-              style={{ minHeight: 32, padding: "0 0.75rem" }}
+              className="fantasma compacto"
+              aria-label={`Remover ${item.codigoIata} ${item.nome}`}
               onClick={() => executar(() => removerCodigoNome(categoria, item.id), "Não foi possível remover.")}
             >
               Remover
@@ -46,7 +45,7 @@ export function SecaoCodigoNome({ categoria, titulo, rotuloCodigo }: { categoria
         ))}
       </ul>
       <form
-        style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", maxWidth: 520 }}
+        className="form-linha"
         onSubmit={(evento) => {
           evento.preventDefault();
           executar(async () => {
@@ -56,19 +55,22 @@ export function SecaoCodigoNome({ categoria, titulo, rotuloCodigo }: { categoria
           }, "Não foi possível cadastrar.");
         }}
       >
-        <input
-          aria-label={rotuloCodigo}
-          placeholder={rotuloCodigo}
-          value={codigo}
-          maxLength={10}
-          style={{ width: 110 }}
-          onChange={(e) => setCodigo(e.target.value)}
-        />
-        <input aria-label="Nome" placeholder="Nome" value={nome} style={{ flex: 1, minWidth: 180 }} onChange={(e) => setNome(e.target.value)} />
+        <div style={{ flex: "0 0 7rem" }}>
+          <label htmlFor={`${categoria}-codigo`} className="visualmente-oculto">
+            {rotuloCodigo}
+          </label>
+          <input id={`${categoria}-codigo`} placeholder="IATA" value={codigo} maxLength={10} style={{ textTransform: "uppercase" }} onChange={(e) => setCodigo(e.target.value)} />
+        </div>
+        <div>
+          <label htmlFor={`${categoria}-nome`} className="visualmente-oculto">
+            Nome
+          </label>
+          <input id={`${categoria}-nome`} placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
+        </div>
         <button type="submit" disabled={!codigo.trim() || !nome.trim()}>
-          Adicionar
+          <Icone nome="mais" /> Adicionar
         </button>
       </form>
-    </section>
+    </Painel>
   );
 }

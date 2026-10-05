@@ -35,7 +35,7 @@ export function PlanoForm({ aoSalvar }: { aoSalvar: (dados: { nome: string; limi
   }
 
   return (
-    <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", maxWidth: 420 }}>
+    <form onSubmit={enviar} className="formulario">
       {erro && (
         <Alerta tipo="erro">
           {erro}
@@ -45,15 +45,20 @@ export function PlanoForm({ aoSalvar }: { aoSalvar: (dados: { nome: string; limi
         <label htmlFor="nomePlano">Nome do plano</label>
         <input id="nomePlano" value={nome} onChange={(e) => setNome(e.target.value)} />
       </div>
-      <div>
-        <label htmlFor="limiteMotoristas">Limite de motoristas ativos</label>
-        <input id="limiteMotoristas" inputMode="numeric" value={motoristas} onChange={(e) => setMotoristas(e.target.value)} />
+      <div className="form-linha">
+        <div>
+          <label htmlFor="limiteMotoristas">Motoristas ativos</label>
+          <input id="limiteMotoristas" inputMode="numeric" value={motoristas} onChange={(e) => setMotoristas(e.target.value)} />
+        </div>
+        <div>
+          <label htmlFor="limiteBdos">BDOs por mês</label>
+          <input id="limiteBdos" inputMode="numeric" value={bdos} onChange={(e) => setBdos(e.target.value)} />
+        </div>
       </div>
-      <div>
-        <label htmlFor="limiteBdos">Limite de BDOs por mês</label>
-        <input id="limiteBdos" inputMode="numeric" value={bdos} onChange={(e) => setBdos(e.target.value)} />
-      </div>
-      <div>
+      <p className="texto-apoio" style={{ margin: 0 }}>
+        Os dois limites são números inteiros maiores que zero.
+      </p>
+      <div className="linha-acoes">
         <button type="submit" disabled={invalido || salvando}>
           {salvando ? "Salvando…" : "Criar plano"}
         </button>

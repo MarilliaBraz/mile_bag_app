@@ -34,7 +34,7 @@ export function TrocarPlanoTenant({ tenantId, planoAtualId, aoTrocar }: { tenant
   }
 
   return (
-    <form onSubmit={(evento) => { evento.preventDefault(); setConfirmando(true); }} style={{ display: "grid", gap: "0.75rem", maxWidth: 420 }}>
+    <form onSubmit={(evento) => { evento.preventDefault(); setConfirmando(true); }} className="formulario">
       {(erro || erroAcao) && (
         <Alerta tipo="erro">
           {erro ?? erroAcao}
@@ -68,10 +68,10 @@ export function TrocarPlanoTenant({ tenantId, planoAtualId, aoTrocar }: { tenant
         aoCancelar={() => setConfirmando(false)}
       />
       {resultado && (
-        <p role="status" style={{ margin: 0, color: resultado.usoExcedeuLimiteNaTroca ? "var(--aviso)" : "var(--confirmacao)" }}>
-          Plano alterado para {resultado.planoVigente.nome}.
+        <Alerta tipo={resultado.usoExcedeuLimiteNaTroca ? "aviso" : "sucesso"}>
+          Plano alterado para <strong>{resultado.planoVigente.nome}</strong>.
           {resultado.usoExcedeuLimiteNaTroca && " Atenção: o uso atual da empresa já ultrapassa os limites do novo plano."}
-        </p>
+        </Alerta>
       )}
     </form>
   );
