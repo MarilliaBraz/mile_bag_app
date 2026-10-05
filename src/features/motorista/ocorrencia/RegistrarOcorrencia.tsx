@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "../../../shared/api/ApiError";
 import { executarOuEnfileirar } from "../offline-sync/fila";
-import { IndicadorSincronizacao } from "../offline-sync/IndicadorSincronizacao";
+import { TelaMotorista } from "../layout/TelaMotorista";
 import { Ajuda } from "../../../shared/ui/Ajuda";
+import { Alerta, Carregando } from "../../../shared/ui/Alerta";
 import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { listarMotivosComOrigem, registrarOcorrencia, type MotivoOcorrencia } from "./ocorrenciaService";
 
@@ -75,62 +76,65 @@ export function RegistrarOcorrencia() {
   }
 
   return (
-    <main style={{ maxWidth: 560, margin: "2rem auto", padding: "0 1rem" }}>
-      <IndicadorSincronizacao />
-      <Link to={`/motorista/entregas/${entregaId}`}>← Voltar para a entrega</Link>
-      <h1>Ocorrência de não entrega</h1>
-      <Ajuda>
-        <p>Use quando não for possível entregar a bagagem. Escolha o motivo e, se quiser, descreva o que aconteceu. A entrega volta para a sua lista de pendentes para uma nova tentativa, sem perder o histórico.</p>
-      </Ajuda>
+    <TelaMotorista titulo="Não consegui entregar" voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar="Voltar para a entrega">
+      <p className="texto-apoio">A entrega volta para a sua lista de pendentes para uma nova tentativa, sem perder o histórico.</p>
 
-      {erro && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
-          {erro}
-        </p>
-      )}
+      {erro && <Alerta tipo="erro">{erro}</Alerta>}
 
-      {!motivos && <p role="status">Carregando motivos…</p>}
+      {!motivos && <Carregando texto="Carregando motivos…" />}
 
       {motivos && motivos.length === 0 && !erro && (
-        <p role="alert" style={{ color: "var(--aviso)" }}>
-          Nenhum motivo de ocorrência está configurado para a sua empresa. Fale com o administrador antes de continuar.
-        </p>
+        <Alerta tipo="aviso">Nenhum motivo de ocorrência está configurado para a sua empresa. Fale com o administrador antes de continuar.</Alerta>
       )}
 
       {motivos && motivos.length > 0 && (
         <>
           {motivosDoCache && (
-            <p role="status" className="texto-apoio" style={{ color: "var(--aviso)" }}>
+            <Alerta tipo="aviso">
               Sem conexão: usando a lista de motivos salva neste aparelho. Se o administrador mudou os motivos, o registro pode ser recusado ao sincronizar.
-            </p>
+            </Alerta>
           )}
-          <label htmlFor="motivo">
-            Motivo <span className="campo-obrigatorio" aria-hidden="true">*</span>
-          </label>
-          <select id="motivo" required aria-required="true" value={motivoOcorrenciaId} onChange={(evento) => setMotivoOcorrenciaId(evento.target.value)}>
-            <option value="">Selecione o motivo</option>
-            {motivos.map((motivo) => (
-              <option key={motivo.id} value={motivo.id}>
-                {motivo.descricao}
-              </option>
-            ))}
-          </select>
 
-          <div style={{ marginTop: "1rem" }}>
-            <label htmlFor="descricao">Descrição adicional</label>
+          <fieldset className="escolhas" style={{ marginTop: "1.25rem" }}>
+            <legend>
+              O que aconteceu? <span className="campo-obrigatorio" aria-hidden="true">*</span>
+            </legend>
+            {motivos.map((motivo) => (
+              <label key={motivo.id} className="escolha">
+                <input
+                  type="radio"
+                  name="motivo"
+                  value={motivo.id}
+                  required
+                  checked={motivoOcorrenciaId === motivo.id}
+                  onChange={(evento) => setMotivoOcorrenciaId(evento.target.value)}
+                />
+                <span>{motivo.descricao}</span>
+              </label>
+            ))}
+          </fieldset>
+
+          <div style={{ marginTop: "1.25rem" }}>
+            <label htmlFor="descricao">Descrição adicional (opcional)</label>
             <textarea
               id="descricao"
               rows={3}
               value={descricaoAdicional}
               onChange={(evento) => setDescricaoAdicional(evento.target.value)}
-              placeholder="Opcional: detalhe o que aconteceu"
+              placeholder="Ex.: portaria fechada, ninguém atendeu o interfone"
             />
           </div>
 
-          <button type="button" onClick={() => setConfirmando(true)} disabled={!motivoOcorrenciaId || enviando} style={{ marginTop: "1rem" }}>
-            {enviando ? "Registrando…" : "Registrar ocorrência e reabrir entrega"}
-          </button>
-          {!motivoOcorrenciaId && <p className="texto-apoio">Escolha um motivo para continuar.</p>}
+          <div className="acao-fixa">
+            <button type="button" className="grande bloco" onClick={() => setConfirmando(true)} disabled={!motivoOcorrenciaId || enviando}>
+              {enviando ? "Registrando…" : "Registrar ocorrência"}
+            </button>
+            {!motivoOcorrenciaId && (
+              <p className="texto-apoio" style={{ textAlign: "center", marginBottom: 0 }}>
+                Escolha um motivo para continuar.
+              </p>
+            )}
+          </div>
           <ConfirmarAcao
             aberto={confirmando}
             titulo="Registrar ocorrência?"
@@ -142,6 +146,10 @@ export function RegistrarOcorrencia() {
           />
         </>
       )}
-    </main>
+
+      <Ajuda>
+        <p>Use quando não for possível entregar a bagagem. Escolha o motivo e, se quiser, descreva o que aconteceu. A entrega volta para a sua lista de pendentes para uma nova tentativa, sem perder o histórico.</p>
+      </Ajuda>
+    </TelaMotorista>
   );
 }

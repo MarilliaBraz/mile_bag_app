@@ -1,6 +1,10 @@
 import { Ajuda } from "../../../../shared/ui/Ajuda";
-import { Link, useParams } from "react-router-dom";
-import { IndicadorSincronizacao } from "../../offline-sync/IndicadorSincronizacao";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { Alerta, Carregando } from "../../../../shared/ui/Alerta";
+import { ConfirmarAcao } from "../../../../shared/ui/ConfirmarAcao";
+import { Icone } from "../../../../shared/ui/Icone";
+import { TelaMotorista } from "../../layout/TelaMotorista";
 import { useRota } from "../hooks/useRota";
 import { AjusteDestinoManual } from "./AjusteDestinoManual";
 import { IniciarViagem } from "./IniciarViagem";
@@ -24,6 +28,7 @@ const CENTRO_PADRAO = { latitude: -16.6869, longitude: -49.2648 };
 export function TelaRota() {
   const { entregaId } = useParams<{ entregaId: string }>();
   const rota = useRota(entregaId ?? "");
+  const [confirmandoEncerrar, setConfirmandoEncerrar] = useState(false);
 
   if (!entregaId) {
     return null;
@@ -32,24 +37,38 @@ export function TelaRota() {
   const emExecucao = rota.trajeto?.status === "EM_EXECUCAO";
 
   return (
-    <main style={{ maxWidth: 560, margin: "2rem auto", padding: "0 1rem" }}>
-      <IndicadorSincronizacao />
-      <Link to={`/motorista/entregas/${entregaId}`}>← Voltar para a entrega</Link>
-      <h1>Rota da entrega</h1>
-      <Ajuda>
-        <p>Calcule as rotas, compare distância e tempo e escolha uma. Você também pode traçar uma rota própria. Ao recalcular, o cálculo anterior fica guardado no histórico da viagem.</p>
-      </Ajuda>
+    <TelaMotorista titulo={emExecucao ? "Viagem em andamento" : "Rota da entrega"} voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar="Voltar para a entrega">
+      {rota.erro && <Alerta tipo="erro">{rota.erro}</Alerta>}
 
-      {rota.erro && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
-          {rota.erro}
-        </p>
+      {rota.pendenteDeSincronizacao && <Alerta tipo="aviso">Registro salvo no aparelho e será enviado quando houver conexão.</Alerta>}
+
+      {/* Durante a viagem, o que importa primeiro são os marcos e o encerramento - a escolha de rota desce. */}
+      {emExecucao && <MarcosProgresso entregaId={entregaId} aoRegistrar={rota.recarregarTrajeto} />}
+
+      {emExecucao && !rota.divergenciaPendente && (
+        <button type="button" className="sucesso grande bloco" onClick={() => setConfirmandoEncerrar(true)} disabled={rota.ocupado} style={{ marginTop: "1rem" }}>
+          <Icone nome="checkCirculo" /> {rota.ocupado ? "Encerrando…" : "Encerrar viagem"}
+        </button>
       )}
+      <ConfirmarAcao
+        aberto={confirmandoEncerrar}
+        titulo="Encerrar a viagem?"
+        descricao="A quilometragem e o tempo serão consolidados com o que foi registrado até agora."
+        rotuloConfirmar="Encerrar viagem"
+        ocupado={rota.ocupado}
+        aoConfirmar={() => {
+          setConfirmandoEncerrar(false);
+          rota.encerrar();
+        }}
+        aoCancelar={() => setConfirmandoEncerrar(false)}
+      />
 
-      {rota.pendenteDeSincronizacao && (
-        <p role="status" style={{ color: "var(--aviso)" }}>
-          Registro salvo no aparelho e será enviado quando houver conexão.
-        </p>
+      {rota.divergenciaPendente && (
+        <JustificativaDivergencia
+          mensagem={rota.divergenciaPendente}
+          aoReenviar={(justificativa) => rota.encerrar(justificativa)}
+          ocupado={rota.ocupado}
+        />
       )}
 
       {rota.precisaDestinoManual ? (
@@ -60,7 +79,7 @@ export function TelaRota() {
         />
       ) : (
         <>
-          {!rota.calculo && !rota.erro && <p role="status">Calculando rota…</p>}
+          {!rota.calculo && !rota.erro && <Carregando texto="Calculando rota a partir da sua posição…" />}
 
           {rota.calculo && (
             <>
@@ -69,35 +88,27 @@ export function TelaRota() {
                 alternativaSelecionada={rota.selecao?.rotaEscolhida.id ?? null}
                 aoSelecionar={rota.selecionarSugerida}
               />
-              <button className="secundario" onClick={() => rota.recalcular()} disabled={rota.ocupado}>
-                {rota.ocupado ? "Recalculando…" : "Recalcular a partir da minha posição"}
+
+              {!rota.trajeto && rota.selecao && <IniciarViagem selecao={rota.selecao} aoIniciar={rota.iniciar} ocupado={rota.ocupado} />}
+
+              <button type="button" className="secundario bloco" onClick={() => rota.recalcular()} disabled={rota.ocupado} style={{ marginTop: "0.75rem" }}>
+                <Icone nome="sincronizar" /> {rota.ocupado ? "Recalculando…" : "Recalcular a partir da minha posição"}
               </button>
 
-              <RotaPropria centro={rota.calculo.destino} aoConfirmar={rota.selecionarPropria} desabilitado={rota.ocupado} />
+              <details className="ajuda sem-icone" style={{ marginTop: "1rem" }}>
+                <summary>Usar uma rota própria</summary>
+                <RotaPropria centro={rota.calculo.destino} aoConfirmar={rota.selecionarPropria} desabilitado={rota.ocupado} />
+              </details>
             </>
           )}
         </>
       )}
 
-      {!rota.trajeto && rota.selecao && <IniciarViagem selecao={rota.selecao} aoIniciar={rota.iniciar} ocupado={rota.ocupado} />}
-
-      {emExecucao && <MarcosProgresso entregaId={entregaId} aoRegistrar={rota.recarregarTrajeto} />}
-
       {rota.trajeto && <ResumoViagem trajeto={rota.trajeto} />}
 
-      {emExecucao && !rota.divergenciaPendente && (
-        <button onClick={() => rota.encerrar()} disabled={rota.ocupado} style={{ marginTop: "1rem" }}>
-          {rota.ocupado ? "Encerrando…" : "Encerrar viagem"}
-        </button>
-      )}
-
-      {rota.divergenciaPendente && (
-        <JustificativaDivergencia
-          mensagem={rota.divergenciaPendente}
-          aoReenviar={(justificativa) => rota.encerrar(justificativa)}
-          ocupado={rota.ocupado}
-        />
-      )}
-    </main>
+      <Ajuda>
+        <p>Calcule as rotas, compare distância e tempo e escolha uma. Você também pode traçar uma rota própria. Ao recalcular, o cálculo anterior fica guardado no histórico da viagem.</p>
+      </Ajuda>
+    </TelaMotorista>
   );
 }

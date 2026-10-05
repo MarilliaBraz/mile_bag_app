@@ -1,6 +1,7 @@
 import { Icone } from "../../../shared/ui/Icone";
 import { useId, useState } from "react";
 import { hojeIso, mensagemDeErro } from "../../../shared/format/formatar";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 type Props = {
   /** Com `nome`, cadastra uma praça nova já com o primeiro valor; sem ele, só adiciona um valor a uma praça existente. */
@@ -57,9 +58,9 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
   return (
     <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", maxWidth: 420 }}>
       {erro && (
-        <p role="alert" style={{ color: "var(--erro)", margin: 0 }}>
+        <Alerta tipo="erro">
           {erro}
-        </p>
+        </Alerta>
       )}
       {pedirNome && (
         <div>

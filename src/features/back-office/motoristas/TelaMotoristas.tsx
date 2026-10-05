@@ -5,6 +5,7 @@ import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { LoteMotoristas } from "./LoteMotoristas";
 import { criarMotorista, definirAtivoMotorista, listarMotoristas, redefinirSenhaMotorista, atualizarMotorista, type Motorista } from "./motoristasApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 const TAMANHO_MINIMO_SENHA = 8;
 
@@ -39,9 +40,9 @@ function NovoMotoristaForm({ aoCriar }: { aoCriar: () => Promise<void> }) {
   return (
     <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", maxWidth: 420 }}>
       {erro && (
-        <p role="alert" style={{ color: "var(--erro)", margin: 0 }}>
+        <Alerta tipo="erro">
           {erro}
-        </p>
+        </Alerta>
       )}
       <div>
         <label htmlFor={`${uid}-nome`}>Nome</label>
@@ -208,14 +209,14 @@ export function TelaMotoristas() {
       </Ajuda>
 
       {(erro || erroAcao) && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erro ?? erroAcao}
-        </p>
+        </Alerta>
       )}
       {resultado && (
-        <p role="status" style={{ color: "var(--confirmacao)" }}>
+        <Alerta tipo="sucesso">
           {resultado}
-        </p>
+        </Alerta>
       )}
       {carregando && <p role="status">Carregando…</p>}
       {motoristas && motoristas.length === 0 && <p>Nenhum motorista cadastrado.</p>}

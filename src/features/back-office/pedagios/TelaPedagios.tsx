@@ -4,6 +4,7 @@ import { formatarData, formatarMoeda, mensagemDeErro } from "../../../shared/for
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { adicionarValor, criarPraca, definirLocalizacaoDaPraca, historicoDaPraca, listarPracas, type PracaPedagio } from "./pedagiosApi";
 import { ValorPedagioForm } from "./ValorPedagioForm";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 function LocalizacaoForm({ praca, aoConcluir }: { praca: PracaPedagio; aoConcluir: () => Promise<void> }) {
   const uid = useId();
@@ -62,9 +63,9 @@ function HistoricoValores({ praca }: { praca: PracaPedagio }) {
   const { dados, erro, carregando } = useRecurso(() => historicoDaPraca(praca.id), "Não foi possível carregar o histórico.");
   if (erro) {
     return (
-      <p role="alert" style={{ color: "var(--erro)" }}>
+      <Alerta tipo="erro">
         {erro}
-      </p>
+      </Alerta>
     );
   }
   if (carregando || !dados) {
@@ -98,9 +99,9 @@ export function TelaPedagios() {
       </Ajuda>
 
       {erro && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erro}
-        </p>
+        </Alerta>
       )}
       {carregando && <p role="status">Carregando…</p>}
       {pracas && pracas.length === 0 && <p>Nenhuma praça cadastrada.</p>}

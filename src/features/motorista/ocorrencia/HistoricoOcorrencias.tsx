@@ -30,13 +30,13 @@ export function HistoricoOcorrencias({ entregaId }: { entregaId: string }) {
   }
 
   return (
-    <section style={{ marginTop: "1.5rem" }}>
+    <section>
       <h2>Tentativas anteriores ({ocorrencias.length})</h2>
-      <ul>
+      <ul className="linha-tempo cartao">
         {ocorrencias.map((ocorrencia) => (
           <li key={ocorrencia.id}>
-            {new Date(ocorrencia.dataHora).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })} —{" "}
-            {descricaoPorMotivo[ocorrencia.motivoOcorrenciaId] ?? "motivo não disponível"}
+            <strong>{descricaoPorMotivo[ocorrencia.motivoOcorrenciaId] ?? "Motivo não disponível"}</strong>
+            <div className="texto-apoio">{new Date(ocorrencia.dataHora).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}</div>
           </li>
         ))}
       </ul>

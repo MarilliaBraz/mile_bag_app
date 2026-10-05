@@ -26,43 +26,56 @@ export function ResumoViagem({ trajeto }: { trajeto: TrajetoDetalhado }) {
   const encerrado = trajeto.status === "ENCERRADO";
 
   return (
-    <section style={{ marginTop: "1.5rem" }}>
+    <section>
       <h2>Viagem {encerrado ? "encerrada" : "em andamento"}</h2>
-      <p style={{ fontSize: "0.9rem" }}>Início: {horaDe(trajeto.dataInicio)}</p>
+      <div className="cartao">
+        {encerrado && trajeto.kmIdaFinal && trajeto.kmVoltaFinal && (
+          <div className="dados-grade" style={{ marginBottom: "1rem" }}>
+            <div>
+              <div className="texto-apoio">Ida</div>
+              <div className="destaque">{formatarKm(trajeto.kmIdaFinal)}</div>
+            </div>
+            <div>
+              <div className="texto-apoio">Volta</div>
+              <div className="destaque">{formatarKm(trajeto.kmVoltaFinal)}</div>
+            </div>
+            {trajeto.tempoFinal !== null && (
+              <div>
+                <div className="texto-apoio">Tempo</div>
+                <div className="destaque">{formatarDuracao(trajeto.tempoFinal)}</div>
+              </div>
+            )}
+          </div>
+        )}
+        {encerrado && trajeto.justificativaDivergencia && <p className="texto-apoio">Justificativa de divergência: {trajeto.justificativaDivergencia}</p>}
 
-      <h3>Cálculos de rota ({trajeto.calculosRota.length})</h3>
-      <ul>
-        {trajeto.calculosRota.map((calculo) => (
-          <li key={calculo.id}>
-            {horaDe(calculo.dataHora)} — {formatarKm(calculo.kmIda)} ida / {formatarKm(calculo.kmVolta)} volta ·{" "}
-            {formatarDuracao(calculo.tempoEstimado)}
-            {calculo.ehRotaInicial ? " · rota inicial" : " · recálculo"}
-          </li>
-        ))}
-      </ul>
+        <h3>Linha do tempo · início às {horaDe(trajeto.dataInicio)}</h3>
+        <ol className="linha-tempo">
+          {trajeto.checkpoints.map((checkpoint) => (
+            <li key={checkpoint.id}>
+              <strong>{ROTULO_CHECKPOINT[checkpoint.tipo] ?? checkpoint.tipo}</strong>{" "}
+              <span className="texto-apoio">
+                {horaDe(checkpoint.dataHora)}
+                {checkpoint.ausente ? " · sem GPS" : ""}
+              </span>
+            </li>
+          ))}
+        </ol>
 
-      <h3>Checkpoints ({trajeto.checkpoints.length})</h3>
-      <ul>
-        {trajeto.checkpoints.map((checkpoint) => (
-          <li key={checkpoint.id}>
-            {horaDe(checkpoint.dataHora)} — {ROTULO_CHECKPOINT[checkpoint.tipo] ?? checkpoint.tipo}
-            {checkpoint.ausente ? " (sem GPS)" : ""}
-          </li>
-        ))}
-      </ul>
-
-      {encerrado && trajeto.kmIdaFinal && trajeto.kmVoltaFinal && (
-        <>
-          <h3>Valores consolidados</h3>
-          <p>
-            {formatarKm(trajeto.kmIdaFinal)} ida · {formatarKm(trajeto.kmVoltaFinal)} volta
-            {trajeto.tempoFinal !== null ? ` · ${formatarDuracao(trajeto.tempoFinal)}` : ""}
-          </p>
-          {trajeto.justificativaDivergencia && (
-            <p style={{ fontSize: "0.9rem" }}>Justificativa de divergência: {trajeto.justificativaDivergencia}</p>
-          )}
-        </>
-      )}
+        <details className="ajuda sem-icone">
+          <summary>Cálculos de rota ({trajeto.calculosRota.length})</summary>
+          <ul className="linha-tempo">
+            {trajeto.calculosRota.map((calculo) => (
+              <li key={calculo.id}>
+                <strong>{calculo.ehRotaInicial ? "Rota inicial" : "Recálculo"}</strong> <span className="texto-apoio">{horaDe(calculo.dataHora)}</span>
+                <div className="texto-apoio">
+                  {formatarKm(calculo.kmIda)} ida · {formatarKm(calculo.kmVolta)} volta · {formatarDuracao(calculo.tempoEstimado)}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </details>
+      </div>
     </section>
   );
 }

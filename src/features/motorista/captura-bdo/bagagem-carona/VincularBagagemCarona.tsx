@@ -1,6 +1,7 @@
 import { Icone } from "../../../../shared/ui/Icone";
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { Alerta } from "../../../../shared/ui/Alerta";
 import { executarOuEnfileirar } from "../../offline-sync/fila";
 import { consultarBdosDisponiveis } from "../../painel-entregas/services/painelService";
 import type { BagagemCaronaResumo, ItemBdoDisponivel } from "../../painel-entregas/types";
@@ -87,67 +88,68 @@ export function VincularBagagemCarona({
   }
 
   return (
-    <section style={{ marginTop: "1.5rem" }}>
-      <h2>Bagagens carona</h2>
+    <section>
+      <h2>
+        <Icone nome="mala" /> Bagagens carona
+      </h2>
 
-      {erro && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
-          {erro}
-        </p>
-      )}
+      {erro && <Alerta tipo="erro">{erro}</Alerta>}
+      {aviso && <Alerta tipo="sucesso">{aviso}</Alerta>}
 
-      {aviso && (
-        <p role="status" style={{ color: "var(--confirmacao)" }}>
-          <Icone nome="checkCirculo" /> {aviso}
-        </p>
-      )}
-
-      {bagagens.length === 0 ? (
-        <p className="texto-apoio">Nenhuma bagagem carona vinculada a esta entrega.</p>
-      ) : (
-        <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-          {bagagens.map((bagagem) => (
-            <li key={bagagem.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", marginBottom: "0.5rem" }}>
-              <span>{bagagem.etiquetaBagagem ?? "Sem etiqueta"}</span>
-              {!encerrada && (
-                <button type="button" className="secundario" onClick={() => desvincular(bagagem.id)} disabled={ocupado} aria-label={`Desvincular bagagem ${bagagem.etiquetaBagagem ?? "sem etiqueta"}`}>
-                  Desvincular
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {/* FR-002: entrega encerrada não aceita novo vínculo - o botão some,
-          em vez de só falhar com 409 depois do toque. */}
-      {!encerrada && candidatos === null && (
-        <button onClick={abrirCandidatos} disabled={ocupado} style={{ marginTop: "0.5rem" }}>
-          {ocupado ? "Carregando…" : "Vincular bagagem carona"}
-        </button>
-      )}
-
-      {candidatos !== null && (
-        <div style={{ marginTop: "0.75rem" }}>
-          <h3>Escolha o BDO que vai junto</h3>
-          {candidatos.length === 0 ? (
-            <p className="texto-apoio">Nenhum BDO disponível para vincular no momento.</p>
-          ) : (
-            <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-              {candidatos.map((bdo) => (
-                <li key={bdo.bdoId} style={{ marginBottom: "0.5rem" }}>
-                  <button onClick={() => vincular(bdo.bdoId)} disabled={ocupado} className="secundario" style={{ width: "100%", textAlign: "left" }}>
-                    <strong>{bdo.bdoNumero ?? "BDO sem número"}</strong> — {bdo.endereco ?? "endereço não informado"}
+      <div className="cartao">
+        {bagagens.length === 0 ? (
+          <p className="texto-apoio">Nenhuma bagagem carona vinculada a esta entrega.</p>
+        ) : (
+          <ul className="lista" style={{ gap: "0.5rem" }}>
+            {bagagens.map((bagagem) => (
+              <li key={bagagem.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem" }}>
+                <span className="codigo">{bagagem.etiquetaBagagem ?? "Sem etiqueta"}</span>
+                {!encerrada && (
+                  <button type="button" className="fantasma" onClick={() => desvincular(bagagem.id)} disabled={ocupado} aria-label={`Desvincular bagagem ${bagagem.etiquetaBagagem ?? "sem etiqueta"}`}>
+                    Desvincular
                   </button>
-                </li>
-              ))}
-            </ul>
-          )}
-          <button className="secundario" onClick={() => setCandidatos(null)} disabled={ocupado}>
-            Cancelar
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* FR-002: entrega encerrada não aceita novo vínculo - o botão some,
+            em vez de só falhar com 409 depois do toque. */}
+        {!encerrada && candidatos === null && (
+          <button type="button" className="secundario bloco" onClick={abrirCandidatos} disabled={ocupado} style={{ marginTop: "0.75rem" }}>
+            {ocupado ? "Carregando…" : "+ Levar outra bagagem junto"}
           </button>
-        </div>
-      )}
+        )}
+
+        {candidatos !== null && (
+          <div style={{ marginTop: "0.75rem" }}>
+            <h3>Escolha o BDO que vai junto</h3>
+            {candidatos.length === 0 ? (
+              <p className="texto-apoio">Nenhum BDO disponível para vincular no momento.</p>
+            ) : (
+              <ul className="lista" style={{ gap: "0.5rem" }}>
+                {candidatos.map((bdo) => (
+                  <li key={bdo.bdoId}>
+                    <button type="button" onClick={() => vincular(bdo.bdoId)} disabled={ocupado} className="opcao">
+                      <span>
+                        <span className="codigo">{bdo.bdoNumero ?? "BDO sem número"}</span>
+                        <span className="texto-apoio" style={{ display: "block" }}>
+                          {bdo.endereco ?? "endereço não informado"}
+                        </span>
+                      </span>
+                      <Icone nome="chevron" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <button type="button" className="fantasma bloco" onClick={() => setCandidatos(null)} disabled={ocupado} style={{ marginTop: "0.5rem" }}>
+              Cancelar
+            </button>
+          </div>
+        )}
+      </div>
     </section>
   );
 }

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { Alerta } from "../../../../shared/ui/Alerta";
+import { Icone } from "../../../../shared/ui/Icone";
 import { executarOuEnfileirar } from "../../offline-sync/fila";
 import { autoatribuir } from "../services/painelService";
 import type { ItemBdoDisponivel } from "../types";
@@ -42,38 +44,34 @@ export function ListaBdosDisponiveis({
   }
 
   return (
-    <section style={{ marginTop: "2rem" }}>
-      <h2>BDOs disponíveis para assumir</h2>
-      {erro && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
-          {erro}
-        </p>
-      )}
-      <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+    <section>
+      <h2>Disponíveis para assumir ({bdos.length})</h2>
+      {erro && <Alerta tipo="erro">{erro}</Alerta>}
+      <ul className="lista">
         {bdos.map((bdo) => (
-          <li
-            key={bdo.bdoId}
-            style={{
-              border: "1px solid var(--borda)",
-              borderRadius: 8,
-              padding: "0.75rem 1rem",
-              marginBottom: "0.75rem",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: "1rem",
-            }}
-          >
-            <div>
-              <strong>{bdo.bdoNumero ?? "BDO sem número"}</strong>
-              <div className="texto-apoio">{bdo.passageiroNome ?? "Passageiro não identificado"}</div>
-              <div className="texto-apoio">{bdo.endereco}</div>
+          <li key={bdo.bdoId} className="cartao">
+            <div className="cartao-cabecalho">
+              <span className="codigo">{bdo.bdoNumero ?? "BDO sem número"}</span>
               {bdo.origem === "EMAIL_AUTOMATICO" && (
-                <span className="texto-apoio" style={{ color: "var(--acao)" }}>Recebido por e-mail</span>
+                <span className="selo selo-info">
+                  <Icone nome="email" /> Por e-mail
+                </span>
               )}
             </div>
-            <button type="button" onClick={() => atribuir(bdo.bdoId)} disabled={atribuindo === bdo.bdoId} aria-label={`Assumir BDO ${bdo.bdoNumero ?? "sem número"}`}>
-              {atribuindo === bdo.bdoId ? "Assumindo…" : "Assumir"}
+            <div className="destaque">{bdo.passageiroNome ?? "Passageiro não identificado"}</div>
+            <div className="linha-icone texto-apoio">
+              <Icone nome="pino" />
+              <span>{bdo.endereco ?? "Endereço não informado"}</span>
+            </div>
+            <button
+              type="button"
+              className="secundario bloco"
+              style={{ marginTop: "0.75rem" }}
+              onClick={() => atribuir(bdo.bdoId)}
+              disabled={atribuindo === bdo.bdoId}
+              aria-label={`Assumir BDO ${bdo.bdoNumero ?? "sem número"}`}
+            >
+              {atribuindo === bdo.bdoId ? "Assumindo…" : "Assumir entrega"}
             </button>
           </li>
         ))}

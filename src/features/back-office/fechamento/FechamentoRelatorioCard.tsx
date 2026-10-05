@@ -4,6 +4,7 @@ import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { consultarIdentidadeVisual } from "../configuracao-tenant/identidadeVisualApi";
 import { PreviaIdentidadeVisual } from "../configuracao-tenant/PreviaIdentidadeVisual";
 import { baixarRelatorio, type Fechamento, type FechamentoDetalhe, type RelatorioPdf } from "./fechamentoApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 const RELATORIOS: { tipo: RelatorioPdf; rotulo: string }[] = [
   { tipo: "relatorio-pagamento-entregas", rotulo: "Baixar pagamento de entregas (PDF)" },
@@ -31,9 +32,9 @@ export function FechamentoRelatorioCard({ fechamento }: { fechamento: Fechamento
   return (
     <div style={{ display: "grid", gap: "0.75rem" }}>
       {erro && (
-        <p role="alert" style={{ color: "var(--erro)", margin: 0 }}>
+        <Alerta tipo="erro">
           {erro}
-        </p>
+        </Alerta>
       )}
       {identidade && <PreviaIdentidadeVisual identidade={identidade} />}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>

@@ -1,3 +1,4 @@
+import { Icone } from "../../../../shared/ui/Icone";
 import type { RotaSelecionada } from "../types";
 import { formatarDistancia, formatarDuracao } from "./MapaRotas";
 
@@ -16,16 +17,15 @@ export function IniciarViagem({
   ocupado?: boolean;
 }) {
   return (
-    <section style={{ marginTop: "1.5rem" }}>
-      <h2>Rota escolhida</h2>
-      <p>
-        {formatarDistancia(selecao.rotaEscolhida.distanciaMetros)} · {formatarDuracao(selecao.rotaEscolhida.duracaoSegundos)} ·{" "}
-        {selecao.tipoSelecao === "PROPRIA" ? "rota própria" : "rota sugerida"}
+    <section className="cartao" style={{ marginTop: "1rem" }}>
+      <div className="texto-apoio">Rota escolhida · {selecao.tipoSelecao === "PROPRIA" ? "própria" : "sugerida"}</div>
+      <p className="destaque">
+        {formatarDuracao(selecao.rotaEscolhida.duracaoSegundos)} · {formatarDistancia(selecao.rotaEscolhida.distanciaMetros)}
       </p>
-      {selecao.justificativa && <p style={{ fontSize: "0.9rem" }}>Justificativa: {selecao.justificativa}</p>}
+      {selecao.justificativa && <p className="texto-apoio">Justificativa: {selecao.justificativa}</p>}
 
-      <button onClick={aoIniciar} disabled={ocupado}>
-        {ocupado ? "Iniciando…" : "Iniciar viagem"}
+      <button type="button" className="grande bloco" onClick={aoIniciar} disabled={ocupado}>
+        <Icone nome="carro" /> {ocupado ? "Iniciando…" : "Iniciar viagem"}
       </button>
     </section>
   );

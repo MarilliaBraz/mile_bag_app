@@ -2,6 +2,7 @@ import { useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { criarCodigoNome, listarCodigoNome, removerCodigoNome, type CategoriaCodigoNome } from "./configuracoesTenantApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 /** Lista com código IATA + nome, usada para bases aeroportuárias e companhias atendidas (HU11) - mesmo formato nos dois endpoints. */
 export function SecaoCodigoNome({ categoria, titulo, rotuloCodigo }: { categoria: CategoriaCodigoNome; titulo: string; rotuloCodigo: string }) {
@@ -24,9 +25,9 @@ export function SecaoCodigoNome({ categoria, titulo, rotuloCodigo }: { categoria
     <section aria-label={titulo}>
       <h2>{titulo}</h2>
       {(erro || erroAcao) && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erro ?? erroAcao}
-        </p>
+        </Alerta>
       )}
       {dados && dados.length === 0 && <p>Nenhuma cadastrada.</p>}
       <ul style={{ paddingLeft: "1.25rem" }}>

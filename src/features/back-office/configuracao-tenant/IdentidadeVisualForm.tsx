@@ -4,6 +4,7 @@ import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { consultarIdentidadeVisual, salvarIdentidadeVisual } from "./identidadeVisualApi";
 import { PreviaIdentidadeVisual } from "./PreviaIdentidadeVisual";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 /** Logotipo e cabeçalho dos relatórios PDF da empresa (HU13). Sem logotipo novo, o atual é mantido. */
 export function IdentidadeVisualForm() {
@@ -48,9 +49,9 @@ export function IdentidadeVisualForm() {
       <p>O logotipo e o cabeçalho aparecem no topo dos relatórios em PDF do fechamento.</p>
 
       {(erro || erroAcao) && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erro ?? erroAcao}
-        </p>
+        </Alerta>
       )}
 
       <form onSubmit={salvar} style={{ display: "grid", gap: "0.75rem", maxWidth: 480 }}>

@@ -4,6 +4,7 @@ import { formatarData, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { TrocarPlanoTenant } from "../planos/TrocarPlanoTenant";
 import { buscarTenant, reenviarConvite } from "./tenantsApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 /**
  * Empresa cadastrada (HU14) - a mesma página serve de confirmação logo após o
@@ -31,9 +32,9 @@ export function TenantCadastradoConfirmacao() {
     <main>
       <Link to="/plataforma/empresas">← Empresas</Link>
       {erro && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erro}
-        </p>
+        </Alerta>
       )}
       {carregando && <p role="status">Carregando…</p>}
 
@@ -55,14 +56,14 @@ export function TenantCadastradoConfirmacao() {
             <h2>Convite do administrador</h2>
             <p>Se o convite não chegou ou expirou, gere um novo. O anterior deixa de valer.</p>
             {erroConvite && (
-              <p role="alert" style={{ color: "var(--erro)" }}>
+              <Alerta tipo="erro">
                 {erroConvite}
-              </p>
+              </Alerta>
             )}
             {conviteReenviado && (
-              <p role="status" style={{ color: "var(--confirmacao)" }}>
+              <Alerta tipo="sucesso">
                 Novo convite enviado.
-              </p>
+              </Alerta>
             )}
             <button type="button" className="secundario" onClick={reenviar}>
               Reenviar convite

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { listarCamposBaixa, salvarCamposBaixa, type CampoBaixa, type CampoObrigatorio } from "./configuracoesTenantApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 const ROTULO: Record<CampoBaixa, string> = {
   POD_FOTO_DOCUMENTO: "Comprovante: foto do documento",
@@ -40,9 +41,9 @@ export function SecaoCamposBaixa() {
     <section aria-labelledby="titulo-campos">
       <h2 id="titulo-campos">Campos obrigatórios na baixa</h2>
       {(erro || erroAcao) && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erro ?? erroAcao}
-        </p>
+        </Alerta>
       )}
       {campos.map((item) => (
         <label key={item.campo} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 400 }}>

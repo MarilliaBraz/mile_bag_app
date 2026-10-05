@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Alerta } from "../../../../shared/ui/Alerta";
 
 /**
  * Justificativa de divergência do trajeto (HU04, RN14/FR-008) - só aparece
@@ -19,23 +20,26 @@ export function JustificativaDivergencia({
 
   return (
     <section style={{ marginTop: "1rem" }}>
-      <p role="alert" style={{ color: "var(--aviso)" }}>
-        {mensagem}
-      </p>
-      <label htmlFor="justificativa-divergencia">Justificativa da divergência *</label>
+      <Alerta tipo="aviso">{mensagem}</Alerta>
+      <label htmlFor="justificativa-divergencia">
+        Justificativa da divergência <span className="campo-obrigatorio" aria-hidden="true">*</span>
+      </label>
       <textarea
         id="justificativa-divergencia"
+        aria-required="true"
         rows={3}
         value={justificativa}
         onChange={(evento) => setJustificativa(evento.target.value)}
         placeholder="Ex.: desvio por interdição da via"
       />
       <button
+        type="button"
+        className="grande bloco"
         onClick={() => aoReenviar(justificativa.trim())}
         disabled={justificativa.trim().length === 0 || ocupado}
         style={{ marginTop: "0.75rem" }}
       >
-        {ocupado ? "Encerrando…" : "Encerrar viagem com justificativa"}
+        {ocupado ? "Encerrando…" : "Encerrar com justificativa"}
       </button>
     </section>
   );

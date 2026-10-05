@@ -1,9 +1,9 @@
 import { liveQuery } from "dexie";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Icone, type NomeIcone } from "../../../shared/ui/Icone";
 import { bancoLocal, type RegistroPendente, type StatusRegistro, type TipoEventoSincronizacao } from "./db";
-import { IndicadorSincronizacao } from "./IndicadorSincronizacao";
+import { Alerta, Carregando, Vazio } from "../../../shared/ui/Alerta";
+import { TelaMotorista } from "../layout/TelaMotorista";
 import { useSincronizacaoAutomatica } from "./useSincronizacaoAutomatica";
 
 const ROTULO_TIPO: Record<TipoEventoSincronizacao, string> = {
@@ -16,10 +16,10 @@ const ROTULO_TIPO: Record<TipoEventoSincronizacao, string> = {
   OCORRENCIA_REGISTRADA: "Ocorrência de não entrega",
 };
 
-const STATUS: Record<StatusRegistro, { icone: NomeIcone; texto: string; cor: string }> = {
-  PENDENTE: { icone: "sincronizar", texto: "Pendente de sincronização", cor: "var(--aviso)" },
-  SINCRONIZADO: { icone: "checkCirculo", texto: "Sincronizado com sucesso", cor: "var(--confirmacao)" },
-  ERRO: { icone: "alerta", texto: "Falha ao sincronizar", cor: "var(--erro)" },
+const STATUS: Record<StatusRegistro, { icone: NomeIcone; texto: string; tom: "aviso" | "sucesso" | "erro" }> = {
+  PENDENTE: { icone: "sincronizar", texto: "Aguardando envio", tom: "aviso" },
+  SINCRONIZADO: { icone: "checkCirculo", texto: "Enviado", tom: "sucesso" },
+  ERRO: { icone: "alerta", texto: "Falha no envio", tom: "erro" },
 };
 
 const LIMITE = 50;
@@ -51,44 +51,43 @@ export function RegistrosLocais() {
   const aguardando = registros?.filter((r) => r.status !== "SINCRONIZADO").length ?? 0;
 
   return (
-    <main style={{ maxWidth: 560, margin: "2rem auto", padding: "0 1rem" }}>
-      <IndicadorSincronizacao />
-      <Link to="/motorista">← Voltar para o painel</Link>
-      <h1>Registros deste aparelho</h1>
+    <TelaMotorista titulo="Registros do aparelho" voltarPara="/motorista/conta" rotuloVoltar="Voltar para a conta">
       <p className="texto-apoio">
         Tudo o que você registra fica salvo aqui e é enviado ao escritório assim que houver conexão. Cada item mostra se já chegou.
       </p>
 
-      <div style={{ margin: "1rem 0" }}>
-        <button type="button" onClick={enviarAgora} disabled={!online || sincronizando || aguardando === 0}>
-          <Icone nome="sincronizar" /> {sincronizando ? "Enviando…" : "Enviar agora"}
+      <div className="cartao" style={{ margin: "1rem 0" }}>
+        <button type="button" className="bloco" onClick={enviarAgora} disabled={!online || sincronizando || aguardando === 0}>
+          <Icone nome="sincronizar" /> {sincronizando ? "Enviando…" : aguardando > 0 ? `Enviar agora (${aguardando})` : "Enviar agora"}
         </button>
-        {!online && <span className="texto-apoio" style={{ marginLeft: "0.75rem" }}>Sem conexão: o envio recomeça sozinho quando a rede voltar.</span>}
+        {!online && <p className="texto-apoio" style={{ textAlign: "center" }}>Sem conexão: o envio recomeça sozinho quando a rede voltar.</p>}
         {online && aguardando === 0 && registros && registros.length > 0 && (
-          <span role="status" className="texto-apoio" style={{ marginLeft: "0.75rem" }}>
-            Tudo enviado.
-          </span>
+          <p role="status" className="texto-apoio" style={{ textAlign: "center", color: "var(--confirmacao)" }}>
+            <Icone nome="checkCirculo" /> Tudo enviado.
+          </p>
         )}
       </div>
 
-      {!registros && <p role="status">Carregando…</p>}
-      {registros && registros.length === 0 && <p>Nenhum registro feito neste aparelho ainda.</p>}
+      {!registros && <Carregando />}
+      {registros && registros.length === 0 && <Vazio icone="sincronizar" titulo="Nenhum registro neste aparelho ainda" />}
 
       {registros && registros.length > 0 && (
-        <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+        <ul className="lista">
           {registros.map((registro) => {
             const status = STATUS[registro.status];
             return (
-              <li key={registro.idLocal} style={{ border: "1px solid var(--borda)", borderRadius: 8, padding: "0.75rem 1rem", marginBottom: "0.75rem" }}>
-                <strong>{ROTULO_TIPO[registro.tipoEvento] ?? registro.tipoEvento}</strong>
-                <div className="texto-apoio">{new Date(registro.timestampCriacaoLocal).toLocaleString("pt-BR")}</div>
-                <div style={{ color: status.cor, marginTop: "0.25rem", fontWeight: 600 }}>
-                  <Icone nome={status.icone} /> {status.texto}
+              <li key={registro.idLocal} className="cartao">
+                <div className="cartao-cabecalho">
+                  <strong>{ROTULO_TIPO[registro.tipoEvento] ?? registro.tipoEvento}</strong>
+                  <span className={`selo selo-${status.tom}`}>
+                    <Icone nome={status.icone} /> {status.texto}
+                  </span>
                 </div>
+                <div className="texto-apoio">{new Date(registro.timestampCriacaoLocal).toLocaleString("pt-BR")}</div>
                 {registro.status === "ERRO" && (
-                  <div role="alert" className="texto-apoio" style={{ color: "var(--erro)" }}>
+                  <Alerta tipo="erro">
                     {registro.motivo ?? "O servidor não aceitou este registro."} Tentativas: {registro.tentativas}. O registro continua guardado e será reenviado.
-                  </div>
+                  </Alerta>
                 )}
               </li>
             );
@@ -96,6 +95,6 @@ export function RegistrosLocais() {
         </ul>
       )}
       {registros && registros.length >= LIMITE && <p className="texto-apoio">Mostrando os {LIMITE} registros mais recentes.</p>}
-    </main>
+    </TelaMotorista>
   );
 }

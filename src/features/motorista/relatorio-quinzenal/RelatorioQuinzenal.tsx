@@ -1,7 +1,8 @@
 import { Ajuda } from "../../../shared/ui/Ajuda";
+import { Alerta, Carregando, Vazio } from "../../../shared/ui/Alerta";
 import { Icone } from "../../../shared/ui/Icone";
-import { Fragment, useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { TelaMotorista } from "../layout/TelaMotorista";
+import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "../../../shared/api/ApiError";
 import { AjusteForm } from "./AjusteForm";
 import { HistoricoAjustes } from "./HistoricoAjustes";
@@ -57,107 +58,126 @@ export function RelatorioQuinzenal() {
     carregar();
   }, [carregar]);
 
-  return (
-    <main style={{ maxWidth: 760, margin: "2rem auto", padding: "0 1rem" }}>
-      <Link to="/motorista" className="nao-imprimir">
-        ← Voltar para o painel
-      </Link>
-      <h1>Relatório quinzenal</h1>
-      <Ajuda>
-        <p>Confira as quilometragens, tarifas e pedágios do período. Para corrigir um valor, use “Corrigir” e explique o motivo: o valor original continua visível no histórico. “Imprimir” gera uma versão limpa para papel ou PDF.</p>
-      </Ajuda>
+  // Totais do período: só somam o que já tem valor ("—" não vira zero no total).
+  const totais = relatorio?.entregas.reduce(
+    (acc, item) => ({
+      km: acc.km + (item.kmIda ?? 0) + (item.kmVolta ?? 0),
+      valor: acc.valor + (item.tarifaAplicada ?? 0) + (item.valorPedagio ?? 0),
+      semValor: acc.semValor + (item.tarifaAplicada === null ? 1 : 0),
+    }),
+    { km: 0, valor: 0, semValor: 0 },
+  );
 
-      <div className="nao-imprimir" style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "end" }}>
-        <div>
-          <label htmlFor="inicio">De</label>
-          <input id="inicio" type="date" value={periodo.inicio} onChange={(e) => setPeriodo({ ...periodo, inicio: e.target.value })} />
+  return (
+    <TelaMotorista titulo="Relatório quinzenal" navegacao>
+      <div className="cartao nao-imprimir">
+        <div className="linha-acoes" style={{ alignItems: "end" }}>
+          <div>
+            <label htmlFor="inicio">De</label>
+            <input id="inicio" type="date" value={periodo.inicio} onChange={(e) => setPeriodo({ ...periodo, inicio: e.target.value })} />
+          </div>
+          <div>
+            <label htmlFor="fim">Até</label>
+            <input id="fim" type="date" value={periodo.fim} onChange={(e) => setPeriodo({ ...periodo, fim: e.target.value })} />
+          </div>
         </div>
-        <div>
-          <label htmlFor="fim">Até</label>
-          <input id="fim" type="date" value={periodo.fim} onChange={(e) => setPeriodo({ ...periodo, fim: e.target.value })} />
-        </div>
-        <button onClick={() => window.print()} disabled={!relatorio || relatorio.entregas.length === 0}>
-          <Icone nome="impressora" /> Imprimir
-        </button>
       </div>
 
-      {erro && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
-          {erro}
-        </p>
-      )}
-      {!relatorio && !erro && <p role="status">Carregando…</p>}
+      {erro && <Alerta tipo="erro">{erro}</Alerta>}
+      {!relatorio && !erro && <Carregando texto="Carregando relatório…" />}
 
-      {relatorio && (
+      {relatorio && totais && (
         <>
-          <p style={{ fontSize: "0.9rem" }}>
+          <p className="texto-apoio">
             Período: {dataBr(periodo.inicio)} a {dataBr(periodo.fim)}
           </p>
           {relatorio.entregas.length === 0 ? (
-            <p>Nenhuma entrega encerrada neste período.</p>
+            <Vazio icone="documento" titulo="Nenhuma entrega encerrada neste período">
+              Escolha outras datas acima.
+            </Vazio>
           ) : (
-            <div className="tabela-rolavel">
-<table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr style={{ textAlign: "left", borderBottom: "2px solid var(--borda)" }}>
-                  <th scope="col">BDO</th>
-                  <th scope="col">Ida</th>
-                  <th scope="col">Volta</th>
-                  <th scope="col">Tarifa</th>
-                  <th scope="col">Pedágio</th>
-                  <th scope="col" className="nao-imprimir" />
-                </tr>
-              </thead>
-              <tbody>
+            <>
+              <div className="resumo" style={{ justifyContent: "space-between", flexWrap: "wrap" }}>
+                <span className="resumo-texto">
+                  <small>Total do período</small>
+                  <span className="resumo-numero" style={{ fontSize: "2rem" }}>
+                    {REAL.format(totais.valor)}
+                  </span>
+                </span>
+                <span className="resumo-texto" style={{ textAlign: "right" }}>
+                  {relatorio.entregas.length} entrega(s)
+                  <small>{km(totais.km)} rodados</small>
+                </span>
+              </div>
+              {totais.semValor > 0 && (
+                <Alerta tipo="aviso">
+                  {totais.semValor} entrega(s) ainda sem tarifa calculada (“—”). Elas não entram no total até o valor ser definido.
+                </Alerta>
+              )}
+
+              <ul className="lista" style={{ marginTop: "1rem" }}>
                 {relatorio.entregas.map((item) => (
-                  <Fragment key={item.entregaId}>
-                    <tr style={{ borderBottom: "1px solid var(--borda)" }}>
-                      <td>
-                        {item.bdoNumero ?? "—"}
-                        {item.temAjuste && <span style={{ fontSize: "0.75rem", color: "var(--aviso)" }}> · corrigido</span>}
-                      </td>
-                      <td>{km(item.kmIda)}</td>
-                      <td>{km(item.kmVolta)}</td>
-                      <td>{dinheiro(item.tarifaAplicada)}</td>
-                      <td>{dinheiro(item.valorPedagio)}</td>
-                      <td className="nao-imprimir" style={{ whiteSpace: "nowrap" }}>
-                        <button className="secundario" onClick={() => setCorrigindo(corrigindo === item.viagemId ? null : item.viagemId)}>
-                          Corrigir
-                        </button>{" "}
-                        {item.temAjuste && (
-                          <button className="secundario" onClick={() => setVerHistorico(verHistorico === item.viagemId ? null : item.viagemId)}>
-                            Histórico
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                    {(corrigindo === item.viagemId || verHistorico === item.viagemId) && (
-                      <tr className="nao-imprimir">
-                        <td colSpan={6}>
-                          {corrigindo === item.viagemId && (
-                            <AjusteForm
-                              viagemId={item.viagemId}
-                              aoCancelar={() => setCorrigindo(null)}
-                              aoSalvar={() => {
-                                setCorrigindo(null);
-                                setVerHistorico(item.viagemId);
-                                setVersaoHistorico((v) => v + 1);
-                                carregar();
-                              }}
-                            />
-                          )}
-                          {verHistorico === item.viagemId && <HistoricoAjustes key={versaoHistorico} viagemId={item.viagemId} />}
-                        </td>
-                      </tr>
+                  <li key={item.entregaId} className="cartao">
+                    <div className="cartao-cabecalho">
+                      <span className="codigo">{item.bdoNumero ?? "—"}</span>
+                      {item.temAjuste && <span className="selo selo-aviso">Corrigido</span>}
+                    </div>
+                    <dl className="dados-grade">
+                      <div>
+                        <dt>Ida</dt>
+                        <dd>{km(item.kmIda)}</dd>
+                      </div>
+                      <div>
+                        <dt>Volta</dt>
+                        <dd>{km(item.kmVolta)}</dd>
+                      </div>
+                      <div>
+                        <dt>Tarifa</dt>
+                        <dd>{dinheiro(item.tarifaAplicada)}</dd>
+                      </div>
+                      <div>
+                        <dt>Pedágio</dt>
+                        <dd>{dinheiro(item.valorPedagio)}</dd>
+                      </div>
+                    </dl>
+                    <div className="linha-acoes nao-imprimir" style={{ marginTop: "0.75rem" }}>
+                      <button type="button" className="secundario" aria-expanded={corrigindo === item.viagemId} onClick={() => setCorrigindo(corrigindo === item.viagemId ? null : item.viagemId)}>
+                        Corrigir valor
+                      </button>
+                      {item.temAjuste && (
+                        <button type="button" className="fantasma" aria-expanded={verHistorico === item.viagemId} onClick={() => setVerHistorico(verHistorico === item.viagemId ? null : item.viagemId)}>
+                          Ver histórico
+                        </button>
+                      )}
+                    </div>
+                    {corrigindo === item.viagemId && (
+                      <AjusteForm
+                        viagemId={item.viagemId}
+                        aoCancelar={() => setCorrigindo(null)}
+                        aoSalvar={() => {
+                          setCorrigindo(null);
+                          setVerHistorico(item.viagemId);
+                          setVersaoHistorico((v) => v + 1);
+                          carregar();
+                        }}
+                      />
                     )}
-                  </Fragment>
+                    {verHistorico === item.viagemId && <HistoricoAjustes key={versaoHistorico} viagemId={item.viagemId} />}
+                  </li>
                 ))}
-              </tbody>
-            </table>
-</div>
+              </ul>
+
+              <button type="button" className="secundario bloco nao-imprimir" style={{ marginTop: "1rem" }} onClick={() => window.print()}>
+                <Icone nome="impressora" /> Imprimir ou salvar em PDF
+              </button>
+            </>
           )}
         </>
       )}
-    </main>
+
+      <Ajuda>
+        <p>Confira as quilometragens, tarifas e pedágios do período. Para corrigir um valor, use “Corrigir valor” e explique o motivo: o valor original continua visível no histórico. “Imprimir” gera uma versão limpa para papel ou PDF.</p>
+      </Ajuda>
+    </TelaMotorista>
   );
 }

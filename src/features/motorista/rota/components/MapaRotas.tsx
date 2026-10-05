@@ -1,4 +1,6 @@
 import { MapaBase } from "../../../../shared/mapa/MapaBase";
+import { Vazio } from "../../../../shared/ui/Alerta";
+import { Icone } from "../../../../shared/ui/Icone";
 import type { CalculoRotas, RotaAlternativa } from "../types";
 
 const REAL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
@@ -32,48 +34,60 @@ export function MapaRotas({
   alternativaSelecionada: string | null;
   aoSelecionar: (alternativa: RotaAlternativa) => void;
 }) {
+  const indiceMaisRapida = calculo.alternativas.reduce(
+    (melhor, alternativa, indice, todas) => (alternativa.duracaoSegundos < todas[melhor].duracaoSegundos ? indice : melhor),
+    0,
+  );
+
   return (
     <section>
       <MapaBase
         centro={calculo.destino}
+        descricao="Mapa com a sua posição e o endereço de entrega"
         marcadores={[
           { posicao: calculo.origem, rotulo: "Sua posição" },
           { posicao: calculo.destino, rotulo: "Endereço de entrega" },
         ]}
       />
 
-      <h2>Rotas sugeridas</h2>
+      <h2>Escolha a rota</h2>
       {calculo.alternativas.length === 0 ? (
-        <p>Nenhuma alternativa de rota foi encontrada para este trecho.</p>
+        <Vazio icone="rota" titulo="Nenhuma rota encontrada">
+          Tente recalcular ou trace uma rota própria.
+        </Vazio>
       ) : (
-        <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-          {calculo.alternativas.map((alternativa) => {
+        <ul className="lista" style={{ gap: "0.5rem" }}>
+          {calculo.alternativas.map((alternativa, indice) => {
             const selecionada = alternativa.id === alternativaSelecionada;
+            const maisRapida = indice === indiceMaisRapida;
             return (
-              <li key={alternativa.id} style={{ marginBottom: "0.5rem" }}>
-                <button
-                  onClick={() => aoSelecionar(alternativa)}
-                  aria-pressed={selecionada}
-                  style={{
-                    width: "100%",
-                    textAlign: "left",
-                    background: selecionada ? "var(--acao-fundo)" : "transparent",
-                    color: selecionada ? "#fff" : "var(--texto)",
-                    border: `1px solid ${selecionada ? "var(--acao-fundo)" : "var(--borda)"}`,
-                  }}
-                >
-                  <strong>{formatarDistancia(alternativa.distanciaMetros)}</strong> · {formatarDuracao(alternativa.duracaoSegundos)}
-                  {alternativa.possuiPedagio ? " · com pedágio" : " · sem pedágio"}
-                  {alternativa.pracasPedagio.length > 0 && (
-                    <div className="texto-apoio" style={{ marginTop: "0.25rem" }}>
-                      {alternativa.pracasPedagio
-                        .map((praca) => (praca.valor === null ? praca.nome : `${praca.nome} (${REAL.format(praca.valor)})`))
-                        .join(" · ")}
-                    </div>
-                  )}
-                  {alternativa.possuiPedagio && alternativa.pracasPedagio.length === 0 && (
-                    <div style={{ fontSize: "0.85rem", marginTop: "0.25rem" }}>Nenhuma praça cadastrada neste trecho: o reembolso ficará pendente.</div>
-                  )}
+              <li key={alternativa.id}>
+                <button type="button" className="opcao" onClick={() => aoSelecionar(alternativa)} aria-pressed={selecionada}>
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", gap: "0.25rem 0.75rem" }}>
+                      <strong style={{ fontSize: "1.25rem" }}>{formatarDuracao(alternativa.duracaoSegundos)}</strong>
+                      <span>{formatarDistancia(alternativa.distanciaMetros)}</span>
+                    </span>
+                    <span style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem", marginTop: "0.375rem" }}>
+                      {maisRapida && calculo.alternativas.length > 1 && <span className="selo selo-sucesso">Mais rápida</span>}
+                      <span className={`selo${alternativa.possuiPedagio ? " selo-aviso" : ""}`}>{alternativa.possuiPedagio ? "Com pedágio" : "Sem pedágio"}</span>
+                    </span>
+                    {alternativa.pracasPedagio.length > 0 && (
+                      <span className="texto-apoio" style={{ display: "block", marginTop: "0.375rem" }}>
+                        {alternativa.pracasPedagio
+                          .map((praca) => (praca.valor === null ? praca.nome : `${praca.nome} (${REAL.format(praca.valor)})`))
+                          .join(" · ")}
+                      </span>
+                    )}
+                    {alternativa.possuiPedagio && alternativa.pracasPedagio.length === 0 && (
+                      <span className="texto-apoio" style={{ display: "block", marginTop: "0.375rem" }}>
+                        Nenhuma praça cadastrada neste trecho: o reembolso ficará pendente.
+                      </span>
+                    )}
+                  </span>
+                  <span className="marcador" aria-hidden="true">
+                    {selecionada && <Icone nome="check" />}
+                  </span>
                 </button>
               </li>
             );

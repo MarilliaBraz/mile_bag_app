@@ -2,6 +2,7 @@ import { useState } from "react";
 import { formatarData, hojeIso, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { agendarPeriodicidade, consultarPeriodicidade } from "./configuracoesTenantApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 const ROTULO: Record<string, string> = { QUINZENAL: "Quinzenal" };
 
@@ -26,9 +27,9 @@ export function SecaoPeriodicidade() {
     <section aria-labelledby="titulo-periodicidade">
       <h2 id="titulo-periodicidade">Periodicidade do fechamento</h2>
       {(erro || erroAcao) && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erro ?? erroAcao}
-        </p>
+        </Alerta>
       )}
       {dados && (
         <p>

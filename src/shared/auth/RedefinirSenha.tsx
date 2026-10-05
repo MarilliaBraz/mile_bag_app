@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { requisitar } from "../api/httpClient";
 import { mensagemDeErro } from "../format/formatar";
+import { Alerta } from "../ui/Alerta";
 
 const TAMANHO_MINIMO_SENHA = 8;
 
@@ -31,18 +32,19 @@ export function RedefinirSenha() {
   }
 
   return (
-    <main style={{ maxWidth: 420, margin: "3rem auto", padding: "0 1rem" }}>
+    <div className="tela-entrada">
+      <main>
       <h1>Nova senha</h1>
       {concluido ? (
-        <p role="status" style={{ color: "var(--confirmacao)" }}>
+        <Alerta tipo="sucesso">
           Senha alterada. <Link to="/login">Entrar com a senha nova</Link>
-        </p>
+        </Alerta>
       ) : (
-        <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem" }}>
+        <form onSubmit={enviar} className="cartao formulario">
           {erro && (
-            <p role="alert" style={{ color: "var(--erro)", margin: 0 }}>
+            <Alerta tipo="erro">
               {erro} <Link to="/esqueci-senha">Pedir um novo link</Link>
-            </p>
+          </Alerta>
           )}
           <div>
             <label htmlFor="senha">Senha nova (mínimo {TAMANHO_MINIMO_SENHA} caracteres)</label>
@@ -54,12 +56,13 @@ export function RedefinirSenha() {
             {confirmacao && senha !== confirmacao && <span id="confirmacao-erro" role="alert" className="texto-erro">As senhas não conferem.</span>}
           </div>
           <div>
-            <button type="submit" disabled={invalido || enviando}>
+            <button type="submit" className="grande bloco" disabled={invalido || enviando}>
               {enviando ? "Salvando…" : "Salvar senha"}
             </button>
           </div>
         </form>
       )}
-    </main>
+      </main>
+    </div>
   );
 }

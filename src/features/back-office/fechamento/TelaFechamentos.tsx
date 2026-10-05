@@ -6,6 +6,7 @@ import { formatarData, formatarMoeda, hojeIso, mensagemDeErro } from "../../../s
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { gerarFechamento, listarFechamentos } from "./fechamentoApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 /**
  * Fechamentos do período (HU12). Gerar é idempotente: repetir o mesmo período
@@ -69,15 +70,15 @@ export function TelaFechamentos() {
       />
 
       {gerado && (
-        <p role="status" style={{ color: "var(--confirmacao)" }}>
+        <Alerta tipo="sucesso">
           <Icone nome="checkCirculo" /> {gerado}
-        </p>
+        </Alerta>
       )}
 
       {(erro || erroAcao) && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erro ?? erroAcao}
-        </p>
+        </Alerta>
       )}
       {carregando && <p role="status">Carregando…</p>}
       {dados && dados.length === 0 && <p>Nenhum fechamento gerado ainda.</p>}

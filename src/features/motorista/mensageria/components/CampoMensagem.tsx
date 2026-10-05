@@ -1,6 +1,7 @@
 import { Icone } from "../../../../shared/ui/Icone";
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { Alerta } from "../../../../shared/ui/Alerta";
 import { enviarMensagem } from "../services/mensagemService";
 
 /**
@@ -40,21 +41,19 @@ export function CampoMensagem({ entregaId, aoEnviar }: { entregaId: string; aoEn
   }
 
   return (
-    <form onSubmit={enviar} style={{ marginTop: "0.75rem" }}>
-      {erro && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
-          {erro}
-        </p>
-      )}
+    <form onSubmit={enviar} style={{ marginTop: "1rem" }}>
+      {erro && <Alerta tipo="erro">{erro}</Alerta>}
       <label htmlFor="mensagem">Mensagem ao passageiro</label>
-      <textarea id="mensagem" rows={2} value={texto} onChange={(e) => setTexto(e.target.value)} placeholder="Ex.: Estou chegando, pode me receber?" />
-      <button type="submit" disabled={!texto.trim() || enviando} style={{ marginTop: "0.5rem" }}>
-        {enviando ? "Enviando…" : "Enviar"}
-      </button>
+      <div style={{ display: "flex", gap: "0.5rem", alignItems: "flex-end" }}>
+        <textarea id="mensagem" rows={2} value={texto} onChange={(e) => setTexto(e.target.value)} placeholder="Ex.: Estou chegando, pode me receber?" />
+        <button type="submit" disabled={!texto.trim() || enviando} style={{ minHeight: "var(--alvo-g)", flex: "none" }}>
+          <Icone nome="enviar" /> {enviando ? "Enviando…" : "Enviar"}
+        </button>
+      </div>
       {enviada && (
-        <span role="status" style={{ marginLeft: "0.75rem", color: "var(--confirmacao)" }}>
+        <p role="status" className="texto-apoio" style={{ color: "var(--confirmacao)" }}>
           <Icone nome="checkCirculo" /> Mensagem enviada.
-        </span>
+        </p>
       )}
     </form>
   );

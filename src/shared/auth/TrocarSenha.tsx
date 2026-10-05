@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { requisitar } from "../api/httpClient";
 import { mensagemDeErro } from "../format/formatar";
+import { Alerta } from "../ui/Alerta";
 import { definirToken, obterPapel, rotaInicialDo } from "./authStorage";
 
 const TAMANHO_MINIMO_SENHA = 8;
@@ -39,19 +40,20 @@ export function TrocarSenha() {
   }
 
   return (
-    <main style={{ maxWidth: 420, margin: "2rem auto", padding: "0 1rem" }}>
+    <div className="tela-entrada">
+      <main>
       <Link to={rotaInicialDo(obterPapel())}>← Voltar</Link>
       <h1>Minha senha</h1>
       {trocada && (
-        <p role="status" style={{ color: "var(--confirmacao)" }}>
+        <Alerta tipo="sucesso">
           Senha alterada. As outras sessões desta conta foram encerradas.
-        </p>
+        </Alerta>
       )}
-      <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem" }}>
+      <form onSubmit={enviar} className="cartao formulario">
         {erro && (
-          <p role="alert" style={{ color: "var(--erro)", margin: 0 }}>
+          <Alerta tipo="erro">
             {erro}
-          </p>
+          </Alerta>
         )}
         <div>
           <label htmlFor="atual">Senha atual</label>
@@ -67,11 +69,12 @@ export function TrocarSenha() {
           {confirmacao && nova !== confirmacao && <span id="confirmacao-erro" role="alert" className="texto-erro">As senhas não conferem.</span>}
         </div>
         <div>
-          <button type="submit" disabled={invalido || enviando}>
+          <button type="submit" className="grande bloco" disabled={invalido || enviando}>
             {enviando ? "Salvando…" : "Trocar senha"}
           </button>
         </div>
       </form>
-    </main>
+      </main>
+    </div>
   );
 }

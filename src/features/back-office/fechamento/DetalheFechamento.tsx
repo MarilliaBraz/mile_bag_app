@@ -4,6 +4,7 @@ import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { listarMotoristas, nomeDoMotorista } from "../motoristas/motoristasApi";
 import { detalharFechamento } from "./fechamentoApi";
 import { FechamentoRelatorioCard } from "./FechamentoRelatorioCard";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 /** Itens de um fechamento (HU12): os PENDENTE aparecem em destaque com o motivo, sem entrar nos totais (FR-006). */
 export function DetalheFechamento() {
@@ -16,9 +17,9 @@ export function DetalheFechamento() {
     <main>
       <Link to="/admin/fechamentos">← Fechamentos</Link>
       {erro && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erro}
-        </p>
+        </Alerta>
       )}
       {carregando && <p role="status">Carregando…</p>}
 
@@ -28,9 +29,9 @@ export function DetalheFechamento() {
             Fechamento {formatarData(dados.periodoInicio)} a {formatarData(dados.periodoFim)}
           </h1>
           {dados.status === "COM_PENDENCIAS" && (
-            <p role="status" style={{ padding: "0.75rem", border: "1px solid var(--aviso)", borderRadius: 8, color: "var(--aviso)" }}>
+            <Alerta tipo="aviso">
               Há entregas pendentes neste fechamento. Corrija o que falta (ex.: cadastrar a tarifa) e gere de novo o período.
-            </p>
+            </Alerta>
           )}
 
           <FechamentoRelatorioCard fechamento={dados} />

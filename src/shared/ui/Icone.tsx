@@ -142,6 +142,58 @@ const FORMAS = {
       <rect x="6" y="14" width="12" height="8" />
     </>
   ),
+  voltar: (
+    <>
+      <line x1="19" y1="12" x2="5" y2="12" />
+      <polyline points="12 19 5 12 12 5" />
+    </>
+  ),
+  chevron: <polyline points="9 18 15 12 9 6" />,
+  rota: (
+    <>
+      <circle cx="6" cy="19" r="3" />
+      <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15" />
+      <circle cx="18" cy="5" r="3" />
+    </>
+  ),
+  usuario: (
+    <>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </>
+  ),
+  mala: (
+    <>
+      <rect x="6" y="7" width="12" height="13" rx="2" />
+      <path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3" />
+      <line x1="10" y1="11" x2="10" y2="16" />
+      <line x1="14" y1="11" x2="14" y2="16" />
+      <line x1="8" y1="22" x2="8" y2="20" />
+      <line x1="16" y1="22" x2="16" y2="20" />
+    </>
+  ),
+  casa: (
+    <>
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <polyline points="9 22 9 12 15 12 15 22" />
+    </>
+  ),
+  fechar: (
+    <>
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </>
+  ),
+  info: (
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="16" x2="12" y2="12" />
+      <line x1="12" y1="8" x2="12.01" y2="8" />
+    </>
+  ),
+  chave: (
+    <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+  ),
 } satisfies Record<string, ReactNode>;
 
 export type NomeIcone = keyof typeof FORMAS;

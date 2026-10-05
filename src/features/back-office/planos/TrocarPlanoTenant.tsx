@@ -3,6 +3,7 @@ import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { listarPlanos, trocarPlanoDoTenant, type ResultadoTrocaPlano } from "./planosApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 /**
  * Troca de plano de uma empresa (HU16, FR-006). A troca sempre acontece; se o
@@ -35,9 +36,9 @@ export function TrocarPlanoTenant({ tenantId, planoAtualId, aoTrocar }: { tenant
   return (
     <form onSubmit={(evento) => { evento.preventDefault(); setConfirmando(true); }} style={{ display: "grid", gap: "0.75rem", maxWidth: 420 }}>
       {(erro || erroAcao) && (
-        <p role="alert" style={{ color: "var(--erro)", margin: 0 }}>
+        <Alerta tipo="erro">
           {erro ?? erroAcao}
-        </p>
+        </Alerta>
       )}
       <div>
         <label htmlFor="novoPlano">Novo plano</label>

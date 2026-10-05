@@ -51,7 +51,7 @@ export function aplicarPreferenciasSalvas() {
  * lembradas neste aparelho. Complementam o zoom do navegador e o modo escuro/
  * alto contraste do sistema, que o CSS já respeita.
  */
-export function PreferenciasAcessibilidade() {
+export function PreferenciasAcessibilidade({ aberto = false }: { aberto?: boolean }) {
   const [fonte, setFonte] = useState(fonteSalva);
   const [contraste, setContraste] = useState(() => ler(CHAVE_CONTRASTE) === "true");
 
@@ -70,19 +70,21 @@ export function PreferenciasAcessibilidade() {
   }
 
   return (
-    <details className="ajuda nao-imprimir">
-      <summary>Acessibilidade: tamanho do texto e contraste</summary>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", padding: "0.25rem 0 0.5rem" }}>
-        <button type="button" className="secundario" onClick={() => mudarFonte(fonte - PASSO)} disabled={fonte <= FONTE_MIN} aria-label="Diminuir o tamanho do texto">
+    <details className="ajuda sem-icone nao-imprimir" open={aberto}>
+      <summary>
+        <Icone nome="contraste" /> Tamanho do texto e contraste
+      </summary>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
+        <button type="button" className="secundario" onClick={() => mudarFonte(fonte - PASSO)} disabled={fonte <= FONTE_MIN} aria-label="Diminuir o tamanho do texto" style={{ minWidth: "var(--alvo-g)", fontSize: "0.9rem" }}>
           A−
         </button>
-        <button type="button" className="secundario" onClick={() => mudarFonte(fonte + PASSO)} disabled={fonte >= FONTE_MAX} aria-label="Aumentar o tamanho do texto">
+        <button type="button" className="secundario" onClick={() => mudarFonte(fonte + PASSO)} disabled={fonte >= FONTE_MAX} aria-label="Aumentar o tamanho do texto" style={{ minWidth: "var(--alvo-g)", fontSize: "1.2rem" }}>
           A+
         </button>
         <button type="button" className="secundario" onClick={alternarContraste} aria-pressed={contraste}>
           <Icone nome="contraste" /> Alto contraste
         </button>
-        <span role="status" className="texto-apoio" style={{ alignSelf: "center" }}>
+        <span role="status" className="texto-apoio" style={{ flexBasis: "100%" }}>
           Texto em {fonte}%{contraste ? " · alto contraste ligado" : ""}
         </span>
       </div>

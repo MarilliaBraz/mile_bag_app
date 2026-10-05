@@ -4,6 +4,7 @@ import { hojeIso, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { listarMotoristas } from "../motoristas/motoristasApi";
 import type { EscopoTarifa, NovaTarifa, Tarifa } from "./tarifasApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 const ROTULO_ESCOPO: Record<EscopoTarifa, string> = {
   PADRAO: "Padrão da empresa",
@@ -68,9 +69,9 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
   return (
     <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", maxWidth: 480 }}>
       {erro && (
-        <p role="alert" style={{ color: "var(--erro)", margin: 0 }}>
+        <Alerta tipo="erro">
           {erro}
-        </p>
+        </Alerta>
       )}
 
       {!tarifa && (

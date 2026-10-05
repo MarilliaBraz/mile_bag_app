@@ -11,6 +11,7 @@ import { TelaTarifas } from "./features/back-office/tarifas/TelaTarifas";
 import { AtivarConviteForm } from "./features/back-office/tenant-onboarding/AtivarConviteForm";
 import { TelaEmpresas } from "./features/back-office/tenant-onboarding/TelaEmpresas";
 import { TenantCadastradoConfirmacao } from "./features/back-office/tenant-onboarding/TenantCadastradoConfirmacao";
+import { TelaConta } from "./features/motorista/conta/TelaConta";
 import { CapturaBdo } from "./features/motorista/captura-bdo/components/CapturaBdo";
 import { DetalheEntrega } from "./features/motorista/painel-entregas/components/DetalheEntrega";
 import { PainelEntregas } from "./features/motorista/painel-entregas/components/PainelEntregas";
@@ -85,6 +86,14 @@ export function App() {
         element={
           <RequireAuth>
             <RegistrosLocais />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/motorista/conta"
+        element={
+          <RequireAuth>
+            <TelaConta />
           </RequireAuth>
         }
       />

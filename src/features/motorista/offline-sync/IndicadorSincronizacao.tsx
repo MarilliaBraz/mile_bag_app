@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Icone } from "../../../shared/ui/Icone";
+import { Alerta } from "../../../shared/ui/Alerta";
 import { useSincronizacaoAutomatica } from "./useSincronizacaoAutomatica";
 
 /**
@@ -15,23 +15,17 @@ export function IndicadorSincronizacao({ aoSincronizar }: { aoSincronizar?: () =
     return null;
   }
 
-  const cor = online ? "var(--aviso)" : "var(--erro)";
-
   return (
-    <p
-      role="status"
-      className="texto-apoio"
-      style={{
-        margin: "0 0 1rem",
-        padding: "0.5rem 0.75rem",
-        borderRadius: 6,
-        border: `1px solid ${cor}`,
-        color: cor,
-      }}
-    >
-      <Icone nome={online ? "conexao" : "semConexao"} /> {online ? "Conectado" : "Sem conexão — os registros ficam salvos no aparelho"}
-      {pendentes > 0 && ` · ${pendentes} registro(s) aguardando sincronização`}{" "}
-      <Link to="/motorista/registros">Ver cada registro</Link>
-    </p>
+    <Alerta tipo={online ? "info" : "aviso"} className="nao-imprimir">
+      <strong>{online ? "Conectado" : "Sem conexão"}</strong>
+      {!online && " — o que você registrar fica salvo no aparelho."}
+      {pendentes > 0 && (
+        <>
+          {" "}
+          {pendentes} registro(s) aguardando envio.
+        </>
+      )}{" "}
+      <Link to="/motorista/registros">Ver registros</Link>
+    </Alerta>
   );
 }

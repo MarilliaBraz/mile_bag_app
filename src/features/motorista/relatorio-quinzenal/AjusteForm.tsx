@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ApiError } from "../../../shared/api/ApiError";
+import { Alerta } from "../../../shared/ui/Alerta";
 import { registrarAjuste, type CampoAjuste } from "./relatorioService";
 
 export const ROTULO_CAMPO: Record<CampoAjuste, string> = {
@@ -40,12 +41,8 @@ export function AjusteForm({ viagemId, aoSalvar, aoCancelar }: { viagemId: strin
   }
 
   return (
-    <form onSubmit={salvar} className="nao-imprimir" style={{ margin: "0.5rem 0 1rem", padding: "0.75rem", border: "1px solid var(--borda)", borderRadius: 8 }}>
-      {erro && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
-          {erro}
-        </p>
-      )}
+    <form onSubmit={salvar} className="nao-imprimir" style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--borda-suave)" }}>
+      {erro && <Alerta tipo="erro">{erro}</Alerta>}
       <label htmlFor={`campo-${viagemId}`}>O que corrigir</label>
       <select id={`campo-${viagemId}`} value={campo} onChange={(e) => setCampo(e.target.value as CampoAjuste)}>
         {Object.entries(ROTULO_CAMPO).map(([valor, rotulo]) => (
@@ -69,7 +66,7 @@ export function AjusteForm({ viagemId, aoSalvar, aoCancelar }: { viagemId: strin
         <textarea id={`just-${viagemId}`} aria-required="true" rows={2} value={justificativa} onChange={(e) => setJustificativa(e.target.value)} placeholder="Por que este valor está errado?" />
       </div>
 
-      <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.75rem" }}>
+      <div className="linha-acoes" style={{ marginTop: "0.75rem" }}>
         <button type="submit" disabled={!valido || salvando}>
           {salvando ? "Salvando…" : "Salvar correção"}
         </button>

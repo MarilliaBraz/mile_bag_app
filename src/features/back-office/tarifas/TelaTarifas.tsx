@@ -5,6 +5,7 @@ import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { listarMotoristas, nomeDoMotorista, type Motorista } from "../motoristas/motoristasApi";
 import { TarifaForm } from "./TarifaForm";
 import { atualizarTarifa, criarTarifa, listarTarifas, removerTarifa, type EscopoTarifa, type Tarifa } from "./tarifasApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 const ROTULO_ESCOPO: Record<EscopoTarifa, string> = { PADRAO: "Padrão", MOTORISTA: "Motorista", REGIAO: "Região" };
 
@@ -42,14 +43,14 @@ export function TelaTarifas() {
       </Ajuda>
 
       {erro && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erro}
-        </p>
+        </Alerta>
       )}
       {erroAcao && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erroAcao}
-        </p>
+        </Alerta>
       )}
       {carregando && <p role="status">Carregando…</p>}
 

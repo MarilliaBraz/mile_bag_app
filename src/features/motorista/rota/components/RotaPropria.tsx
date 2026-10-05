@@ -31,36 +31,41 @@ export function RotaPropria({
   const podeConfirmar = justificativa.trim().length > 0 && tracado.length > 0 && !desabilitado;
 
   return (
-    <section style={{ marginTop: "1.5rem" }}>
-      <h2>Usar uma rota própria</h2>
-      <p style={{ fontSize: "0.9rem" }}>Toque no mapa para marcar os pontos do caminho que você vai fazer.</p>
+    <section>
+      <p className="texto-apoio">Toque no mapa para marcar os pontos do caminho que você vai fazer.</p>
 
       <MapaBase
         centro={centro}
+        descricao="Mapa para marcar os pontos da rota própria"
         marcadores={tracado.map((ponto, indice) => ({ posicao: ponto, rotulo: `Ponto ${indice + 1}` }))}
       >
         <CapturarCliques aoClicar={(ponto) => setTracado((atual) => [...atual, ponto])} />
       </MapaBase>
 
-      <p style={{ fontSize: "0.9rem" }}>
-        {tracado.length} ponto(s) marcado(s){" "}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", margin: "0.5rem 0 1rem" }}>
+        <span role="status" className="texto-apoio">
+          {tracado.length} ponto(s) marcado(s)
+        </span>
         {tracado.length > 0 && (
-          <button className="secundario" onClick={() => setTracado((atual) => atual.slice(0, -1))} style={{ marginLeft: "0.5rem" }}>
+          <button type="button" className="fantasma" onClick={() => setTracado((atual) => atual.slice(0, -1))}>
             Desfazer último
           </button>
         )}
-      </p>
+      </div>
 
-      <label htmlFor="justificativa-rota">Justificativa *</label>
+      <label htmlFor="justificativa-rota">
+        Justificativa <span className="campo-obrigatorio" aria-hidden="true">*</span>
+      </label>
       <textarea
         id="justificativa-rota"
+        aria-required="true"
         rows={3}
         value={justificativa}
         onChange={(evento) => setJustificativa(evento.target.value)}
         placeholder="Por que esta rota é melhor que as sugeridas?"
       />
 
-      <button onClick={() => aoConfirmar(tracado, justificativa.trim())} disabled={!podeConfirmar} style={{ marginTop: "0.75rem" }}>
+      <button type="button" className="bloco" onClick={() => aoConfirmar(tracado, justificativa.trim())} disabled={!podeConfirmar} style={{ marginTop: "0.75rem" }}>
         Usar esta rota
       </button>
     </section>

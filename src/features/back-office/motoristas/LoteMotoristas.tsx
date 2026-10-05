@@ -1,6 +1,7 @@
 import { useId, useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { criarMotoristasEmLote, type LinhaLote, type ResultadoLote } from "./motoristasApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 const MAXIMO_POR_LOTE = 100;
 
@@ -78,9 +79,9 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
     <div>
       <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", maxWidth: 640 }}>
         {erro && (
-          <p role="alert" style={{ color: "var(--erro)", margin: 0 }}>
+          <Alerta tipo="erro">
             {erro}
-          </p>
+          </Alerta>
         )}
         <div>
           <label htmlFor={`${uid}-lote`}>Um motorista por linha: nome;login;senha</label>
@@ -110,12 +111,12 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
             Resultado: {resultados.filter((r) => r.criado).length} criado(s), {resultados.filter((r) => !r.criado).length} com erro
           </h3>
           {comSenhaGerada && (
-            <p role="status" style={{ padding: "0.5rem 0.75rem", border: "1px solid var(--aviso)", borderRadius: 8, color: "var(--aviso)" }}>
+            <Alerta tipo="aviso">
               As senhas geradas aparecem só agora e não ficam guardadas em claro: entregue-as aos motoristas ou baixe o CSV.{" "}
               <button type="button" className="secundario" onClick={() => baixarSenhas(resultados)}>
                 Baixar CSV com as senhas
               </button>
-            </p>
+            </Alerta>
           )}
           <div className="tabela-rolavel">
 <table style={{ width: "100%", borderCollapse: "collapse" }}>

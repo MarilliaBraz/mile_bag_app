@@ -1,6 +1,7 @@
 import { Icone } from "../../../shared/ui/Icone";
 import { useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 /** Novo plano de assinatura (HU16): nome e os dois limites, ambos inteiros positivos. */
 export function PlanoForm({ aoSalvar }: { aoSalvar: (dados: { nome: string; limiteMotoristasAtivos: number; limiteVolumeMensalBdos: number }) => Promise<void> }) {
@@ -36,9 +37,9 @@ export function PlanoForm({ aoSalvar }: { aoSalvar: (dados: { nome: string; limi
   return (
     <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", maxWidth: 420 }}>
       {erro && (
-        <p role="alert" style={{ color: "var(--erro)", margin: 0 }}>
+        <Alerta tipo="erro">
           {erro}
-        </p>
+        </Alerta>
       )}
       <div>
         <label htmlFor="nomePlano">Nome do plano</label>

@@ -1,3 +1,5 @@
+import { Icone } from "../../../../shared/ui/Icone";
+
 /**
  * Ligação direta ao passageiro (HU21) - link `tel:` padrão, tratado pelo
  * próprio sistema operacional do dispositivo: não há API de telefonia nem
@@ -14,21 +16,8 @@ export function BotaoLigar({ telefone }: { telefone: string | null }) {
   }
 
   return (
-    <a
-      href={`tel:${telefone.replace(/\D/g, "")}`}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        minHeight: 44,
-        padding: "0.5rem 1.25rem",
-        borderRadius: 6,
-        background: "var(--confirmacao-fundo)",
-        color: "#fff",
-        textDecoration: "none",
-      }}
-    >
-      <Icone nome="telefone" />&nbsp;Ligar para o passageiro
+    <a href={`tel:${telefone.replace(/\D/g, "")}`} className="botao grande secundario" aria-label="Ligar para o passageiro">
+      <Icone nome="telefone" /> Ligar
     </a>
   );
-}import { Icone } from "../../../../shared/ui/Icone";
-
+}

@@ -1,5 +1,6 @@
 import { Icone, type NomeIcone } from "../../../../shared/ui/Icone";
 import { useState } from "react";
+import { Alerta } from "../../../../shared/ui/Alerta";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { obterPosicaoAtual } from "../../../../shared/geo/posicaoAtual";
 import { registrarCheckpoint } from "../services/viagemService";
@@ -49,20 +50,16 @@ export function MarcosProgresso({ entregaId, aoRegistrar }: { entregaId: string;
   }
 
   return (
-    <section style={{ marginTop: "1.5rem" }}>
-      <h2>Avisar o passageiro</h2>
-      <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+    <section>
+      <h2 style={{ marginTop: "0.5rem" }}>Avisar o passageiro</h2>
+      <div className="grade-acoes">
         {MARCOS.map((marco) => (
-          <button key={marco.tipo} onClick={() => registrar(marco.tipo, marco.confirmacao)} disabled={ocupado !== null} style={{ flex: 1, minWidth: 160 }}>
+          <button key={marco.tipo} type="button" className="grande" onClick={() => registrar(marco.tipo, marco.confirmacao)} disabled={ocupado !== null}>
             <Icone nome={marco.icone} /> {ocupado === marco.tipo ? "Registrando…" : marco.rotulo}
           </button>
         ))}
       </div>
-      {aviso && (
-        <p role={aviso.tipo === "erro" ? "alert" : "status"} style={{ color: aviso.tipo === "erro" ? "var(--erro)" : "var(--confirmacao)" }}>
-          {aviso.texto}
-        </p>
-      )}
+      {aviso && <Alerta tipo={aviso.tipo === "erro" ? "erro" : "sucesso"}>{aviso.texto}</Alerta>}
     </section>
   );
 }

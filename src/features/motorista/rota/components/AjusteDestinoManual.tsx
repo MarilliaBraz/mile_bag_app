@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMapEvents } from "react-leaflet";
+import { Alerta } from "../../../../shared/ui/Alerta";
 import { MapaBase } from "../../../../shared/mapa/MapaBase";
 import type { Coordenada } from "../types";
 
@@ -29,20 +30,18 @@ export function AjusteDestinoManual({
 
   return (
     <section>
-      <h2>Indique o endereço no mapa</h2>
-      <p role="alert" style={{ color: "var(--aviso)" }}>
-        Não foi possível localizar automaticamente o endereço deste BDO. Toque no mapa para marcar onde é a entrega.
-      </p>
+      <Alerta tipo="aviso">Não foi possível localizar automaticamente o endereço deste BDO. Toque no mapa para marcar onde é a entrega.</Alerta>
 
       <MapaBase
         centro={destino ?? centroInicial}
+        descricao="Mapa para marcar o endereço de entrega"
         marcadores={destino ? [{ posicao: destino, rotulo: "Endereço de entrega" }] : []}
       >
         <CapturarClique aoClicar={setDestino} />
       </MapaBase>
 
-      <button onClick={() => destino && aoConfirmar(destino)} disabled={!destino || ocupado} style={{ marginTop: "0.75rem" }}>
-        {ocupado ? "Calculando…" : "Calcular rota até aqui"}
+      <button type="button" className="grande bloco" onClick={() => destino && aoConfirmar(destino)} disabled={!destino || ocupado} style={{ marginTop: "0.75rem" }}>
+        {ocupado ? "Calculando…" : destino ? "Calcular rota até aqui" : "Toque no mapa para marcar o endereço"}
       </button>
     </section>
   );

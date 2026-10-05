@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Alerta, Carregando } from "../../../shared/ui/Alerta";
 import { ROTULO_CAMPO } from "./AjusteForm";
 import { listarAjustes, type Ajuste } from "./relatorioService";
 
@@ -18,14 +19,10 @@ export function HistoricoAjustes({ viagemId }: { viagemId: string }) {
   }, [viagemId]);
 
   if (erro) {
-    return (
-      <p role="alert" style={{ color: "var(--erro)" }}>
-        Não foi possível carregar o histórico.
-      </p>
-    );
+    return <Alerta tipo="erro">Não foi possível carregar o histórico.</Alerta>;
   }
   if (!ajustes) {
-    return <p role="status">Carregando histórico…</p>;
+    return <Carregando texto="Carregando histórico…" />;
   }
 
   // A lista vem da mais recente para a mais antiga: o último de cada campo
@@ -36,7 +33,7 @@ export function HistoricoAjustes({ viagemId }: { viagemId: string }) {
   }
 
   return (
-    <div className="nao-imprimir" style={{ margin: "0.5rem 0 1rem", fontSize: "0.9rem" }}>
+    <div className="nao-imprimir texto-apoio" style={{ marginTop: "1rem", paddingTop: "0.75rem", borderTop: "1px solid var(--borda-suave)" }}>
       <strong>Valor original preservado</strong>
       <ul>
         {[...originalPorCampo].map(([campo, original]) => (

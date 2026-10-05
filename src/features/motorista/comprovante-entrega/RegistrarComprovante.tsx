@@ -1,13 +1,14 @@
 import { Icone } from "../../../shared/ui/Icone";
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "../../../shared/api/ApiError";
 import { obterPosicaoDetalhada, ORIENTACAO_FALHA_POSICAO, type MotivoFalhaPosicao } from "../../../shared/geo/posicaoAtual";
 import type { Coordenada } from "../../../shared/mapa/MapaBase";
 import { arquivoParaBase64, executarOuEnfileirar } from "../offline-sync/fila";
-import { IndicadorSincronizacao } from "../offline-sync/IndicadorSincronizacao";
+import { TelaMotorista } from "../layout/TelaMotorista";
 import { JustificativaDivergencia } from "../rota/components/JustificativaDivergencia";
 import { Ajuda } from "../../../shared/ui/Ajuda";
+import { Alerta, Carregando } from "../../../shared/ui/Alerta";
 import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { registrarComprovante } from "./comprovanteService";
 
@@ -42,6 +43,19 @@ export function RegistrarComprovante() {
   useEffect(() => {
     capturarPosicao();
   }, []);
+
+  // Prévia da foto escolhida: o motorista confere se o documento saiu legível antes de encerrar.
+  const [urlPrevia, setUrlPrevia] = useState<string | null>(null);
+  useEffect(() => () => {
+    if (urlPrevia) {
+      URL.revokeObjectURL(urlPrevia);
+    }
+  }, [urlPrevia]);
+
+  function escolherFoto(arquivo: File | null) {
+    setFoto(arquivo);
+    setUrlPrevia(arquivo ? URL.createObjectURL(arquivo) : null);
+  }
 
   async function capturarPosicao() {
     setCapturandoPosicao(true);
@@ -106,85 +120,89 @@ export function RegistrarComprovante() {
   }
 
   const podeEnviar = !!foto && identificacaoRecebedor.trim().length > 0 && !!posicao && !enviando;
+  const pendencias = [!foto && "tire a foto", !identificacaoRecebedor.trim() && "informe quem recebeu", !posicao && (capturandoPosicao ? "aguarde a localização" : "libere a localização")].filter(Boolean);
 
   return (
-    <main style={{ maxWidth: 560, margin: "2rem auto", padding: "0 1rem" }}>
-      <IndicadorSincronizacao />
-      <Link to={`/motorista/entregas/${entregaId}`}>← Voltar para a entrega</Link>
-      <h1>Comprovante de entrega</h1>
-      <Ajuda>
-        <p>Tire uma foto do documento assinado e informe quem recebeu a bagagem. A data, a hora e a localização são registradas automaticamente. Sem internet, o comprovante fica salvo no aparelho e é enviado depois.</p>
-      </Ajuda>
+    <TelaMotorista titulo="Comprovante de entrega" voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar="Voltar para a entrega">
+      {erro && <Alerta tipo="erro">{erro}</Alerta>}
 
-      {erro && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
-          {erro}
-        </p>
-      )}
+      <div className="formulario">
+        <div>
+          <span id="rotulo-foto" className="destaque" style={{ display: "block", marginBottom: "0.375rem", fontSize: "1rem" }}>
+            1. Foto do documento assinado <span className="campo-obrigatorio" aria-hidden="true">*</span>
+          </span>
+          {urlPrevia && <img src={urlPrevia} alt="Foto do comprovante escolhida" className="previa-foto" style={{ marginBottom: "0.5rem" }} />}
+          <label className={`seletor-foto${foto ? " preenchido" : ""}`}>
+            <Icone nome={foto ? "checkCirculo" : "camera"} />
+            <strong>{foto ? "Foto pronta — tocar para trocar" : "Tirar foto do documento"}</strong>
+            {!foto && <span>Use a câmera traseira, com o documento inteiro na imagem.</span>}
+            <input
+              id="foto-comprovante"
+              className="visualmente-oculto"
+              required
+              aria-required="true"
+              aria-labelledby="rotulo-foto"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={(evento) => escolherFoto(evento.target.files?.[0] ?? null)}
+            />
+          </label>
+        </div>
 
-      <label htmlFor="foto-comprovante">
-        Foto do documento assinado <span className="campo-obrigatorio" aria-hidden="true">*</span>
-      </label>
-      <input
-        id="foto-comprovante"
-        required
-        aria-required="true"
-        type="file"
-        accept="image/*"
-        capture="environment"
-        onChange={(evento) => setFoto(evento.target.files?.[0] ?? null)}
-      />
+        <div>
+          <label htmlFor="recebedor">
+            2. Quem recebeu <span className="campo-obrigatorio" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="recebedor"
+            required
+            aria-required="true"
+            type="text"
+            autoComplete="off"
+            autoCapitalize="words"
+            value={identificacaoRecebedor}
+            onChange={(evento) => setIdentificacaoRecebedor(evento.target.value)}
+            placeholder="Nome e/ou documento de quem recebeu"
+          />
+        </div>
 
-      <div style={{ marginTop: "1rem" }}>
-        <label htmlFor="recebedor">
-          Quem recebeu <span className="campo-obrigatorio" aria-hidden="true">*</span>
-        </label>
-        <input
-          id="recebedor"
-          required
-          aria-required="true"
-          type="text"
-          value={identificacaoRecebedor}
-          onChange={(evento) => setIdentificacaoRecebedor(evento.target.value)}
-          placeholder="Nome e/ou documento de quem recebeu"
-        />
+        {/* Edge case do spec: falha de GPS não pode custar os campos já
+            preenchidos - o formulário continua montado e só a captura é
+            refeita. */}
+        {capturandoPosicao ? (
+          <Carregando texto="Capturando a localização…" />
+        ) : posicao ? (
+          <Alerta tipo="sucesso">
+            <strong>Localização capturada.</strong> Data, hora e local entram no comprovante automaticamente.
+          </Alerta>
+        ) : (
+          <Alerta tipo="aviso">
+            <p>
+              <strong>Não foi possível capturar a localização</strong>, e ela é obrigatória no comprovante.
+            </p>
+            {motivoFalhaPosicao && <p>{ORIENTACAO_FALHA_POSICAO[motivoFalhaPosicao]}</p>}
+            <button type="button" className="secundario" onClick={capturarPosicao}>
+              <Icone nome="pino" /> Tentar novamente
+            </button>
+          </Alerta>
+        )}
       </div>
-
-      {/* Edge case do spec: falha de GPS não pode custar os campos já
-          preenchidos - o formulário continua montado e só a captura é
-          refeita. */}
-      <p className="texto-apoio" style={{ marginTop: "1rem" }} role="status">
-        {capturandoPosicao
-          ? "Capturando a localização…"
-          : posicao
-            ? (
-              <>
-                <Icone nome="pino" /> Localização capturada ({posicao.latitude.toFixed(5)}, {posicao.longitude.toFixed(5)})
-              </>
-            )
-            : "Não foi possível capturar a localização, e ela é obrigatória no comprovante."}
-        {!capturandoPosicao && motivoFalhaPosicao && (
-          <span style={{ display: "block", marginTop: "0.25rem" }}>{ORIENTACAO_FALHA_POSICAO[motivoFalhaPosicao]}</span>
-        )}
-        {!capturandoPosicao && !posicao && (
-          <button type="button" className="secundario" onClick={capturarPosicao} style={{ marginLeft: "0.5rem" }}>
-            Tentar novamente
-          </button>
-        )}
-      </p>
 
       {divergencia ? (
         <JustificativaDivergencia mensagem={divergencia} aoReenviar={(justificativa) => enviar(justificativa)} ocupado={enviando} />
       ) : (
         <>
-          <button type="button" onClick={() => setConfirmando(true)} disabled={!podeEnviar} style={{ marginTop: "1rem" }}>
-            {enviando ? "Registrando…" : "Registrar comprovante e encerrar entrega"}
-          </button>
-          {!podeEnviar && !enviando && (
-            <p className="texto-apoio">
-              Para continuar: {[!foto && "tire a foto", !identificacaoRecebedor.trim() && "informe quem recebeu", !posicao && (capturandoPosicao ? "aguarde a localização" : "libere a localização")].filter(Boolean).join(", ")}.
-            </p>
-          )}
+          <div className="acao-fixa">
+            <button type="button" className="sucesso grande bloco" onClick={() => setConfirmando(true)} disabled={!podeEnviar}>
+              <Icone nome="checkCirculo" /> {enviando ? "Registrando…" : "Registrar e encerrar entrega"}
+            </button>
+            {!podeEnviar && !enviando && (
+              <p className="texto-apoio" style={{ textAlign: "center", marginBottom: 0 }}>
+                Para continuar: {pendencias.join(", ")}.
+              </p>
+            )}
+          </div>
           <ConfirmarAcao
             aberto={confirmando}
             titulo="Encerrar a entrega?"
@@ -196,6 +214,10 @@ export function RegistrarComprovante() {
           />
         </>
       )}
-    </main>
+
+      <Ajuda>
+        <p>Tire uma foto do documento assinado e informe quem recebeu a bagagem. A data, a hora e a localização são registradas automaticamente. Sem internet, o comprovante fica salvo no aparelho e é enviado depois.</p>
+      </Ajuda>
+    </TelaMotorista>
   );
 }

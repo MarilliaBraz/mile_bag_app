@@ -2,8 +2,8 @@ import "leaflet/dist/leaflet.css";
 import iconeSombra from "leaflet/dist/images/marker-shadow.png";
 import icone2x from "leaflet/dist/images/marker-icon-2x.png";
 import icone from "leaflet/dist/images/marker-icon.png";
-import { Icon } from "leaflet";
-import type { ReactNode } from "react";
+import { Icon, latLngBounds } from "leaflet";
+import { useState, type ReactNode } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
 /** Coordenada geográfica (WGS84) — espelha com.marillia.milebag.core.geo.Coordenada. */
@@ -53,12 +53,19 @@ export function MapaBase({
   descricao?: string;
   children?: ReactNode;
 }) {
+  const [enquadramento] = useState(() =>
+    marcadores.length >= 2 ? latLngBounds(marcadores.map((m) => [m.posicao.latitude, m.posicao.longitude])) : undefined,
+  );
+
   return (
-    <div role="region" aria-label={descricao}>
+    <div role="region" aria-label={descricao} className="mapa">
     <MapContainer
-      center={[centro.latitude, centro.longitude]}
-      zoom={zoom}
-      style={{ height: altura, width: "100%", borderRadius: 8 }}
+      center={enquadramento ? undefined : [centro.latitude, centro.longitude]}
+      zoom={enquadramento ? undefined : zoom}
+      // Com dois ou mais pontos (ex.: sua posição e o destino), o mapa abre enquadrando todos eles.
+      bounds={enquadramento}
+      boundsOptions={{ padding: [32, 32] }}
+      style={{ height: altura, width: "100%" }}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

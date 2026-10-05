@@ -2,6 +2,7 @@ import { useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { criarMotivo, desativarMotivo, listarMotivos } from "./configuracoesTenantApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 /**
  * Motivos de não entrega (HU11, FR-009): nunca se apaga, só se desativa - as
@@ -27,9 +28,9 @@ export function SecaoMotivos() {
     <section aria-labelledby="titulo-motivos">
       <h2 id="titulo-motivos">Motivos de não entrega</h2>
       {(erro || erroAcao) && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erro ?? erroAcao}
-        </p>
+        </Alerta>
       )}
       {dados && dados.length === 0 && <p>Nenhum motivo ativo.</p>}
       <ul style={{ paddingLeft: "1.25rem" }}>

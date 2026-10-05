@@ -4,6 +4,7 @@ import { ApiError } from "../../../shared/api/ApiError";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { ativarConvite, consultarConvite } from "./tenantsApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 const TAMANHO_MINIMO_SENHA = 8;
 
@@ -39,28 +40,29 @@ export function AtivarConviteForm() {
   }
 
   return (
-    <main style={{ maxWidth: 480, margin: "3rem auto", padding: "0 1rem" }}>
+    <div className="tela-entrada">
+      <main className="cartao">
       <h1>Ativar acesso</h1>
 
       {carregando && <p role="status">Verificando o convite…</p>}
       {erro && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erro} Peça um novo convite a quem cadastrou a empresa.
-        </p>
+        </Alerta>
       )}
 
       {convite && convite.status !== "PENDENTE" && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {convite.status === "EXPIRADO" ? "Este convite expirou." : "Este convite já foi usado ou substituído por outro."} Peça um novo convite a quem
           cadastrou a empresa.
-        </p>
+        </Alerta>
       )}
 
       {ativado && (
-        <p role="status" style={{ color: "var(--confirmacao)" }}>
+        <Alerta tipo="sucesso">
           Senha definida para {convite?.emailDestinatario}. O acesso por login ainda está em construção: a conta já existe, mas não há tela de entrada com
           e-mail e senha nesta versão.
-        </p>
+        </Alerta>
       )}
 
       {convite && convite.status === "PENDENTE" && !ativado && (
@@ -69,9 +71,9 @@ export function AtivarConviteForm() {
             Você foi convidado a administrar <strong>{convite.tenantNome}</strong> com o e-mail <strong>{convite.emailDestinatario}</strong>.
           </p>
           {erroAcao && (
-            <p role="alert" style={{ color: "var(--erro)", margin: 0 }}>
+            <Alerta tipo="erro">
               {erroAcao}
-            </p>
+            </Alerta>
           )}
           <div>
             <label htmlFor="senha">Senha (mínimo {TAMANHO_MINIMO_SENHA} caracteres)</label>
@@ -89,6 +91,7 @@ export function AtivarConviteForm() {
           </div>
         </form>
       )}
-    </main>
+      </main>
+    </div>
   );
 }

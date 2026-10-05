@@ -1,6 +1,7 @@
 import { Icone } from "../../../../shared/ui/Icone";
 import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { Alerta, Carregando } from "../../../../shared/ui/Alerta";
 import { consultarConversa, type CanalMensagem, type Conversa as ConversaDados, type Mensagem } from "../services/mensagemService";
 import { AvisoSemContato } from "./AvisoSemContato";
 import { CampoMensagem } from "./CampoMensagem";
@@ -67,14 +68,10 @@ export function Conversa({ entregaId }: { entregaId: string }) {
   }, [carregar]);
 
   if (erro && !conversa) {
-    return (
-      <p role="alert" style={{ color: "var(--erro)" }}>
-        {erro}
-      </p>
-    );
+    return <Alerta tipo="erro">{erro}</Alerta>;
   }
   if (!conversa) {
-    return <p role="status">Carregando conversa…</p>;
+    return <Carregando texto="Carregando conversa…" />;
   }
   if (!conversa.contatoDisponivel.email) {
     return <AvisoSemContato />;
@@ -83,47 +80,32 @@ export function Conversa({ entregaId }: { entregaId: string }) {
   const baloes = agrupar(conversa.mensagens);
 
   return (
-    <div>
+    <div className="cartao">
       {!conversa.contatoDisponivel.telegram && (
-        <p style={{ fontSize: "0.85rem" }}>
-          As mensagens vão por e-mail, com um link para o passageiro continuar a conversa pelo Telegram.
-        </p>
+        <p className="texto-apoio">As mensagens vão por e-mail, com um link para o passageiro continuar a conversa pelo Telegram.</p>
       )}
 
       {baloes.length === 0 ? (
-        <p style={{ fontSize: "0.9rem" }}>Nenhuma mensagem ainda. Os avisos de andamento da entrega saem automaticamente.</p>
+        <p className="texto-apoio">Nenhuma mensagem ainda. Os avisos de andamento da entrega saem automaticamente.</p>
       ) : (
-        <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-          {baloes.map(({ chave, mensagem, canais }) => {
-            const doMotorista = mensagem.autor === "MOTORISTA";
-            return (
-              <li key={chave} style={{ display: "flex", justifyContent: doMotorista ? "flex-end" : "flex-start", marginBottom: "0.5rem" }}>
-                <div
-                  style={{
-                    maxWidth: "85%",
-                    padding: "0.5rem 0.75rem",
-                    borderRadius: 8,
-                    border: "1px solid var(--borda)",
-                    borderStyle: mensagem.autor === "SISTEMA" ? "dashed" : "solid",
-                  }}
-                >
-                  <div className="texto-apoio">
-                    {ROTULO_AUTOR[mensagem.autor]} ·{" "}
-                    {new Date(mensagem.criadoEm).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
-                  </div>
-                  <div>{mensagem.conteudo}</div>
-                  <div className="texto-apoio" style={{ marginTop: "0.25rem" }}>
-                    {canais.map(({ canal, falhou }) => (
-                      <span key={canal} style={{ marginRight: "0.5rem", color: falhou ? "var(--erro)" : "inherit" }}>
-                        <Icone nome={canal === "EMAIL" ? "email" : "enviar"} /> {ROTULO_CANAL[canal]}
-                        {falhou ? " (falhou)" : ""}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </li>
-            );
-          })}
+        <ul className="conversa">
+          {baloes.map(({ chave, mensagem, canais }) => (
+            <li key={chave} className={`balao balao-${mensagem.autor.toLowerCase()}`}>
+              <div className="texto-apoio" style={{ fontSize: "0.8125rem" }}>
+                {ROTULO_AUTOR[mensagem.autor]} ·{" "}
+                {new Date(mensagem.criadoEm).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+              </div>
+              <div>{mensagem.conteudo}</div>
+              <div className="texto-apoio" style={{ fontSize: "0.8125rem", marginTop: "0.25rem" }}>
+                {canais.map(({ canal, falhou }) => (
+                  <span key={canal} style={{ marginRight: "0.5rem", ...(falhou ? { color: "var(--erro)", fontWeight: 700 } : {}) }}>
+                    <Icone nome={canal === "EMAIL" ? "email" : "enviar"} /> {ROTULO_CANAL[canal]}
+                    {falhou ? " (falhou)" : ""}
+                  </span>
+                ))}
+              </div>
+            </li>
+          ))}
         </ul>
       )}
 

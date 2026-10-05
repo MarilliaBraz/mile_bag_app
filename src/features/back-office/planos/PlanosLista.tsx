@@ -4,6 +4,7 @@ import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { PlanoForm } from "./PlanoForm";
 import { criarPlano, listarPlanos, removerPlano } from "./planosApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 /** Planos de assinatura (HU16). Um plano com empresas associadas não pode ser removido - o botão nem aparece. */
 export function PlanosLista() {
@@ -30,9 +31,9 @@ export function PlanosLista() {
       </Ajuda>
 
       {(erro || erroAcao) && (
-        <p role="alert" style={{ color: "var(--erro)" }}>
+        <Alerta tipo="erro">
           {erro ?? erroAcao}
-        </p>
+        </Alerta>
       )}
       {carregando && <p role="status">Carregando…</p>}
       {dados && dados.length === 0 && <p>Nenhum plano cadastrado. Cadastre um plano antes de cadastrar empresas.</p>}

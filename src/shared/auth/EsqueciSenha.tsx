@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { requisitar } from "../api/httpClient";
 import { mensagemDeErro } from "../format/formatar";
+import { Alerta } from "../ui/Alerta";
 
 /**
  * Pedido de redefinição de senha (HU25). A resposta é sempre a mesma, exista ou não a conta - a tela não revela quais
@@ -29,7 +30,8 @@ export function EsqueciSenha() {
   }
 
   return (
-    <main style={{ maxWidth: 420, margin: "3rem auto", padding: "0 1rem" }}>
+    <div className="tela-entrada">
+      <main>
       <h1>Esqueci minha senha</h1>
       {enviado ? (
         <p role="status">
@@ -37,18 +39,18 @@ export function EsqueciSenha() {
           Se o seu login não é um e-mail, peça ao administrador da sua empresa para redefinir a senha.
         </p>
       ) : (
-        <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem" }}>
+        <form onSubmit={enviar} className="cartao formulario">
           {erro && (
-            <p role="alert" style={{ color: "var(--erro)", margin: 0 }}>
+            <Alerta tipo="erro">
               {erro}
-            </p>
+          </Alerta>
           )}
           <div>
             <label htmlFor="login">E-mail de login</label>
             <input id="login" type="email" autoComplete="username" value={login} onChange={(e) => setLogin(e.target.value)} autoFocus />
           </div>
           <div>
-            <button type="submit" disabled={!login.includes("@") || enviando}>
+            <button type="submit" className="grande bloco" disabled={!login.includes("@") || enviando}>
               {enviando ? "Enviando…" : "Enviar link"}
             </button>
           </div>
@@ -57,6 +59,7 @@ export function EsqueciSenha() {
       <p>
         <Link to="/login">← Voltar ao login</Link>
       </p>
-    </main>
+      </main>
+    </div>
   );
 }

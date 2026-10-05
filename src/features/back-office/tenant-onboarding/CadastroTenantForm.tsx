@@ -3,6 +3,7 @@ import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { listarPlanos } from "../planos/planosApi";
 import { cadastrarTenant, type Tenant } from "./tenantsApi";
+import { Alerta } from "../../../shared/ui/Alerta";
 
 /** Cadastro de empresa assinante (HU14) - já dispara o convite por e-mail ao primeiro administrador (HU15). */
 export function CadastroTenantForm({ aoCadastrar }: { aoCadastrar: (tenant: Tenant) => void }) {
@@ -38,9 +39,9 @@ export function CadastroTenantForm({ aoCadastrar }: { aoCadastrar: (tenant: Tena
   return (
     <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", maxWidth: 480 }}>
       {(erro || erroPlanos) && (
-        <p role="alert" style={{ color: "var(--erro)", margin: 0 }}>
+        <Alerta tipo="erro">
           {erro ?? erroPlanos}
-        </p>
+        </Alerta>
       )}
       <div>
         <label htmlFor="identificadorEmpresa">Identificador da empresa</label>
