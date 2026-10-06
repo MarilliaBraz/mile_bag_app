@@ -63,9 +63,12 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Tema escuro: pensado para dirigir à noite - fundo azul-petróleo profundo (não preto puro) e cores menos saturadas. */
+/* Tema escuro: pensado para dirigir à noite - fundo azul-petróleo profundo (não preto puro) e cores menos saturadas.
+ * Segue o sistema, a não ser que a pessoa escolha "Claro" ou "Escuro" em PreferenciasAcessibilidade (data-tema no <html>).
+ * :where() mantém a especificidade igual à de :root, para o alto contraste (declarado depois) continuar vencendo. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:where(:not([data-tema="claro"])) {
+    color-scheme: dark;
     --fundo: #0b1220;
     --fundo-app: #0b1220;
     --superficie: #141d2f;
@@ -92,6 +95,39 @@
     --sombra-2: 0 6px 16px rgb(0 0 0 / 0.45);
     --sombra-nav: 0 -4px 16px rgb(0 0 0 / 0.5);
   }
+}
+
+:root:where([data-tema="escuro"]) {
+  color-scheme: dark;
+  --fundo: #0b1220;
+  --fundo-app: #0b1220;
+  --superficie: #141d2f;
+  --superficie-2: #1c2740;
+  --texto: #d8e0ec;
+  --texto-suave: #a3b3c9;
+  --texto-titulo: #f8fafc;
+  --borda: #6b7c93;
+  --borda-suave: #26344d;
+  --acao: #7cb1ff;
+  --acao-fundo: #2563eb;
+  --acao-fundo-hover: #3b74f0;
+  --acao-suave: #172a4d;
+  --confirmacao: #5ee08f;
+  --confirmacao-fundo: #15803d;
+  --confirmacao-suave: #0f2e1f;
+  --erro: #ff8a8a;
+  --erro-fundo: #c62828;
+  --erro-suave: #3a1519;
+  --aviso: #fcd34d;
+  --aviso-suave: #352a0c;
+  --foco: #93c5fd;
+  --sombra-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --sombra-2: 0 6px 16px rgb(0 0 0 / 0.45);
+  --sombra-nav: 0 -4px 16px rgb(0 0 0 / 0.5);
+}
+
+:root:where([data-tema="claro"]) {
+  color-scheme: light;
 }
 
 * {
@@ -1391,6 +1427,11 @@ details.ajuda.sem-icone summary::before {
   margin-top: 2.5rem;
 }
 
+/* No celular as preferências ficam no fim da página; no computador, no rodapé da barra lateral. */
+.admin-lateral-preferencias {
+  display: none;
+}
+
 @media (min-width: 960px) {
   .admin {
     display: grid;
@@ -1399,6 +1440,7 @@ details.ajuda.sem-icone summary::before {
 
   .admin-lateral {
     height: 100dvh;
+    overflow-y: auto;
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: stretch;
@@ -1443,6 +1485,46 @@ details.ajuda.sem-icone summary::before {
     width: auto;
     height: auto;
     clip: auto;
+  }
+
+  .admin-preferencias {
+    display: none;
+  }
+
+  .admin-lateral-preferencias {
+    display: block;
+  }
+
+  .admin-lateral-preferencias details.ajuda {
+    margin: 0 0 0.25rem;
+    padding: 0 0.5rem;
+    border: none;
+    background: transparent;
+  }
+
+  .admin-lateral-preferencias details.ajuda summary {
+    font-size: 0.9375rem;
+    padding: 0 0.375rem;
+    border-radius: var(--raio);
+  }
+
+  .admin-lateral-preferencias details.ajuda summary:hover {
+    background: var(--superficie-2);
+  }
+
+  .admin-lateral-preferencias details.ajuda > div > div {
+    gap: 0.375rem !important;
+  }
+
+  .admin-lateral-preferencias details.ajuda button.secundario {
+    min-height: 40px;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.875rem;
+  }
+
+  .admin-lateral-preferencias .segmentado button {
+    padding: 0.375rem 0.25rem;
+    font-size: 0.8125rem;
   }
 
   .admin-sair {

@@ -28,6 +28,9 @@ export function AdminLayout({ titulo, itens }: { titulo: string; itens: Item[] }
         </nav>
 
         <div className="admin-lateral-rodape">
+          <div className="admin-lateral-preferencias">
+            <PreferenciasAcessibilidade />
+          </div>
           <NavLink to="/conta/senha" className="admin-link-conta">
             <Icone nome="chave" />
             <span>Minha senha</span>
