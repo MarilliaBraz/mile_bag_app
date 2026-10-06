@@ -9,6 +9,15 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <title>Milebag — Motorista</title>
+    <script>
+      // Aplica o tema antes da primeira pintura (sem piscar o claro para quem usa escuro).
+      // Mesma regra e mesma chave de src/shared/ui/preferencias.ts, que assume depois do carregamento.
+      try {
+        var tema = localStorage.getItem("milebag_tema");
+        var escuro = tema === "escuro" || (tema !== "claro" && matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.dataset.tema = escuro ? "escuro" : "claro";
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

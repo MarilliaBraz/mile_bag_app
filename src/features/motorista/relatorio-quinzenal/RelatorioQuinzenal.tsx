@@ -4,11 +4,10 @@ import { Icone } from "../../../shared/ui/Icone";
 import { TelaMotorista } from "../layout/TelaMotorista";
 import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "../../../shared/api/ApiError";
+import { formatarMoeda } from "../../../shared/format/formatar";
 import { AjusteForm } from "./AjusteForm";
 import { HistoricoAjustes } from "./HistoricoAjustes";
 import { consultarRelatorio, type RelatorioQuinzenal as Relatorio } from "./relatorioService";
-
-const REAL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
 function paraIso(data: Date): string {
   return `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}-${String(data.getDate()).padStart(2, "0")}`;
@@ -26,7 +25,6 @@ function quinzenaAtual(): { inicio: string; fim: string } {
 }
 
 const km = (valor: number | null) => (valor === null ? "—" : `${valor.toFixed(1).replace(".", ",")} km`);
-const dinheiro = (valor: number | null) => (valor === null ? "—" : REAL.format(valor));
 const dataBr = (iso: string) => iso.split("-").reverse().join("/");
 
 /**
@@ -101,7 +99,7 @@ export function RelatorioQuinzenal() {
                 <span className="resumo-texto">
                   <small>Total do período</small>
                   <span className="resumo-numero" style={{ fontSize: "2rem" }}>
-                    {REAL.format(totais.valor)}
+                    {formatarMoeda(totais.valor)}
                   </span>
                 </span>
                 <span className="resumo-texto" style={{ textAlign: "right" }}>
@@ -133,11 +131,11 @@ export function RelatorioQuinzenal() {
                       </div>
                       <div>
                         <dt>Tarifa</dt>
-                        <dd>{dinheiro(item.tarifaAplicada)}</dd>
+                        <dd>{formatarMoeda(item.tarifaAplicada)}</dd>
                       </div>
                       <div>
                         <dt>Pedágio</dt>
-                        <dd>{dinheiro(item.valorPedagio)}</dd>
+                        <dd>{formatarMoeda(item.valorPedagio)}</dd>
                       </div>
                     </dl>
                     <div className="linha-acoes nao-imprimir" style={{ marginTop: "0.75rem" }}>
