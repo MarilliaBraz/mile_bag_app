@@ -47,7 +47,7 @@ export function TelaRota() {
 
       {emExecucao && !rota.divergenciaPendente && (
         <button type="button" className="sucesso grande bloco" onClick={() => setConfirmandoEncerrar(true)} disabled={rota.ocupado} style={{ marginTop: "1rem" }}>
-          <Icone nome="checkCirculo" /> {rota.ocupado ? "Encerrando…" : "Encerrar viagem"}
+          <Icone nome="checkCirculo" /> {rota.ocupado ? "Aguarde…" : "Encerrar viagem"}
         </button>
       )}
       <ConfirmarAcao

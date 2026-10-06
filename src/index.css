@@ -2040,6 +2040,57 @@ dialog.gaveta::backdrop {
   box-shadow: var(--sombra-1);
 }
 
+/* Mapa no tema escuro: as imagens do OpenStreetMap são sempre claras e ofuscam à noite.
+ * Inverte só a camada de imagens (os marcadores ficam intactos) e gira o matiz para a água
+ * continuar azul e os parques verdes; controles e atribuição seguem as cores do tema. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]):not([data-alto-contraste="true"]) .leaflet-tile-pane {
+    filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.8);
+  }
+}
+
+:root[data-tema="escuro"]:not([data-alto-contraste="true"]) .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.8);
+}
+
+.mapa .leaflet-container {
+  background: var(--superficie-2);
+  font: inherit;
+}
+
+.mapa .leaflet-bar {
+  border: 1px solid var(--borda-suave);
+  box-shadow: var(--sombra-1);
+}
+
+.mapa .leaflet-bar a {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  background: var(--superficie);
+  color: var(--texto-titulo);
+  border-bottom-color: var(--borda-suave);
+}
+
+.mapa .leaflet-bar a:hover {
+  background: var(--superficie-2);
+}
+
+.mapa .leaflet-container .leaflet-control-attribution {
+  background: color-mix(in srgb, var(--superficie) 85%, transparent);
+  color: var(--texto-suave);
+}
+
+.mapa .leaflet-container .leaflet-control-attribution a {
+  color: var(--acao);
+}
+
+.mapa .leaflet-popup-content-wrapper,
+.mapa .leaflet-popup-tip {
+  background: var(--superficie);
+  color: var(--texto-titulo);
+}
+
 /* Botão de alternativa de rota (selecionável). */
 .opcao {
   display: flex;
