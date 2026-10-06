@@ -16,7 +16,7 @@ export function AdminLayout({ titulo, itens }: { titulo: string; itens: Item[] }
         <span className="marca">
           <img src="/icone-app.svg" alt="" /> Milebag
         </span>
-        <span className="admin-area texto-apoio">{titulo.replace(/^Milebag\s*—\s*/, "")}</span>
+        <span className="admin-area texto-apoio">{titulo}</span>
 
         <nav aria-label="Seções" className="menu-admin">
           {itens.map((item, indice) => (

@@ -21,7 +21,7 @@ export function AcessibilidadeDeRota() {
         principal.tabIndex = -1;
       }
       const titulo = document.querySelector("h1")?.textContent?.trim();
-      document.title = titulo && titulo !== NOME_SISTEMA ? `${titulo} — ${NOME_SISTEMA}` : NOME_SISTEMA;
+      document.title = titulo && titulo !== NOME_SISTEMA ? `${titulo} | ${NOME_SISTEMA}` : NOME_SISTEMA;
     };
 
     // As telas carregam dados depois de montar (o <h1> pode surgir depois): observa o DOM.

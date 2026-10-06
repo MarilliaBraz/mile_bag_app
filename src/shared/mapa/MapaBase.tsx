@@ -6,7 +6,7 @@ import { Icon, latLngBounds } from "leaflet";
 import { useState, type ReactNode } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
-/** Coordenada geográfica (WGS84) — espelha com.marillia.milebag.core.geo.Coordenada. */
+/** Coordenada geográfica (WGS84); espelha com.marillia.milebag.core.geo.Coordenada. */
 export type Coordenada = {
   latitude: number;
   longitude: number;

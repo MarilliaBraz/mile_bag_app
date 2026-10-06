@@ -4,7 +4,7 @@ import { proximaSequenciaLocal } from "./sequenciaLocal";
 
 /**
  * Grava um evento na fila local (HU08, FR-001/FR-007). É o ponto de
- * integração que as telas de HU01–HU07 usam quando a ação é executada sem
+ * integração que as telas de HU01 a HU07 usam quando a ação é executada sem
  * conexão.
  */
 export async function enfileirar(tipoEvento: TipoEventoSincronizacao, payload: unknown): Promise<RegistroPendente> {

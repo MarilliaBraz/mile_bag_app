@@ -12,7 +12,7 @@ export default defineConfig({
       // sincronizacao - HU08) fica para quando essas telas existirem;
       // por ora so o essencial para o app ser instalavel (RI04/plan.md).
       manifest: {
-        name: "Milebag — Motorista",
+        name: "Milebag Motorista",
         short_name: "Milebag",
         description: "Aplicação do motorista para devolução de bagagens extraviadas.",
         start_url: "/motorista",

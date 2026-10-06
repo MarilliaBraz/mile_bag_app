@@ -61,8 +61,8 @@ export async function obterPosicaoDetalhada(tempoLimiteMs = 10_000): Promise<Res
 }
 
 /**
- * Posição atual do dispositivo (HU03, HU04): resolve com {@code null} — nunca
- * rejeita — quando não há posição, porque o back-end aceita checkpoint sem
+ * Posição atual do dispositivo (HU03, HU04): resolve com {@code null} (nunca
+ * rejeita) quando não há posição, porque o back-end aceita checkpoint sem
  * coordenadas ({@code ausente = true}) e o fluxo em campo não pode travar por
  * falta de GPS (RI05). Use {@link obterPosicaoDetalhada} quando a tela precisar
  * explicar o motivo.
