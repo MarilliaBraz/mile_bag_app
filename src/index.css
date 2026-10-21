@@ -2211,6 +2211,28 @@ dialog.gaveta::backdrop {
   font-family: var(--fonte-mono);
 }
 
+/* Uma linha só em qualquer largura: as barras fixas abaixo descem exatamente a altura da faixa. */
+.faixa-ambiente {
+  height: 1.75rem;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.faixa-longa {
+  display: none;
+}
+
+@media (min-width: 720px) {
+  .faixa-curta {
+    display: none;
+  }
+
+  .faixa-longa {
+    display: inline;
+  }
+}
+
 /* Com a faixa no topo, as barras fixas descem para não ficar por baixo dela. */
 .faixa-ambiente ~ .app-motorista .barra-topo,
 .faixa-ambiente ~ .admin .admin-lateral {
