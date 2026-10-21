@@ -704,19 +704,6 @@ button.perigo-contorno {
   box-shadow: var(--sombra-2);
 }
 
-/* Silhueta de mala ao fundo do resumo: só decoração (fica atrás do texto, sem afetar a leitura). */
-.resumo::after {
-  content: "";
-  position: absolute;
-  right: -1.25rem;
-  bottom: -1.75rem;
-  width: 7.5rem;
-  height: 7.5rem;
-  border: 10px solid rgb(255 255 255 / 0.08);
-  border-radius: var(--raio-g);
-  pointer-events: none;
-}
-
 .resumo-numero {
   font-size: var(--fs-numero);
   font-weight: 800;
@@ -2369,6 +2356,11 @@ dialog.gaveta::backdrop {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     place-items: stretch;
     padding: 0;
+  }
+
+  /* A marca já está no painel ao lado: não repete acima do formulário. */
+  .tela-entrada.com-marca > main > .marca {
+    display: none;
   }
 
   .tela-entrada.com-marca > main {
