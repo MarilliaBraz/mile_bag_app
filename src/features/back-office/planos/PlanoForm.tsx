@@ -55,7 +55,7 @@ export function PlanoForm({ aoSalvar }: { aoSalvar: (dados: { nome: string; limi
           <input id="limiteBdos" inputMode="numeric" value={bdos} onChange={(e) => setBdos(e.target.value)} />
         </div>
       </div>
-      <p className="texto-apoio" style={{ margin: 0 }}>
+      <p className="texto-apoio m-0">
         Os dois limites são números inteiros maiores que zero.
       </p>
       <div className="linha-acoes">

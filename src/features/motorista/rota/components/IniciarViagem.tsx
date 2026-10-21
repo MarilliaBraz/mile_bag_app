@@ -17,7 +17,7 @@ export function IniciarViagem({
   ocupado?: boolean;
 }) {
   return (
-    <section className="cartao" style={{ marginTop: "1rem" }}>
+    <section className="cartao mt-4">
       <div className="texto-apoio">Rota escolhida · {selecao.tipoSelecao === "PROPRIA" ? "própria" : "sugerida"}</div>
       <p className="destaque">
         {formatarDuracao(selecao.rotaEscolhida.duracaoSegundos)} · {formatarDistancia(selecao.rotaEscolhida.distanciaMetros)}

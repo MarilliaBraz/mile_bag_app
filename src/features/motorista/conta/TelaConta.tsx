@@ -21,7 +21,7 @@ export function TelaConta() {
             <Icone nome="sincronizar" />
             <span className="cartao-corpo">
               <strong>Registros do aparelho</strong>
-              <span className="texto-apoio" style={{ display: "block" }}>
+              <span className="texto-apoio em-bloco">
                 {pendentes > 0 ? `${pendentes} aguardando envio` : "Tudo o que foi registrado neste celular"}
               </span>
             </span>
@@ -34,7 +34,7 @@ export function TelaConta() {
             <Icone nome="chave" />
             <span className="cartao-corpo">
               <strong>Minha senha</strong>
-              <span className="texto-apoio" style={{ display: "block" }}>
+              <span className="texto-apoio em-bloco">
                 Trocar a senha de acesso
               </span>
             </span>
@@ -46,9 +46,9 @@ export function TelaConta() {
       <h2>Leitura</h2>
       <PreferenciasAcessibilidade aberto />
 
-      <div style={{ marginTop: "2rem" }}>
+      <div className="mt-8">
         <BotaoSair className="perigo-contorno grande bloco" />
-        <p className="texto-apoio" style={{ textAlign: "center" }}>
+        <p className="texto-apoio centro">
           O que ainda não foi enviado continua guardado para o próximo login.
         </p>
       </div>

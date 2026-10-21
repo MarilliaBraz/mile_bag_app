@@ -93,7 +93,7 @@ export function CapturaBdo() {
           <strong>BDO {campos.numero} confirmado</strong>
           <span>Ele já está disponível para ser assumido no painel de entregas.</span>
         </div>
-        <div className="pilha" style={{ marginTop: "1rem" }}>
+        <div className="pilha mt-4">
           <Link to="/motorista" className="botao grande bloco">
             Ir para minhas entregas
           </Link>

@@ -65,8 +65,7 @@ export function ListaBdosDisponiveis({
             </div>
             <button
               type="button"
-              className="secundario bloco"
-              style={{ marginTop: "0.75rem" }}
+              className="secundario bloco mt-3"
               onClick={() => atribuir(bdo.bdoId)}
               disabled={atribuindo === bdo.bdoId}
               aria-label={`Assumir BDO ${bdo.bdoNumero ?? "sem número"}`}

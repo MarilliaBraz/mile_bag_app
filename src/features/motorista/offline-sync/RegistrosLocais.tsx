@@ -60,9 +60,9 @@ export function RegistrosLocais() {
         <button type="button" className="bloco" onClick={enviarAgora} disabled={!online || sincronizando || aguardando === 0}>
           <Icone nome="sincronizar" /> {sincronizando ? "Enviando…" : aguardando > 0 ? `Enviar agora (${aguardando})` : "Enviar agora"}
         </button>
-        {!online && <p className="texto-apoio" style={{ textAlign: "center" }}>Sem conexão: o envio recomeça sozinho quando a rede voltar.</p>}
+        {!online && <p className="texto-apoio centro">Sem conexão: o envio recomeça sozinho quando a rede voltar.</p>}
         {online && aguardando === 0 && registros && registros.length > 0 && (
-          <p role="status" className="texto-apoio" style={{ textAlign: "center", color: "var(--confirmacao)" }}>
+          <p role="status" className="texto-apoio centro texto-sucesso">
             <Icone nome="checkCirculo" /> Tudo enviado.
           </p>
         )}

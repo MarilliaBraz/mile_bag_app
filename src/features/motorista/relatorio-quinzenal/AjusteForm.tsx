@@ -52,21 +52,21 @@ export function AjusteForm({ viagemId, aoSalvar, aoCancelar }: { viagemId: strin
         ))}
       </select>
 
-      <div style={{ marginTop: "0.75rem" }}>
+      <div className="mt-3">
         <label htmlFor={`valor-${viagemId}`}>
           Valor correto <span className="campo-obrigatorio" aria-hidden="true">*</span>
         </label>
         <input id={`valor-${viagemId}`} aria-required="true" type="number" step="any" min="0" value={valorNovo} onChange={(e) => setValorNovo(e.target.value)} />
       </div>
 
-      <div style={{ marginTop: "0.75rem" }}>
+      <div className="mt-3">
         <label htmlFor={`just-${viagemId}`}>
           Justificativa <span className="campo-obrigatorio" aria-hidden="true">*</span>
         </label>
         <textarea id={`just-${viagemId}`} aria-required="true" rows={2} value={justificativa} onChange={(e) => setJustificativa(e.target.value)} placeholder="Por que este valor está errado?" />
       </div>
 
-      <div className="linha-acoes" style={{ marginTop: "0.75rem" }}>
+      <div className="linha-acoes mt-3">
         <button type="submit" disabled={!valido || salvando}>
           {salvando ? "Salvando…" : "Salvar correção"}
         </button>

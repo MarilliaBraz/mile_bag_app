@@ -19,7 +19,7 @@ export function JustificativaDivergencia({
   const [justificativa, setJustificativa] = useState("");
 
   return (
-    <section style={{ marginTop: "1rem" }}>
+    <section className="mt-4">
       <Alerta tipo="aviso">{mensagem}</Alerta>
       <label htmlFor="justificativa-divergencia">
         Justificativa da divergência <span className="campo-obrigatorio" aria-hidden="true">*</span>
@@ -34,10 +34,9 @@ export function JustificativaDivergencia({
       />
       <button
         type="button"
-        className="grande bloco"
+        className="grande bloco mt-3"
         onClick={() => aoReenviar(justificativa.trim())}
         disabled={justificativa.trim().length === 0 || ocupado}
-        style={{ marginTop: "0.75rem" }}
       >
         {ocupado ? "Encerrando…" : "Encerrar com justificativa"}
       </button>

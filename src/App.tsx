@@ -21,6 +21,7 @@ import { RelatorioQuinzenal } from "./features/motorista/relatorio-quinzenal/Rel
 import { TelaRota } from "./features/motorista/rota/components/TelaRota";
 import { RegistrosLocais } from "./features/motorista/offline-sync/RegistrosLocais";
 import { AcessibilidadeDeRota } from "./shared/ui/AcessibilidadeDeRota";
+import { FaixaAmbiente } from "./shared/ui/FaixaAmbiente";
 import { EsqueciSenha } from "./shared/auth/EsqueciSenha";
 import { Login } from "./shared/auth/Login";
 import { RedefinirSenha } from "./shared/auth/RedefinirSenha";
@@ -31,6 +32,7 @@ export function App() {
   return (
     <>
       <AcessibilidadeDeRota />
+      <FaixaAmbiente />
       <Routes>
         <Route path="/login" element={<Login />} />
       <Route

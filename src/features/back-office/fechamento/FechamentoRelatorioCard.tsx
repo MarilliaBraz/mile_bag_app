@@ -41,7 +41,7 @@ export function FechamentoRelatorioCard({ fechamento }: { fechamento: Fechamento
         ))}
       </div>
       {identidade && (
-        <details className="ajuda sem-icone" style={{ margin: 0 }}>
+        <details className="ajuda sem-icone m-0">
           <summary>Ver cabeçalho que vai nos PDFs</summary>
           <PreviaIdentidadeVisual identidade={identidade} />
         </details>

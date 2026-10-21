@@ -7,6 +7,30 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 (repositório `mile_bag_audite`). Enquanto a versão for 0.x, mudanças de comportamento podem acontecer
 entre versões menores.
 
+## [Não lançado]
+
+Em validação no ambiente de homologação (`mile_bag_infra/scripts/implantar.sh homologacao`).
+
+### Adicionado
+
+- Faixa "Ambiente de Homologação" no topo de todas as telas, com a versão implantada, quando
+  `VITE_AMBIENTE` está preenchida (produção fica sem faixa).
+- Estado da conexão sempre visível na barra superior do motorista ("Conectado", "Sem conexão" ou
+  "N a enviar"), levando aos registros do aparelho.
+- Etapas da entrega no detalhe (Assumida, A caminho, No endereço, Entregue), mostrando em qual
+  etapa a entrega está e quantas faltam.
+- Login com painel da marca no computador.
+- Transição curta entre telas (View Transitions), desligada com `prefers-reduced-motion`.
+
+### Alterado
+
+- Design system v2: escalas de tipografia e espaço como tokens, paleta refinada, sombras e cantos
+  mais suaves, botão "Capturar" em amarelo de sinalização (alto contraste ao sol).
+- Estilos soltos nos componentes (`style={{...}}`) trocados por classes utilitárias baseadas nos tokens.
+- Ícones deixam de ser "desenhados" a cada tela; a animação ficou só nos estados vazio e de sucesso.
+- O brilho dos esqueletos de carregamento anima só `transform` (sem repintar a tela a cada quadro).
+- Seção atual do menu do back-office marcada também por uma barra lateral, não só pela cor.
+
 ## [0.1.0] - 2026-10-05
 
 Primeira versão registrada neste arquivo. As funcionalidades anteriores (HU01 a HU27) estão no

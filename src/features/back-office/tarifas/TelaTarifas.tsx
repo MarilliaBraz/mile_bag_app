@@ -95,7 +95,7 @@ export function TelaTarifas() {
                   <tr key={tarifa.id}>
                     <td>
                       <span className={`selo ${TOM_ESCOPO[tarifa.escopo]}`}>{ROTULO_ESCOPO[tarifa.escopo]}</span>{" "}
-                      <strong style={{ wordBreak: "break-word" }}>{alvoDe(tarifa, motoristas)}</strong>
+                      <strong className="quebrar">{alvoDe(tarifa, motoristas)}</strong>
                     </td>
                     <td className="numero">{formatarMoeda(tarifa.valorFixo)}</td>
                     <td className="numero">{formatarMoeda(tarifa.valorPorKm)}</td>

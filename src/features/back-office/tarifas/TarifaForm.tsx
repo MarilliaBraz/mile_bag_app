@@ -119,7 +119,7 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
           <input id={`${uid}-valorPorKm`} inputMode="decimal" placeholder="0,00" value={valorPorKm} onChange={(e) => setValorPorKm(e.target.value)} />
         </div>
       </div>
-      {semValor && <p className="texto-apoio" style={{ margin: 0 }}>Informe o valor fixo, o valor por km ou os dois.</p>}
+      {semValor && <p className="texto-apoio m-0">Informe o valor fixo, o valor por km ou os dois.</p>}
 
       <div>
         <label htmlFor={`${uid}-vigenteDesde`}>Vigente desde</label>

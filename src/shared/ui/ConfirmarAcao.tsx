@@ -30,7 +30,7 @@ export function ConfirmarAcao({ aberto, titulo, descricao, rotuloConfirmar, peri
 
   return (
     <dialog ref={ref} className="confirmacao" aria-labelledby={`${uid}-titulo`} aria-describedby={`${uid}-descricao`} onCancel={aoCancelar}>
-      <h2 id={`${uid}-titulo`} style={{ marginTop: 0 }}>
+      <h2 className="mt-0" id={`${uid}-titulo`}>
         {titulo}
       </h2>
       <p id={`${uid}-descricao`}>{descricao}</p>

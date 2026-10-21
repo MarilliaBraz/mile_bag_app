@@ -117,13 +117,13 @@ export function VincularBagagemCarona({
         {/* FR-002: entrega encerrada não aceita novo vínculo - o botão some,
             em vez de só falhar com 409 depois do toque. */}
         {!encerrada && candidatos === null && (
-          <button type="button" className="secundario bloco" onClick={abrirCandidatos} disabled={ocupado} style={{ marginTop: "0.75rem" }}>
+          <button type="button" className="secundario bloco mt-3" onClick={abrirCandidatos} disabled={ocupado}>
             {ocupado ? "Carregando…" : "+ Levar outra bagagem junto"}
           </button>
         )}
 
         {candidatos !== null && (
-          <div style={{ marginTop: "0.75rem" }}>
+          <div className="mt-3">
             <h3>Escolha o BDO que vai junto</h3>
             {candidatos.length === 0 ? (
               <p className="texto-apoio">Nenhum BDO disponível para vincular no momento.</p>
@@ -134,7 +134,7 @@ export function VincularBagagemCarona({
                     <button type="button" onClick={() => vincular(bdo.bdoId)} disabled={ocupado} className="opcao">
                       <span>
                         <span className="codigo">{bdo.bdoNumero ?? "BDO sem número"}</span>
-                        <span className="texto-apoio" style={{ display: "block" }}>
+                        <span className="texto-apoio em-bloco">
                           {bdo.endereco ?? "endereço não informado"}
                         </span>
                       </span>
@@ -144,7 +144,7 @@ export function VincularBagagemCarona({
                 ))}
               </ul>
             )}
-            <button type="button" className="fantasma bloco" onClick={() => setCandidatos(null)} disabled={ocupado} style={{ marginTop: "0.5rem" }}>
+            <button type="button" className="fantasma bloco mt-2" onClick={() => setCandidatos(null)} disabled={ocupado}>
               Cancelar
             </button>
           </div>

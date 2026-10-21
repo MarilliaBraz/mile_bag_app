@@ -87,12 +87,12 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
         <div>
           <label htmlFor={`${uid}-lote`}>Um motorista por linha: nome;login;senha</label>
           <textarea
+            className="mono"
             id={`${uid}-lote`}
             rows={6}
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
             placeholder={"Maria Souza;maria@empresa.com\nJoão Lima;joao.lima;senha-inicial-123"}
-            style={{ fontFamily: "ui-monospace, Consolas, monospace" }}
             aria-describedby={`${uid}-lote-ajuda`}
           />
           <span id={`${uid}-lote-ajuda`} className="texto-apoio">
@@ -106,7 +106,7 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
       </form>
 
       {resultados && (
-        <section aria-label="Resultado do lote" style={{ marginTop: "1rem" }}>
+        <section className="mt-4" aria-label="Resultado do lote">
           <h3>
             Resultado: {resultados.filter((r) => r.criado).length} criado(s), {resultados.filter((r) => !r.criado).length} com erro
           </h3>
@@ -136,7 +136,7 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
                   <td>{r.nome}</td>
                   <td>{r.login}</td>
                   <td>{r.criado ? <span className="selo selo-sucesso">Criado</span> : <span className="selo selo-erro">{r.mensagem ?? "Erro"}</span>}</td>
-                  <td style={{ fontFamily: "ui-monospace, Consolas, monospace" }}>{r.senhaGerada ?? ""}</td>
+                  <td className="mono">{r.senhaGerada ?? ""}</td>
                 </tr>
               ))}
             </tbody>

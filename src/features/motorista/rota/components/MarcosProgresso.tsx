@@ -51,7 +51,7 @@ export function MarcosProgresso({ entregaId, aoRegistrar }: { entregaId: string;
 
   return (
     <section>
-      <h2 style={{ marginTop: "0.5rem" }}>Avisar o passageiro</h2>
+      <h2 className="mt-2">Avisar o passageiro</h2>
       <div className="grade-acoes">
         {MARCOS.map((marco) => (
           <button key={marco.tipo} type="button" className="grande" onClick={() => registrar(marco.tipo, marco.confirmacao)} disabled={ocupado !== null}>

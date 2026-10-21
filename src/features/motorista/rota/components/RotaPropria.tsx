@@ -65,7 +65,7 @@ export function RotaPropria({
         placeholder="Por que esta rota é melhor que as sugeridas?"
       />
 
-      <button type="button" className="bloco" onClick={() => aoConfirmar(tracado, justificativa.trim())} disabled={!podeConfirmar} style={{ marginTop: "0.75rem" }}>
+      <button type="button" className="bloco mt-3" onClick={() => aoConfirmar(tracado, justificativa.trim())} disabled={!podeConfirmar}>
         Usar esta rota
       </button>
     </section>

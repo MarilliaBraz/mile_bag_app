@@ -91,7 +91,7 @@ export function Conversa({ entregaId }: { entregaId: string }) {
         <ul className="conversa">
           {baloes.map(({ chave, mensagem, canais }) => (
             <li key={chave} className={`balao balao-${mensagem.autor.toLowerCase()}`}>
-              <div className="texto-apoio" style={{ fontSize: "0.8125rem" }}>
+              <div className="texto-apoio fs-xs">
                 {ROTULO_AUTOR[mensagem.autor]} ·{" "}
                 {new Date(mensagem.criadoEm).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
               </div>

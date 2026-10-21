@@ -1,5 +1,6 @@
 import { Ajuda } from "../ui/Ajuda";
 import { Alerta } from "../ui/Alerta";
+import { Icone } from "../ui/Icone";
 import { PreferenciasAcessibilidade } from "../ui/PreferenciasAcessibilidade";
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
@@ -39,14 +40,35 @@ export function Login() {
   }
 
   return (
-    <div className="tela-entrada">
+    <div className="tela-entrada com-marca">
+      {/* Painel da marca: só no computador (no celular o formulário vem primeiro, sem rolagem). */}
+      <aside className="entrada-marca" aria-hidden="true">
+        <span className="marca">
+          <img src="/icone-app.svg" alt="" /> Milebag
+        </span>
+        <div>
+          <h2>A bagagem certa, na porta certa, com comprovante.</h2>
+          <ul>
+            <li>
+              <Icone nome="camera" /> BDO pela câmera ou pelo e-mail
+            </li>
+            <li>
+              <Icone nome="rota" /> Rota e pedágios calculados
+            </li>
+            <li>
+              <Icone nome="checkCirculo" /> Comprovante mesmo sem internet
+            </li>
+          </ul>
+        </div>
+        <span>Gestão de última milha de bagagens</span>
+      </aside>
       <main>
         <div className="marca">
           <img src="/icone-app.svg" alt="" /> Milebag
         </div>
         <h1>Entrar</h1>
         <p className="texto-apoio">Use o login e a senha que a sua empresa informou.</p>
-        <form onSubmit={entrar} className="cartao formulario" style={{ marginTop: "1rem" }}>
+        <form onSubmit={entrar} className="cartao formulario mt-4">
           {erro && (
             <Alerta id="login-erro" tipo="erro" className="sem-margem">
               {erro}
@@ -58,9 +80,9 @@ export function Login() {
           </div>
           <div>
             <label htmlFor="senha">Senha</label>
-            <div style={{ position: "relative" }}>
-              <input id="senha" type={mostrarSenha ? "text" : "password"} aria-invalid={!!erro} aria-describedby={erro ? "login-erro" : undefined} autoComplete="current-password" value={senha} onChange={(e) => setSenha(e.target.value)} style={{ paddingRight: "5.5rem" }} />
-              <button type="button" className="fantasma" onClick={() => setMostrarSenha((v) => !v)} aria-pressed={mostrarSenha} style={{ position: "absolute", right: 2, top: 2, bottom: 2, minHeight: 0, padding: "0 0.75rem" }}>
+            <div className="campo-senha">
+              <input id="senha" type={mostrarSenha ? "text" : "password"} aria-invalid={!!erro} aria-describedby={erro ? "login-erro" : undefined} autoComplete="current-password" value={senha} onChange={(e) => setSenha(e.target.value)} />
+              <button type="button" className="fantasma" onClick={() => setMostrarSenha((v) => !v)} aria-pressed={mostrarSenha}>
                 {mostrarSenha ? "Ocultar" : "Mostrar"}
               </button>
             </div>
@@ -68,7 +90,7 @@ export function Login() {
           <button type="submit" className="grande bloco" disabled={!login.trim() || !senha || entrando}>
             {entrando ? "Entrando…" : "Entrar"}
           </button>
-          <Link to="/esqueci-senha" style={{ textAlign: "center" }}>
+          <Link to="/esqueci-senha" className="centro">
             Esqueci minha senha
           </Link>
         </form>

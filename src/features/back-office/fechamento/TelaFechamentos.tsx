@@ -83,7 +83,7 @@ export function TelaFechamentos() {
       {carregando && <Carregando texto="Carregando fechamentos…" />}
 
       {dados && dados.length === 0 && (
-        <div style={{ marginTop: "1.25rem" }}>
+        <div className="mt-5">
           <Vazio icone="calendario" titulo="Nenhum fechamento gerado ainda">
             Escolha o período acima e gere o primeiro.
           </Vazio>
@@ -113,7 +113,7 @@ export function TelaFechamentos() {
                   const periodo = `${formatarData(fechamento.periodoInicio)} a ${formatarData(fechamento.periodoFim)}`;
                   return (
                     <tr key={fechamento.id}>
-                      <td style={{ whiteSpace: "nowrap" }}>
+                      <td className="sem-quebra">
                         <strong>{periodo}</strong>
                       </td>
                       <td>
