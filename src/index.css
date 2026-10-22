@@ -2239,6 +2239,11 @@ dialog.gaveta::backdrop {
   top: 1.75rem;
 }
 
+/* As telas de altura cheia descontam a faixa; senão a página fica 1.75rem maior que a janela e rola sozinha. */
+.faixa-ambiente ~ :is(.admin, .tela-entrada) {
+  min-height: calc(100dvh - 1.75rem);
+}
+
 @media (min-width: 960px) {
   .faixa-ambiente ~ .admin .admin-lateral {
     height: calc(100dvh - 1.75rem);
