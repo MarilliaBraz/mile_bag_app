@@ -14,6 +14,7 @@ import { Painel } from "../layout/Pagina";
 export function SecaoMotivos() {
   const { dados, erro, recarregar } = useRecurso(listarMotivos, "Não foi possível carregar os motivos.");
   const [descricao, setDescricao] = useState("");
+  const [reagendamento, setReagendamento] = useState(false);
   const [erroAcao, setErroAcao] = useState<string | null>(null);
 
   async function executar(acao: () => Promise<unknown>, mensagem: string) {
@@ -33,7 +34,14 @@ export function SecaoMotivos() {
       <ul className="lista-simples">
         {dados?.map((motivo) => (
           <li key={motivo.id}>
-            <span>{motivo.descricao}</span>
+            <span>
+              {motivo.descricao}{" "}
+              {motivo.reagendamento && (
+                <span className="selo selo-info">
+                  <Icone nome="calendario" /> Reagendamento
+                </span>
+              )}
+            </span>
             <button
               type="button"
               className="fantasma compacto"
@@ -50,8 +58,9 @@ export function SecaoMotivos() {
         onSubmit={(evento) => {
           evento.preventDefault();
           executar(async () => {
-            await criarMotivo(descricao.trim());
+            await criarMotivo(descricao.trim(), reagendamento);
             setDescricao("");
+            setReagendamento(false);
           }, "Não foi possível criar o motivo.");
         }}
       >
@@ -61,6 +70,10 @@ export function SecaoMotivos() {
           </label>
           <input id="novo-motivo" placeholder="Novo motivo" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
         </div>
+        <label className="interruptor">
+          <input type="checkbox" checked={reagendamento} onChange={(e) => setReagendamento(e.target.checked)} />
+          <span>Reagendamento (o motorista informa a data e o horário combinados com o passageiro)</span>
+        </label>
         <button type="submit" disabled={!descricao.trim()}>
           <Icone nome="mais" /> Adicionar
         </button>

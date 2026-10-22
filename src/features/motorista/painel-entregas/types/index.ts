@@ -1,3 +1,4 @@
+import type { JanelaReagendamento } from "../../../../shared/format/formatar";
 import type { PendenciaContatoBdo } from "../../../../shared/ui/AvisoContatoIncompleto";
 
 /** Espelha com.marillia.milebag.business.entrega.model.EntregaStatus (mile_bag_api). */
@@ -24,6 +25,8 @@ export type ItemPainel = {
   dataAutoatribuicao: string;
   temTrajetoIniciado: boolean;
   marcoMaisRecente: "A_CAMINHO" | "CHEGADA" | null;
+  /** HU29: ausente em respostas guardadas antes do campo existir. */
+  janelaReagendamento?: JanelaReagendamento | null;
 };
 
 /** Espelha com.marillia.milebag.business.entrega.model.PainelEntregasResponse. */
@@ -49,6 +52,9 @@ export type ItemBdoDisponivel = {
   etiquetaBagagem: string | null;
   dataCaptura: string;
   pendenciasContato: PendenciaContatoBdo[];
+  /** HU29: já houve tentativa e ocorrência (RN05); a janela só vem se foi reagendada. */
+  reaberta?: boolean;
+  janelaReagendamento?: JanelaReagendamento | null;
 };
 
 /** Espelha com.marillia.milebag.business.entrega.model.BdosDisponiveisResponse. */
