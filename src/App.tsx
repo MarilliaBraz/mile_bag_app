@@ -1,5 +1,7 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AdminLayout, ITENS_PLATAFORMA, ITENS_TENANT } from "./features/back-office/AdminLayout";
+import { AvisoEmergenciasAbertas } from "./features/back-office/emergencias/AvisoEmergenciasAbertas";
+import { TelaEmergencias } from "./features/back-office/emergencias/TelaEmergencias";
 import { IdentidadeVisualForm } from "./features/back-office/configuracao-tenant/IdentidadeVisualForm";
 import { TelaConfiguracoes } from "./features/back-office/configuracao-tenant/TelaConfiguracoes";
 import { DetalheFechamento } from "./features/back-office/fechamento/DetalheFechamento";
@@ -13,6 +15,7 @@ import { TelaEmpresas } from "./features/back-office/tenant-onboarding/TelaEmpre
 import { TenantCadastradoConfirmacao } from "./features/back-office/tenant-onboarding/TenantCadastradoConfirmacao";
 import { TelaConta } from "./features/motorista/conta/TelaConta";
 import { CapturaBdo } from "./features/motorista/captura-bdo/components/CapturaBdo";
+import { TelaEmergencia } from "./features/motorista/emergencia/TelaEmergencia";
 import { DetalheEntrega } from "./features/motorista/painel-entregas/components/DetalheEntrega";
 import { PainelEntregas } from "./features/motorista/painel-entregas/components/PainelEntregas";
 import { RegistrarComprovante } from "./features/motorista/comprovante-entrega/RegistrarComprovante";
@@ -104,6 +107,14 @@ export function App() {
         }
       />
       <Route
+        path="/motorista/emergencia"
+        element={
+          <RequireAuth papeis={["MOTORISTA"]}>
+            <TelaEmergencia />
+          </RequireAuth>
+        }
+      />
+      <Route
         path="/motorista/captura-bdo"
         element={
           <RequireAuth>
@@ -128,12 +139,13 @@ export function App() {
         path="/admin"
         element={
           <RequireAuth papeis={["ADMINISTRADOR_TENANT"]}>
-            <AdminLayout titulo="Administração" itens={ITENS_TENANT} />
+            <AdminLayout titulo="Administração" itens={ITENS_TENANT} aviso={<AvisoEmergenciasAbertas />} />
           </RequireAuth>
         }
       >
         <Route index element={<Navigate to="tarifas" replace />} />
         <Route path="motoristas" element={<TelaMotoristas />} />
+        <Route path="emergencias" element={<TelaEmergencias />} />
         <Route path="tarifas" element={<TelaTarifas />} />
         <Route path="pedagios" element={<TelaPedagios />} />
         <Route path="configuracoes" element={<TelaConfiguracoes />} />
