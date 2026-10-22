@@ -1,6 +1,7 @@
 import { Icone } from "../../../../shared/ui/Icone";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { useIntervaloEmPrimeiroPlano } from "../../../../shared/hooks/useIntervaloEmPrimeiroPlano";
 import { Alerta, Carregando } from "../../../../shared/ui/Alerta";
 import { consultarConversa, type CanalMensagem, type Conversa as ConversaDados, type Mensagem } from "../services/mensagemService";
 import { AvisoSemContato } from "./AvisoSemContato";
@@ -46,7 +47,7 @@ function agrupar(mensagens: Mensagem[]): Balao[] {
  * Conversa da entrega com o passageiro (HU18): mensagens manuais e avisos
  * automáticos numa linha do tempo só (FR-001). Atualiza sozinha enquanto
  * aberta, já que as respostas do passageiro chegam por Telegram/e-mail sem
- * ação do motorista (FR-004).
+ * ação do motorista (FR-004). Só atualiza com o app visível (RNF11).
  */
 export function Conversa({ entregaId }: { entregaId: string }) {
   const [conversa, setConversa] = useState<ConversaDados | null>(null);
@@ -61,11 +62,7 @@ export function Conversa({ entregaId }: { entregaId: string }) {
     }
   }, [entregaId]);
 
-  useEffect(() => {
-    carregar();
-    const intervalo = setInterval(carregar, INTERVALO_ATUALIZACAO_MS);
-    return () => clearInterval(intervalo);
-  }, [carregar]);
+  useIntervaloEmPrimeiroPlano(carregar, INTERVALO_ATUALIZACAO_MS);
 
   if (erro && !conversa) {
     return <Alerta tipo="erro">{erro}</Alerta>;

@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AdminLayout, ITENS_PLATAFORMA, ITENS_TENANT } from "./features/back-office/AdminLayout";
 import { IdentidadeVisualForm } from "./features/back-office/configuracao-tenant/IdentidadeVisualForm";
 import { TelaConfiguracoes } from "./features/back-office/configuracao-tenant/TelaConfiguracoes";
@@ -22,6 +22,7 @@ import { TelaRota } from "./features/motorista/rota/components/TelaRota";
 import { RegistrosLocais } from "./features/motorista/offline-sync/RegistrosLocais";
 import { AcessibilidadeDeRota } from "./shared/ui/AcessibilidadeDeRota";
 import { FaixaAmbiente } from "./shared/ui/FaixaAmbiente";
+import { LimiteDeFalha } from "./shared/ui/LimiteDeFalha";
 import { EsqueciSenha } from "./shared/auth/EsqueciSenha";
 import { Login } from "./shared/auth/Login";
 import { RedefinirSenha } from "./shared/auth/RedefinirSenha";
@@ -29,10 +30,13 @@ import { TrocarSenha } from "./shared/auth/TrocarSenha";
 import { RequireAuth } from "./shared/auth/RequireAuth";
 
 export function App() {
+  // RNF11: uma falha numa tela não derruba o app; mudar de rota sai do estado de falha.
+  const { pathname } = useLocation();
   return (
     <>
       <AcessibilidadeDeRota />
       <FaixaAmbiente />
+      <LimiteDeFalha key={pathname}>
       <Routes>
         <Route path="/login" element={<Login />} />
       <Route
@@ -152,6 +156,7 @@ export function App() {
       </Route>
       <Route path="*" element={<Navigate to="/motorista" replace />} />
     </Routes>
+      </LimiteDeFalha>
     </>
   );
 }
