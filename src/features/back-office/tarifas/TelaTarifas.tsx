@@ -15,7 +15,7 @@ function alvoDe(tarifa: Tarifa, motoristas: Motorista[] | null): string {
   if (tarifa.escopo === "MOTORISTA") {
     return nomeDoMotorista(motoristas, tarifa.motoristaId);
   }
-  return tarifa.escopo === "REGIAO" ? (tarifa.regiao ?? "—") : "Todos";
+  return tarifa.escopo === "REGIAO" ? (tarifa.regiao ?? "Região não informada") : "Todos";
 }
 
 const TOM_ESCOPO: Record<EscopoTarifa, string> = { PADRAO: "selo-info", MOTORISTA: "selo-sucesso", REGIAO: "selo-aviso" };

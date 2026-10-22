@@ -4,17 +4,16 @@ import { Icone } from "../../../shared/ui/Icone";
 import { TelaMotorista } from "../layout/TelaMotorista";
 import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "../../../shared/api/ApiError";
+import { formatarMoeda } from "../../../shared/format/formatar";
 import { AjusteForm } from "./AjusteForm";
 import { HistoricoAjustes } from "./HistoricoAjustes";
 import { consultarRelatorio, type RelatorioQuinzenal as Relatorio } from "./relatorioService";
-
-const REAL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
 function paraIso(data: Date): string {
   return `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}-${String(data.getDate()).padStart(2, "0")}`;
 }
 
-/** Quinzena em andamento: 1–15 ou 16–último dia do mês (o "período de fechamento em andamento" do spec). */
+/** Quinzena em andamento: dias 1 a 15 ou 16 ao último dia do mês (o "período de fechamento em andamento" do spec). */
 function quinzenaAtual(): { inicio: string; fim: string } {
   const hoje = new Date();
   const ano = hoje.getFullYear();
@@ -25,14 +24,13 @@ function quinzenaAtual(): { inicio: string; fim: string } {
   return { inicio: paraIso(new Date(ano, mes, 16)), fim: paraIso(new Date(ano, mes + 1, 0)) };
 }
 
-const km = (valor: number | null) => (valor === null ? "—" : `${valor.toFixed(1).replace(".", ",")} km`);
-const dinheiro = (valor: number | null) => (valor === null ? "—" : REAL.format(valor));
+const km = (valor: number | null) => (valor === null ? "Não calculado" : `${valor.toFixed(1).replace(".", ",")} km`);
 const dataBr = (iso: string) => iso.split("-").reverse().join("/");
 
 /**
  * Relatório quinzenal do motorista (HU17): as próprias entregas do período
  * com os valores usados no pagamento, pronto para impressão (RI11, `@media
- * print` em index.css) e com correção por linha. "—" significa que o valor
+ * print` em index.css) e com correção por linha. "Sem valor" significa que o valor
  * ainda não pôde ser calculado (ex.: tarifa não configurada) - nunca um zero.
  */
 export function RelatorioQuinzenal() {
@@ -58,7 +56,7 @@ export function RelatorioQuinzenal() {
     carregar();
   }, [carregar]);
 
-  // Totais do período: só somam o que já tem valor ("—" não vira zero no total).
+  // Totais do período: só somam o que já tem valor (valor ausente não vira zero no total).
   const totais = relatorio?.entregas.reduce(
     (acc, item) => ({
       km: acc.km + (item.kmIda ?? 0) + (item.kmVolta ?? 0),
@@ -101,7 +99,7 @@ export function RelatorioQuinzenal() {
                 <span className="resumo-texto">
                   <small>Total do período</small>
                   <span className="resumo-numero" style={{ fontSize: "2rem" }}>
-                    {REAL.format(totais.valor)}
+                    {formatarMoeda(totais.valor)}
                   </span>
                 </span>
                 <span className="resumo-texto" style={{ textAlign: "right" }}>
@@ -111,7 +109,7 @@ export function RelatorioQuinzenal() {
               </div>
               {totais.semValor > 0 && (
                 <Alerta tipo="aviso">
-                  {totais.semValor} entrega(s) ainda sem tarifa calculada (“—”). Elas não entram no total até o valor ser definido.
+                  {totais.semValor} entrega(s) ainda sem tarifa calculada (aparecem como “Sem valor”). Elas não entram no total até a tarifa ser definida.
                 </Alerta>
               )}
 
@@ -119,7 +117,7 @@ export function RelatorioQuinzenal() {
                 {relatorio.entregas.map((item) => (
                   <li key={item.entregaId} className="cartao">
                     <div className="cartao-cabecalho">
-                      <span className="codigo">{item.bdoNumero ?? "—"}</span>
+                      <span className="codigo">{item.bdoNumero ?? "BDO sem número"}</span>
                       {item.temAjuste && <span className="selo selo-aviso">Corrigido</span>}
                     </div>
                     <dl className="dados-grade">
@@ -133,11 +131,11 @@ export function RelatorioQuinzenal() {
                       </div>
                       <div>
                         <dt>Tarifa</dt>
-                        <dd>{dinheiro(item.tarifaAplicada)}</dd>
+                        <dd>{formatarMoeda(item.tarifaAplicada)}</dd>
                       </div>
                       <div>
                         <dt>Pedágio</dt>
-                        <dd>{dinheiro(item.valorPedagio)}</dd>
+                        <dd>{formatarMoeda(item.valorPedagio)}</dd>
                       </div>
                     </dl>
                     <div className="linha-acoes nao-imprimir" style={{ marginTop: "0.75rem" }}>

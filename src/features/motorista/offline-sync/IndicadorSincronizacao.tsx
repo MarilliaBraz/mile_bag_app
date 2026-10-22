@@ -18,7 +18,7 @@ export function IndicadorSincronizacao({ aoSincronizar }: { aoSincronizar?: () =
   return (
     <Alerta tipo={online ? "info" : "aviso"} className="nao-imprimir">
       <strong>{online ? "Conectado" : "Sem conexão"}</strong>
-      {!online && " — o que você registrar fica salvo no aparelho."}
+      {!online && ": o que você registrar fica salvo no aparelho."}
       {pendentes > 0 && (
         <>
           {" "}

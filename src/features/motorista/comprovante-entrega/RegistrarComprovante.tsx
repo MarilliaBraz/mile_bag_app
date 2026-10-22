@@ -134,7 +134,7 @@ export function RegistrarComprovante() {
           {urlPrevia && <img src={urlPrevia} alt="Foto do comprovante escolhida" className="previa-foto" style={{ marginBottom: "0.5rem" }} />}
           <label className={`seletor-foto${foto ? " preenchido" : ""}`}>
             <Icone nome={foto ? "checkCirculo" : "camera"} />
-            <strong>{foto ? "Foto pronta — tocar para trocar" : "Tirar foto do documento"}</strong>
+            <strong>{foto ? "Foto pronta. Toque para trocar" : "Tirar foto do documento"}</strong>
             {!foto && <span>Use a câmera traseira, com o documento inteiro na imagem.</span>}
             <input
               id="foto-comprovante"

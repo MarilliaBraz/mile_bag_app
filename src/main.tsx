@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import { App } from "./App.tsx";
-import { aplicarPreferenciasSalvas } from "./shared/ui/PreferenciasAcessibilidade";
+import { aplicarPreferenciasSalvas } from "./shared/ui/preferencias";
 
 aplicarPreferenciasSalvas();
 

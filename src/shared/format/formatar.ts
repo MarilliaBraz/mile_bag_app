@@ -1,13 +1,13 @@
 const REAL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
 export function formatarMoeda(valor: number | null | undefined): string {
-  return valor === null || valor === undefined ? "—" : REAL.format(valor);
+  return valor === null || valor === undefined ? "Sem valor" : REAL.format(valor);
 }
 
 /** Datas ISO puras (AAAA-MM-DD) sem passar por Date, que as deslocaria pelo fuso. */
 export function formatarData(iso: string | null | undefined): string {
   if (!iso) {
-    return "—";
+    return "Sem data";
   }
   const [ano, mes, dia] = iso.slice(0, 10).split("-");
   return `${dia}/${mes}/${ano}`;

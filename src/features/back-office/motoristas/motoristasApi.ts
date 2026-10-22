@@ -28,7 +28,7 @@ export const redefinirSenhaMotorista = (id: string, senha: string) =>
 /** Nome do motorista para exibição; sem cadastro (ex.: registros antigos) cai no id abreviado. */
 export function nomeDoMotorista(motoristas: Motorista[] | null, id: string | null): string {
   if (!id) {
-    return "—";
+    return "Sem motorista";
   }
   return motoristas?.find((m) => m.id === id)?.nome ?? id.slice(0, 8);
 }

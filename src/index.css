@@ -55,7 +55,7 @@
 
   --altura-nav: 68px;
 
-  color-scheme: light dark;
+  color-scheme: light;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   color: var(--texto);
   background: var(--fundo-app);
@@ -63,40 +63,10 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Tema escuro: pensado para dirigir à noite - fundo azul-petróleo profundo (não preto puro) e cores menos saturadas.
- * Segue o sistema, a não ser que a pessoa escolha "Claro" ou "Escuro" em PreferenciasAcessibilidade (data-tema no <html>).
- * :where() mantém a especificidade igual à de :root, para o alto contraste (declarado depois) continuar vencendo. */
-@media (prefers-color-scheme: dark) {
-  :root:where(:not([data-tema="claro"])) {
-    color-scheme: dark;
-    --fundo: #0b1220;
-    --fundo-app: #0b1220;
-    --superficie: #141d2f;
-    --superficie-2: #1c2740;
-    --texto: #d8e0ec;
-    --texto-suave: #a3b3c9;
-    --texto-titulo: #f8fafc;
-    --borda: #6b7c93;
-    --borda-suave: #26344d;
-    --acao: #7cb1ff;
-    --acao-fundo: #2563eb;
-    --acao-fundo-hover: #3b74f0;
-    --acao-suave: #172a4d;
-    --confirmacao: #5ee08f;
-    --confirmacao-fundo: #15803d;
-    --confirmacao-suave: #0f2e1f;
-    --erro: #ff8a8a;
-    --erro-fundo: #c62828;
-    --erro-suave: #3a1519;
-    --aviso: #fcd34d;
-    --aviso-suave: #352a0c;
-    --foco: #93c5fd;
-    --sombra-1: 0 1px 2px rgb(0 0 0 / 0.4);
-    --sombra-2: 0 6px 16px rgb(0 0 0 / 0.45);
-    --sombra-nav: 0 -4px 16px rgb(0 0 0 / 0.5);
-  }
-}
-
+/* Tema escuro: pensado para dirigir à noite, com fundo azul-petróleo profundo (não preto puro) e cores menos saturadas.
+ * Única definição da paleta escura: o tema "automático" é resolvido em shared/ui/preferencias.ts, que sempre grava
+ * data-tema="claro" ou "escuro" no <html>. :where() mantém a especificidade igual à de :root, para o alto contraste
+ * (declarado depois) continuar vencendo. */
 :root:where([data-tema="escuro"]) {
   color-scheme: dark;
   --fundo: #0b1220;
@@ -124,10 +94,6 @@
   --sombra-1: 0 1px 2px rgb(0 0 0 / 0.4);
   --sombra-2: 0 6px 16px rgb(0 0 0 / 0.45);
   --sombra-nav: 0 -4px 16px rgb(0 0 0 / 0.5);
-}
-
-:root:where([data-tema="claro"]) {
-  color-scheme: light;
 }
 
 * {
@@ -2043,12 +2009,6 @@ dialog.gaveta::backdrop {
 /* Mapa no tema escuro: as imagens do OpenStreetMap são sempre claras e ofuscam à noite.
  * Inverte só a camada de imagens (os marcadores ficam intactos) e gira o matiz para a água
  * continuar azul e os parques verdes; controles e atribuição seguem as cores do tema. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-tema="claro"]):not([data-alto-contraste="true"]) .leaflet-tile-pane {
-    filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.8);
-  }
-}
-
 :root[data-tema="escuro"]:not([data-alto-contraste="true"]) .leaflet-tile-pane {
   filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.8);
 }

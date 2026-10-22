@@ -9,7 +9,7 @@ export type TipoSelecao = "SUGERIDA" | "PROPRIA";
  * Espelha com.marillia.milebag.core.geo.RotaAlternativa. Sem traçado
  * (polilinha): o back-end extrai do motor de rotas apenas o resumo
  * (distância, tempo, indicador de pedágio), então o mapa só posiciona
- * origem e destino — as alternativas são comparadas pelos números.
+ * origem e destino; as alternativas são comparadas pelos números.
  */
 export type RotaAlternativa = {
   id: string;

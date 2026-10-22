@@ -122,7 +122,7 @@ export function App() {
         path="/admin"
         element={
           <RequireAuth papeis={["ADMINISTRADOR_TENANT"]}>
-            <AdminLayout titulo="Milebag — Administração" itens={ITENS_TENANT} />
+            <AdminLayout titulo="Administração" itens={ITENS_TENANT} />
           </RequireAuth>
         }
       >
@@ -139,7 +139,7 @@ export function App() {
         path="/plataforma"
         element={
           <RequireAuth papeis={["ADMINISTRADOR_PLATAFORMA"]}>
-            <AdminLayout titulo="Milebag — Plataforma" itens={ITENS_PLATAFORMA} />
+            <AdminLayout titulo="Plataforma" itens={ITENS_PLATAFORMA} />
           </RequireAuth>
         }
       >

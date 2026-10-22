@@ -1,7 +1,12 @@
 import { ApiError } from "./ApiError";
 import { obterToken } from "../auth/authStorage";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
+// Endereço da API vem do arquivo .env do ambiente (modelo em .env.example), nunca fixo no código.
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+if (!BASE_URL) {
+  throw new Error("VITE_API_BASE_URL não definida. Configure o arquivo .env do ambiente (modelo em .env.example).");
+}
 
 type ProblemDetail = {
   detail?: string;

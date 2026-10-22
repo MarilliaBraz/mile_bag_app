@@ -46,7 +46,7 @@ export function HistoricoAjustes({ viagemId }: { viagemId: string }) {
       <ul>
         {ajustes.map((ajuste) => (
           <li key={ajuste.id}>
-            {new Date(ajuste.criadoEm).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })} — {ROTULO_CAMPO[ajuste.campo]}:{" "}
+            {new Date(ajuste.criadoEm).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })} · {ROTULO_CAMPO[ajuste.campo]}:{" "}
             {ajuste.valorAnterior} → <strong>{ajuste.valorNovo}</strong>
             <br />
             <em>{ajuste.justificativa}</em>
