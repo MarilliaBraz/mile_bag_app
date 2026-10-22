@@ -40,7 +40,7 @@ export function AjusteDestinoManual({
         <CapturarClique aoClicar={setDestino} />
       </MapaBase>
 
-      <button type="button" className="grande bloco" onClick={() => destino && aoConfirmar(destino)} disabled={!destino || ocupado} style={{ marginTop: "0.75rem" }}>
+      <button type="button" className="grande bloco mt-3" onClick={() => destino && aoConfirmar(destino)} disabled={!destino || ocupado}>
         {ocupado ? "Calculando…" : destino ? "Calcular rota até aqui" : "Toque no mapa para marcar o endereço"}
       </button>
     </section>

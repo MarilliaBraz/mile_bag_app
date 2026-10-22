@@ -95,7 +95,7 @@ export function RegistrarOcorrencia() {
             </Alerta>
           )}
 
-          <fieldset className="escolhas" style={{ marginTop: "1.25rem" }}>
+          <fieldset className="escolhas mt-5">
             <legend>
               O que aconteceu? <span className="campo-obrigatorio" aria-hidden="true">*</span>
             </legend>
@@ -114,7 +114,7 @@ export function RegistrarOcorrencia() {
             ))}
           </fieldset>
 
-          <div style={{ marginTop: "1.25rem" }}>
+          <div className="mt-5">
             <label htmlFor="descricao">Descrição adicional (opcional)</label>
             <textarea
               id="descricao"
@@ -130,7 +130,7 @@ export function RegistrarOcorrencia() {
               {enviando ? "Registrando…" : "Registrar ocorrência"}
             </button>
             {!motivoOcorrenciaId && (
-              <p className="texto-apoio" style={{ textAlign: "center", marginBottom: 0 }}>
+              <p className="texto-apoio centro mb-0">
                 Escolha um motivo para continuar.
               </p>
             )}

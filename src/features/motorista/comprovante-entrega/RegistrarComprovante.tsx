@@ -131,7 +131,7 @@ export function RegistrarComprovante() {
           <span id="rotulo-foto" className="destaque" style={{ display: "block", marginBottom: "0.375rem", fontSize: "1rem" }}>
             1. Foto do documento assinado <span className="campo-obrigatorio" aria-hidden="true">*</span>
           </span>
-          {urlPrevia && <img src={urlPrevia} alt="Foto do comprovante escolhida" className="previa-foto" style={{ marginBottom: "0.5rem" }} />}
+          {urlPrevia && <img src={urlPrevia} alt="Foto do comprovante escolhida" className="previa-foto mb-2" />}
           <label className={`seletor-foto${foto ? " preenchido" : ""}`}>
             <Icone nome={foto ? "checkCirculo" : "camera"} />
             <strong>{foto ? "Foto pronta. Toque para trocar" : "Tirar foto do documento"}</strong>
@@ -198,7 +198,7 @@ export function RegistrarComprovante() {
               <Icone nome="checkCirculo" /> {enviando ? "Registrando…" : "Registrar e encerrar entrega"}
             </button>
             {!podeEnviar && !enviando && (
-              <p className="texto-apoio" style={{ textAlign: "center", marginBottom: 0 }}>
+              <p className="texto-apoio centro mb-0">
                 Para continuar: {pendencias.join(", ")}.
               </p>
             )}

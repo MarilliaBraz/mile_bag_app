@@ -46,7 +46,7 @@ export function TelaRota() {
       {emExecucao && <MarcosProgresso entregaId={entregaId} aoRegistrar={rota.recarregarTrajeto} />}
 
       {emExecucao && !rota.divergenciaPendente && (
-        <button type="button" className="sucesso grande bloco" onClick={() => setConfirmandoEncerrar(true)} disabled={rota.ocupado} style={{ marginTop: "1rem" }}>
+        <button type="button" className="sucesso grande bloco mt-4" onClick={() => setConfirmandoEncerrar(true)} disabled={rota.ocupado}>
           <Icone nome="checkCirculo" /> {rota.ocupado ? "Aguarde…" : "Encerrar viagem"}
         </button>
       )}
@@ -91,11 +91,11 @@ export function TelaRota() {
 
               {!rota.trajeto && rota.selecao && <IniciarViagem selecao={rota.selecao} aoIniciar={rota.iniciar} ocupado={rota.ocupado} />}
 
-              <button type="button" className="secundario bloco" onClick={() => rota.recalcular()} disabled={rota.ocupado} style={{ marginTop: "0.75rem" }}>
+              <button type="button" className="secundario bloco mt-3" onClick={() => rota.recalcular()} disabled={rota.ocupado}>
                 <Icone nome="sincronizar" /> {rota.ocupado ? "Recalculando…" : "Recalcular a partir da minha posição"}
               </button>
 
-              <details className="ajuda sem-icone" style={{ marginTop: "1rem" }}>
+              <details className="ajuda sem-icone mt-4">
                 <summary>Usar uma rota própria</summary>
                 <RotaPropria centro={rota.calculo.destino} aoConfirmar={rota.selecionarPropria} desabilitado={rota.ocupado} />
               </details>

@@ -59,7 +59,7 @@ export function SecaoCodigoNome({ categoria, titulo, rotuloCodigo }: { categoria
           <label htmlFor={`${categoria}-codigo`} className="visualmente-oculto">
             {rotuloCodigo}
           </label>
-          <input id={`${categoria}-codigo`} placeholder="IATA" value={codigo} maxLength={10} style={{ textTransform: "uppercase" }} onChange={(e) => setCodigo(e.target.value)} />
+          <input className="maiusculas" id={`${categoria}-codigo`} placeholder="IATA" value={codigo} maxLength={10} onChange={(e) => setCodigo(e.target.value)} />
         </div>
         <div>
           <label htmlFor={`${categoria}-nome`} className="visualmente-oculto">

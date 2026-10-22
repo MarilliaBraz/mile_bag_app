@@ -86,7 +86,7 @@ export function PainelEntregas() {
 
       {!painel && !erro && (
         <div className="pilha" role="status" aria-label="Carregando entregas">
-          <div className="esqueleto" style={{ height: "5rem" }} />
+          <div className="esqueleto esqueleto-curto" />
           <div className="esqueleto" />
           <div className="esqueleto" />
         </div>
@@ -113,7 +113,7 @@ export function PainelEntregas() {
                 const status = STATUS_ENTREGA[item.status];
                 return (
                   <li key={item.entregaId}>
-                    <Link to={`/motorista/entregas/${item.entregaId}`} className="cartao-link">
+                    <Link to={`/motorista/entregas/${item.entregaId}`} viewTransition className="cartao-link">
                       <div className="cartao-corpo">
                         <div className="cartao-cabecalho">
                           <span className="codigo">{item.bdoNumero ?? "BDO sem número"}</span>
@@ -133,7 +133,7 @@ export function PainelEntregas() {
                         {item.bagagensCarona.length > 0 && (
                           <div className="linha-icone texto-apoio">
                             <Icone nome="mala" />
-                            <span>+ {item.bagagensCarona.length} bagagem(ns) carona</span>
+                            <span>{item.bagagensCarona.length === 1 ? "+ 1 bagagem carona" : `+ ${item.bagagensCarona.length} bagagens carona`}</span>
                           </div>
                         )}
                       </div>

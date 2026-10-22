@@ -10,6 +10,7 @@ import { Conversa } from "../../mensageria/components/Conversa";
 import { HistoricoOcorrencias } from "../../ocorrencia/HistoricoOcorrencias";
 import { consultarDetalhe } from "../services/painelService";
 import type { ItemPainelDetalhe } from "../types";
+import { EtapasEntrega } from "./EtapasEntrega";
 import { STATUS_ENTREGA } from "./statusEntrega";
 
 /**
@@ -66,26 +67,27 @@ export function DetalheEntrega() {
               <span className="texto-apoio">Entregar para</span>
               <span className={`selo selo-${status.tom}`}>{status.texto}</span>
             </div>
-            <div className="destaque" style={{ fontSize: "1.375rem" }}>
-              {entrega.passageiroNome ?? "Passageiro não identificado"}
-            </div>
-            <div className="linha-icone" style={{ marginTop: "0.5rem", fontSize: "1.0625rem" }}>
+            <div className="destino-nome">{entrega.passageiroNome ?? "Passageiro não identificado"}</div>
+            <div className="linha-icone destino-endereco">
               <Icone nome="pino" />
               <span>{entrega.endereco ?? "Endereço não informado"}</span>
             </div>
+            <div className="divisor-topo">
+              <EtapasEntrega entrega={entrega} />
+            </div>
           </section>
 
-          <div className="grade-acoes" style={{ marginTop: "1rem" }}>
-            <Link to={`/motorista/entregas/${entrega.entregaId}/rota`} className={`botao grande${entrega.telefone ? "" : " largo"}`}>
+          <div className="grade-acoes mt-4">
+            <Link to={`/motorista/entregas/${entrega.entregaId}/rota`} viewTransition className={`botao grande${entrega.telefone ? "" : " largo"}`}>
               <Icone nome="rota" /> {entrega.temTrajetoIniciado ? "Ver viagem" : "Rota"}
             </Link>
             <BotaoLigar telefone={entrega.telefone} />
             {!encerrada && (
               <>
-                <Link to={`/motorista/entregas/${entrega.entregaId}/comprovante`} className="botao grande sucesso largo">
+                <Link to={`/motorista/entregas/${entrega.entregaId}/comprovante`} viewTransition className="botao grande sucesso largo">
                   <Icone nome="checkCirculo" /> Registrar entrega
                 </Link>
-                <Link to={`/motorista/entregas/${entrega.entregaId}/ocorrencia`} className="botao secundario largo">
+                <Link to={`/motorista/entregas/${entrega.entregaId}/ocorrencia`} viewTransition className="botao secundario largo">
                   <Icone nome="alerta" /> Não consegui entregar
                 </Link>
               </>

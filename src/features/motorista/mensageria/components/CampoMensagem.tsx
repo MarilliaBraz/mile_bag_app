@@ -41,7 +41,7 @@ export function CampoMensagem({ entregaId, aoEnviar }: { entregaId: string; aoEn
   }
 
   return (
-    <form onSubmit={enviar} style={{ marginTop: "1rem" }}>
+    <form className="mt-4" onSubmit={enviar}>
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
       <label htmlFor="mensagem">Mensagem ao passageiro</label>
       <div style={{ display: "flex", gap: "0.5rem", alignItems: "flex-end" }}>
@@ -51,7 +51,7 @@ export function CampoMensagem({ entregaId, aoEnviar }: { entregaId: string; aoEn
         </button>
       </div>
       {enviada && (
-        <p role="status" className="texto-apoio" style={{ color: "var(--confirmacao)" }}>
+        <p role="status" className="texto-apoio texto-sucesso">
           <Icone nome="checkCirculo" /> Mensagem enviada.
         </p>
       )}

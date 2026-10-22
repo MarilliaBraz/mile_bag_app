@@ -30,7 +30,7 @@ export function ResumoViagem({ trajeto }: { trajeto: TrajetoDetalhado }) {
       <h2>Viagem {encerrado ? "encerrada" : "em andamento"}</h2>
       <div className="cartao">
         {encerrado && trajeto.kmIdaFinal && trajeto.kmVoltaFinal && (
-          <div className="dados-grade" style={{ marginBottom: "1rem" }}>
+          <div className="dados-grade mb-4">
             <div>
               <div className="texto-apoio">Ida</div>
               <div className="destaque">{formatarKm(trajeto.kmIdaFinal)}</div>

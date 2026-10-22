@@ -102,7 +102,7 @@ export function RelatorioQuinzenal() {
                     {formatarMoeda(totais.valor)}
                   </span>
                 </span>
-                <span className="resumo-texto" style={{ textAlign: "right" }}>
+                <span className="resumo-texto direita">
                   {relatorio.entregas.length} entrega(s)
                   <small>{km(totais.km)} rodados</small>
                 </span>
@@ -113,7 +113,7 @@ export function RelatorioQuinzenal() {
                 </Alerta>
               )}
 
-              <ul className="lista" style={{ marginTop: "1rem" }}>
+              <ul className="lista mt-4">
                 {relatorio.entregas.map((item) => (
                   <li key={item.entregaId} className="cartao">
                     <div className="cartao-cabecalho">
@@ -138,7 +138,7 @@ export function RelatorioQuinzenal() {
                         <dd>{formatarMoeda(item.valorPedagio)}</dd>
                       </div>
                     </dl>
-                    <div className="linha-acoes nao-imprimir" style={{ marginTop: "0.75rem" }}>
+                    <div className="linha-acoes nao-imprimir mt-3">
                       <button type="button" className="secundario" aria-expanded={corrigindo === item.viagemId} onClick={() => setCorrigindo(corrigindo === item.viagemId ? null : item.viagemId)}>
                         Corrigir valor
                       </button>
@@ -165,7 +165,7 @@ export function RelatorioQuinzenal() {
                 ))}
               </ul>
 
-              <button type="button" className="secundario bloco nao-imprimir" style={{ marginTop: "1rem" }} onClick={() => window.print()}>
+              <button type="button" className="secundario bloco nao-imprimir mt-4" onClick={() => window.print()}>
                 <Icone nome="impressora" /> Imprimir ou salvar em PDF
               </button>
             </>

@@ -70,7 +70,7 @@ export function AtivarConviteForm() {
 
       {convite && convite.status === "PENDENTE" && !ativado && (
         <form onSubmit={ativar} className="cartao formulario">
-          <p style={{ margin: 0 }}>
+          <p className="m-0">
             Você foi convidado a administrar <strong>{convite.tenantNome}</strong> com o e-mail <strong>{convite.emailDestinatario}</strong>.
           </p>
           {erroAcao && (

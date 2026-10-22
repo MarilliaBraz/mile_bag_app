@@ -81,7 +81,7 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
       {pedirNome && (
         <fieldset style={{ border: "1px solid var(--borda-suave)", borderRadius: "var(--raio)", padding: "0.75rem 1rem 1rem", margin: 0 }}>
           <legend style={{ fontWeight: 600, padding: "0 0.25rem" }}>Localização da praça (opcional)</legend>
-          <p className="texto-apoio" style={{ marginTop: 0 }}>
+          <p className="texto-apoio mt-0">
             Sem a localização, a praça não é detectada nas rotas e o reembolso do pedágio fica pendente. No Google Maps, clique com o botão direito no local
             da praça e copie as coordenadas.
           </p>

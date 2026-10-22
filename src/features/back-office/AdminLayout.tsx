@@ -20,7 +20,7 @@ export function AdminLayout({ titulo, itens }: { titulo: string; itens: Item[] }
 
         <nav aria-label="Seções" className="menu-admin">
           {itens.map((item, indice) => (
-            <NavLink key={item.para} to={item.para} accessKey={String(indice + 1)} title={`Atalho: Alt+Shift+${indice + 1}`}>
+            <NavLink key={item.para} to={item.para} viewTransition accessKey={String(indice + 1)} title={`Atalho: Alt+Shift+${indice + 1}`}>
               <Icone nome={item.icone} />
               <span>{item.rotulo}</span>
             </NavLink>
@@ -31,7 +31,7 @@ export function AdminLayout({ titulo, itens }: { titulo: string; itens: Item[] }
           <div className="admin-lateral-preferencias">
             <PreferenciasAcessibilidade />
           </div>
-          <NavLink to="/conta/senha" className="admin-link-conta">
+          <NavLink to="/conta/senha" viewTransition className="admin-link-conta">
             <Icone nome="chave" />
             <span>Minha senha</span>
           </NavLink>

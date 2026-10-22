@@ -63,9 +63,9 @@ export function MapaRotas({
             return (
               <li key={alternativa.id}>
                 <button type="button" className="opcao" onClick={() => aoSelecionar(alternativa)} aria-pressed={selecionada}>
-                  <span style={{ flex: 1, minWidth: 0 }}>
+                  <span className="flex-1">
                     <span style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", gap: "0.25rem 0.75rem" }}>
-                      <strong style={{ fontSize: "1.25rem" }}>{formatarDuracao(alternativa.duracaoSegundos)}</strong>
+                      <strong className="fs-g">{formatarDuracao(alternativa.duracaoSegundos)}</strong>
                       <span>{formatarDistancia(alternativa.distanciaMetros)}</span>
                     </span>
                     <span style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem", marginTop: "0.375rem" }}>

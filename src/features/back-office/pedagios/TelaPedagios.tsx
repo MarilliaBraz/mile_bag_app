@@ -36,7 +36,7 @@ function LocalizacaoForm({ praca, aoConcluir }: { praca: PracaPedagio; aoConclui
       className="formulario"
     >
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
-      <p className="texto-apoio" style={{ margin: 0 }}>
+      <p className="texto-apoio m-0">
         No Google Maps, clique com o botão direito no local da praça e copie as coordenadas.
       </p>
       <div className="form-linha">
