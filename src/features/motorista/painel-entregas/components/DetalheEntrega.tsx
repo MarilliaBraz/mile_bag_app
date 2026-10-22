@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { Alerta, Carregando } from "../../../../shared/ui/Alerta";
+import { AvisoContatoIncompleto } from "../../../../shared/ui/AvisoContatoIncompleto";
 import { Icone } from "../../../../shared/ui/Icone";
 import { VincularBagagemCarona } from "../../captura-bdo/bagagem-carona/VincularBagagemCarona";
 import { TelaMotorista } from "../../layout/TelaMotorista";
@@ -72,6 +73,7 @@ export function DetalheEntrega() {
               <Icone nome="pino" />
               <span>{entrega.endereco ?? "Endereço não informado"}</span>
             </div>
+            <AvisoContatoIncompleto pendencias={entrega.pendenciasContato} compacto />
             <div className="divisor-topo">
               <EtapasEntrega entrega={entrega} />
             </div>

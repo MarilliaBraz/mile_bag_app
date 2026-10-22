@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { Alerta } from "../../../../shared/ui/Alerta";
+import { AvisoContatoIncompleto } from "../../../../shared/ui/AvisoContatoIncompleto";
 import { Icone } from "../../../../shared/ui/Icone";
 import { executarOuEnfileirar } from "../../offline-sync/fila";
 import { autoatribuir } from "../services/painelService";
@@ -63,6 +64,7 @@ export function ListaBdosDisponiveis({
               <Icone nome="pino" />
               <span>{bdo.endereco ?? "Endereço não informado"}</span>
             </div>
+            <AvisoContatoIncompleto pendencias={bdo.pendenciasContato} compacto />
             <button
               type="button"
               className="secundario bloco mt-3"
