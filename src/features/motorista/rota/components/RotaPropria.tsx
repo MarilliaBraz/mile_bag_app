@@ -54,7 +54,10 @@ export function RotaPropria({
       </div>
 
       <label htmlFor="justificativa-rota">
-        Justificativa <span className="campo-obrigatorio" aria-hidden="true">*</span>
+        Justificativa{" "}
+        <span className="campo-obrigatorio" aria-hidden="true">
+          *
+        </span>
       </label>
       <textarea
         id="justificativa-rota"

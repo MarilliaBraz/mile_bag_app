@@ -78,7 +78,11 @@ export function DetalheEntrega() {
           </section>
 
           <div className="grade-acoes mt-4">
-            <Link to={`/motorista/entregas/${entrega.entregaId}/rota`} viewTransition className={`botao grande${entrega.telefone ? "" : " largo"}`}>
+            <Link
+              to={`/motorista/entregas/${entrega.entregaId}/rota`}
+              viewTransition
+              className={`botao grande${entrega.telefone ? "" : " largo"}`}
+            >
               <Icone nome="rota" /> {entrega.temTrajetoIniciado ? "Ver viagem" : "Rota"}
             </Link>
             <BotaoLigar telefone={entrega.telefone} />
@@ -114,7 +118,12 @@ export function DetalheEntrega() {
             </div>
           </dl>
 
-          <VincularBagagemCarona entregaId={entrega.entregaId} bagagens={entrega.bagagensCarona} encerrada={encerrada} aoAlterar={carregar} />
+          <VincularBagagemCarona
+            entregaId={entrega.entregaId}
+            bagagens={entrega.bagagensCarona}
+            encerrada={encerrada}
+            aoAlterar={carregar}
+          />
 
           <HistoricoOcorrencias entregaId={entrega.entregaId} />
 

@@ -10,7 +10,10 @@ export function TelaEmpresas() {
   const [codigo, setCodigo] = useState("");
 
   return (
-    <Pagina titulo="Empresas assinantes" descricao="Cadastre a empresa e o e-mail do primeiro administrador: ele recebe um convite para definir a própria senha e já pode começar a operar.">
+    <Pagina
+      titulo="Empresas assinantes"
+      descricao="Cadastre a empresa e o e-mail do primeiro administrador: ele recebe um convite para definir a própria senha e já pode começar a operar."
+    >
       <div className="grade-paineis">
         <Painel titulo="Cadastrar empresa">
           <CadastroTenantForm aoCadastrar={(tenant) => navigate(`/plataforma/empresas/${tenant.id}`)} />
@@ -26,7 +29,13 @@ export function TelaEmpresas() {
           >
             <div>
               <label htmlFor="codigo-empresa">Código da empresa</label>
-              <input id="codigo-empresa" placeholder="Ex.: 3f2b…" spellCheck={false} value={codigo} onChange={(e) => setCodigo(e.target.value)} />
+              <input
+                id="codigo-empresa"
+                placeholder="Ex.: 3f2b…"
+                spellCheck={false}
+                value={codigo}
+                onChange={(e) => setCodigo(e.target.value)}
+              />
             </div>
             <button type="submit" disabled={!codigo.trim()}>
               Abrir <Icone nome="chevron" />

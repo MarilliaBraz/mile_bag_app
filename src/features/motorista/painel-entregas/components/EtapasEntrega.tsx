@@ -30,7 +30,10 @@ function etapaAtual(entrega: Pick<ItemPainel, "status" | "marcoMaisRecente" | "t
 export function EtapasEntrega({ entrega }: { entrega: Pick<ItemPainel, "status" | "marcoMaisRecente" | "temTrajetoIniciado"> }) {
   const atual = etapaAtual(entrega);
   return (
-    <ol className="etapas" aria-label={atual >= ETAPAS.length ? "Andamento: entrega concluída" : `Andamento: etapa ${atual + 1} de ${ETAPAS.length}`}>
+    <ol
+      className="etapas"
+      aria-label={atual >= ETAPAS.length ? "Andamento: entrega concluída" : `Andamento: etapa ${atual + 1} de ${ETAPAS.length}`}
+    >
       {ETAPAS.map((etapa, indice) => {
         const feita = indice < atual;
         const classe = feita ? "etapa-feita" : indice === atual ? "etapa-atual" : undefined;

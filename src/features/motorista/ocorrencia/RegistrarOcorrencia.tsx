@@ -84,20 +84,26 @@ export function RegistrarOcorrencia() {
       {!motivos && <Carregando texto="Carregando motivos…" />}
 
       {motivos && motivos.length === 0 && !erro && (
-        <Alerta tipo="aviso">Nenhum motivo de ocorrência está configurado para a sua empresa. Fale com o administrador antes de continuar.</Alerta>
+        <Alerta tipo="aviso">
+          Nenhum motivo de ocorrência está configurado para a sua empresa. Fale com o administrador antes de continuar.
+        </Alerta>
       )}
 
       {motivos && motivos.length > 0 && (
         <>
           {motivosDoCache && (
             <Alerta tipo="aviso">
-              Sem conexão: usando a lista de motivos salva neste aparelho. Se o administrador mudou os motivos, o registro pode ser recusado ao sincronizar.
+              Sem conexão: usando a lista de motivos salva neste aparelho. Se o administrador mudou os motivos, o registro pode ser recusado
+              ao sincronizar.
             </Alerta>
           )}
 
           <fieldset className="escolhas mt-5">
             <legend>
-              O que aconteceu? <span className="campo-obrigatorio" aria-hidden="true">*</span>
+              O que aconteceu?{" "}
+              <span className="campo-obrigatorio" aria-hidden="true">
+                *
+              </span>
             </legend>
             {motivos.map((motivo) => (
               <label key={motivo.id} className="escolha">
@@ -129,11 +135,7 @@ export function RegistrarOcorrencia() {
             <button type="button" className="grande bloco" onClick={() => setConfirmando(true)} disabled={!motivoOcorrenciaId || enviando}>
               {enviando ? "Registrando…" : "Registrar ocorrência"}
             </button>
-            {!motivoOcorrenciaId && (
-              <p className="texto-apoio centro mb-0">
-                Escolha um motivo para continuar.
-              </p>
-            )}
+            {!motivoOcorrenciaId && <p className="texto-apoio centro mb-0">Escolha um motivo para continuar.</p>}
           </div>
           <ConfirmarAcao
             aberto={confirmando}
@@ -148,7 +150,10 @@ export function RegistrarOcorrencia() {
       )}
 
       <Ajuda>
-        <p>Use quando não for possível entregar a bagagem. Escolha o motivo e, se quiser, descreva o que aconteceu. A entrega volta para a sua lista de pendentes para uma nova tentativa, sem perder o histórico.</p>
+        <p>
+          Use quando não for possível entregar a bagagem. Escolha o motivo e, se quiser, descreva o que aconteceu. A entrega volta para a
+          sua lista de pendentes para uma nova tentativa, sem perder o histórico.
+        </p>
       </Ajuda>
     </TelaMotorista>
   );

@@ -79,11 +79,7 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
   return (
     <div>
       <form onSubmit={enviar} className="formulario">
-        {erro && (
-          <Alerta tipo="erro">
-            {erro}
-          </Alerta>
-        )}
+        {erro && <Alerta tipo="erro">{erro}</Alerta>}
         <div>
           <label htmlFor={`${uid}-lote`}>Um motorista por linha: nome;login;senha</label>
           <textarea
@@ -96,7 +92,8 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
             aria-describedby={`${uid}-lote-ajuda`}
           />
           <span id={`${uid}-lote-ajuda`} className="texto-apoio">
-            A senha é opcional: sem ela o sistema gera uma de 12 caracteres. Até {MAXIMO_POR_LOTE} por vez. Pode colar direto de uma planilha.
+            A senha é opcional: sem ela o sistema gera uma de 12 caracteres. Até {MAXIMO_POR_LOTE} por vez. Pode colar direto de uma
+            planilha.
           </span>
         </div>
         {excedeu && <Alerta tipo="erro">Máximo de {MAXIMO_POR_LOTE} motoristas por vez.</Alerta>}
@@ -119,29 +116,35 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
             </Alerta>
           )}
           <div className="tabela-rolavel">
-<table className="tabela">
-            <thead>
-              <tr>
-                <th scope="col">Linha</th>
-                <th scope="col">Nome</th>
-                <th scope="col">Login</th>
-                <th scope="col">Situação</th>
-                <th scope="col">Senha gerada</th>
-              </tr>
-            </thead>
-            <tbody>
-              {resultados.map((r) => (
-                <tr key={r.linha}>
-                  <td>{r.linha}</td>
-                  <td>{r.nome}</td>
-                  <td>{r.login}</td>
-                  <td>{r.criado ? <span className="selo selo-sucesso">Criado</span> : <span className="selo selo-erro">{r.mensagem ?? "Erro"}</span>}</td>
-                  <td className="mono">{r.senhaGerada ?? ""}</td>
+            <table className="tabela">
+              <thead>
+                <tr>
+                  <th scope="col">Linha</th>
+                  <th scope="col">Nome</th>
+                  <th scope="col">Login</th>
+                  <th scope="col">Situação</th>
+                  <th scope="col">Senha gerada</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-</div>
+              </thead>
+              <tbody>
+                {resultados.map((r) => (
+                  <tr key={r.linha}>
+                    <td>{r.linha}</td>
+                    <td>{r.nome}</td>
+                    <td>{r.login}</td>
+                    <td>
+                      {r.criado ? (
+                        <span className="selo selo-sucesso">Criado</span>
+                      ) : (
+                        <span className="selo selo-erro">{r.mensagem ?? "Erro"}</span>
+                      )}
+                    </td>
+                    <td className="mono">{r.senhaGerada ?? ""}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       )}
     </div>

@@ -105,7 +105,13 @@ export function VincularBagagemCarona({
               <li key={bagagem.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem" }}>
                 <span className="codigo">{bagagem.etiquetaBagagem ?? "Sem etiqueta"}</span>
                 {!encerrada && (
-                  <button type="button" className="fantasma" onClick={() => desvincular(bagagem.id)} disabled={ocupado} aria-label={`Desvincular bagagem ${bagagem.etiquetaBagagem ?? "sem etiqueta"}`}>
+                  <button
+                    type="button"
+                    className="fantasma"
+                    onClick={() => desvincular(bagagem.id)}
+                    disabled={ocupado}
+                    aria-label={`Desvincular bagagem ${bagagem.etiquetaBagagem ?? "sem etiqueta"}`}
+                  >
                     Desvincular
                   </button>
                 )}
@@ -134,9 +140,7 @@ export function VincularBagagemCarona({
                     <button type="button" onClick={() => vincular(bdo.bdoId)} disabled={ocupado} className="opcao">
                       <span>
                         <span className="codigo">{bdo.bdoNumero ?? "BDO sem número"}</span>
-                        <span className="texto-apoio em-bloco">
-                          {bdo.endereco ?? "endereço não informado"}
-                        </span>
+                        <span className="texto-apoio em-bloco">{bdo.endereco ?? "endereço não informado"}</span>
                       </span>
                       <Icone nome="chevron" />
                     </button>

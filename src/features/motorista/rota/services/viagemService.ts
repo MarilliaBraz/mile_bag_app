@@ -15,11 +15,7 @@ export function consultarTrajeto(entregaId: string): Promise<TrajetoDetalhado> {
 }
 
 /** POST /api/v1/entregas/{entregaId}/viagem/checkpoints (HU04; marcos de progresso de HU20). */
-export function registrarCheckpoint(
-  entregaId: string,
-  tipo: TipoCheckpoint,
-  posicao: Coordenada | null,
-): Promise<Checkpoint> {
+export function registrarCheckpoint(entregaId: string, tipo: TipoCheckpoint, posicao: Coordenada | null): Promise<Checkpoint> {
   return requisitar<Checkpoint>(`/api/v1/entregas/${entregaId}/viagem/checkpoints`, {
     metodo: "POST",
     corpo: { tipo, lat: posicao?.latitude ?? null, lng: posicao?.longitude ?? null },

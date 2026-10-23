@@ -22,7 +22,10 @@ export function JustificativaDivergencia({
     <section className="mt-4">
       <Alerta tipo="aviso">{mensagem}</Alerta>
       <label htmlFor="justificativa-divergencia">
-        Justificativa da divergência <span className="campo-obrigatorio" aria-hidden="true">*</span>
+        Justificativa da divergência{" "}
+        <span className="campo-obrigatorio" aria-hidden="true">
+          *
+        </span>
       </label>
       <textarea
         id="justificativa-divergencia"

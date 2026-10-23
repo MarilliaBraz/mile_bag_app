@@ -26,7 +26,10 @@ export function TrocarSenha() {
     setErro(null);
     setEnviando(true);
     try {
-      const resposta = await requisitar<{ token: string }>("/api/v1/auth/senha", { metodo: "POST", corpo: { senhaAtual: atual, novaSenha: nova } });
+      const resposta = await requisitar<{ token: string }>("/api/v1/auth/senha", {
+        metodo: "POST",
+        corpo: { senhaAtual: atual, novaSenha: nova },
+      });
       definirToken(resposta.token);
       setAtual("");
       setNova("");
@@ -42,38 +45,42 @@ export function TrocarSenha() {
   return (
     <div className="tela-entrada">
       <main>
-      <Link to={rotaInicialDo(obterPapel())}>← Voltar</Link>
-      <h1>Minha senha</h1>
-      {trocada && (
-        <Alerta tipo="sucesso">
-          Senha alterada. As outras sessões desta conta foram encerradas.
-        </Alerta>
-      )}
-      <form onSubmit={enviar} className="cartao formulario">
-        {erro && (
-          <Alerta tipo="erro">
-            {erro}
-          </Alerta>
-        )}
-        <div>
-          <label htmlFor="atual">Senha atual</label>
-          <input id="atual" type="password" autoComplete="current-password" value={atual} onChange={(e) => setAtual(e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="nova">Senha nova (mínimo {TAMANHO_MINIMO_SENHA} caracteres)</label>
-          <input id="nova" type="password" autoComplete="new-password" value={nova} onChange={(e) => setNova(e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="confirmacao">Repita a senha nova</label>
-          <input id="confirmacao" type="password" autoComplete="new-password" aria-invalid={!!confirmacao && nova !== confirmacao} aria-describedby={!!confirmacao && nova !== confirmacao ? "confirmacao-erro" : undefined} value={confirmacao} onChange={(e) => setConfirmacao(e.target.value)} />
-          {confirmacao && nova !== confirmacao && <span id="confirmacao-erro" role="alert" className="texto-erro">As senhas não conferem.</span>}
-        </div>
-        <div>
-          <button type="submit" className="grande bloco" disabled={invalido || enviando}>
-            {enviando ? "Salvando…" : "Trocar senha"}
-          </button>
-        </div>
-      </form>
+        <Link to={rotaInicialDo(obterPapel())}>← Voltar</Link>
+        <h1>Minha senha</h1>
+        {trocada && <Alerta tipo="sucesso">Senha alterada. As outras sessões desta conta foram encerradas.</Alerta>}
+        <form onSubmit={enviar} className="cartao formulario">
+          {erro && <Alerta tipo="erro">{erro}</Alerta>}
+          <div>
+            <label htmlFor="atual">Senha atual</label>
+            <input id="atual" type="password" autoComplete="current-password" value={atual} onChange={(e) => setAtual(e.target.value)} />
+          </div>
+          <div>
+            <label htmlFor="nova">Senha nova (mínimo {TAMANHO_MINIMO_SENHA} caracteres)</label>
+            <input id="nova" type="password" autoComplete="new-password" value={nova} onChange={(e) => setNova(e.target.value)} />
+          </div>
+          <div>
+            <label htmlFor="confirmacao">Repita a senha nova</label>
+            <input
+              id="confirmacao"
+              type="password"
+              autoComplete="new-password"
+              aria-invalid={!!confirmacao && nova !== confirmacao}
+              aria-describedby={!!confirmacao && nova !== confirmacao ? "confirmacao-erro" : undefined}
+              value={confirmacao}
+              onChange={(e) => setConfirmacao(e.target.value)}
+            />
+            {confirmacao && nova !== confirmacao && (
+              <span id="confirmacao-erro" role="alert" className="texto-erro">
+                As senhas não conferem.
+              </span>
+            )}
+          </div>
+          <div>
+            <button type="submit" className="grande bloco" disabled={invalido || enviando}>
+              {enviando ? "Salvando…" : "Trocar senha"}
+            </button>
+          </div>
+        </form>
       </main>
     </div>
   );

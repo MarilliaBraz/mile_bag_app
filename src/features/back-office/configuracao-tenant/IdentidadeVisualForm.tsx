@@ -55,17 +55,33 @@ export function IdentidadeVisualForm() {
           <form onSubmit={salvar} className="formulario">
             <div>
               <label htmlFor="cabecalho">Cabeçalho</label>
-              <textarea id="cabecalho" rows={4} value={cabecalho} onChange={(e) => setCabecalho(e.target.value)} placeholder="Razão social, CNPJ, endereço…" />
+              <textarea
+                id="cabecalho"
+                rows={4}
+                value={cabecalho}
+                onChange={(e) => setCabecalho(e.target.value)}
+                placeholder="Razão social, CNPJ, endereço…"
+              />
             </div>
             <div>
-              <span id="rotulo-logotipo" style={{ display: "block", fontWeight: 600, marginBottom: "0.375rem", color: "var(--texto-titulo)" }}>
+              <span
+                id="rotulo-logotipo"
+                style={{ display: "block", fontWeight: 600, marginBottom: "0.375rem", color: "var(--texto-titulo)" }}
+              >
                 Logotipo
               </span>
               <label className={`seletor-foto${logotipo ? " preenchido" : ""}`} style={{ padding: "1.25rem 1rem" }}>
                 <Icone nome={logotipo ? "checkCirculo" : "imagem"} />
                 <strong>{logotipo ? logotipo.name : "Escolher imagem"}</strong>
                 <span>PNG ou JPEG. Sem arquivo novo, o logotipo atual é mantido.</span>
-                <input id="logotipo" className="visualmente-oculto" aria-labelledby="rotulo-logotipo" type="file" accept="image/png,image/jpeg" onChange={(e) => setLogotipo(e.target.files?.[0] ?? null)} />
+                <input
+                  id="logotipo"
+                  className="visualmente-oculto"
+                  aria-labelledby="rotulo-logotipo"
+                  type="file"
+                  accept="image/png,image/jpeg"
+                  onChange={(e) => setLogotipo(e.target.files?.[0] ?? null)}
+                />
               </label>
             </div>
             <button type="submit" disabled={salvando}>

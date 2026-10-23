@@ -35,7 +35,14 @@ export function FechamentoRelatorioCard({ fechamento }: { fechamento: Fechamento
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
       <div className="linha-acoes">
         {RELATORIOS.map(({ tipo, rotulo }) => (
-          <button key={tipo} type="button" className="secundario" disabled={baixando !== null} onClick={() => baixar(tipo)} aria-label={`Baixar PDF de ${rotulo.toLowerCase()}`}>
+          <button
+            key={tipo}
+            type="button"
+            className="secundario"
+            disabled={baixando !== null}
+            onClick={() => baixar(tipo)}
+            aria-label={`Baixar PDF de ${rotulo.toLowerCase()}`}
+          >
             <Icone nome="baixar" /> {baixando === tipo ? "Gerando…" : rotulo}
           </button>
         ))}

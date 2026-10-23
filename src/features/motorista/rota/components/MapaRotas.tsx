@@ -70,7 +70,9 @@ export function MapaRotas({
                     </span>
                     <span style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem", marginTop: "0.375rem" }}>
                       {maisRapida && calculo.alternativas.length > 1 && <span className="selo selo-sucesso">Mais rápida</span>}
-                      <span className={`selo${alternativa.possuiPedagio ? " selo-aviso" : ""}`}>{alternativa.possuiPedagio ? "Com pedágio" : "Sem pedágio"}</span>
+                      <span className={`selo${alternativa.possuiPedagio ? " selo-aviso" : ""}`}>
+                        {alternativa.possuiPedagio ? "Com pedágio" : "Sem pedágio"}
+                      </span>
                     </span>
                     {alternativa.pracasPedagio.length > 0 && (
                       <span className="texto-apoio" style={{ display: "block", marginTop: "0.375rem" }}>

@@ -7,8 +7,8 @@ import { registrarCheckpoint } from "../services/viagemService";
 import type { TipoCheckpoint } from "../types";
 
 const MARCOS: { tipo: Extract<TipoCheckpoint, "A_CAMINHO" | "CHEGADA">; icone: NomeIcone; rotulo: string; confirmacao: string }[] = [
-  { tipo: "A_CAMINHO", icone: "carro", rotulo: "Estou a caminho", confirmacao: "Marco \"a caminho\" registrado." },
-  { tipo: "CHEGADA", icone: "pino", rotulo: "Cheguei", confirmacao: "Marco \"chegada\" registrado." },
+  { tipo: "A_CAMINHO", icone: "carro", rotulo: "Estou a caminho", confirmacao: 'Marco "a caminho" registrado.' },
+  { tipo: "CHEGADA", icone: "pino", rotulo: "Cheguei", confirmacao: 'Marco "chegada" registrado.' },
 ];
 
 /**
@@ -54,7 +54,13 @@ export function MarcosProgresso({ entregaId, aoRegistrar }: { entregaId: string;
       <h2 className="mt-2">Avisar o passageiro</h2>
       <div className="grade-acoes">
         {MARCOS.map((marco) => (
-          <button key={marco.tipo} type="button" className="grande" onClick={() => registrar(marco.tipo, marco.confirmacao)} disabled={ocupado !== null}>
+          <button
+            key={marco.tipo}
+            type="button"
+            className="grande"
+            onClick={() => registrar(marco.tipo, marco.confirmacao)}
+            disabled={ocupado !== null}
+          >
             <Icone nome={marco.icone} /> {ocupado === marco.tipo ? "Registrando…" : marco.rotulo}
           </button>
         ))}

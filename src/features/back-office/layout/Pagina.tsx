@@ -73,7 +73,17 @@ export function Painel({
 }
 
 /** Número de destaque (total a pagar, pendências...) para leitura rápida antes da tabela. */
-export function Indicador({ rotulo, valor, detalhe, tom }: { rotulo: string; valor: ReactNode; detalhe?: ReactNode; tom?: "aviso" | "sucesso" | "erro" }) {
+export function Indicador({
+  rotulo,
+  valor,
+  detalhe,
+  tom,
+}: {
+  rotulo: string;
+  valor: ReactNode;
+  detalhe?: ReactNode;
+  tom?: "aviso" | "sucesso" | "erro";
+}) {
   return (
     <div className={`indicador${tom ? ` indicador-${tom}` : ""}`}>
       <span className="indicador-rotulo">{rotulo}</span>

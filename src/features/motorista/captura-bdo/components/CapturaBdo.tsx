@@ -130,7 +130,14 @@ export function CapturaBdo() {
             <Icone nome="camera" />
             <strong>Fotografar BDO</strong>
             <span>Documento inteiro, bem iluminado e sem reflexo.</span>
-            <input id="foto-bdo" className="visualmente-oculto" type="file" accept="image/*" capture="environment" onChange={aoSelecionarFoto} />
+            <input
+              id="foto-bdo"
+              className="visualmente-oculto"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={aoSelecionarFoto}
+            />
           </label>
         </>
       )}
@@ -139,16 +146,42 @@ export function CapturaBdo() {
 
       {etapa === "conferencia" && bdo && (
         <form onSubmit={confirmar}>
-          <Alerta tipo="info">Confira os campos lidos automaticamente e corrija o que estiver errado. Nada é salvo sem a sua confirmação.</Alerta>
+          <Alerta tipo="info">
+            Confira os campos lidos automaticamente e corrija o que estiver errado. Nada é salvo sem a sua confirmação.
+          </Alerta>
 
           <div className="cartao formulario">
             <CampoTexto label="Número do BDO" valor={campos.numero} aoAlterar={(v) => atualizarCampo("numero", v)} obrigatorio />
-            <CampoTexto label="Nome do passageiro" valor={campos.passageiroNome} aoAlterar={(v) => atualizarCampo("passageiroNome", v)} obrigatorio />
-            <CampoTexto label="Endereço de entrega" valor={campos.enderecoEntrega} aoAlterar={(v) => atualizarCampo("enderecoEntrega", v)} obrigatorio />
+            <CampoTexto
+              label="Nome do passageiro"
+              valor={campos.passageiroNome}
+              aoAlterar={(v) => atualizarCampo("passageiroNome", v)}
+              obrigatorio
+            />
+            <CampoTexto
+              label="Endereço de entrega"
+              valor={campos.enderecoEntrega}
+              aoAlterar={(v) => atualizarCampo("enderecoEntrega", v)}
+              obrigatorio
+            />
             <CampoTexto label="Companhia aérea" valor={campos.companhiaAerea} aoAlterar={(v) => atualizarCampo("companhiaAerea", v)} />
-            <CampoTexto label="Telefone do passageiro" tipo="tel" valor={campos.telefonePassageiro} aoAlterar={(v) => atualizarCampo("telefonePassageiro", v)} />
-            <CampoTexto label="E-mail do passageiro" tipo="email" valor={campos.emailPassageiro} aoAlterar={(v) => atualizarCampo("emailPassageiro", v)} />
-            <CampoTexto label="Etiqueta da bagagem" valor={campos.etiquetaBagagem} aoAlterar={(v) => atualizarCampo("etiquetaBagagem", v)} />
+            <CampoTexto
+              label="Telefone do passageiro"
+              tipo="tel"
+              valor={campos.telefonePassageiro}
+              aoAlterar={(v) => atualizarCampo("telefonePassageiro", v)}
+            />
+            <CampoTexto
+              label="E-mail do passageiro"
+              tipo="email"
+              valor={campos.emailPassageiro}
+              aoAlterar={(v) => atualizarCampo("emailPassageiro", v)}
+            />
+            <CampoTexto
+              label="Etiqueta da bagagem"
+              valor={campos.etiquetaBagagem}
+              aoAlterar={(v) => atualizarCampo("etiquetaBagagem", v)}
+            />
           </div>
 
           <div className="acao-fixa">
@@ -160,7 +193,10 @@ export function CapturaBdo() {
       )}
 
       <Ajuda>
-        <p>Fotografe o documento do BDO. O sistema lê os campos, e você confere e corrige tudo antes de confirmar. Nada é salvo sem a sua conferência.</p>
+        <p>
+          Fotografe o documento do BDO. O sistema lê os campos, e você confere e corrige tudo antes de confirmar. Nada é salvo sem a sua
+          conferência.
+        </p>
       </Ajuda>
     </TelaMotorista>
   );
@@ -191,7 +227,14 @@ function CampoTexto({
           </span>
         )}
       </label>
-      <input id={id} type={tipo} value={valor ?? ""} onChange={(evento) => aoAlterar(evento.target.value)} required={obrigatorio} aria-required={obrigatorio} />
+      <input
+        id={id}
+        type={tipo}
+        value={valor ?? ""}
+        onChange={(evento) => aoAlterar(evento.target.value)}
+        required={obrigatorio}
+        aria-required={obrigatorio}
+      />
     </div>
   );
 }

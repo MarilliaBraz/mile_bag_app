@@ -30,7 +30,9 @@ export function AjusteDestinoManual({
 
   return (
     <section>
-      <Alerta tipo="aviso">Não foi possível localizar automaticamente o endereço deste BDO. Toque no mapa para marcar onde é a entrega.</Alerta>
+      <Alerta tipo="aviso">
+        Não foi possível localizar automaticamente o endereço deste BDO. Toque no mapa para marcar onde é a entrega.
+      </Alerta>
 
       <MapaBase
         centro={destino ?? centroInicial}

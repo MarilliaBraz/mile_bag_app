@@ -46,11 +46,14 @@ export function RegistrarComprovante() {
 
   // Prévia da foto escolhida: o motorista confere se o documento saiu legível antes de encerrar.
   const [urlPrevia, setUrlPrevia] = useState<string | null>(null);
-  useEffect(() => () => {
-    if (urlPrevia) {
-      URL.revokeObjectURL(urlPrevia);
-    }
-  }, [urlPrevia]);
+  useEffect(
+    () => () => {
+      if (urlPrevia) {
+        URL.revokeObjectURL(urlPrevia);
+      }
+    },
+    [urlPrevia],
+  );
 
   function escolherFoto(arquivo: File | null) {
     setFoto(arquivo);
@@ -120,7 +123,11 @@ export function RegistrarComprovante() {
   }
 
   const podeEnviar = !!foto && identificacaoRecebedor.trim().length > 0 && !!posicao && !enviando;
-  const pendencias = [!foto && "tire a foto", !identificacaoRecebedor.trim() && "informe quem recebeu", !posicao && (capturandoPosicao ? "aguarde a localização" : "libere a localização")].filter(Boolean);
+  const pendencias = [
+    !foto && "tire a foto",
+    !identificacaoRecebedor.trim() && "informe quem recebeu",
+    !posicao && (capturandoPosicao ? "aguarde a localização" : "libere a localização"),
+  ].filter(Boolean);
 
   return (
     <TelaMotorista titulo="Comprovante de entrega" voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar="Voltar para a entrega">
@@ -129,7 +136,10 @@ export function RegistrarComprovante() {
       <div className="formulario">
         <div>
           <span id="rotulo-foto" className="destaque" style={{ display: "block", marginBottom: "0.375rem", fontSize: "1rem" }}>
-            1. Foto do documento assinado <span className="campo-obrigatorio" aria-hidden="true">*</span>
+            1. Foto do documento assinado{" "}
+            <span className="campo-obrigatorio" aria-hidden="true">
+              *
+            </span>
           </span>
           {urlPrevia && <img src={urlPrevia} alt="Foto do comprovante escolhida" className="previa-foto mb-2" />}
           <label className={`seletor-foto${foto ? " preenchido" : ""}`}>
@@ -152,7 +162,10 @@ export function RegistrarComprovante() {
 
         <div>
           <label htmlFor="recebedor">
-            2. Quem recebeu <span className="campo-obrigatorio" aria-hidden="true">*</span>
+            2. Quem recebeu{" "}
+            <span className="campo-obrigatorio" aria-hidden="true">
+              *
+            </span>
           </label>
           <input
             id="recebedor"
@@ -197,11 +210,7 @@ export function RegistrarComprovante() {
             <button type="button" className="sucesso grande bloco" onClick={() => setConfirmando(true)} disabled={!podeEnviar}>
               <Icone nome="checkCirculo" /> {enviando ? "Registrando…" : "Registrar e encerrar entrega"}
             </button>
-            {!podeEnviar && !enviando && (
-              <p className="texto-apoio centro mb-0">
-                Para continuar: {pendencias.join(", ")}.
-              </p>
-            )}
+            {!podeEnviar && !enviando && <p className="texto-apoio centro mb-0">Para continuar: {pendencias.join(", ")}.</p>}
           </div>
           <ConfirmarAcao
             aberto={confirmando}
@@ -216,7 +225,10 @@ export function RegistrarComprovante() {
       )}
 
       <Ajuda>
-        <p>Tire uma foto do documento assinado e informe quem recebeu a bagagem. A data, a hora e a localização são registradas automaticamente. Sem internet, o comprovante fica salvo no aparelho e é enviado depois.</p>
+        <p>
+          Tire uma foto do documento assinado e informe quem recebeu a bagagem. A data, a hora e a localização são registradas
+          automaticamente. Sem internet, o comprovante fica salvo no aparelho e é enviado depois.
+        </p>
       </Ajuda>
     </TelaMotorista>
   );

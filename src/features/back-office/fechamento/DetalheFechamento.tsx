@@ -31,7 +31,8 @@ export function DetalheFechamento() {
         <>
           {dados.status === "COM_PENDENCIAS" && (
             <Alerta tipo="aviso">
-              <strong>Há entregas pendentes neste fechamento.</strong> Elas não entram nos totais. Corrija o que falta (ex.: cadastrar a tarifa) e gere de novo o período.
+              <strong>Há entregas pendentes neste fechamento.</strong> Elas não entram nos totais. Corrija o que falta (ex.: cadastrar a
+              tarifa) e gere de novo o período.
             </Alerta>
           )}
 
@@ -39,10 +40,18 @@ export function DetalheFechamento() {
             <Indicador rotulo="Pagamento de entregas" valor={formatarMoeda(pagamento)} />
             <Indicador rotulo="Reembolso de pedágios" valor={formatarMoeda(pedagio)} />
             <Indicador rotulo="Entregas" valor={dados.itens.length} />
-            <Indicador rotulo="Pendentes" valor={pendentes} tom={pendentes > 0 ? "aviso" : "sucesso"} detalhe={pendentes > 0 ? "Fora dos totais" : "Tudo calculado"} />
+            <Indicador
+              rotulo="Pendentes"
+              valor={pendentes}
+              tom={pendentes > 0 ? "aviso" : "sucesso"}
+              detalhe={pendentes > 0 ? "Fora dos totais" : "Tudo calculado"}
+            />
           </div>
 
-          <Painel titulo="Relatórios em PDF" descricao="Pagamento e pedágio saem sempre em arquivos separados, com a identidade visual da empresa.">
+          <Painel
+            titulo="Relatórios em PDF"
+            descricao="Pagamento e pedágio saem sempre em arquivos separados, com a identidade visual da empresa."
+          >
             <FechamentoRelatorioCard fechamento={dados} />
           </Painel>
 
@@ -58,8 +67,12 @@ export function DetalheFechamento() {
                     <tr>
                       <th scope="col">Motorista</th>
                       <th scope="col">Entrega</th>
-                      <th scope="col" className="numero">Pagamento</th>
-                      <th scope="col" className="numero">Pedágio</th>
+                      <th scope="col" className="numero">
+                        Pagamento
+                      </th>
+                      <th scope="col" className="numero">
+                        Pedágio
+                      </th>
                       <th scope="col">Situação</th>
                     </tr>
                   </thead>

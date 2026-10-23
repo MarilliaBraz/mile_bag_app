@@ -27,9 +27,14 @@ export function SecaoMotivos() {
   }
 
   return (
-    <Painel titulo="Motivos de não entrega" descricao="O que o motorista escolhe ao registrar uma ocorrência. Desativar mantém as ocorrências antigas.">
+    <Painel
+      titulo="Motivos de não entrega"
+      descricao="O que o motorista escolhe ao registrar uma ocorrência. Desativar mantém as ocorrências antigas."
+    >
       {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
-      {dados && dados.length === 0 && <p className="texto-apoio">Nenhum motivo ativo. Sem motivos, o motorista não consegue registrar ocorrências.</p>}
+      {dados && dados.length === 0 && (
+        <p className="texto-apoio">Nenhum motivo ativo. Sem motivos, o motorista não consegue registrar ocorrências.</p>
+      )}
       <ul className="lista-simples">
         {dados?.map((motivo) => (
           <li key={motivo.id}>

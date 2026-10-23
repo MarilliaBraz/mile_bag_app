@@ -76,12 +76,31 @@ export function Login() {
           )}
           <div>
             <label htmlFor="login">Login</label>
-            <input id="login" aria-invalid={!!erro} aria-describedby={erro ? "login-erro" : undefined} autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false} value={login} onChange={(e) => setLogin(e.target.value)} autoFocus />
+            <input
+              id="login"
+              aria-invalid={!!erro}
+              aria-describedby={erro ? "login-erro" : undefined}
+              autoComplete="username"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              value={login}
+              onChange={(e) => setLogin(e.target.value)}
+              autoFocus
+            />
           </div>
           <div>
             <label htmlFor="senha">Senha</label>
             <div className="campo-senha">
-              <input id="senha" type={mostrarSenha ? "text" : "password"} aria-invalid={!!erro} aria-describedby={erro ? "login-erro" : undefined} autoComplete="current-password" value={senha} onChange={(e) => setSenha(e.target.value)} />
+              <input
+                id="senha"
+                type={mostrarSenha ? "text" : "password"}
+                aria-invalid={!!erro}
+                aria-describedby={erro ? "login-erro" : undefined}
+                autoComplete="current-password"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+              />
               <button type="button" className="fantasma" onClick={() => setMostrarSenha((v) => !v)} aria-pressed={mostrarSenha}>
                 {mostrarSenha ? "Ocultar" : "Mostrar"}
               </button>
@@ -95,7 +114,10 @@ export function Login() {
           </Link>
         </form>
         <Ajuda titulo="Não consegue entrar?">
-          <p>Confira se o login está escrito igual ao que recebeu e se a tecla Caps Lock está desligada. Se esqueceu a senha, use “Esqueci minha senha”. Se o problema continuar, fale com o administrador da sua empresa.</p>
+          <p>
+            Confira se o login está escrito igual ao que recebeu e se a tecla Caps Lock está desligada. Se esqueceu a senha, use “Esqueci
+            minha senha”. Se o problema continuar, fale com o administrador da sua empresa.
+          </p>
         </Ajuda>
         <PreferenciasAcessibilidade />
       </main>

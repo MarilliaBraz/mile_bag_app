@@ -47,7 +47,9 @@ export function ResumoViagem({ trajeto }: { trajeto: TrajetoDetalhado }) {
             )}
           </div>
         )}
-        {encerrado && trajeto.justificativaDivergencia && <p className="texto-apoio">Justificativa de divergência: {trajeto.justificativaDivergencia}</p>}
+        {encerrado && trajeto.justificativaDivergencia && (
+          <p className="texto-apoio">Justificativa de divergência: {trajeto.justificativaDivergencia}</p>
+        )}
 
         <h3>Linha do tempo · início às {horaDe(trajeto.dataInicio)}</h3>
         <ol className="linha-tempo">
@@ -67,7 +69,8 @@ export function ResumoViagem({ trajeto }: { trajeto: TrajetoDetalhado }) {
           <ul className="linha-tempo">
             {trajeto.calculosRota.map((calculo) => (
               <li key={calculo.id}>
-                <strong>{calculo.ehRotaInicial ? "Rota inicial" : "Recálculo"}</strong> <span className="texto-apoio">{horaDe(calculo.dataHora)}</span>
+                <strong>{calculo.ehRotaInicial ? "Rota inicial" : "Recálculo"}</strong>{" "}
+                <span className="texto-apoio">{horaDe(calculo.dataHora)}</span>
                 <div className="texto-apoio">
                   {formatarKm(calculo.kmIda)} ida · {formatarKm(calculo.kmVolta)} volta · {formatarDuracao(calculo.tempoEstimado)}
                 </div>
