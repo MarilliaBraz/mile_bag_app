@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ApiError } from "../../../shared/api/ApiError";
 import { acionarAlerta, cancelarAlerta, consultarMeuAlertaAberto, type AlertaEmergencia } from "../../../shared/api/emergenciaApi";
+import { registrarFalha } from "../../../shared/diagnostico/registroFalhas";
 import { obterPosicaoAtual } from "../../../shared/geo/posicaoAtual";
 import { Alerta, Carregando } from "../../../shared/ui/Alerta";
 import { Icone } from "../../../shared/ui/Icone";
@@ -8,6 +9,18 @@ import { TelaMotorista } from "../layout/TelaMotorista";
 import { useConectividade } from "../offline-sync/useConectividade";
 
 const NUMERO_POLICIA = "190";
+
+/**
+ * Mensagem de falha do envio do alerta. Nunca repassa o texto do servidor:
+ * numa emergência o motorista precisa saber o que fazer agora, não o motivo
+ * técnico (que vai para os registros do aparelho via registrarFalha).
+ */
+function mensagemFalhaEnvio(excecao: unknown): string {
+  if (excecao instanceof ApiError && (excecao.status === 401 || excecao.status === 403)) {
+    return `Sua sessão expirou e o alerta não chegou à empresa. Se precisar de ajuda agora, ligue ${NUMERO_POLICIA}. Depois, entre de novo no aplicativo para avisar a empresa.`;
+  }
+  return `O alerta não chegou à empresa. Se precisar de ajuda agora, ligue ${NUMERO_POLICIA}. Você também pode tocar em “Enviar alerta de emergência” para tentar de novo.`;
+}
 
 /**
  * Alerta de emergência (HU30, RI18): abrir esta tela + "Enviar alerta" são os
@@ -40,11 +53,8 @@ export function TelaEmergencia() {
       const posicao = await obterPosicaoAtual(5_000);
       setAlerta(await acionarAlerta(posicao));
     } catch (excecao) {
-      setErro(
-        excecao instanceof ApiError
-          ? excecao.message
-          : `Não foi possível enviar o alerta. Ligue ${NUMERO_POLICIA} se precisar de ajuda agora.`,
-      );
+      registrarFalha(excecao);
+      setErro(mensagemFalhaEnvio(excecao));
     } finally {
       setEnviando(false);
     }
