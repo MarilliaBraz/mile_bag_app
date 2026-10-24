@@ -12,3 +12,8 @@ export function capturarBdo(imagem: File): Promise<BdoResponse> {
 export function confirmarConferencia(id: string, campos: CamposExtraidosBdo): Promise<BdoResponse> {
   return requisitar<BdoResponse>(`/api/v1/bdos/${id}/conferencia`, { metodo: "PATCH", corpo: campos });
 }
+
+/** DELETE /api/v1/bdos/{id} (HU01): descarta a captura ainda não confirmada (registro e foto). */
+export function descartarCaptura(id: string): Promise<void> {
+  return requisitar<void>(`/api/v1/bdos/${id}`, { metodo: "DELETE" });
+}
