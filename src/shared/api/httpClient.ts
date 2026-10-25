@@ -24,21 +24,44 @@ function avisarSeSessaoExpirou(status: number, tipo: string | undefined): void {
   }
 }
 
+/**
+ * Corpo de erro da API (problem+json). Quem responde nem sempre é a API: com
+ * ela fora do ar, o proxy devolve 502 sem corpo ou com HTML - nesse caso não
+ * há problema para ler.
+ */
+function lerProblema(texto: string): ProblemDetail | undefined {
+  if (!texto) {
+    return undefined;
+  }
+  try {
+    return JSON.parse(texto) as ProblemDetail;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Mensagem para quando não veio `detail` - nunca o statusText cru ("Bad Gateway"). */
+function mensagemPadrao(status: number): string {
+  if (status === 502 || status === 503 || status === 504) {
+    return "O servidor está indisponível no momento. Tente de novo em instantes.";
+  }
+  return status >= 500 ? "O servidor encontrou um erro. Tente de novo em instantes." : `Não foi possível concluir a ação (erro ${status}).`;
+}
+
 async function tratarResposta<T>(resposta: Response): Promise<T> {
   if (resposta.status === 204) {
     return undefined as T;
   }
 
   const texto = await resposta.text();
-  const corpo = texto ? (JSON.parse(texto) as unknown) : undefined;
 
   if (!resposta.ok) {
-    const problema = corpo as ProblemDetail | undefined;
+    const problema = lerProblema(texto);
     avisarSeSessaoExpirou(resposta.status, problema?.type);
-    throw new ApiError(resposta.status, problema?.detail ?? resposta.statusText, problema?.type);
+    throw new ApiError(resposta.status, problema?.detail ?? mensagemPadrao(resposta.status), problema?.type);
   }
 
-  return corpo as T;
+  return (texto ? JSON.parse(texto) : undefined) as T;
 }
 
 function cabecalhoAutorizacao(): HeadersInit {
@@ -79,15 +102,9 @@ export async function enviarFormulario<T>(caminho: string, dados: FormData, meto
 export async function baixarArquivo(caminho: string): Promise<Blob> {
   const resposta = await fetch(`${BASE_URL}${caminho}`, { headers: cabecalhoAutorizacao() });
   if (!resposta.ok) {
-    const texto = await resposta.text();
-    let detalhe: ProblemDetail | undefined;
-    try {
-      detalhe = texto ? (JSON.parse(texto) as ProblemDetail) : undefined;
-    } catch {
-      detalhe = undefined;
-    }
+    const detalhe = lerProblema(await resposta.text());
     avisarSeSessaoExpirou(resposta.status, detalhe?.type);
-    throw new ApiError(resposta.status, detalhe?.detail ?? resposta.statusText, detalhe?.type);
+    throw new ApiError(resposta.status, detalhe?.detail ?? mensagemPadrao(resposta.status), detalhe?.type);
   }
   return resposta.blob();
 }
