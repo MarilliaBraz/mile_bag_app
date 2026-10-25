@@ -29,6 +29,8 @@ export type CalculoRotas = {
   origem: Coordenada;
   destino: Coordenada;
   alternativas: RotaAlternativa[];
+  /** false quando a lista veio vazia porque o serviço de rotas está fora do ar (não por falta de caminho). */
+  motorRotasDisponivel?: boolean;
 };
 
 /** Espelha com.marillia.milebag.business.rota.model.SelecionarRotaResponse. */
