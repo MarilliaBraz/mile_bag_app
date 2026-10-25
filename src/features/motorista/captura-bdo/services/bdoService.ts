@@ -13,6 +13,11 @@ export function confirmarConferencia(id: string, campos: CamposExtraidosBdo): Pr
   return requisitar<BdoResponse>(`/api/v1/bdos/${id}/conferencia`, { metodo: "PATCH", corpo: campos });
 }
 
+/** GET /api/v1/bdos/pendentes-conferencia (HU01/HU08): fotos do motorista ainda sem conferência, inclusive as tiradas sem internet. */
+export function listarPendentesDeConferencia(): Promise<BdoResponse[]> {
+  return requisitar<BdoResponse[]>("/api/v1/bdos/pendentes-conferencia");
+}
+
 /** DELETE /api/v1/bdos/{id} (HU01): descarta a captura ainda não confirmada (registro e foto). */
 export function descartarCaptura(id: string): Promise<void> {
   return requisitar<void>(`/api/v1/bdos/${id}`, { metodo: "DELETE" });
