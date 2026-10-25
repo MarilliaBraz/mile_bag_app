@@ -1,3 +1,4 @@
+import { Polyline } from "react-leaflet";
 import { MapaBase } from "../../../../shared/mapa/MapaBase";
 import { Vazio } from "../../../../shared/ui/Alerta";
 import { Icone } from "../../../../shared/ui/Icone";
@@ -19,11 +20,9 @@ export function formatarDuracao(segundos: number): string {
 
 /**
  * Alternativas de rota calculadas (HU03, FR-001/FR-002) - distância, tempo
- * estimado e indicador de pedágio, com o mapa posicionando origem e destino.
- *
- * <p>O mapa não desenha o traçado de cada alternativa: o back-end extrai do
- * motor de rotas apenas o resumo de cada opção (ver {@code RotaAlternativa}),
- * sem a polilinha - a comparação entre elas é feita pelos números.</p>
+ * estimado e indicador de pedágio, com o mapa mostrando origem, destino e o
+ * caminho de cada alternativa. A escolhida fica em destaque; antes da
+ * escolha, a mais rápida.
  */
 export function MapaRotas({
   calculo,
@@ -38,6 +37,11 @@ export function MapaRotas({
     (melhor, alternativa, indice, todas) => (alternativa.duracaoSegundos < todas[melhor].duracaoSegundos ? indice : melhor),
     0,
   );
+  const idEmDestaque = alternativaSelecionada ?? calculo.alternativas[indiceMaisRapida]?.id;
+  // A destacada por último, para ficar por cima das outras.
+  const tracados = [...(calculo.tracados ?? [])].sort(
+    (a, b) => Number(a.alternativaId === idEmDestaque) - Number(b.alternativaId === idEmDestaque),
+  );
 
   return (
     <section>
@@ -48,7 +52,16 @@ export function MapaRotas({
           { posicao: calculo.origem, rotulo: "Sua posição" },
           { posicao: calculo.destino, rotulo: "Endereço de entrega" },
         ]}
-      />
+      >
+        {tracados.map(({ alternativaId, pontos }) => (
+          <Polyline
+            // O Leaflet só aplica a classe ao criar a linha: trocar o destaque recria.
+            key={`${alternativaId}-${alternativaId === idEmDestaque}`}
+            positions={pontos.map((ponto) => [ponto.latitude, ponto.longitude])}
+            pathOptions={{ className: alternativaId === idEmDestaque ? "tracado-rota" : "tracado-rota tracado-rota-alternativa" }}
+          />
+        ))}
+      </MapaBase>
 
       <h2>Escolha a rota</h2>
       {calculo.motorRotasDisponivel === false ? (
