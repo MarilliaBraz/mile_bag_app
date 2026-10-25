@@ -58,7 +58,7 @@ export function MapaRotas({
             // O Leaflet só aplica a classe ao criar a linha: trocar o destaque recria.
             key={`${alternativaId}-${alternativaId === idEmDestaque}`}
             positions={pontos.map((ponto) => [ponto.latitude, ponto.longitude])}
-            pathOptions={{ className: alternativaId === idEmDestaque ? "tracado-rota" : "tracado-rota tracado-rota-alternativa" }}
+            className={alternativaId === idEmDestaque ? "tracado-rota" : "tracado-rota tracado-rota-alternativa"}
           />
         ))}
       </MapaBase>
