@@ -109,6 +109,12 @@ export function RegistrosLocais() {
                   {new Date(falha.dataHora).toLocaleString("pt-BR")} — {falha.tela}
                   <br />
                   <span className="texto-apoio">{falha.mensagem}</span>
+                  {falha.local && (
+                    <details>
+                      <summary className="texto-apoio">Onde aconteceu</summary>
+                      <pre className="mono fs-xs quebrar" style={{ whiteSpace: "pre-wrap" }}>{falha.local}</pre>
+                    </details>
+                  )}
                 </span>
               </li>
             ))}
