@@ -31,6 +31,8 @@ function agrupar(mensagens: Mensagem[]): Balao[] {
         balao.mensagem.conteudo === mensagem.conteudo &&
         balao.mensagem.tipoEvento === mensagem.tipoEvento &&
         mensagem.autor !== "PASSAGEIRO" &&
+        // Mesmo canal de novo é um reenvio ("Enviar de novo"), não o mesmo envio por outro canal.
+        !balao.canais.some(({ canal }) => canal === mensagem.canal) &&
         Math.abs(new Date(mensagem.criadoEm).getTime() - new Date(balao.mensagem.criadoEm).getTime()) < JANELA_AGRUPAMENTO_MS,
     );
     const canal = { canal: mensagem.canal, falhou: mensagem.statusEnvio === "FALHOU" };
