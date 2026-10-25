@@ -6,6 +6,7 @@ import { TelaMotorista } from "../layout/TelaMotorista";
 import { Ajuda } from "../../../shared/ui/Ajuda";
 import { Alerta, Carregando } from "../../../shared/ui/Alerta";
 import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
+import { formatarJanela } from "../../../shared/format/formatar";
 import { listarMotivosComOrigem, registrarOcorrencia, type MotivoOcorrencia } from "./ocorrenciaService";
 
 /** Junta data e hora digitadas (fuso do aparelho) num instante ISO; nulo enquanto falta algum dos dois. */
@@ -150,7 +151,15 @@ export function RegistrarOcorrencia() {
               </legend>
               <div className="campo">
                 <label htmlFor="data-reagendada">Data combinada</label>
-                <input id="data-reagendada" type="date" required value={dataReagendada} onChange={(evento) => setDataReagendada(evento.target.value)} />
+                {/* min: o calendário já não oferece dias passados (a validação abaixo continua cobrindo o horário). */}
+                <input
+                  id="data-reagendada"
+                  type="date"
+                  required
+                  min={new Date().toLocaleDateString("sv-SE")}
+                  value={dataReagendada}
+                  onChange={(evento) => setDataReagendada(evento.target.value)}
+                />
               </div>
               <div className="form-linha">
                 <div>
@@ -194,7 +203,11 @@ export function RegistrarOcorrencia() {
           <ConfirmarAcao
             aberto={confirmando}
             titulo="Registrar ocorrência?"
-            descricao="A entrega será marcada como não realizada e voltará para a lista de disponíveis. Isso não pode ser desfeito por aqui."
+            descricao={
+              janelaInicio && janelaFim
+                ? `A entrega voltará para a lista de disponíveis reagendada para ${formatarJanela({ inicio: janelaInicio, fim: janelaFim })}, e o passageiro recebe a confirmação. Isso não pode ser desfeito por aqui.`
+                : "A entrega será marcada como não realizada e voltará para a lista de disponíveis. Isso não pode ser desfeito por aqui."
+            }
             rotuloConfirmar="Registrar ocorrência"
             ocupado={enviando}
             aoConfirmar={enviar}
