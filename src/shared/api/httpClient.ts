@@ -1,5 +1,5 @@
 import { ApiError } from "./ApiError";
-import { obterToken } from "../auth/authStorage";
+import { EVENTO_SESSAO_EXPIRADA, limparToken, obterToken } from "../auth/authStorage";
 
 // Endereço da API vem do arquivo .env do ambiente (modelo em .env.example), nunca fixo no código.
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -14,6 +14,16 @@ type ProblemDetail = {
   type?: string;
 };
 
+const TIPO_SESSAO_EXPIRADA = "/sessao-expirada";
+
+/** 401 sessao-expirada: o token não vale mais. Some com ele e avisa o app, que oferece entrar de novo. */
+function avisarSeSessaoExpirou(status: number, tipo: string | undefined): void {
+  if (status === 401 && tipo?.endsWith(TIPO_SESSAO_EXPIRADA)) {
+    limparToken();
+    window.dispatchEvent(new Event(EVENTO_SESSAO_EXPIRADA));
+  }
+}
+
 async function tratarResposta<T>(resposta: Response): Promise<T> {
   if (resposta.status === 204) {
     return undefined as T;
@@ -24,6 +34,7 @@ async function tratarResposta<T>(resposta: Response): Promise<T> {
 
   if (!resposta.ok) {
     const problema = corpo as ProblemDetail | undefined;
+    avisarSeSessaoExpirou(resposta.status, problema?.type);
     throw new ApiError(resposta.status, problema?.detail ?? resposta.statusText, problema?.type);
   }
 
@@ -75,6 +86,7 @@ export async function baixarArquivo(caminho: string): Promise<Blob> {
     } catch {
       detalhe = undefined;
     }
+    avisarSeSessaoExpirou(resposta.status, detalhe?.type);
     throw new ApiError(resposta.status, detalhe?.detail ?? resposta.statusText, detalhe?.type);
   }
   return resposta.blob();

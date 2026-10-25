@@ -26,6 +26,7 @@ import { EsqueciSenha } from "./shared/auth/EsqueciSenha";
 import { Login } from "./shared/auth/Login";
 import { RedefinirSenha } from "./shared/auth/RedefinirSenha";
 import { TrocarSenha } from "./shared/auth/TrocarSenha";
+import { AvisoSessaoExpirada } from "./shared/auth/AvisoSessaoExpirada";
 import { RequireAuth } from "./shared/auth/RequireAuth";
 
 export function App() {
@@ -33,6 +34,7 @@ export function App() {
     <>
       <AcessibilidadeDeRota />
       <FaixaAmbiente />
+      <AvisoSessaoExpirada />
       <Routes>
         <Route path="/login" element={<Login />} />
       <Route
