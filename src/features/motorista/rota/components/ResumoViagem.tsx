@@ -67,9 +67,11 @@ export function ResumoViagem({ trajeto }: { trajeto: TrajetoDetalhado }) {
           <ul className="linha-tempo">
             {trajeto.calculosRota.map((calculo) => (
               <li key={calculo.id}>
-                <strong>{calculo.ehRotaInicial ? "Rota inicial" : "Recálculo"}</strong> <span className="texto-apoio">{horaDe(calculo.dataHora)}</span>
+                <strong>{calculo.ehRotaInicial ? "Rota inicial" : "Recálculo"}</strong>
+                {calculo.origemSelecao === "PROPRIA" ? " (própria)" : ""} <span className="texto-apoio">{horaDe(calculo.dataHora)}</span>
                 <div className="texto-apoio">
-                  {formatarKm(calculo.kmIda)} ida · {formatarKm(calculo.kmVolta)} volta · {formatarDuracao(calculo.tempoEstimado)}
+                  {formatarKm(calculo.kmIda)} ida · {formatarKm(calculo.kmVolta)} volta
+                  {calculo.origemSelecao === "PROPRIA" ? "" : ` · ${formatarDuracao(calculo.tempoEstimado)}`}
                 </div>
               </li>
             ))}

@@ -20,7 +20,8 @@ export function RotaEmUso({ calculo }: { calculo: CalculoRota }) {
           </div>
           <div>
             <div className="texto-apoio">Tempo estimado</div>
-            <div className="destaque">{formatarDuracao(calculo.tempoEstimado)}</div>
+            {/* A rota própria não passa pelo motor de rotas: não há tempo estimado (o servidor grava 0). */}
+            <div className="destaque">{calculo.origemSelecao === "PROPRIA" ? "Não estimado" : formatarDuracao(calculo.tempoEstimado)}</div>
           </div>
           <div>
             <div className="texto-apoio">Tipo</div>

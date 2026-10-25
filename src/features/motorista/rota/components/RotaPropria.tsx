@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMapEvents } from "react-leaflet";
+import { CircleMarker, Polyline, useMapEvents } from "react-leaflet";
 import { MapaBase } from "../../../../shared/mapa/MapaBase";
 import type { Coordenada } from "../types";
 
@@ -15,13 +15,19 @@ function CapturarCliques({ aoClicar }: { aoClicar: (ponto: Coordenada) => void }
  * mapa para marcar os pontos do caminho que pretende fazer e precisa
  * justificar a escolha: sem justificativa o back-end recusa a seleção (400),
  * então o botão fica bloqueado até o campo estar preenchido.
+ *
+ * <p>Os alfinetes mostram a posição do motorista e o endereço de entrega, só
+ * como referência (e para o mapa abrir enquadrando os dois); os pontos
+ * marcados aparecem ligados por uma linha, na ordem em que foram tocados.</p>
  */
 export function RotaPropria({
-  centro,
+  origem,
+  destino,
   aoConfirmar,
   desabilitado = false,
 }: {
-  centro: Coordenada;
+  origem: Coordenada | null;
+  destino: Coordenada;
   aoConfirmar: (tracado: Coordenada[], justificativa: string) => void;
   desabilitado?: boolean;
 }) {
@@ -29,17 +35,21 @@ export function RotaPropria({
   const [justificativa, setJustificativa] = useState("");
 
   const podeConfirmar = justificativa.trim().length > 0 && tracado.length > 0 && !desabilitado;
+  const referencias = [...(origem ? [{ posicao: origem, rotulo: "Sua posição" }] : []), { posicao: destino, rotulo: "Endereço de entrega" }];
+  const posicoes = tracado.map((ponto) => [ponto.latitude, ponto.longitude] as [number, number]);
 
   return (
     <section>
-      <p className="texto-apoio">Toque no mapa para marcar os pontos do caminho que você vai fazer.</p>
+      <p className="texto-apoio">
+        Os alfinetes mostram a sua posição e o endereço de entrega. Toque no mapa para marcar, em ordem, os pontos do caminho que você vai fazer.
+      </p>
 
-      <MapaBase
-        centro={centro}
-        descricao="Mapa para marcar os pontos da rota própria"
-        marcadores={tracado.map((ponto, indice) => ({ posicao: ponto, rotulo: `Ponto ${indice + 1}` }))}
-      >
+      <MapaBase centro={destino} descricao="Mapa para marcar os pontos da rota própria" marcadores={referencias}>
         <CapturarCliques aoClicar={(ponto) => setTracado((atual) => [...atual, ponto])} />
+        {posicoes.length > 1 && <Polyline positions={posicoes} className="tracado-proprio" />}
+        {posicoes.map((posicao, indice) => (
+          <CircleMarker key={`${indice}-${posicao.join(",")}`} center={posicao} radius={6} className="tracado-proprio-ponto" />
+        ))}
       </MapaBase>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", margin: "0.5rem 0 1rem" }}>

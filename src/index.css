@@ -1088,6 +1088,20 @@ dd {
   gap: 0.5rem;
 }
 
+/* Rota própria (HU03): os pontos marcados pelo motorista, ligados na ordem em que foram tocados. */
+.tracado-proprio {
+  stroke: var(--acao);
+  stroke-width: 4;
+  stroke-dasharray: 8 6;
+}
+
+.tracado-proprio-ponto {
+  stroke: var(--superficie);
+  stroke-width: 2;
+  fill: var(--acao);
+  fill-opacity: 1;
+}
+
 .balao {
   max-width: 85%;
   padding: 0.625rem 0.875rem;
