@@ -1112,6 +1112,17 @@ dd {
   border-bottom-left-radius: 6px;
 }
 
+.selo-falha {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--raio-g);
+  background: var(--erro-suave);
+  color: var(--erro);
+  font-weight: 700;
+}
+
 .balao-sistema {
   justify-self: center;
   max-width: 95%;
