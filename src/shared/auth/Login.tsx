@@ -3,24 +3,31 @@ import { Alerta } from "../ui/Alerta";
 import { Icone } from "../ui/Icone";
 import { PreferenciasAcessibilidade } from "../ui/PreferenciasAcessibilidade";
 import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { requisitar } from "../api/httpClient";
 import { mensagemDeErro } from "../format/formatar";
-import { definirToken, obterPapel, obterToken, rotaInicialDo, type Papel } from "./authStorage";
+import { definirToken, obterPapel, obterToken, rotaInicialDo, tokenExpirado, type EstadoLogin, type Papel } from "./authStorage";
 
 /** Espelha AutenticacaoController.LoginResponse. */
 type Sessao = { token: string; papel: Papel };
 
+/** Volta para a tela onde a sessão expirou, desde que seja da área do papel que entrou. */
+function destinoDepoisDeEntrar(papel: Papel, voltarPara: string | undefined): string {
+  const inicial = rotaInicialDo(papel);
+  return voltarPara?.startsWith(inicial) ? voltarPara : inicial;
+}
+
 /** Entrada por login e senha (HU22): o servidor devolve o JWT e o papel decide para onde ir. */
 export function Login() {
   const navigate = useNavigate();
+  const estado = (useLocation().state ?? {}) as EstadoLogin;
   const [login, setLogin] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [entrando, setEntrando] = useState(false);
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
-  if (obterToken() && obterPapel()) {
+  if (obterToken() && !tokenExpirado() && obterPapel()) {
     return <Navigate to={rotaInicialDo(obterPapel())} replace />;
   }
 
@@ -31,7 +38,7 @@ export function Login() {
     try {
       const sessao = await requisitar<Sessao>("/api/v1/auth/login", { metodo: "POST", corpo: { login: login.trim(), senha } });
       definirToken(sessao.token);
-      navigate(rotaInicialDo(sessao.papel), { replace: true });
+      navigate(destinoDepoisDeEntrar(sessao.papel, estado.voltarPara), { replace: true });
     } catch (excecao) {
       setErro(mensagemDeErro(excecao, "Não foi possível entrar. Verifique a conexão e tente de novo."));
     } finally {
@@ -69,6 +76,11 @@ export function Login() {
         <h1>Entrar</h1>
         <p className="texto-apoio">Use o login e a senha que a sua empresa informou.</p>
         <form onSubmit={entrar} className="cartao formulario mt-4">
+          {estado.sessaoExpirada && !erro && (
+            <Alerta tipo="aviso" className="sem-margem">
+              Sua sessão expirou. Entre de novo para continuar de onde parou.
+            </Alerta>
+          )}
           {erro && (
             <Alerta id="login-erro" tipo="erro" className="sem-margem">
               {erro}

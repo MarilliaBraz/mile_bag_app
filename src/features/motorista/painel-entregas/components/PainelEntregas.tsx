@@ -3,11 +3,15 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { Ajuda } from "../../../../shared/ui/Ajuda";
 import { Alerta, Vazio } from "../../../../shared/ui/Alerta";
+import { AvisoJanelaReagendamento } from "../../../../shared/ui/AvisoJanelaReagendamento";
 import { Icone, type NomeIcone } from "../../../../shared/ui/Icone";
 import { TelaMotorista } from "../../layout/TelaMotorista";
+import { listarPendentesDeConferencia } from "../../captura-bdo/services/bdoService";
+import type { BdoResponse } from "../../captura-bdo/types";
 import { listarMotivos } from "../../ocorrencia/ocorrenciaService";
 import { consultarBdosDisponiveis, consultarPainel } from "../services/painelService";
 import type { BdosDisponiveis, ItemPainel, PainelEntregas as PainelEntregasResposta } from "../types";
+import { FotosParaConferir } from "./FotosParaConferir";
 import { ListaBdosDisponiveis } from "./ListaBdosDisponiveis";
 import { STATUS_ENTREGA } from "./statusEntrega";
 
@@ -24,6 +28,7 @@ const ROTULO_MARCO: Record<NonNullable<ItemPainel["marcoMaisRecente"]>, { icone:
 export function PainelEntregas() {
   const [painel, setPainel] = useState<PainelEntregasResposta | null>(null);
   const [bdosDisponiveis, setBdosDisponiveis] = useState<BdosDisponiveis | null>(null);
+  const [fotosParaConferir, setFotosParaConferir] = useState<BdoResponse[]>([]);
   const [erro, setErro] = useState<string | null>(null);
   const localizacao = useLocation();
   const navegar = useNavigate();
@@ -35,6 +40,10 @@ export function PainelEntregas() {
       const [painelResposta, bdosResposta] = await Promise.all([consultarPainel(), consultarBdosDisponiveis()]);
       setPainel(painelResposta);
       setBdosDisponiveis(bdosResposta);
+      // Complemento do painel: uma falha aqui não esconde as entregas.
+      listarPendentesDeConferencia()
+        .then(setFotosParaConferir)
+        .catch(() => undefined);
     } catch (excecao) {
       setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível carregar o painel. Tente novamente.");
     }
@@ -111,6 +120,8 @@ export function PainelEntregas() {
             </span>
           </div>
 
+          <FotosParaConferir bdos={fotosParaConferir} />
+
           <h2>Para entregar</h2>
           {painel.entregas.length === 0 ? (
             <Vazio icone="checkCirculo" titulo="Nenhuma entrega pendente">
@@ -139,6 +150,7 @@ export function PainelEntregas() {
                           <Icone nome="pino" />
                           <span>{item.endereco ?? "Endereço não informado"}</span>
                         </div>
+                        <AvisoJanelaReagendamento janela={item.janelaReagendamento} />
                         {item.bagagensCarona.length > 0 && (
                           <div className="linha-icone texto-apoio">
                             <Icone nome="mala" />

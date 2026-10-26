@@ -3,7 +3,7 @@ import { requisitar } from "../../../shared/api/httpClient";
 const BASE = "/api/v1/configuracoes";
 
 /** Espelha MotivoOcorrenciaResponse - o GET só devolve os motivos ativos. */
-export type MotivoOcorrencia = { id: string; descricao: string };
+export type MotivoOcorrencia = { id: string; descricao: string; reagendamento: boolean };
 
 /** Espelha o enum CampoBaixa e CampoObrigatorioResponse. */
 export type CampoBaixa =
@@ -18,8 +18,8 @@ export type CategoriaCodigoNome = "bases-aeroportuarias" | "companhias-aereas";
 export type PeriodicidadeAtual = { vigente: string; proxima: string | null; proximaVigenteDesde: string | null };
 
 export const listarMotivos = () => requisitar<MotivoOcorrencia[]>(`${BASE}/motivos-ocorrencia`);
-export const criarMotivo = (descricao: string) =>
-  requisitar<MotivoOcorrencia>(`${BASE}/motivos-ocorrencia`, { metodo: "POST", corpo: { descricao } });
+export const criarMotivo = (descricao: string, reagendamento: boolean) =>
+  requisitar<MotivoOcorrencia>(`${BASE}/motivos-ocorrencia`, { metodo: "POST", corpo: { descricao, reagendamento } });
 export const desativarMotivo = (id: string) =>
   requisitar<MotivoOcorrencia>(`${BASE}/motivos-ocorrencia/${id}`, { metodo: "PATCH", corpo: { ativo: false } });
 

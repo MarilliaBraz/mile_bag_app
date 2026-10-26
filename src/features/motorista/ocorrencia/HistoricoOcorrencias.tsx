@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { formatarJanela } from "../../../shared/format/formatar";
 import { listarMotivos, listarOcorrencias, type OcorrenciaResponse } from "./ocorrenciaService";
 
 /**
@@ -39,6 +40,11 @@ export function HistoricoOcorrencias({ entregaId }: { entregaId: string }) {
             <div className="texto-apoio">
               {new Date(ocorrencia.dataHora).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
             </div>
+            {ocorrencia.janelaInicio && ocorrencia.janelaFim && (
+              <div className="texto-apoio">
+                Reagendada para {formatarJanela({ inicio: ocorrencia.janelaInicio, fim: ocorrencia.janelaFim })}
+              </div>
+            )}
           </li>
         ))}
       </ul>

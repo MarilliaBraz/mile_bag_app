@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+import { Polyline } from "react-leaflet";
 import { MapaBase } from "../../../../shared/mapa/MapaBase";
 import { Vazio } from "../../../../shared/ui/Alerta";
 import { Icone } from "../../../../shared/ui/Icone";
@@ -19,24 +21,32 @@ export function formatarDuracao(segundos: number): string {
 
 /**
  * Alternativas de rota calculadas (HU03, FR-001/FR-002) - distância, tempo
- * estimado e indicador de pedágio, com o mapa posicionando origem e destino.
- *
- * <p>O mapa não desenha o traçado de cada alternativa: o back-end extrai do
- * motor de rotas apenas o resumo de cada opção (ver {@code RotaAlternativa}),
- * sem a polilinha - a comparação entre elas é feita pelos números.</p>
+ * estimado e indicador de pedágio, com o mapa mostrando origem, destino e o
+ * caminho de cada alternativa. A escolhida fica em destaque; antes da
+ * escolha, a mais rápida.
  */
 export function MapaRotas({
   calculo,
   alternativaSelecionada,
   aoSelecionar,
+  titulo = "Escolha a rota",
+  children,
 }: {
   calculo: CalculoRotas;
   alternativaSelecionada: string | null;
   aoSelecionar: (alternativa: RotaAlternativa) => void;
+  titulo?: string;
+  /** Texto de apoio logo abaixo do título (ex.: o que acontece ao trocar de rota durante a viagem). */
+  children?: ReactNode;
 }) {
   const indiceMaisRapida = calculo.alternativas.reduce(
     (melhor, alternativa, indice, todas) => (alternativa.duracaoSegundos < todas[melhor].duracaoSegundos ? indice : melhor),
     0,
+  );
+  const idEmDestaque = alternativaSelecionada ?? calculo.alternativas[indiceMaisRapida]?.id;
+  // A destacada por último, para ficar por cima das outras.
+  const tracados = [...(calculo.tracados ?? [])].sort(
+    (a, b) => Number(a.alternativaId === idEmDestaque) - Number(b.alternativaId === idEmDestaque),
   );
 
   return (
@@ -48,10 +58,24 @@ export function MapaRotas({
           { posicao: calculo.origem, rotulo: "Sua posição" },
           { posicao: calculo.destino, rotulo: "Endereço de entrega" },
         ]}
-      />
+      >
+        {tracados.map(({ alternativaId, pontos }) => (
+          <Polyline
+            // O Leaflet só aplica a classe ao criar a linha: trocar o destaque recria.
+            key={`${alternativaId}-${alternativaId === idEmDestaque}`}
+            positions={pontos.map((ponto) => [ponto.latitude, ponto.longitude])}
+            className={alternativaId === idEmDestaque ? "tracado-rota" : "tracado-rota tracado-rota-alternativa"}
+          />
+        ))}
+      </MapaBase>
 
-      <h2>Escolha a rota</h2>
-      {calculo.alternativas.length === 0 ? (
+      <h2>{titulo}</h2>
+      {children}
+      {calculo.motorRotasDisponivel === false ? (
+        <Vazio icone="alerta" titulo="Serviço de rotas indisponível">
+          Não foi possível calcular as rotas agora. Tente recalcular em alguns minutos ou trace uma rota própria.
+        </Vazio>
+      ) : calculo.alternativas.length === 0 ? (
         <Vazio icone="rota" titulo="Nenhuma rota encontrada">
           Tente recalcular ou trace uma rota própria.
         </Vazio>
