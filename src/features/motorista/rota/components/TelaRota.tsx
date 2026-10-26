@@ -14,7 +14,9 @@ import { MarcosProgresso } from "./MarcosProgresso";
 import { ResumoViagem } from "./ResumoViagem";
 import { RotaEmUso } from "./RotaEmUso";
 import { RotaPropria } from "./RotaPropria";
-import type { RotaAlternativa } from "../types";
+import type { Coordenada, RotaAlternativa } from "../types";
+
+type RotaPropriaPendente = { tracado: Coordenada[]; justificativa: string };
 
 // Centro de fallback do mapa de ajuste manual (Goiânia): só usado quando a
 // geocodificação falhou e ainda não há nenhuma coordenada conhecida da
@@ -32,6 +34,11 @@ export function TelaRota() {
   const rota = useRota(entregaId ?? "");
   const [confirmandoEncerrar, setConfirmandoEncerrar] = useState(false);
   const [alternativaParaTrocar, setAlternativaParaTrocar] = useState<RotaAlternativa | null>(null);
+  const [rotaPropriaParaTrocar, setRotaPropriaParaTrocar] = useState<RotaPropriaPendente | null>(null);
+  const [rotaPropriaAberta, setRotaPropriaAberta] = useState(false);
+  // Muda a cada rota própria registrada: recria o formulário vazio.
+  const [versaoRotaPropria, setVersaoRotaPropria] = useState(0);
+  const [avisoRota, setAvisoRota] = useState<string | null>(null);
 
   if (!entregaId) {
     return null;
@@ -40,6 +47,24 @@ export function TelaRota() {
   const emExecucao = rota.trajeto?.status === "EM_EXECUCAO";
   // Os cálculos vêm em ordem cronológica: o último é o que está valendo.
   const rotaEmUso = emExecucao ? rota.trajeto?.calculosRota.at(-1) : undefined;
+
+  async function trocarParaSugerida(alternativa: RotaAlternativa) {
+    setAvisoRota(null);
+    if (await rota.selecionarSugerida(alternativa)) {
+      setAvisoRota("Rota trocada. Ela passa a valer a partir de agora.");
+    }
+  }
+
+  async function usarRotaPropria({ tracado, justificativa }: RotaPropriaPendente) {
+    setAvisoRota(null);
+    if (await rota.selecionarPropria(tracado, justificativa)) {
+      setRotaPropriaAberta(false);
+      setVersaoRotaPropria((versao) => versao + 1);
+      if (emExecucao) {
+        setAvisoRota("Rota própria registrada. Ela passa a valer a partir de agora.");
+      }
+    }
+  }
 
   return (
     <TelaMotorista titulo={emExecucao ? "Viagem em andamento" : "Rota da entrega"} voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar="Voltar para a entrega">
@@ -76,6 +101,12 @@ export function TelaRota() {
         />
       )}
 
+      {avisoRota && (
+        <Alerta tipo="sucesso" aoFechar={() => setAvisoRota(null)}>
+          {avisoRota}
+        </Alerta>
+      )}
+
       {rotaEmUso && <RotaEmUso calculo={rotaEmUso} />}
 
       {rota.precisaDestinoManual ? (
@@ -109,7 +140,7 @@ export function TelaRota() {
                 ocupado={rota.ocupado}
                 aoConfirmar={() => {
                   if (alternativaParaTrocar) {
-                    rota.selecionarSugerida(alternativaParaTrocar);
+                    trocarParaSugerida(alternativaParaTrocar);
                   }
                   setAlternativaParaTrocar(null);
                 }}
@@ -122,10 +153,33 @@ export function TelaRota() {
                 <Icone nome="sincronizar" /> {rota.ocupado ? "Recalculando…" : "Recalcular a partir da minha posição"}
               </button>
 
-              <details className="ajuda sem-icone mt-4">
+              <details className="ajuda sem-icone mt-4" open={rotaPropriaAberta} onToggle={(evento) => setRotaPropriaAberta(evento.currentTarget.open)}>
                 <summary>Usar uma rota própria</summary>
-                <RotaPropria centro={rota.calculo.destino} aoConfirmar={rota.selecionarPropria} desabilitado={rota.ocupado} />
+                <RotaPropria
+                  key={versaoRotaPropria}
+                  origem={rota.calculo.origem}
+                  destino={rota.calculo.destino}
+                  // Durante a viagem, a rota própria também troca a rota em uso: pede confirmação.
+                  aoConfirmar={(tracado, justificativa) =>
+                    emExecucao ? setRotaPropriaParaTrocar({ tracado, justificativa }) : usarRotaPropria({ tracado, justificativa })
+                  }
+                  desabilitado={rota.ocupado}
+                />
               </details>
+              <ConfirmarAcao
+                aberto={rotaPropriaParaTrocar !== null}
+                titulo="Usar a rota própria?"
+                descricao="A rota que você marcou passa a valer a partir de agora. A rota anterior fica guardada no histórico da viagem."
+                rotuloConfirmar="Usar rota própria"
+                ocupado={rota.ocupado}
+                aoConfirmar={() => {
+                  if (rotaPropriaParaTrocar) {
+                    usarRotaPropria(rotaPropriaParaTrocar);
+                  }
+                  setRotaPropriaParaTrocar(null);
+                }}
+                aoCancelar={() => setRotaPropriaParaTrocar(null)}
+              />
             </>
           )}
         </>

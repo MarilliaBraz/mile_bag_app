@@ -74,15 +74,16 @@ export function useRota(entregaId: string) {
     }
   }, [entregaId]);
 
-  async function selecionarSugerida(alternativa: RotaAlternativa) {
-    await registrarSelecao({ tipoSelecao: "SUGERIDA", alternativaId: alternativa.id });
+  /** As seleções devolvem se deram certo (inclusive guardadas para enviar depois), para a tela confirmar ao motorista. */
+  async function selecionarSugerida(alternativa: RotaAlternativa): Promise<boolean> {
+    return registrarSelecao({ tipoSelecao: "SUGERIDA", alternativaId: alternativa.id });
   }
 
-  async function selecionarPropria(tracadoManual: Coordenada[], justificativa: string) {
-    await registrarSelecao({ tipoSelecao: "PROPRIA", tracadoManual, justificativa });
+  async function selecionarPropria(tracadoManual: Coordenada[], justificativa: string): Promise<boolean> {
+    return registrarSelecao({ tipoSelecao: "PROPRIA", tracadoManual, justificativa });
   }
 
-  async function registrarSelecao(parametros: Parameters<typeof selecionarRota>[1]) {
+  async function registrarSelecao(parametros: Parameters<typeof selecionarRota>[1]): Promise<boolean> {
     setErro(null);
     setOcupado(true);
     try {
@@ -99,7 +100,7 @@ export function useRota(entregaId: string) {
 
       if (enfileirado) {
         setPendenteDeSincronizacao(true);
-        return;
+        return true;
       }
 
       setSelecao(resultado ?? null);
@@ -108,8 +109,10 @@ export function useRota(entregaId: string) {
       if (trajeto) {
         setTrajeto(await consultarTrajeto(entregaId));
       }
+      return true;
     } catch (excecao) {
       setErro(mensagemDeErro(excecao, "Não foi possível registrar a rota escolhida."));
+      return false;
     } finally {
       setOcupado(false);
     }
