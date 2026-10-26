@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { formatarData, formatarMoeda, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { obterTextos, useTextos } from "../../../shared/i18n/idioma";
 import { listarMotoristas, nomeDoMotorista, type Motorista } from "../motoristas/motoristasApi";
 import { TarifaForm } from "./TarifaForm";
 import { atualizarTarifa, criarTarifa, listarTarifas, removerTarifa, type EscopoTarifa, type Tarifa } from "./tarifasApi";
@@ -9,21 +10,23 @@ import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { Icone } from "../../../shared/ui/Icone";
 import { Gaveta, Pagina, Painel } from "../layout/Pagina";
 
-const ROTULO_ESCOPO: Record<EscopoTarifa, string> = { PADRAO: "Padrão", MOTORISTA: "Motorista", REGIAO: "Região" };
-
 function alvoDe(tarifa: Tarifa, motoristas: Motorista[] | null): string {
   if (tarifa.escopo === "MOTORISTA") {
     return nomeDoMotorista(motoristas, tarifa.motoristaId);
   }
-  return tarifa.escopo === "REGIAO" ? (tarifa.regiao ?? "Região não informada") : "Todos";
+  const t = obterTextos().backOffice.tarifas;
+  return tarifa.escopo === "REGIAO" ? (tarifa.regiao ?? t.regiaoNaoInformada) : t.todos;
 }
 
 const TOM_ESCOPO: Record<EscopoTarifa, string> = { PADRAO: "selo-info", MOTORISTA: "selo-sucesso", REGIAO: "selo-aviso" };
 
 /** Tabelas de tarifa da empresa (HU09): a mais específica vale (motorista > região > padrão, FR-004). */
 export function TelaTarifas() {
-  const { dados: tarifas, erro, carregando, recarregar } = useRecurso(listarTarifas, "Não foi possível carregar as tarifas.");
-  const { dados: motoristas } = useRecurso(listarMotoristas, "Não foi possível carregar os motoristas.");
+  const textos = useTextos().backOffice;
+  const t = textos.tarifas;
+  const ROTULO_ESCOPO = t.escopos;
+  const { dados: tarifas, erro, carregando, recarregar } = useRecurso(listarTarifas, t.falhaCarregar);
+  const { dados: motoristas } = useRecurso(listarMotoristas, textos.motoristas.falhaCarregar);
   const [criando, setCriando] = useState(false);
   const [editando, setEditando] = useState<Tarifa | null>(null);
   const [excluindo, setExcluindo] = useState<Tarifa | null>(null);
@@ -35,11 +38,11 @@ export function TelaTarifas() {
     try {
       await removerTarifa(id);
       setExcluindo(null);
-      setResultado("Tarifa excluída.");
+      setResultado(t.excluida);
       await recarregar();
     } catch (excecao) {
       setExcluindo(null);
-      setErroAcao(mensagemDeErro(excecao, "Não foi possível excluir a tarifa."));
+      setErroAcao(mensagemDeErro(excecao, t.falhaExcluir));
     }
   }
 
@@ -47,11 +50,11 @@ export function TelaTarifas() {
 
   return (
     <Pagina
-      titulo="Tarifas"
-      descricao="Quanto o motorista recebe por entrega: valor fixo, valor por km ou os dois. Vale a mais específica: motorista, depois região, depois a padrão."
+      titulo={t.titulo}
+      descricao={t.descricao}
       acoes={
         <button type="button" onClick={() => setCriando(true)}>
-          <Icone nome="mais" /> Nova tarifa
+          <Icone nome="mais" /> {t.novaTarifa}
         </button>
       }
     >
@@ -64,14 +67,14 @@ export function TelaTarifas() {
       )}
       {semPadrao && (
         <Alerta tipo="aviso">
-          <strong>Não há tarifa padrão.</strong> Entregas de motoristas e regiões sem tarifa própria ficam pendentes no fechamento.
+          <strong>{t.semPadrao}</strong> {t.semPadraoDica}
         </Alerta>
       )}
-      {carregando && <Carregando texto="Carregando tarifas…" />}
+      {carregando && <Carregando texto={t.carregando} />}
 
       {tarifas && tarifas.length === 0 && (
-        <Vazio icone="moeda" titulo="Nenhuma tarifa cadastrada">
-          Comece pela tarifa padrão da empresa.
+        <Vazio icone="moeda" titulo={t.nenhuma}>
+          {t.nenhumaDica}
         </Vazio>
       )}
 
@@ -81,16 +84,16 @@ export function TelaTarifas() {
             <table className="tabela">
               <thead>
                 <tr>
-                  <th scope="col">Aplica a</th>
+                  <th scope="col">{t.colunaAplicaA}</th>
                   <th scope="col" className="numero">
-                    Valor fixo
+                    {t.colunaValorFixo}
                   </th>
                   <th scope="col" className="numero">
-                    Por km
+                    {t.colunaPorKm}
                   </th>
-                  <th scope="col">Vigente desde</th>
+                  <th scope="col">{t.colunaVigente}</th>
                   <th scope="col" className="coluna-acoes">
-                    <span className="visualmente-oculto">Ações</span>
+                    <span className="visualmente-oculto">{textos.geral.acoes}</span>
                   </th>
                 </tr>
               </thead>
@@ -110,17 +113,17 @@ export function TelaTarifas() {
                           type="button"
                           className="fantasma compacto"
                           onClick={() => setEditando(tarifa)}
-                          aria-label={`Editar tarifa ${ROTULO_ESCOPO[tarifa.escopo]} ${alvoDe(tarifa, motoristas)}`}
+                          aria-label={t.editarRotulo(ROTULO_ESCOPO[tarifa.escopo], alvoDe(tarifa, motoristas))}
                         >
-                          <Icone nome="lapis" /> Editar
+                          <Icone nome="lapis" /> {textos.geral.editar}
                         </button>
                         <button
                           type="button"
                           className="fantasma compacto"
                           onClick={() => setExcluindo(tarifa)}
-                          aria-label={`Excluir tarifa ${ROTULO_ESCOPO[tarifa.escopo]} ${alvoDe(tarifa, motoristas)}`}
+                          aria-label={t.excluirRotulo(ROTULO_ESCOPO[tarifa.escopo], alvoDe(tarifa, motoristas))}
                         >
-                          <Icone nome="lixeira" /> Excluir
+                          <Icone nome="lixeira" /> {textos.geral.excluir}
                         </button>
                       </span>
                     </td>
@@ -134,24 +137,20 @@ export function TelaTarifas() {
 
       <ConfirmarAcao
         aberto={excluindo !== null}
-        titulo="Excluir esta tarifa?"
-        descricao={
-          excluindo
-            ? `A tarifa ${ROTULO_ESCOPO[excluindo.escopo].toLowerCase()} (${alvoDe(excluindo, motoristas)}) deixa de valer para os próximos cálculos. Fechamentos já emitidos não mudam.`
-            : ""
-        }
-        rotuloConfirmar="Excluir tarifa"
+        titulo={t.excluirTitulo}
+        descricao={excluindo ? t.excluirDescricao(ROTULO_ESCOPO[excluindo.escopo], alvoDe(excluindo, motoristas)) : ""}
+        rotuloConfirmar={t.excluirTarifa}
         perigo
         aoConfirmar={() => excluindo && excluir(excluindo.id)}
         aoCancelar={() => setExcluindo(null)}
       />
 
-      <Gaveta aberta={criando} titulo="Nova tarifa" aoFechar={() => setCriando(false)}>
+      <Gaveta aberta={criando} titulo={t.novaTarifa} aoFechar={() => setCriando(false)}>
         <TarifaForm
           aoSalvar={async (dados) => {
             await criarTarifa(dados);
             setCriando(false);
-            setResultado("Tarifa cadastrada.");
+            setResultado(t.cadastrada);
             await recarregar();
           }}
           aoCancelar={() => setCriando(false)}
@@ -160,8 +159,8 @@ export function TelaTarifas() {
 
       <Gaveta
         aberta={editando !== null}
-        titulo={editando ? `Editar tarifa · ${ROTULO_ESCOPO[editando.escopo]}` : "Editar tarifa"}
-        descricao="Só valores e vigência mudam. Viagens já encerradas e fechamentos emitidos não são recalculados."
+        titulo={editando ? t.editarTitulo(ROTULO_ESCOPO[editando.escopo]) : t.editarTarifa}
+        descricao={t.editarDescricao}
         aoFechar={() => setEditando(null)}
       >
         {editando && (
@@ -175,7 +174,7 @@ export function TelaTarifas() {
                 vigenteDesde: dados.vigenteDesde,
               });
               setEditando(null);
-              setResultado("Tarifa atualizada.");
+              setResultado(t.atualizada);
               await recarregar();
             }}
           />

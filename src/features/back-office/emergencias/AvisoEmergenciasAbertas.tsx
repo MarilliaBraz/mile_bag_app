@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { EVENTO_ALERTAS_ALTERADOS, listarAlertas } from "../../../shared/api/emergenciaApi";
 import { useIntervaloEmPrimeiroPlano } from "../../../shared/hooks/useIntervaloEmPrimeiroPlano";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { Icone } from "../../../shared/ui/Icone";
 
 const INTERVALO_CONSULTA_MS = 30_000;
@@ -12,6 +13,7 @@ const INTERVALO_CONSULTA_MS = 30_000;
  */
 export function AvisoEmergenciasAbertas() {
   const [abertos, setAbertos] = useState(0);
+  const t = useTextos().backOffice.emergencias;
 
   const consultar = useCallback(() => {
     listarAlertas("ABERTO")
@@ -34,9 +36,9 @@ export function AvisoEmergenciasAbertas() {
   return (
     <div role="alert" className="faixa-emergencia">
       <Icone nome="alerta" />
-      <span>{abertos === 1 ? "1 alerta de emergência em aberto." : `${abertos} alertas de emergência em aberto.`}</span>
+      <span>{t.abertos(abertos)}</span>
       <Link to="/admin/emergencias" className="botao perigo compacto">
-        Ver agora
+        {t.verAgora}
       </Link>
     </div>
   );

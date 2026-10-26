@@ -1,5 +1,6 @@
 import { useId, useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { criarMotoristasEmLote, type LinhaLote, type ResultadoLote } from "./motoristasApi";
 import { Alerta } from "../../../shared/ui/Alerta";
 import { Icone } from "../../../shared/ui/Icone";
@@ -50,6 +51,7 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
   const [resultados, setResultados] = useState<ResultadoLote[] | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+  const t = useTextos().backOffice.motoristas;
 
   const linhas = interpretarLinhas(texto);
   const excedeu = linhas.length > MAXIMO_POR_LOTE;
@@ -68,7 +70,7 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
         setTexto("");
       }
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível cadastrar o lote."));
+      setErro(mensagemDeErro(excecao, t.falhaLote));
     } finally {
       setEnviando(false);
     }
@@ -81,7 +83,7 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
       <form onSubmit={enviar} className="formulario">
         {erro && <Alerta tipo="erro">{erro}</Alerta>}
         <div>
-          <label htmlFor={`${uid}-lote`}>Um motorista por linha: nome;login;senha</label>
+          <label htmlFor={`${uid}-lote`}>{t.loteRotulo}</label>
           <textarea
             className="mono"
             id={`${uid}-lote`}
@@ -92,26 +94,23 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
             aria-describedby={`${uid}-lote-ajuda`}
           />
           <span id={`${uid}-lote-ajuda`} className="texto-apoio">
-            A senha é opcional: sem ela o sistema gera uma de 12 caracteres. Até {MAXIMO_POR_LOTE} por vez. Pode colar direto de uma
-            planilha.
+            {t.loteAjuda(MAXIMO_POR_LOTE)}
           </span>
         </div>
-        {excedeu && <Alerta tipo="erro">Máximo de {MAXIMO_POR_LOTE} motoristas por vez.</Alerta>}
+        {excedeu && <Alerta tipo="erro">{t.loteMaximo(MAXIMO_POR_LOTE)}</Alerta>}
         <button type="submit" className="bloco" disabled={linhas.length === 0 || excedeu || enviando}>
-          {enviando ? "Cadastrando…" : `Cadastrar ${linhas.length} motorista(s)`}
+          {enviando ? t.cadastrando : t.cadastrarQuantos(linhas.length)}
         </button>
       </form>
 
       {resultados && (
-        <section className="mt-4" aria-label="Resultado do lote">
-          <h3>
-            Resultado: {resultados.filter((r) => r.criado).length} criado(s), {resultados.filter((r) => !r.criado).length} com erro
-          </h3>
+        <section className="mt-4" aria-label={t.resultadoLote}>
+          <h3>{t.resultado(resultados.filter((r) => r.criado).length, resultados.filter((r) => !r.criado).length)}</h3>
           {comSenhaGerada && (
             <Alerta tipo="aviso">
-              As senhas geradas aparecem só agora e não ficam guardadas em claro: entregue-as aos motoristas ou baixe o CSV.{" "}
+              {t.senhasSoAgora}{" "}
               <button type="button" className="secundario compacto" onClick={() => baixarSenhas(resultados)}>
-                <Icone nome="baixar" /> Baixar CSV com as senhas
+                <Icone nome="baixar" /> {t.baixarCsv}
               </button>
             </Alerta>
           )}
@@ -119,11 +118,11 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
             <table className="tabela">
               <thead>
                 <tr>
-                  <th scope="col">Linha</th>
-                  <th scope="col">Nome</th>
-                  <th scope="col">Login</th>
-                  <th scope="col">Situação</th>
-                  <th scope="col">Senha gerada</th>
+                  <th scope="col">{t.colunaLinha}</th>
+                  <th scope="col">{t.colunaNome}</th>
+                  <th scope="col">{t.colunaLogin}</th>
+                  <th scope="col">{t.colunaSituacao}</th>
+                  <th scope="col">{t.colunaSenhaGerada}</th>
                 </tr>
               </thead>
               <tbody>
@@ -134,9 +133,9 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
                     <td>{r.login}</td>
                     <td>
                       {r.criado ? (
-                        <span className="selo selo-sucesso">Criado</span>
+                        <span className="selo selo-sucesso">{t.criado}</span>
                       ) : (
-                        <span className="selo selo-erro">{r.mensagem ?? "Erro"}</span>
+                        <span className="selo selo-erro">{r.mensagem ?? t.erro}</span>
                       )}
                     </td>
                     <td className="mono">{r.senhaGerada ?? ""}</td>

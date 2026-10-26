@@ -1,6 +1,7 @@
 import { useId, useState } from "react";
 import { formatarData, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { LoteMotoristas } from "./LoteMotoristas";
 import {
@@ -24,6 +25,7 @@ function NovoMotoristaForm({ aoCriar }: { aoCriar: (nome: string) => Promise<voi
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
+  const t = useTextos().backOffice.motoristas;
 
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
@@ -33,7 +35,7 @@ function NovoMotoristaForm({ aoCriar }: { aoCriar: (nome: string) => Promise<voi
       await criarMotorista({ nome: nome.trim(), login: login.trim(), senha });
       await aoCriar(nome.trim());
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível cadastrar o motorista."));
+      setErro(mensagemDeErro(excecao, t.falhaCadastrar));
     } finally {
       setSalvando(false);
     }
@@ -43,11 +45,11 @@ function NovoMotoristaForm({ aoCriar }: { aoCriar: (nome: string) => Promise<voi
     <form onSubmit={enviar} className="formulario">
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
       <div>
-        <label htmlFor={`${uid}-nome`}>Nome completo</label>
+        <label htmlFor={`${uid}-nome`}>{t.nomeCompleto}</label>
         <input id={`${uid}-nome`} autoComplete="off" value={nome} onChange={(e) => setNome(e.target.value)} />
       </div>
       <div>
-        <label htmlFor={`${uid}-login`}>Login</label>
+        <label htmlFor={`${uid}-login`}>{t.login}</label>
         <input
           id={`${uid}-login`}
           autoComplete="off"
@@ -58,11 +60,11 @@ function NovoMotoristaForm({ aoCriar }: { aoCriar: (nome: string) => Promise<voi
           aria-describedby={`${uid}-login-ajuda`}
         />
         <span id={`${uid}-login-ajuda`} className="texto-apoio">
-          O que o motorista digita para entrar. Pode ser um e-mail.
+          {t.loginAjuda}
         </span>
       </div>
       <div>
-        <label htmlFor={`${uid}-senha`}>Senha inicial</label>
+        <label htmlFor={`${uid}-senha`}>{t.senhaInicial}</label>
         <input
           id={`${uid}-senha`}
           type="password"
@@ -72,11 +74,11 @@ function NovoMotoristaForm({ aoCriar }: { aoCriar: (nome: string) => Promise<voi
           aria-describedby={`${uid}-senha-ajuda`}
         />
         <span id={`${uid}-senha-ajuda`} className="texto-apoio">
-          Mínimo de {TAMANHO_MINIMO_SENHA} caracteres. Entregue ao motorista junto com o login.
+          {t.senhaInicialAjuda(TAMANHO_MINIMO_SENHA)}
         </span>
       </div>
       <button type="submit" className="bloco" disabled={!nome.trim() || !login.trim() || senha.length < TAMANHO_MINIMO_SENHA || salvando}>
-        {salvando ? "Cadastrando…" : "Cadastrar motorista"}
+        {salvando ? t.cadastrando : t.cadastrar}
       </button>
     </form>
   );
@@ -87,6 +89,8 @@ function EditarForm({ motorista, aoConcluir }: { motorista: Motorista; aoConclui
   const [nome, setNome] = useState(motorista.nome);
   const [login, setLogin] = useState(motorista.login);
   const [erro, setErro] = useState<string | null>(null);
+  const textos = useTextos().backOffice;
+  const t = textos.motoristas;
 
   const nomeMudou = nome.trim() !== "" && nome.trim() !== motorista.nome;
   const loginMudou = login.trim() !== "" && login.trim() !== motorista.login;
@@ -101,7 +105,7 @@ function EditarForm({ motorista, aoConcluir }: { motorista: Motorista; aoConclui
       });
       await aoConcluir();
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível salvar as alterações."));
+      setErro(mensagemDeErro(excecao, t.falhaSalvar));
     }
   }
 
@@ -109,20 +113,16 @@ function EditarForm({ motorista, aoConcluir }: { motorista: Motorista; aoConclui
     <form onSubmit={enviar} className="formulario">
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
       <div>
-        <label htmlFor={`${uid}-nome`}>Nome</label>
+        <label htmlFor={`${uid}-nome`}>{t.nome}</label>
         <input id={`${uid}-nome`} value={nome} onChange={(e) => setNome(e.target.value)} />
       </div>
       <div>
-        <label htmlFor={`${uid}-login`}>Login</label>
+        <label htmlFor={`${uid}-login`}>{t.login}</label>
         <input id={`${uid}-login`} autoCapitalize="none" value={login} onChange={(e) => setLogin(e.target.value)} />
       </div>
-      {loginMudou && (
-        <Alerta tipo="aviso">
-          O motorista passa a entrar com o login novo. Um pedido de redefinição de senha que estava pendente é cancelado.
-        </Alerta>
-      )}
+      {loginMudou && <Alerta tipo="aviso">{t.loginNovoAviso}</Alerta>}
       <button type="submit" className="bloco" disabled={!nomeMudou && !loginMudou}>
-        Salvar alterações
+        {textos.geral.salvarAlteracoes}
       </button>
     </form>
   );
@@ -134,6 +134,8 @@ function NovaSenhaForm({ motorista, aoConcluir }: { motorista: Motorista; aoConc
   const [erro, setErro] = useState<string | null>(null);
   const [salva, setSalva] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
+  const textos = useTextos().backOffice;
+  const t = textos.motoristas;
 
   async function enviar() {
     setErro(null);
@@ -142,7 +144,7 @@ function NovaSenhaForm({ motorista, aoConcluir }: { motorista: Motorista; aoConc
       setSenha("");
       setSalva(true);
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível redefinir a senha."));
+      setErro(mensagemDeErro(excecao, t.falhaRedefinir));
     } finally {
       setConfirmando(false);
     }
@@ -158,16 +160,16 @@ function NovaSenhaForm({ motorista, aoConcluir }: { motorista: Motorista; aoConc
     >
       <ConfirmarAcao
         aberto={confirmando}
-        titulo={`Trocar a senha de ${motorista.nome}?`}
-        descricao="As sessões abertas deste motorista serão encerradas e ele precisará entrar de novo com a senha nova."
-        rotuloConfirmar="Trocar senha"
+        titulo={t.trocarSenhaTitulo(motorista.nome)}
+        descricao={t.trocarSenhaDescricao}
+        rotuloConfirmar={t.trocarSenha}
         aoConfirmar={enviar}
         aoCancelar={() => setConfirmando(false)}
       />
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
-      {salva && <Alerta tipo="sucesso">Senha redefinida. Avise {motorista.nome} da senha nova.</Alerta>}
+      {salva && <Alerta tipo="sucesso">{t.senhaRedefinida(motorista.nome)}</Alerta>}
       <div>
-        <label htmlFor={`${uid}-nova`}>Nova senha</label>
+        <label htmlFor={`${uid}-nova`}>{t.novaSenha}</label>
         <input
           id={`${uid}-nova`}
           type="password"
@@ -177,15 +179,15 @@ function NovaSenhaForm({ motorista, aoConcluir }: { motorista: Motorista; aoConc
           aria-describedby={`${uid}-nova-ajuda`}
         />
         <span id={`${uid}-nova-ajuda`} className="texto-apoio">
-          Mínimo de {TAMANHO_MINIMO_SENHA} caracteres. As sessões abertas dele serão encerradas.
+          {t.novaSenhaAjuda(TAMANHO_MINIMO_SENHA)}
         </span>
       </div>
       <div className="linha-acoes">
         <button type="submit" disabled={senha.length < TAMANHO_MINIMO_SENHA}>
-          Salvar senha
+          {t.salvarSenha}
         </button>
         <button type="button" className="secundario" onClick={aoConcluir}>
-          {salva ? "Concluir" : "Cancelar"}
+          {salva ? textos.geral.concluir : textos.geral.cancelar}
         </button>
       </div>
     </form>
@@ -200,7 +202,9 @@ type Filtro = "TODOS" | "ATIVOS" | "DESATIVADOS";
  * apontando para ele.
  */
 export function TelaMotoristas() {
-  const { dados: motoristas, erro, carregando, recarregar } = useRecurso(listarMotoristas, "Não foi possível carregar os motoristas.");
+  const textos = useTextos().backOffice;
+  const t = textos.motoristas;
+  const { dados: motoristas, erro, carregando, recarregar } = useRecurso(listarMotoristas, t.falhaCarregar);
   const [erroAcao, setErroAcao] = useState<string | null>(null);
   const [criando, setCriando] = useState(false);
   const [emLote, setEmLote] = useState(false);
@@ -217,9 +221,9 @@ export function TelaMotoristas() {
     try {
       await definirAtivoMotorista(motorista.id, !motorista.ativo);
       await recarregar();
-      setResultado(motorista.ativo ? `${motorista.nome} foi desativado.` : `${motorista.nome} foi reativado.`);
+      setResultado(motorista.ativo ? t.foiDesativado(motorista.nome) : t.foiReativado(motorista.nome));
     } catch (excecao) {
-      setErroAcao(mensagemDeErro(excecao, "Não foi possível alterar o motorista."));
+      setErroAcao(mensagemDeErro(excecao, t.falhaAlterar));
     } finally {
       setDesativando(null);
     }
@@ -236,22 +240,22 @@ export function TelaMotoristas() {
     ) ?? [];
 
   const FILTROS: { valor: Filtro; rotulo: string }[] = [
-    { valor: "TODOS", rotulo: `Todos (${motoristas?.length ?? 0})` },
-    { valor: "ATIVOS", rotulo: `Ativos (${ativos})` },
-    { valor: "DESATIVADOS", rotulo: `Desativados (${desativados})` },
+    { valor: "TODOS", rotulo: t.filtroTodos(motoristas?.length ?? 0) },
+    { valor: "ATIVOS", rotulo: t.filtroAtivos(ativos) },
+    { valor: "DESATIVADOS", rotulo: t.filtroDesativados(desativados) },
   ];
 
   return (
     <Pagina
-      titulo="Motoristas"
-      descricao="Quem faz as entregas da sua empresa. Desativar encerra as sessões do motorista, mas mantém as entregas e ajustes dele."
+      titulo={t.titulo}
+      descricao={t.descricao}
       acoes={
         <>
           <button type="button" className="secundario" onClick={() => setEmLote(true)}>
-            <Icone nome="usuarios" /> Cadastrar em lote
+            <Icone nome="usuarios" /> {t.cadastrarEmLote}
           </button>
           <button type="button" onClick={() => setCriando(true)}>
-            <Icone nome="mais" /> Novo motorista
+            <Icone nome="mais" /> {t.novoMotorista}
           </button>
         </>
       }
@@ -269,13 +273,13 @@ export function TelaMotoristas() {
             <Icone nome="busca" />
             <input
               type="search"
-              aria-label="Buscar motorista por nome ou login"
-              placeholder="Buscar por nome ou login"
+              aria-label={t.buscarRotulo}
+              placeholder={t.buscar}
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
             />
           </div>
-          <div className="segmentado" role="group" aria-label="Filtrar por situação">
+          <div className="segmentado" role="group" aria-label={t.filtrarSituacao}>
             {FILTROS.map((opcao) => (
               <button key={opcao.valor} type="button" aria-pressed={filtro === opcao.valor} onClick={() => setFiltro(opcao.valor)}>
                 {opcao.rotulo}
@@ -286,21 +290,21 @@ export function TelaMotoristas() {
 
         {carregando && (
           <div style={{ padding: "0 1.25rem" }}>
-            <Carregando texto="Carregando motoristas…" />
+            <Carregando texto={t.carregando} />
           </div>
         )}
 
         {motoristas && motoristas.length === 0 && (
           <div style={{ padding: "1.25rem" }}>
-            <Vazio icone="usuarios" titulo="Nenhum motorista cadastrado">
-              Use “Novo motorista” ou “Cadastrar em lote” para começar.
+            <Vazio icone="usuarios" titulo={t.nenhum}>
+              {t.nenhumDica}
             </Vazio>
           </div>
         )}
 
         {motoristas && motoristas.length > 0 && visiveis.length === 0 && (
           <p className="texto-apoio" style={{ padding: "1rem 1.25rem" }} role="status">
-            Nenhum motorista encontrado com esse filtro.
+            {t.nenhumFiltro}
           </p>
         )}
 
@@ -309,11 +313,11 @@ export function TelaMotoristas() {
             <table className="tabela">
               <thead>
                 <tr>
-                  <th scope="col">Motorista</th>
-                  <th scope="col">Situação</th>
-                  <th scope="col">Cadastrado em</th>
+                  <th scope="col">{t.colunaMotorista}</th>
+                  <th scope="col">{t.colunaSituacao}</th>
+                  <th scope="col">{t.colunaCadastro}</th>
                   <th scope="col" className="coluna-acoes">
-                    <span className="visualmente-oculto">Ações</span>
+                    <span className="visualmente-oculto">{textos.geral.acoes}</span>
                   </th>
                 </tr>
               </thead>
@@ -330,7 +334,7 @@ export function TelaMotoristas() {
                       </div>
                     </td>
                     <td>
-                      <span className={`selo ${motorista.ativo ? "selo-sucesso" : ""}`}>{motorista.ativo ? "Ativo" : "Desativado"}</span>
+                      <span className={`selo ${motorista.ativo ? "selo-sucesso" : ""}`}>{motorista.ativo ? t.ativo : t.desativado}</span>
                     </td>
                     <td>{formatarData(motorista.criadoEm)}</td>
                     <td className="coluna-acoes">
@@ -339,25 +343,25 @@ export function TelaMotoristas() {
                           type="button"
                           className="fantasma compacto"
                           onClick={() => setEditando(motorista)}
-                          aria-label={`Editar ${motorista.nome}`}
+                          aria-label={t.editarRotulo(motorista.nome)}
                         >
-                          <Icone nome="lapis" /> Editar
+                          <Icone nome="lapis" /> {textos.geral.editar}
                         </button>
                         <button
                           type="button"
                           className="fantasma compacto"
                           onClick={() => setRedefinindo(motorista)}
-                          aria-label={`Nova senha para ${motorista.nome}`}
+                          aria-label={t.senhaRotulo(motorista.nome)}
                         >
-                          <Icone nome="chave" /> Senha
+                          <Icone nome="chave" /> {t.rotuloSenha}
                         </button>
                         <button
                           type="button"
                           className="fantasma compacto"
                           onClick={() => (motorista.ativo ? setDesativando(motorista) : alternar(motorista))}
-                          aria-label={`${motorista.ativo ? "Desativar" : "Reativar"} ${motorista.nome}`}
+                          aria-label={t.acaoRotulo(motorista.ativo ? t.desativar : t.reativar, motorista.nome)}
                         >
-                          <Icone nome={motorista.ativo ? "pausa" : "check"} /> {motorista.ativo ? "Desativar" : "Reativar"}
+                          <Icone nome={motorista.ativo ? "pausa" : "check"} /> {motorista.ativo ? t.desativar : t.reativar}
                         </button>
                       </span>
                     </td>
@@ -371,31 +375,25 @@ export function TelaMotoristas() {
 
       <ConfirmarAcao
         aberto={desativando !== null}
-        titulo={`Desativar ${desativando?.nome ?? "motorista"}?`}
-        descricao="As sessões abertas deste motorista serão encerradas e ele não conseguirá mais entrar. As entregas e ajustes dele são mantidos, e você pode reativá-lo depois."
-        rotuloConfirmar="Desativar motorista"
+        titulo={t.desativarTitulo(desativando?.nome ?? null)}
+        descricao={t.desativarDescricao}
+        rotuloConfirmar={t.desativarMotorista}
         perigo
         aoConfirmar={() => desativando && alternar(desativando)}
         aoCancelar={() => setDesativando(null)}
       />
 
-      <Gaveta aberta={criando} titulo="Novo motorista" aoFechar={() => setCriando(false)}>
+      <Gaveta aberta={criando} titulo={t.novoMotorista} aoFechar={() => setCriando(false)}>
         <NovoMotoristaForm
           aoCriar={async (nome) => {
             setCriando(false);
-            setResultado(`${nome} foi cadastrado.`);
+            setResultado(t.foiCadastrado(nome));
             await recarregar();
           }}
         />
       </Gaveta>
 
-      <Gaveta
-        aberta={emLote}
-        largura="larga"
-        titulo="Cadastrar vários motoristas"
-        descricao="Cole uma linha por motorista. Cada linha é tratada separadamente: as com erro aparecem com o motivo e as outras são criadas."
-        aoFechar={() => setEmLote(false)}
-      >
+      <Gaveta aberta={emLote} largura="larga" titulo={t.loteTitulo} descricao={t.loteDescricao} aoFechar={() => setEmLote(false)}>
         <LoteMotoristas
           aoConcluir={async () => {
             await recarregar();
@@ -403,12 +401,12 @@ export function TelaMotoristas() {
         />
       </Gaveta>
 
-      <Gaveta aberta={editando !== null} titulo={`Editar ${editando?.nome ?? ""}`} aoFechar={() => setEditando(null)}>
+      <Gaveta aberta={editando !== null} titulo={t.editarTitulo(editando?.nome ?? "")} aoFechar={() => setEditando(null)}>
         {editando && (
           <EditarForm
             motorista={editando}
             aoConcluir={async () => {
-              setResultado(`Dados de ${editando.nome} atualizados.`);
+              setResultado(t.dadosAtualizados(editando.nome));
               setEditando(null);
               await recarregar();
             }}
@@ -416,7 +414,7 @@ export function TelaMotoristas() {
         )}
       </Gaveta>
 
-      <Gaveta aberta={redefinindo !== null} titulo={`Nova senha para ${redefinindo?.nome ?? ""}`} aoFechar={() => setRedefinindo(null)}>
+      <Gaveta aberta={redefinindo !== null} titulo={t.senhaRotulo(redefinindo?.nome ?? "")} aoFechar={() => setRedefinindo(null)}>
         {redefinindo && <NovaSenhaForm motorista={redefinindo} aoConcluir={() => setRedefinindo(null)} />}
       </Gaveta>
     </Pagina>
