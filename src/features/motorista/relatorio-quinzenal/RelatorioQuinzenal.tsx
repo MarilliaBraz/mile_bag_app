@@ -4,7 +4,8 @@ import { Icone } from "../../../shared/ui/Icone";
 import { TelaMotorista } from "../layout/TelaMotorista";
 import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "../../../shared/api/ApiError";
-import { formatarMoeda } from "../../../shared/format/formatar";
+import { formatarData, formatarMoeda, formatarNumero } from "../../../shared/format/formatar";
+import { obterTextos, useTextos } from "../../../shared/i18n/idioma";
 import { AjusteForm } from "./AjusteForm";
 import { HistoricoAjustes } from "./HistoricoAjustes";
 import { consultarRelatorio, type RelatorioQuinzenal as Relatorio } from "./relatorioService";
@@ -25,8 +26,7 @@ function quinzenaAtual(): { inicio: string; fim: string } {
 }
 
 // Duas casas: com uma só, ida 6,34 + volta 6,34 apareciam como 6,3 + 6,3 e o total (12,68) como 12,7.
-const km = (valor: number | null) => (valor === null ? "Não calculado" : `${valor.toFixed(2).replace(".", ",")} km`);
-const dataBr = (iso: string) => iso.split("-").reverse().join("/");
+const km = (valor: number | null) => (valor === null ? obterTextos().motorista.relatorio.naoCalculado : `${formatarNumero(valor, 2)} km`);
 
 /**
  * Relatório quinzenal do motorista (HU17): as próprias entregas do período
@@ -42,6 +42,8 @@ export function RelatorioQuinzenal() {
   const [verHistorico, setVerHistorico] = useState<string | null>(null);
   // Muda a cada correção salva, para o histórico aberto se recarregar.
   const [versaoHistorico, setVersaoHistorico] = useState(0);
+  const textos = useTextos();
+  const t = textos.motorista.relatorio;
 
   const carregar = useCallback(async () => {
     setErro(null);
@@ -49,8 +51,9 @@ export function RelatorioQuinzenal() {
       setRelatorio(await consultarRelatorio(periodo.inicio, periodo.fim));
     } catch (excecao) {
       setRelatorio(null);
-      setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível carregar o relatório.");
+      setErro(excecao instanceof ApiError ? excecao.message : t.falhaCarregar);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [periodo]);
 
   useEffect(() => {
@@ -68,77 +71,70 @@ export function RelatorioQuinzenal() {
   );
 
   return (
-    <TelaMotorista titulo="Relatório quinzenal" navegacao>
+    <TelaMotorista titulo={t.titulo} navegacao>
       <div className="cartao nao-imprimir">
         <div className="linha-acoes" style={{ alignItems: "end" }}>
           <div>
-            <label htmlFor="inicio">De</label>
+            <label htmlFor="inicio">{t.de}</label>
             <input id="inicio" type="date" value={periodo.inicio} onChange={(e) => setPeriodo({ ...periodo, inicio: e.target.value })} />
           </div>
           <div>
-            <label htmlFor="fim">Até</label>
+            <label htmlFor="fim">{t.ate}</label>
             <input id="fim" type="date" value={periodo.fim} onChange={(e) => setPeriodo({ ...periodo, fim: e.target.value })} />
           </div>
         </div>
       </div>
 
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
-      {!relatorio && !erro && <Carregando texto="Carregando relatório…" />}
+      {!relatorio && !erro && <Carregando texto={t.carregando} />}
 
       {relatorio && totais && (
         <>
-          <p className="texto-apoio">
-            Período: {dataBr(periodo.inicio)} a {dataBr(periodo.fim)}
-          </p>
+          <p className="texto-apoio">{t.periodo(formatarData(periodo.inicio), formatarData(periodo.fim))}</p>
           {relatorio.entregas.length === 0 ? (
-            <Vazio icone="documento" titulo="Nenhuma entrega encerrada neste período">
-              Escolha outras datas acima.
+            <Vazio icone="documento" titulo={t.nenhuma}>
+              {t.outrasDatas}
             </Vazio>
           ) : (
             <>
               <div className="resumo" style={{ justifyContent: "space-between", flexWrap: "wrap" }}>
                 <span className="resumo-texto">
-                  <small>Total do período</small>
+                  <small>{t.totalPeriodo}</small>
                   <span className="resumo-numero" style={{ fontSize: "2rem" }}>
                     {formatarMoeda(totais.valor)}
                   </span>
                 </span>
                 <span className="resumo-texto direita">
-                  {relatorio.entregas.length} viagem(ns)
-                  <small>{km(totais.km)} rodados</small>
+                  {t.viagens(relatorio.entregas.length)}
+                  <small>{t.rodados(km(totais.km))}</small>
                 </span>
               </div>
-              {totais.semValor > 0 && (
-                <Alerta tipo="aviso">
-                  {totais.semValor} entrega(s) ainda sem tarifa calculada (aparecem como “Sem valor”). Elas não entram no total até a tarifa
-                  ser definida.
-                </Alerta>
-              )}
+              {totais.semValor > 0 && <Alerta tipo="aviso">{t.semTarifa(totais.semValor)}</Alerta>}
 
               <ul className="lista mt-4">
                 {relatorio.entregas.map((item) => (
                   // A mesma entrega pode aparecer duas vezes (tentativa sem sucesso e entrega concluída): a chave é a viagem.
                   <li key={item.viagemId} className="cartao">
                     <div className="cartao-cabecalho">
-                      <span className="codigo">{item.bdoNumero ?? "BDO sem número"}</span>
-                      {item.tentativaSemSucesso && <span className="selo">Tentativa sem sucesso</span>}
-                      {item.temAjuste && <span className="selo selo-aviso">Corrigido</span>}
+                      <span className="codigo">{item.bdoNumero ?? textos.motorista.geral.bdoSemNumero}</span>
+                      {item.tentativaSemSucesso && <span className="selo">{t.tentativaSemSucesso}</span>}
+                      {item.temAjuste && <span className="selo selo-aviso">{t.corrigido}</span>}
                     </div>
                     <dl className="dados-grade">
                       <div>
-                        <dt>Ida</dt>
+                        <dt>{t.ida}</dt>
                         <dd>{km(item.kmIda)}</dd>
                       </div>
                       <div>
-                        <dt>Volta</dt>
+                        <dt>{t.volta}</dt>
                         <dd>{km(item.kmVolta)}</dd>
                       </div>
                       <div>
-                        <dt>Tarifa</dt>
+                        <dt>{t.tarifa}</dt>
                         <dd>{formatarMoeda(item.tarifaAplicada)}</dd>
                       </div>
                       <div>
-                        <dt>Pedágio</dt>
+                        <dt>{t.pedagio}</dt>
                         <dd>{formatarMoeda(item.valorPedagio)}</dd>
                       </div>
                     </dl>
@@ -149,7 +145,7 @@ export function RelatorioQuinzenal() {
                         aria-expanded={corrigindo === item.viagemId}
                         onClick={() => setCorrigindo(corrigindo === item.viagemId ? null : item.viagemId)}
                       >
-                        Corrigir valor
+                        {t.corrigirValor}
                       </button>
                       {item.temAjuste && (
                         <button
@@ -158,7 +154,7 @@ export function RelatorioQuinzenal() {
                           aria-expanded={verHistorico === item.viagemId}
                           onClick={() => setVerHistorico(verHistorico === item.viagemId ? null : item.viagemId)}
                         >
-                          Ver histórico
+                          {t.verHistorico}
                         </button>
                       )}
                     </div>
@@ -180,7 +176,7 @@ export function RelatorioQuinzenal() {
               </ul>
 
               <button type="button" className="secundario bloco nao-imprimir mt-4" onClick={() => window.print()}>
-                <Icone nome="impressora" /> Imprimir ou salvar em PDF
+                <Icone nome="impressora" /> {t.imprimir}
               </button>
             </>
           )}
@@ -188,10 +184,7 @@ export function RelatorioQuinzenal() {
       )}
 
       <Ajuda>
-        <p>
-          Confira as quilometragens, tarifas e pedágios do período. Para corrigir um valor, use “Corrigir valor” e explique o motivo: o
-          valor original continua visível no histórico. “Imprimir” gera uma versão limpa para papel ou PDF.
-        </p>
+        <p>{t.ajuda}</p>
       </Ajuda>
     </TelaMotorista>
   );

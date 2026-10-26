@@ -1,3 +1,4 @@
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Alerta } from "../../../../shared/ui/Alerta";
 
 /**
@@ -7,10 +8,5 @@ import { Alerta } from "../../../../shared/ui/Alerta";
  * ligação (HU21), quando houver telefone, continua sendo a alternativa.
  */
 export function AvisoSemContato() {
-  return (
-    <Alerta tipo="aviso">
-      Este passageiro não tem e-mail cadastrado no BDO, então não é possível trocar mensagens por aqui. Se houver telefone, use o botão
-      “Ligar”.
-    </Alerta>
-  );
+  return <Alerta tipo="aviso">{useTextos().motorista.mensagens.semContato}</Alerta>;
 }

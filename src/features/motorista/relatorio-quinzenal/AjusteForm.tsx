@@ -1,14 +1,10 @@
 import { useState } from "react";
 import { ApiError } from "../../../shared/api/ApiError";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { Alerta } from "../../../shared/ui/Alerta";
 import { registrarAjuste, type CampoAjuste } from "./relatorioService";
 
-export const ROTULO_CAMPO: Record<CampoAjuste, string> = {
-  KM_IDA: "Quilometragem de ida",
-  KM_VOLTA: "Quilometragem de volta",
-  TARIFA_APLICADA: "Tarifa aplicada (R$)",
-  VALOR_PEDAGIO: "Pedágio (R$)",
-};
+const CAMPOS: CampoAjuste[] = ["KM_IDA", "KM_VOLTA", "TARIFA_APLICADA", "VALOR_PEDAGIO"];
 
 /**
  * Correção de um valor calculado (HU17, FR-003/FR-004). O botão de salvar
@@ -23,6 +19,7 @@ export function AjusteForm({ viagemId, aoSalvar, aoCancelar }: { viagemId: strin
   const [justificativa, setJustificativa] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
+  const t = useTextos().motorista.relatorio;
 
   const valido = valorNovo.trim() !== "" && Number.isFinite(Number(valorNovo)) && justificativa.trim().length > 0;
 
@@ -34,7 +31,7 @@ export function AjusteForm({ viagemId, aoSalvar, aoCancelar }: { viagemId: strin
       await registrarAjuste(viagemId, { campo, valorNovo: valorNovo.trim(), justificativa: justificativa.trim() });
       aoSalvar();
     } catch (excecao) {
-      setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível salvar a correção.");
+      setErro(excecao instanceof ApiError ? excecao.message : t.falhaSalvar);
     } finally {
       setSalvando(false);
     }
@@ -47,18 +44,18 @@ export function AjusteForm({ viagemId, aoSalvar, aoCancelar }: { viagemId: strin
       style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--borda-suave)" }}
     >
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
-      <label htmlFor={`campo-${viagemId}`}>O que corrigir</label>
+      <label htmlFor={`campo-${viagemId}`}>{t.oQueCorrigir}</label>
       <select id={`campo-${viagemId}`} value={campo} onChange={(e) => setCampo(e.target.value as CampoAjuste)}>
-        {Object.entries(ROTULO_CAMPO).map(([valor, rotulo]) => (
+        {CAMPOS.map((valor) => (
           <option key={valor} value={valor}>
-            {rotulo}
+            {t.campos[valor]}
           </option>
         ))}
       </select>
 
       <div className="mt-3">
         <label htmlFor={`valor-${viagemId}`}>
-          Valor correto{" "}
+          {t.valorCorreto}{" "}
           <span className="campo-obrigatorio" aria-hidden="true">
             *
           </span>
@@ -76,7 +73,7 @@ export function AjusteForm({ viagemId, aoSalvar, aoCancelar }: { viagemId: strin
 
       <div className="mt-3">
         <label htmlFor={`just-${viagemId}`}>
-          Justificativa{" "}
+          {t.justificativa}{" "}
           <span className="campo-obrigatorio" aria-hidden="true">
             *
           </span>
@@ -87,16 +84,16 @@ export function AjusteForm({ viagemId, aoSalvar, aoCancelar }: { viagemId: strin
           rows={2}
           value={justificativa}
           onChange={(e) => setJustificativa(e.target.value)}
-          placeholder="Por que este valor está errado?"
+          placeholder={t.porQueErrado}
         />
       </div>
 
       <div className="linha-acoes mt-3">
         <button type="submit" disabled={!valido || salvando}>
-          {salvando ? "Salvando…" : "Salvar correção"}
+          {salvando ? t.salvando : t.salvarCorrecao}
         </button>
         <button type="button" className="secundario" onClick={aoCancelar} disabled={salvando}>
-          Cancelar
+          {t.cancelar}
         </button>
       </div>
     </form>

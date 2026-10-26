@@ -1,6 +1,7 @@
 import { Icone } from "../../../../shared/ui/Icone";
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Alerta } from "../../../../shared/ui/Alerta";
 import { enviarMensagem } from "../services/mensagemService";
 
@@ -15,6 +16,7 @@ export function CampoMensagem({ entregaId, aoEnviar }: { entregaId: string; aoEn
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [enviada, setEnviada] = useState(false);
+  const t = useTextos().motorista.mensagens;
 
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
@@ -30,11 +32,7 @@ export function CampoMensagem({ entregaId, aoEnviar }: { entregaId: string; aoEn
       setEnviada(true);
       aoEnviar();
     } catch (excecao) {
-      setErro(
-        excecao instanceof ApiError
-          ? excecao.message
-          : "Sem conexão: não foi possível enviar a mensagem. Tente de novo quando a rede voltar.",
-      );
+      setErro(excecao instanceof ApiError ? excecao.message : t.semConexaoEnviar);
     } finally {
       setEnviando(false);
     }
@@ -43,22 +41,16 @@ export function CampoMensagem({ entregaId, aoEnviar }: { entregaId: string; aoEn
   return (
     <form className="mt-4" onSubmit={enviar}>
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
-      <label htmlFor="mensagem">Mensagem ao passageiro</label>
+      <label htmlFor="mensagem">{t.mensagemAoPassageiro}</label>
       <div style={{ display: "flex", gap: "0.5rem", alignItems: "flex-end" }}>
-        <textarea
-          id="mensagem"
-          rows={2}
-          value={texto}
-          onChange={(e) => setTexto(e.target.value)}
-          placeholder="Ex.: Estou chegando, pode me receber?"
-        />
+        <textarea id="mensagem" rows={2} value={texto} onChange={(e) => setTexto(e.target.value)} placeholder={t.exemplo} />
         <button type="submit" disabled={!texto.trim() || enviando} style={{ minHeight: "var(--alvo-g)", flex: "none" }}>
-          <Icone nome="enviar" /> {enviando ? "Enviando…" : "Enviar"}
+          <Icone nome="enviar" /> {enviando ? t.enviando : t.enviar}
         </button>
       </div>
       {enviada && (
         <p role="status" className="texto-apoio texto-sucesso">
-          <Icone nome="checkCirculo" /> Mensagem enviada.
+          <Icone nome="checkCirculo" /> {t.enviada}
         </p>
       )}
     </form>
