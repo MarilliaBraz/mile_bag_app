@@ -7,7 +7,20 @@ export type FalhaRegistrada = {
   dataHora: string;
   tela: string;
   mensagem: string;
+  /** Onde aconteceu: primeiras linhas da pilha e, na renderização, o componente. Sem isso, uma falha sem reprodução não tem como ser investigada. */
+  local?: string;
 };
+
+const LINHAS_DE_LOCAL = 6;
+
+function resumirLocal(erro: unknown, pilhaDeComponentes?: string | null): string | undefined {
+  const pilha = erro instanceof Error ? erro.stack : undefined;
+  const linhas = [
+    ...(pilha?.split("\n").slice(1, LINHAS_DE_LOCAL) ?? []),
+    ...(pilhaDeComponentes?.trim().split("\n").slice(0, LINHAS_DE_LOCAL) ?? []),
+  ].map((linha) => linha.trim());
+  return linhas.length > 0 ? linhas.join("\n").slice(0, 1_000) : undefined;
+}
 
 const CHAVE = "milebag.falhasRecentes";
 const LIMITE = 20;
@@ -21,9 +34,14 @@ export function listarFalhas(): FalhaRegistrada[] {
   }
 }
 
-export function registrarFalha(erro: unknown): void {
+export function registrarFalha(erro: unknown, pilhaDeComponentes?: string | null): void {
   const mensagem = erro instanceof Error ? erro.message : String(erro);
-  const falha: FalhaRegistrada = { dataHora: new Date().toISOString(), tela: window.location.pathname, mensagem: mensagem.slice(0, 300) };
+  const falha: FalhaRegistrada = {
+    dataHora: new Date().toISOString(),
+    tela: window.location.pathname,
+    mensagem: mensagem.slice(0, 300),
+    local: resumirLocal(erro, pilhaDeComponentes),
+  };
   try {
     localStorage.setItem(CHAVE, JSON.stringify([falha, ...listarFalhas()].slice(0, LIMITE)));
   } catch {

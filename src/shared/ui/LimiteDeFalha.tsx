@@ -17,8 +17,8 @@ export class LimiteDeFalha extends Component<{ children: ReactNode }, Estado> {
     return { falhou: true };
   }
 
-  componentDidCatch(erro: Error, _info: ErrorInfo) {
-    registrarFalha(erro);
+  componentDidCatch(erro: Error, info: ErrorInfo) {
+    registrarFalha(erro, info.componentStack);
   }
 
   render() {
