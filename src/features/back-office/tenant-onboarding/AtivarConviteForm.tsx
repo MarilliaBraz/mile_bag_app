@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { ApiError } from "../../../shared/api/ApiError";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { obterTextos, useTextos } from "../../../shared/i18n/idioma";
+import { SeletorIdioma } from "../../../shared/ui/SeletorIdioma";
 import { ativarConvite, consultarConvite } from "./tenantsApi";
 import { Alerta, Carregando } from "../../../shared/ui/Alerta";
 
@@ -16,7 +18,13 @@ const TAMANHO_MINIMO_SENHA = 8;
  */
 export function AtivarConviteForm() {
   const { token } = useParams<{ token: string }>();
-  const { dados: convite, erro, carregando } = useRecurso(() => consultarConvite(token ?? ""), "Este convite não é válido.");
+  const textos = useTextos();
+  const t = textos.backOffice.convite;
+  const {
+    dados: convite,
+    erro,
+    carregando,
+  } = useRecurso(() => consultarConvite(token ?? ""), obterTextos().backOffice.convite.falhaCarregar);
   const [senha, setSenha] = useState("");
   const [confirmacao, setConfirmacao] = useState("");
   const [erroAcao, setErroAcao] = useState<string | null>(null);
@@ -33,7 +41,7 @@ export function AtivarConviteForm() {
       await ativarConvite(token ?? "", senha);
       setAtivado(true);
     } catch (excecao) {
-      setErroAcao(excecao instanceof ApiError ? excecao.message : mensagemDeErro(excecao, "Não foi possível ativar o convite."));
+      setErroAcao(excecao instanceof ApiError ? excecao.message : mensagemDeErro(excecao, t.falhaAtivar));
     } finally {
       setEnviando(false);
     }
@@ -42,41 +50,41 @@ export function AtivarConviteForm() {
   return (
     <div className="tela-entrada">
       <main>
+        <div className="entrada-idioma">
+          <SeletorIdioma />
+        </div>
         <div className="marca">
           <img src="/icone-app.svg" alt="" /> Milebag
         </div>
-        <h1>Ativar acesso</h1>
+        <h1>{t.titulo}</h1>
 
-        {carregando && <Carregando texto="Verificando o convite…" />}
-        {erro && <Alerta tipo="erro">{erro} Peça um novo convite a quem cadastrou a empresa.</Alerta>}
+        {carregando && <Carregando texto={t.verificando} />}
+        {erro && (
+          <Alerta tipo="erro">
+            {erro} {t.pecaNovo}
+          </Alerta>
+        )}
 
         {convite && convite.status !== "PENDENTE" && (
           <Alerta tipo="erro">
-            {convite.status === "EXPIRADO" ? "Este convite expirou." : "Este convite já foi usado ou substituído por outro."} Peça um novo
-            convite a quem cadastrou a empresa.
+            {convite.status === "EXPIRADO" ? t.expirou : t.jaUsado} {t.pecaNovo}
           </Alerta>
         )}
 
-        {ativado && (
-          <Alerta tipo="sucesso">
-            Senha definida para {convite?.emailDestinatario}. O acesso por login ainda está em construção: a conta já existe, mas não há
-            tela de entrada com e-mail e senha nesta versão.
-          </Alerta>
-        )}
+        {ativado && <Alerta tipo="sucesso">{t.senhaDefinida(convite?.emailDestinatario ?? "")}</Alerta>}
 
         {convite && convite.status === "PENDENTE" && !ativado && (
           <form onSubmit={ativar} className="cartao formulario">
             <p className="m-0">
-              Você foi convidado a administrar <strong>{convite.tenantNome}</strong> com o e-mail{" "}
-              <strong>{convite.emailDestinatario}</strong>.
+              {t.convidado} <strong>{convite.tenantNome}</strong> {t.comEmail} <strong>{convite.emailDestinatario}</strong>.
             </p>
             {erroAcao && <Alerta tipo="erro">{erroAcao}</Alerta>}
             <div>
-              <label htmlFor="senha">Senha (mínimo {TAMANHO_MINIMO_SENHA} caracteres)</label>
+              <label htmlFor="senha">{textos.senha.minimo(t.campoSenha, TAMANHO_MINIMO_SENHA)}</label>
               <input id="senha" type="password" autoComplete="new-password" value={senha} onChange={(e) => setSenha(e.target.value)} />
             </div>
             <div>
-              <label htmlFor="confirmacaoSenha">Repita a senha</label>
+              <label htmlFor="confirmacaoSenha">{t.repita}</label>
               <input
                 id="confirmacaoSenha"
                 type="password"
@@ -88,12 +96,12 @@ export function AtivarConviteForm() {
               />
               {confirmacao && senha !== confirmacao && (
                 <span id="confirmacaoSenha-erro" role="alert" className="texto-erro">
-                  As senhas não conferem.
+                  {textos.senha.naoConferem}
                 </span>
               )}
             </div>
             <button type="submit" className="grande bloco" disabled={invalido || enviando}>
-              {enviando ? "Ativando…" : "Ativar acesso"}
+              {enviando ? t.ativando : t.ativar}
             </button>
           </form>
         )}

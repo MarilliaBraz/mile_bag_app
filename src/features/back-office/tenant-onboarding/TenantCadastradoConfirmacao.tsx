@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { formatarData, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { TrocarPlanoTenant } from "../planos/TrocarPlanoTenant";
 import { buscarTenant, reenviarConvite } from "./tenantsApi";
 import { Alerta, Carregando } from "../../../shared/ui/Alerta";
@@ -15,7 +16,8 @@ import { Pagina, Painel } from "../layout/Pagina";
  */
 export function TenantCadastradoConfirmacao() {
   const { tenantId } = useParams<{ tenantId: string }>();
-  const { dados, erro, carregando, recarregar } = useRecurso(() => buscarTenant(tenantId ?? ""), "Não foi possível carregar a empresa.");
+  const t = useTextos().backOffice.empresas;
+  const { dados, erro, carregando, recarregar } = useRecurso(() => buscarTenant(tenantId ?? ""), t.falhaCarregar);
   const [conviteReenviado, setConviteReenviado] = useState(false);
   const [erroConvite, setErroConvite] = useState<string | null>(null);
 
@@ -26,35 +28,35 @@ export function TenantCadastradoConfirmacao() {
       await reenviarConvite(tenantId ?? "");
       setConviteReenviado(true);
     } catch (excecao) {
-      setErroConvite(mensagemDeErro(excecao, "Não foi possível reenviar o convite."));
+      setErroConvite(mensagemDeErro(excecao, t.falhaReenviar));
     }
   }
 
   return (
-    <Pagina titulo={dados?.nome ?? "Empresa"} voltarPara="/plataforma/empresas" rotuloVoltar="Empresas">
+    <Pagina titulo={dados?.nome ?? t.empresa} voltarPara="/plataforma/empresas" rotuloVoltar={t.voltarEmpresas}>
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
-      {carregando && <Carregando texto="Carregando empresa…" />}
+      {carregando && <Carregando texto={t.carregando} />}
 
       {dados && (
         <>
           <Painel>
             <dl className="dados-grade">
               <div>
-                <dt>Identificador</dt>
+                <dt>{t.identificadorCurto}</dt>
                 <dd className="codigo">{dados.identificadorEmpresa}</dd>
               </div>
               <div>
-                <dt>Situação</dt>
+                <dt>{t.situacao}</dt>
                 <dd>
                   <span className={`selo ${dados.status === "ATIVO" ? "selo-sucesso" : "selo-aviso"}`}>{dados.status}</span>
                 </dd>
               </div>
               <div>
-                <dt>Cadastrada em</dt>
+                <dt>{t.cadastradaEm}</dt>
                 <dd>{formatarData(dados.criadoEm)}</dd>
               </div>
               <div>
-                <dt>Código da empresa</dt>
+                <dt>{t.codigoEmpresa}</dt>
                 <dd className="codigo" style={{ wordBreak: "break-all", fontSize: "0.9375rem" }}>
                   {dados.id}
                 </dd>
@@ -63,18 +65,15 @@ export function TenantCadastradoConfirmacao() {
           </Painel>
 
           <div className="grade-paineis mt-5">
-            <Painel
-              titulo="Convite do administrador"
-              descricao="Se o convite não chegou ou expirou, gere um novo. O anterior deixa de valer."
-            >
+            <Painel titulo={t.conviteTitulo} descricao={t.conviteDescricao}>
               {erroConvite && <Alerta tipo="erro">{erroConvite}</Alerta>}
-              {conviteReenviado && <Alerta tipo="sucesso">Novo convite enviado.</Alerta>}
+              {conviteReenviado && <Alerta tipo="sucesso">{t.novoConviteEnviado}</Alerta>}
               <button type="button" className="secundario" onClick={reenviar}>
-                <Icone nome="email" /> Reenviar convite
+                <Icone nome="email" /> {t.reenviarConvite}
               </button>
             </Painel>
 
-            <Painel titulo="Plano">
+            <Painel titulo={t.plano}>
               <TrocarPlanoTenant tenantId={dados.id} planoAtualId={dados.planoId} aoTrocar={recarregar} />
             </Painel>
           </div>

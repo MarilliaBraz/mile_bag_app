@@ -2908,6 +2908,12 @@ dialog.gaveta::backdrop {
   flex: 1 1 12rem;
 }
 
+/* Bandeiras do idioma no back-office: acima do painel de texto, contraste e tema. */
+.admin-preferencias .seletor-idioma,
+.admin-lateral-preferencias .seletor-idioma {
+  margin-bottom: 0.5rem;
+}
+
 /* Bandeiras do idioma no topo das telas de entrada. */
 .entrada-idioma {
   display: flex;

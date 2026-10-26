@@ -8,5 +8,6 @@ import { Alerta } from "../../../../shared/ui/Alerta";
  * ligação (HU21), quando houver telefone, continua sendo a alternativa.
  */
 export function AvisoSemContato() {
-  return <Alerta tipo="aviso">{useTextos().motorista.mensagens.semContato}</Alerta>;
+  const t = useTextos().motorista.mensagens;
+  return <Alerta tipo="aviso">{t.semContato}</Alerta>;
 }

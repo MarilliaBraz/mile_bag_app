@@ -4,6 +4,7 @@ import { BotaoSair } from "../../shared/auth/BotaoSair";
 import { useTextos, type ChaveMenu } from "../../shared/i18n/idioma";
 import { Icone, type NomeIcone } from "../../shared/ui/Icone";
 import { PreferenciasAcessibilidade } from "../../shared/ui/PreferenciasAcessibilidade";
+import { SeletorIdioma } from "../../shared/ui/SeletorIdioma";
 
 type Item = { para: string; rotulo: ChaveMenu; icone: NomeIcone };
 
@@ -33,6 +34,7 @@ export function AdminLayout({ titulo, itens, aviso }: { titulo: string; itens: I
 
         <div className="admin-lateral-rodape">
           <div className="admin-lateral-preferencias">
+            <SeletorIdioma />
             <PreferenciasAcessibilidade />
           </div>
           <NavLink to="/conta/senha" viewTransition className="admin-link-conta">
@@ -47,6 +49,7 @@ export function AdminLayout({ titulo, itens, aviso }: { titulo: string; itens: I
         {aviso}
         <Outlet />
         <div className="admin-preferencias">
+          <SeletorIdioma />
           <PreferenciasAcessibilidade />
         </div>
       </div>

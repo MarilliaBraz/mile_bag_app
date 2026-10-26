@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { mensagemDeErro } from "../../../shared/format/formatar";
+import { formatarNumero, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { listarPlanos, trocarPlanoDoTenant, type ResultadoTrocaPlano } from "./planosApi";
 import { Alerta } from "../../../shared/ui/Alerta";
@@ -11,7 +12,8 @@ import { Alerta } from "../../../shared/ui/Alerta";
  * `usoExcedeuLimiteNaTroca` e a tela avisa - é um alerta, não um bloqueio.
  */
 export function TrocarPlanoTenant({ tenantId, planoAtualId, aoTrocar }: { tenantId: string; planoAtualId: string; aoTrocar?: () => void }) {
-  const { dados: planos, erro } = useRecurso(listarPlanos, "Não foi possível carregar os planos.");
+  const t = useTextos().backOffice.planos;
+  const { dados: planos, erro } = useRecurso(listarPlanos, t.falhaCarregar);
   const [escolhido, setEscolhido] = useState("");
   const [resultado, setResultado] = useState<ResultadoTrocaPlano | null>(null);
   const [erroAcao, setErroAcao] = useState<string | null>(null);
@@ -26,7 +28,7 @@ export function TrocarPlanoTenant({ tenantId, planoAtualId, aoTrocar }: { tenant
       setResultado(await trocarPlanoDoTenant(tenantId, escolhido));
       aoTrocar?.();
     } catch (excecao) {
-      setErroAcao(mensagemDeErro(excecao, "Não foi possível trocar o plano."));
+      setErroAcao(mensagemDeErro(excecao, t.falhaTrocar));
     } finally {
       setTrocando(false);
       setConfirmando(false);
@@ -43,36 +45,35 @@ export function TrocarPlanoTenant({ tenantId, planoAtualId, aoTrocar }: { tenant
     >
       {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
       <div>
-        <label htmlFor="novoPlano">Novo plano</label>
+        <label htmlFor="novoPlano">{t.novoPlanoRotulo}</label>
         <select id="novoPlano" value={escolhido} onChange={(e) => setEscolhido(e.target.value)}>
-          <option value="">Escolha um plano</option>
+          <option value="">{t.escolhaPlano}</option>
           {planos
             ?.filter(({ plano }) => plano.id !== planoAtualId)
             .map(({ plano }) => (
               <option key={plano.id} value={plano.id}>
-                {plano.nome} ({plano.limiteMotoristasAtivos} motoristas, {plano.limiteVolumeMensalBdos} BDOs/mês)
+                {t.opcaoPlano(plano.nome, formatarNumero(plano.limiteMotoristasAtivos), formatarNumero(plano.limiteVolumeMensalBdos))}
               </option>
             ))}
         </select>
       </div>
       <div>
         <button type="submit" disabled={!escolhido || trocando}>
-          {trocando ? "Trocando…" : "Trocar plano"}
+          {trocando ? t.trocando : t.trocarPlano}
         </button>
       </div>
       <ConfirmarAcao
         aberto={confirmando}
-        titulo="Trocar o plano da empresa?"
-        descricao="A troca vale imediatamente. Se o uso atual da empresa já passa dos limites do novo plano, você será avisado, mas a troca acontece mesmo assim."
-        rotuloConfirmar="Trocar plano"
+        titulo={t.trocarTitulo}
+        descricao={t.trocarDescricao}
+        rotuloConfirmar={t.trocarPlano}
         ocupado={trocando}
         aoConfirmar={trocar}
         aoCancelar={() => setConfirmando(false)}
       />
       {resultado && (
         <Alerta tipo={resultado.usoExcedeuLimiteNaTroca ? "aviso" : "sucesso"}>
-          Plano alterado para <strong>{resultado.planoVigente.nome}</strong>.
-          {resultado.usoExcedeuLimiteNaTroca && " Atenção: o uso atual da empresa já ultrapassa os limites do novo plano."}
+          {t.alteradoPara} <strong>{resultado.planoVigente.nome}</strong>.{resultado.usoExcedeuLimiteNaTroca && t.usoExcedeu}
         </Alerta>
       )}
     </form>

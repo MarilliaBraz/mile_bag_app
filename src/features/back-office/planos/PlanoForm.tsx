@@ -1,6 +1,7 @@
 import { Icone } from "../../../shared/ui/Icone";
 import { useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { Alerta } from "../../../shared/ui/Alerta";
 
 /** Novo plano de assinatura (HU16): nome e os dois limites, ambos inteiros positivos. */
@@ -15,6 +16,8 @@ export function PlanoForm({
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
   const [salvo, setSalvo] = useState(false);
+  const textos = useTextos().backOffice;
+  const t = textos.planos;
 
   const limiteMotoristas = Number(motoristas);
   const limiteBdos = Number(bdos);
@@ -33,7 +36,7 @@ export function PlanoForm({
       setBdos("");
       setSalvo(true);
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível criar o plano."));
+      setErro(mensagemDeErro(excecao, t.falhaCriar));
     } finally {
       setSalvando(false);
     }
@@ -43,27 +46,27 @@ export function PlanoForm({
     <form onSubmit={enviar} className="formulario">
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
       <div>
-        <label htmlFor="nomePlano">Nome do plano</label>
+        <label htmlFor="nomePlano">{t.nomePlano}</label>
         <input id="nomePlano" value={nome} onChange={(e) => setNome(e.target.value)} />
       </div>
       <div className="form-linha">
         <div>
-          <label htmlFor="limiteMotoristas">Motoristas ativos</label>
+          <label htmlFor="limiteMotoristas">{t.motoristasAtivos}</label>
           <input id="limiteMotoristas" inputMode="numeric" value={motoristas} onChange={(e) => setMotoristas(e.target.value)} />
         </div>
         <div>
-          <label htmlFor="limiteBdos">BDOs por mês</label>
+          <label htmlFor="limiteBdos">{t.bdosPorMes}</label>
           <input id="limiteBdos" inputMode="numeric" value={bdos} onChange={(e) => setBdos(e.target.value)} />
         </div>
       </div>
-      <p className="texto-apoio m-0">Os dois limites são números inteiros maiores que zero.</p>
+      <p className="texto-apoio m-0">{t.limitesInteiros}</p>
       <div className="linha-acoes">
         <button type="submit" disabled={invalido || salvando}>
-          {salvando ? "Salvando…" : "Criar plano"}
+          {salvando ? textos.geral.salvando : t.criarPlano}
         </button>
         {salvo && (
           <span role="status" style={{ color: "var(--confirmacao)", alignSelf: "center" }}>
-            <Icone nome="checkCirculo" /> Plano criado.
+            <Icone nome="checkCirculo" /> {t.planoCriado}
           </span>
         )}
       </div>

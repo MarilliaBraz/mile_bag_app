@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTextos } from "../../../shared/i18n/idioma";
 import type { IdentidadeVisual } from "./identidadeVisualApi";
 import { baixarLogotipo } from "./identidadeVisualApi";
 
@@ -18,6 +19,7 @@ export function PreviaIdentidadeVisual({
 }) {
   const [urlLogotipo, setUrlLogotipo] = useState<string | null>(null);
   const temLogotipo = identidade.logotipoUrl !== null;
+  const t = useTextos().backOffice.identidade;
 
   useEffect(() => {
     if (arquivoLocal) {
@@ -48,11 +50,11 @@ export function PreviaIdentidadeVisual({
   }, [temLogotipo, versao, arquivoLocal]);
 
   if (!temLogotipo && !identidade.cabecalho && !arquivoLocal) {
-    return <p className="texto-apoio">Sem identidade visual configurada: os relatórios saem com o cabeçalho padrão do sistema.</p>;
+    return <p className="texto-apoio">{t.semIdentidade}</p>;
   }
 
   return (
-    <div role="img" aria-label="Prévia do topo do relatório em PDF" className="folha-previa">
+    <div role="img" aria-label={t.previaRotulo} className="folha-previa">
       {urlLogotipo && <img src={urlLogotipo} alt="" style={{ maxHeight: 64, maxWidth: "100%" }} />}
       {identidade.cabecalho && <div style={{ marginTop: "0.5rem", whiteSpace: "pre-line", fontWeight: 600 }}>{identidade.cabecalho}</div>}
       <div className="linhas-falsas" aria-hidden="true">

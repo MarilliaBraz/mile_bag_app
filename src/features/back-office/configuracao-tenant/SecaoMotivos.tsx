@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { criarMotivo, desativarMotivo, listarMotivos } from "./configuracoesTenantApi";
 import { Alerta } from "../../../shared/ui/Alerta";
 import { Icone } from "../../../shared/ui/Icone";
@@ -12,7 +13,8 @@ import { Painel } from "../layout/Pagina";
  * ativos, então um motivo desativado some daqui e não há como reativá-lo.
  */
 export function SecaoMotivos() {
-  const { dados, erro, recarregar } = useRecurso(listarMotivos, "Não foi possível carregar os motivos.");
+  const t = useTextos().backOffice.configuracoes;
+  const { dados, erro, recarregar } = useRecurso(listarMotivos, t.falhaMotivos);
   const [descricao, setDescricao] = useState("");
   const [reagendamento, setReagendamento] = useState(false);
   const [erroAcao, setErroAcao] = useState<string | null>(null);
@@ -28,14 +30,9 @@ export function SecaoMotivos() {
   }
 
   return (
-    <Painel
-      titulo="Motivos de não entrega"
-      descricao="O que o motorista escolhe ao registrar uma ocorrência. Desativar mantém as ocorrências antigas."
-    >
+    <Painel titulo={t.motivosTitulo} descricao={t.motivosDescricao}>
       {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
-      {dados && dados.length === 0 && (
-        <p className="texto-apoio">Nenhum motivo ativo. Sem motivos, o motorista não consegue registrar ocorrências.</p>
-      )}
+      {dados && dados.length === 0 && <p className="texto-apoio">{t.nenhumMotivo}</p>}
       <ul className="lista-simples">
         {dados?.map((motivo) => (
           <li key={motivo.id}>
@@ -43,17 +40,17 @@ export function SecaoMotivos() {
               {motivo.descricao}{" "}
               {motivo.reagendamento && (
                 <span className="selo selo-info">
-                  <Icone nome="calendario" /> Reagendamento
+                  <Icone nome="calendario" /> {t.reagendamento}
                 </span>
               )}
             </span>
             <button
               type="button"
               className="fantasma compacto"
-              aria-label={`Desativar motivo ${motivo.descricao}`}
-              onClick={() => executar(() => desativarMotivo(motivo.id), "Não foi possível desativar o motivo.")}
+              aria-label={t.desativarMotivoRotulo(motivo.descricao)}
+              onClick={() => executar(() => desativarMotivo(motivo.id), t.falhaDesativarMotivo)}
             >
-              Desativar
+              {t.desativar}
             </button>
           </li>
         ))}
@@ -66,21 +63,21 @@ export function SecaoMotivos() {
             await criarMotivo(descricao.trim(), reagendamento);
             setDescricao("");
             setReagendamento(false);
-          }, "Não foi possível criar o motivo.");
+          }, t.falhaCriarMotivo);
         }}
       >
         <div>
           <label htmlFor="novo-motivo" className="visualmente-oculto">
-            Novo motivo
+            {t.novoMotivo}
           </label>
-          <input id="novo-motivo" placeholder="Novo motivo" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+          <input id="novo-motivo" placeholder={t.novoMotivo} value={descricao} onChange={(e) => setDescricao(e.target.value)} />
         </div>
         <label className="interruptor">
           <input type="checkbox" checked={reagendamento} onChange={(e) => setReagendamento(e.target.checked)} />
-          <span>Reagendamento (o motorista informa a data e o horário combinados com o passageiro)</span>
+          <span>{t.reagendamentoExplicacao}</span>
         </label>
         <button type="submit" disabled={!descricao.trim()}>
-          <Icone nome="mais" /> Adicionar
+          <Icone nome="mais" /> {t.adicionar}
         </button>
       </form>
     </Painel>

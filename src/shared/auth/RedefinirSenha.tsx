@@ -4,6 +4,7 @@ import { requisitar } from "../api/httpClient";
 import { mensagemDeErro } from "../format/formatar";
 import { useTextos } from "../i18n/idioma";
 import { Alerta } from "../ui/Alerta";
+import { SeletorIdioma } from "../ui/SeletorIdioma";
 
 const TAMANHO_MINIMO_SENHA = 8;
 
@@ -36,6 +37,9 @@ export function RedefinirSenha() {
   return (
     <div className="tela-entrada">
       <main>
+        <div className="entrada-idioma">
+          <SeletorIdioma />
+        </div>
         <h1>{t.senha.redefinir.titulo}</h1>
         {concluido ? (
           <Alerta tipo="sucesso">

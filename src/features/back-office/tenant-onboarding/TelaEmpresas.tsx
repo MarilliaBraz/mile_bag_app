@@ -1,3 +1,4 @@
+import { useTextos } from "../../../shared/i18n/idioma";
 import { Icone } from "../../../shared/ui/Icone";
 import { Pagina, Painel } from "../layout/Pagina";
 import { useState } from "react";
@@ -8,18 +9,16 @@ import { CadastroTenantForm } from "./CadastroTenantForm";
 export function TelaEmpresas() {
   const navigate = useNavigate();
   const [codigo, setCodigo] = useState("");
+  const t = useTextos().backOffice.empresas;
 
   return (
-    <Pagina
-      titulo="Empresas assinantes"
-      descricao="Cadastre a empresa e o e-mail do primeiro administrador: ele recebe um convite para definir a própria senha e já pode começar a operar."
-    >
+    <Pagina titulo={t.titulo} descricao={t.descricao}>
       <div className="grade-paineis">
-        <Painel titulo="Cadastrar empresa">
+        <Painel titulo={t.cadastrarEmpresa}>
           <CadastroTenantForm aoCadastrar={(tenant) => navigate(`/plataforma/empresas/${tenant.id}`)} />
         </Painel>
 
-        <Painel titulo="Abrir empresa já cadastrada" descricao="Use o código da empresa (aparece na página dela depois do cadastro).">
+        <Painel titulo={t.abrirTitulo} descricao={t.abrirDescricao}>
           <form
             className="form-linha"
             onSubmit={(evento) => {
@@ -28,17 +27,17 @@ export function TelaEmpresas() {
             }}
           >
             <div>
-              <label htmlFor="codigo-empresa">Código da empresa</label>
+              <label htmlFor="codigo-empresa">{t.codigoEmpresa}</label>
               <input
                 id="codigo-empresa"
-                placeholder="Ex.: 3f2b…"
+                placeholder={t.codigoExemplo}
                 spellCheck={false}
                 value={codigo}
                 onChange={(e) => setCodigo(e.target.value)}
               />
             </div>
             <button type="submit" disabled={!codigo.trim()}>
-              Abrir <Icone nome="chevron" />
+              {t.abrir} <Icone nome="chevron" />
             </button>
           </form>
         </Painel>

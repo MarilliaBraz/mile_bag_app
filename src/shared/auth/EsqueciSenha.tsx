@@ -4,6 +4,7 @@ import { requisitar } from "../api/httpClient";
 import { mensagemDeErro } from "../format/formatar";
 import { useTextos } from "../i18n/idioma";
 import { Alerta } from "../ui/Alerta";
+import { SeletorIdioma } from "../ui/SeletorIdioma";
 
 /**
  * Pedido de redefinição de senha (HU25). A resposta é sempre a mesma, exista ou não a conta - a tela não revela quais
@@ -34,6 +35,9 @@ export function EsqueciSenha() {
   return (
     <div className="tela-entrada">
       <main>
+        <div className="entrada-idioma">
+          <SeletorIdioma />
+        </div>
         <h1>{t.senha.esqueci.titulo}</h1>
         {enviado ? (
           <p role="status">{t.senha.esqueci.enviado}</p>
