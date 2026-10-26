@@ -6,9 +6,15 @@ import { obterPosicaoAtual } from "../../../../shared/geo/posicaoAtual";
 import { registrarCheckpoint } from "../services/viagemService";
 import type { Checkpoint, TipoCheckpoint } from "../types";
 
-const MARCOS: { tipo: Extract<TipoCheckpoint, "A_CAMINHO" | "CHEGADA">; icone: NomeIcone; rotulo: string; registrado: string; confirmacao: string }[] = [
-  { tipo: "A_CAMINHO", icone: "carro", rotulo: "Estou a caminho", registrado: "A caminho", confirmacao: "Marco \"a caminho\" registrado." },
-  { tipo: "CHEGADA", icone: "pino", rotulo: "Cheguei", registrado: "Chegada", confirmacao: "Marco \"chegada\" registrado." },
+const MARCOS: {
+  tipo: Extract<TipoCheckpoint, "A_CAMINHO" | "CHEGADA">;
+  icone: NomeIcone;
+  rotulo: string;
+  registrado: string;
+  confirmacao: string;
+}[] = [
+  { tipo: "A_CAMINHO", icone: "carro", rotulo: "Estou a caminho", registrado: "A caminho", confirmacao: 'Marco "a caminho" registrado.' },
+  { tipo: "CHEGADA", icone: "pino", rotulo: "Cheguei", registrado: "Chegada", confirmacao: 'Marco "chegada" registrado.' },
 ];
 
 const hora = (dataHora: string) => new Date(dataHora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
@@ -44,7 +50,9 @@ export function MarcosProgresso({
   const [registradosAgora, setRegistradosAgora] = useState<Checkpoint[]>([]);
 
   const registroDo = (tipo: TipoCheckpoint) =>
-    [...checkpoints, ...registradosAgora].filter((checkpoint) => checkpoint.tipo === tipo).sort((a, b) => a.dataHora.localeCompare(b.dataHora))[0];
+    [...checkpoints, ...registradosAgora]
+      .filter((checkpoint) => checkpoint.tipo === tipo)
+      .sort((a, b) => a.dataHora.localeCompare(b.dataHora))[0];
 
   async function registrar(tipo: (typeof MARCOS)[number]["tipo"], confirmacao: string) {
     setAviso(null);
@@ -75,11 +83,23 @@ export function MarcosProgresso({
         {MARCOS.map((marco) => {
           const registro = registroDo(marco.tipo);
           return registro ? (
-            <button key={marco.tipo} type="button" className="grande" disabled aria-label={`${marco.registrado} registrado às ${hora(registro.dataHora)}`}>
+            <button
+              key={marco.tipo}
+              type="button"
+              className="grande"
+              disabled
+              aria-label={`${marco.registrado} registrado às ${hora(registro.dataHora)}`}
+            >
               <Icone nome="check" /> {marco.registrado} · {hora(registro.dataHora)}
             </button>
           ) : (
-            <button key={marco.tipo} type="button" className="grande" onClick={() => registrar(marco.tipo, marco.confirmacao)} disabled={ocupado !== null}>
+            <button
+              key={marco.tipo}
+              type="button"
+              className="grande"
+              onClick={() => registrar(marco.tipo, marco.confirmacao)}
+              disabled={ocupado !== null}
+            >
               <Icone nome={marco.icone} /> {ocupado === marco.tipo ? "Registrando…" : marco.rotulo}
             </button>
           );

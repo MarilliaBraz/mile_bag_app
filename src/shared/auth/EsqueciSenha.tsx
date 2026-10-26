@@ -32,33 +32,29 @@ export function EsqueciSenha() {
   return (
     <div className="tela-entrada">
       <main>
-      <h1>Esqueci minha senha</h1>
-      {enviado ? (
-        <p role="status">
-          Se existir uma conta com esse e-mail, enviamos um link para escolher uma senha nova. Ele vale por 1 hora e só pode ser usado uma vez.
-          Se o seu login não é um e-mail, peça ao administrador da sua empresa para redefinir a senha.
+        <h1>Esqueci minha senha</h1>
+        {enviado ? (
+          <p role="status">
+            Se existir uma conta com esse e-mail, enviamos um link para escolher uma senha nova. Ele vale por 1 hora e só pode ser usado uma
+            vez. Se o seu login não é um e-mail, peça ao administrador da sua empresa para redefinir a senha.
+          </p>
+        ) : (
+          <form onSubmit={enviar} className="cartao formulario">
+            {erro && <Alerta tipo="erro">{erro}</Alerta>}
+            <div>
+              <label htmlFor="login">E-mail de login</label>
+              <input id="login" type="email" autoComplete="username" value={login} onChange={(e) => setLogin(e.target.value)} autoFocus />
+            </div>
+            <div>
+              <button type="submit" className="grande bloco" disabled={!login.includes("@") || enviando}>
+                {enviando ? "Enviando…" : "Enviar link"}
+              </button>
+            </div>
+          </form>
+        )}
+        <p>
+          <Link to="/login">← Voltar ao login</Link>
         </p>
-      ) : (
-        <form onSubmit={enviar} className="cartao formulario">
-          {erro && (
-            <Alerta tipo="erro">
-              {erro}
-          </Alerta>
-          )}
-          <div>
-            <label htmlFor="login">E-mail de login</label>
-            <input id="login" type="email" autoComplete="username" value={login} onChange={(e) => setLogin(e.target.value)} autoFocus />
-          </div>
-          <div>
-            <button type="submit" className="grande bloco" disabled={!login.includes("@") || enviando}>
-              {enviando ? "Enviando…" : "Enviar link"}
-            </button>
-          </div>
-        </form>
-      )}
-      <p>
-        <Link to="/login">← Voltar ao login</Link>
-      </p>
       </main>
     </div>
   );

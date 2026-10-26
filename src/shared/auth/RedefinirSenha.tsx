@@ -34,34 +34,46 @@ export function RedefinirSenha() {
   return (
     <div className="tela-entrada">
       <main>
-      <h1>Nova senha</h1>
-      {concluido ? (
-        <Alerta tipo="sucesso">
-          Senha alterada. <Link to="/login">Entrar com a senha nova</Link>
-        </Alerta>
-      ) : (
-        <form onSubmit={enviar} className="cartao formulario">
-          {erro && (
-            <Alerta tipo="erro">
-              {erro} <Link to="/esqueci-senha">Pedir um novo link</Link>
+        <h1>Nova senha</h1>
+        {concluido ? (
+          <Alerta tipo="sucesso">
+            Senha alterada. <Link to="/login">Entrar com a senha nova</Link>
           </Alerta>
-          )}
-          <div>
-            <label htmlFor="senha">Senha nova (mínimo {TAMANHO_MINIMO_SENHA} caracteres)</label>
-            <input id="senha" type="password" autoComplete="new-password" value={senha} onChange={(e) => setSenha(e.target.value)} />
-          </div>
-          <div>
-            <label htmlFor="confirmacao">Repita a senha</label>
-            <input id="confirmacao" type="password" autoComplete="new-password" aria-invalid={!!confirmacao && senha !== confirmacao} aria-describedby={!!confirmacao && senha !== confirmacao ? "confirmacao-erro" : undefined} value={confirmacao} onChange={(e) => setConfirmacao(e.target.value)} />
-            {confirmacao && senha !== confirmacao && <span id="confirmacao-erro" role="alert" className="texto-erro">As senhas não conferem.</span>}
-          </div>
-          <div>
-            <button type="submit" className="grande bloco" disabled={invalido || enviando}>
-              {enviando ? "Salvando…" : "Salvar senha"}
-            </button>
-          </div>
-        </form>
-      )}
+        ) : (
+          <form onSubmit={enviar} className="cartao formulario">
+            {erro && (
+              <Alerta tipo="erro">
+                {erro} <Link to="/esqueci-senha">Pedir um novo link</Link>
+              </Alerta>
+            )}
+            <div>
+              <label htmlFor="senha">Senha nova (mínimo {TAMANHO_MINIMO_SENHA} caracteres)</label>
+              <input id="senha" type="password" autoComplete="new-password" value={senha} onChange={(e) => setSenha(e.target.value)} />
+            </div>
+            <div>
+              <label htmlFor="confirmacao">Repita a senha</label>
+              <input
+                id="confirmacao"
+                type="password"
+                autoComplete="new-password"
+                aria-invalid={!!confirmacao && senha !== confirmacao}
+                aria-describedby={!!confirmacao && senha !== confirmacao ? "confirmacao-erro" : undefined}
+                value={confirmacao}
+                onChange={(e) => setConfirmacao(e.target.value)}
+              />
+              {confirmacao && senha !== confirmacao && (
+                <span id="confirmacao-erro" role="alert" className="texto-erro">
+                  As senhas não conferem.
+                </span>
+              )}
+            </div>
+            <div>
+              <button type="submit" className="grande bloco" disabled={invalido || enviando}>
+                {enviando ? "Salvando…" : "Salvar senha"}
+              </button>
+            </div>
+          </form>
+        )}
       </main>
     </div>
   );

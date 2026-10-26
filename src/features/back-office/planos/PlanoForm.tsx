@@ -4,7 +4,11 @@ import { mensagemDeErro } from "../../../shared/format/formatar";
 import { Alerta } from "../../../shared/ui/Alerta";
 
 /** Novo plano de assinatura (HU16): nome e os dois limites, ambos inteiros positivos. */
-export function PlanoForm({ aoSalvar }: { aoSalvar: (dados: { nome: string; limiteMotoristasAtivos: number; limiteVolumeMensalBdos: number }) => Promise<void> }) {
+export function PlanoForm({
+  aoSalvar,
+}: {
+  aoSalvar: (dados: { nome: string; limiteMotoristasAtivos: number; limiteVolumeMensalBdos: number }) => Promise<void>;
+}) {
   const [nome, setNome] = useState("");
   const [motoristas, setMotoristas] = useState("");
   const [bdos, setBdos] = useState("");
@@ -14,7 +18,8 @@ export function PlanoForm({ aoSalvar }: { aoSalvar: (dados: { nome: string; limi
 
   const limiteMotoristas = Number(motoristas);
   const limiteBdos = Number(bdos);
-  const invalido = !nome.trim() || !Number.isInteger(limiteMotoristas) || limiteMotoristas <= 0 || !Number.isInteger(limiteBdos) || limiteBdos <= 0;
+  const invalido =
+    !nome.trim() || !Number.isInteger(limiteMotoristas) || limiteMotoristas <= 0 || !Number.isInteger(limiteBdos) || limiteBdos <= 0;
 
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
@@ -36,11 +41,7 @@ export function PlanoForm({ aoSalvar }: { aoSalvar: (dados: { nome: string; limi
 
   return (
     <form onSubmit={enviar} className="formulario">
-      {erro && (
-        <Alerta tipo="erro">
-          {erro}
-        </Alerta>
-      )}
+      {erro && <Alerta tipo="erro">{erro}</Alerta>}
       <div>
         <label htmlFor="nomePlano">Nome do plano</label>
         <input id="nomePlano" value={nome} onChange={(e) => setNome(e.target.value)} />
@@ -55,16 +56,16 @@ export function PlanoForm({ aoSalvar }: { aoSalvar: (dados: { nome: string; limi
           <input id="limiteBdos" inputMode="numeric" value={bdos} onChange={(e) => setBdos(e.target.value)} />
         </div>
       </div>
-      <p className="texto-apoio m-0">
-        Os dois limites são números inteiros maiores que zero.
-      </p>
+      <p className="texto-apoio m-0">Os dois limites são números inteiros maiores que zero.</p>
       <div className="linha-acoes">
         <button type="submit" disabled={invalido || salvando}>
           {salvando ? "Salvando…" : "Criar plano"}
         </button>
-        {salvo && <span role="status" style={{ color: "var(--confirmacao)", alignSelf: "center" }}>
+        {salvo && (
+          <span role="status" style={{ color: "var(--confirmacao)", alignSelf: "center" }}>
             <Icone nome="checkCirculo" /> Plano criado.
-          </span>}
+          </span>
+        )}
       </div>
     </form>
   );

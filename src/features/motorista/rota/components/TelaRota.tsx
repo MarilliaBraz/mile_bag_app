@@ -67,7 +67,11 @@ export function TelaRota() {
   }
 
   return (
-    <TelaMotorista titulo={emExecucao ? "Viagem em andamento" : "Rota da entrega"} voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar="Voltar para a entrega">
+    <TelaMotorista
+      titulo={emExecucao ? "Viagem em andamento" : "Rota da entrega"}
+      voltarPara={`/motorista/entregas/${entregaId}`}
+      rotuloVoltar="Voltar para a entrega"
+    >
       {rota.erro && <Alerta tipo="erro">{rota.erro}</Alerta>}
 
       {rota.pendenteDeSincronizacao && <Alerta tipo="aviso">Registro salvo no aparelho e será enviado quando houver conexão.</Alerta>}
@@ -153,7 +157,11 @@ export function TelaRota() {
                 <Icone nome="sincronizar" /> {rota.ocupado ? "Recalculando…" : "Recalcular a partir da minha posição"}
               </button>
 
-              <details className="ajuda sem-icone mt-4" open={rotaPropriaAberta} onToggle={(evento) => setRotaPropriaAberta(evento.currentTarget.open)}>
+              <details
+                className="ajuda sem-icone mt-4"
+                open={rotaPropriaAberta}
+                onToggle={(evento) => setRotaPropriaAberta(evento.currentTarget.open)}
+              >
                 <summary>Usar uma rota própria</summary>
                 <RotaPropria
                   key={versaoRotaPropria}
@@ -188,7 +196,10 @@ export function TelaRota() {
       {rota.trajeto && <ResumoViagem trajeto={rota.trajeto} />}
 
       <Ajuda>
-        <p>Calcule as rotas, compare distância e tempo e escolha uma. Você também pode traçar uma rota própria. Ao recalcular, o cálculo anterior fica guardado no histórico da viagem.</p>
+        <p>
+          Calcule as rotas, compare distância e tempo e escolha uma. Você também pode traçar uma rota própria. Ao recalcular, o cálculo
+          anterior fica guardado no histórico da viagem.
+        </p>
       </Ajuda>
     </TelaMotorista>
   );

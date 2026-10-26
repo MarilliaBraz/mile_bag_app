@@ -59,32 +59,32 @@ export function MapaBase({
 
   return (
     <div role="region" aria-label={descricao} className="mapa">
-    <MapContainer
-      center={enquadramento ? undefined : [centro.latitude, centro.longitude]}
-      zoom={enquadramento ? undefined : zoom}
-      // Com dois ou mais pontos (ex.: sua posição e o destino), o mapa abre enquadrando todos eles.
-      bounds={enquadramento}
-      boundsOptions={{ padding: [32, 32] }}
-      // A roda do mouse rola a página, não dá zoom: senão quem rola a tela fica preso no mapa.
-      // O zoom continua pelos botões +/−, pinça e toque duplo.
-      scrollWheelZoom={false}
-      style={{ height: altura, width: "100%" }}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      />
-      {marcadores.map((marcador) => (
-        <Marker
-          key={`${marcador.rotulo}-${marcador.posicao.latitude}-${marcador.posicao.longitude}`}
-          position={[marcador.posicao.latitude, marcador.posicao.longitude]}
-          icon={ICONE_PADRAO}
-        >
-          <Popup>{marcador.rotulo}</Popup>
-        </Marker>
-      ))}
-      {children}
-    </MapContainer>
+      <MapContainer
+        center={enquadramento ? undefined : [centro.latitude, centro.longitude]}
+        zoom={enquadramento ? undefined : zoom}
+        // Com dois ou mais pontos (ex.: sua posição e o destino), o mapa abre enquadrando todos eles.
+        bounds={enquadramento}
+        boundsOptions={{ padding: [32, 32] }}
+        // A roda do mouse rola a página, não dá zoom: senão quem rola a tela fica preso no mapa.
+        // O zoom continua pelos botões +/−, pinça e toque duplo.
+        scrollWheelZoom={false}
+        style={{ height: altura, width: "100%" }}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        />
+        {marcadores.map((marcador) => (
+          <Marker
+            key={`${marcador.rotulo}-${marcador.posicao.latitude}-${marcador.posicao.longitude}`}
+            position={[marcador.posicao.latitude, marcador.posicao.longitude]}
+            icon={ICONE_PADRAO}
+          >
+            <Popup>{marcador.rotulo}</Popup>
+          </Marker>
+        ))}
+        {children}
+      </MapContainer>
     </div>
   );
 }

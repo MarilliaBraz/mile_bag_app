@@ -10,7 +10,15 @@ export const criarMotorista = (corpo: { nome: string; login: string; senha: stri
 export type LinhaLote = { nome: string; login: string; senha: string };
 
 /** Espelha MotoristaController.ResultadoLinhaResponse; `senhaGerada` só vem quando o sistema gerou a senha. */
-export type ResultadoLote = { linha: number; nome: string; login: string; criado: boolean; mensagem: string | null; id: string | null; senhaGerada: string | null };
+export type ResultadoLote = {
+  linha: number;
+  nome: string;
+  login: string;
+  criado: boolean;
+  mensagem: string | null;
+  id: string | null;
+  senhaGerada: string | null;
+};
 
 export const criarMotoristasEmLote = (linhas: LinhaLote[]) =>
   requisitar<{ criados: number; comErro: number; resultados: ResultadoLote[] }>("/api/v1/motoristas/lote", {

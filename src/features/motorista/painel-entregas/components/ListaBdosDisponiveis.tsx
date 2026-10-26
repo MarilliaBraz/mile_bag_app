@@ -13,13 +13,7 @@ import type { ItemBdoDisponivel } from "../types";
  * única via de descoberta de um BDO recebido automaticamente por e-mail
  * (RF21, HU02): sem esta lista, ele fica sem forma de o motorista o ver.
  */
-export function ListaBdosDisponiveis({
-  bdos,
-  aoAutoatribuir,
-}: {
-  bdos: ItemBdoDisponivel[];
-  aoAutoatribuir: (bdoId: string) => void;
-}) {
+export function ListaBdosDisponiveis({ bdos, aoAutoatribuir }: { bdos: ItemBdoDisponivel[]; aoAutoatribuir: (bdoId: string) => void }) {
   const [atribuindo, setAtribuindo] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
 

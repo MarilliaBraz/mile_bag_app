@@ -7,11 +7,7 @@ export type MotivoOcorrencia = { id: string; descricao: string; reagendamento: b
 
 /** Espelha o enum CampoBaixa e CampoObrigatorioResponse. */
 export type CampoBaixa =
-  | "POD_FOTO_DOCUMENTO"
-  | "POD_IDENTIFICACAO_RECEBEDOR"
-  | "POD_DATA_HORA"
-  | "POD_GEOLOCALIZACAO"
-  | "OCORRENCIA_DESCRICAO_ADICIONAL";
+  "POD_FOTO_DOCUMENTO" | "POD_IDENTIFICACAO_RECEBEDOR" | "POD_DATA_HORA" | "POD_GEOLOCALIZACAO" | "OCORRENCIA_DESCRICAO_ADICIONAL";
 export type CampoObrigatorio = { campo: CampoBaixa; obrigatorio: boolean };
 
 /** Espelha CodigoNomeResponse (base aeroportuária e companhia aérea têm o mesmo formato). */

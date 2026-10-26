@@ -43,15 +43,31 @@ export function TelaFechamentos() {
       titulo="Fechamentos"
       descricao="Gere o fechamento de um período para ver quanto pagar a cada motorista. Pagamento de entregas e reembolso de pedágios saem sempre separados."
     >
-      <Painel titulo="Gerar fechamento" descricao="Gerar o mesmo período de novo devolve o fechamento existente. Períodos que cruzam um fechamento já feito são recusados.">
-        <form onSubmit={(evento) => { evento.preventDefault(); setConfirmando(true); }} className="form-linha">
+      <Painel
+        titulo="Gerar fechamento"
+        descricao="Gerar o mesmo período de novo devolve o fechamento existente. Períodos que cruzam um fechamento já feito são recusados."
+      >
+        <form
+          onSubmit={(evento) => {
+            evento.preventDefault();
+            setConfirmando(true);
+          }}
+          className="form-linha"
+        >
           <div>
             <label htmlFor="periodoInicio">De</label>
             <input id="periodoInicio" type="date" value={inicio} onChange={(e) => setInicio(e.target.value)} />
           </div>
           <div>
             <label htmlFor="periodoFim">Até</label>
-            <input id="periodoFim" type="date" value={fim} onChange={(e) => setFim(e.target.value)} aria-invalid={fim < inicio} aria-describedby={fim < inicio ? "periodo-erro" : undefined} />
+            <input
+              id="periodoFim"
+              type="date"
+              value={fim}
+              onChange={(e) => setFim(e.target.value)}
+              aria-invalid={fim < inicio}
+              aria-describedby={fim < inicio ? "periodo-erro" : undefined}
+            />
           </div>
           <button type="submit" disabled={!inicio || !fim || fim < inicio || gerando}>
             <Icone nome="calendario" /> {gerando ? "Gerando…" : "Gerar fechamento"}
@@ -98,9 +114,15 @@ export function TelaFechamentos() {
                 <tr>
                   <th scope="col">Período</th>
                   <th scope="col">Situação</th>
-                  <th scope="col" className="numero">Motoristas</th>
-                  <th scope="col" className="numero">Pagamento de entregas</th>
-                  <th scope="col" className="numero">Reembolso de pedágios</th>
+                  <th scope="col" className="numero">
+                    Motoristas
+                  </th>
+                  <th scope="col" className="numero">
+                    Pagamento de entregas
+                  </th>
+                  <th scope="col" className="numero">
+                    Reembolso de pedágios
+                  </th>
                   <th scope="col" className="coluna-acoes">
                     <span className="visualmente-oculto">Ações</span>
                   </th>
@@ -133,7 +155,11 @@ export function TelaFechamentos() {
                       </td>
                       <td className="numero">{formatarMoeda(pedagio)}</td>
                       <td className="coluna-acoes">
-                        <Link to={`/admin/fechamentos/${fechamento.id}`} className="botao fantasma compacto" aria-label={`Ver fechamento de ${periodo}`}>
+                        <Link
+                          to={`/admin/fechamentos/${fechamento.id}`}
+                          className="botao fantasma compacto"
+                          aria-label={`Ver fechamento de ${periodo}`}
+                        >
                           Ver detalhes <Icone nome="chevron" />
                         </Link>
                       </td>

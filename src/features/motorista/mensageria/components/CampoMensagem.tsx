@@ -45,7 +45,13 @@ export function CampoMensagem({ entregaId, aoEnviar }: { entregaId: string; aoEn
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
       <label htmlFor="mensagem">Mensagem ao passageiro</label>
       <div style={{ display: "flex", gap: "0.5rem", alignItems: "flex-end" }}>
-        <textarea id="mensagem" rows={2} value={texto} onChange={(e) => setTexto(e.target.value)} placeholder="Ex.: Estou chegando, pode me receber?" />
+        <textarea
+          id="mensagem"
+          rows={2}
+          value={texto}
+          onChange={(e) => setTexto(e.target.value)}
+          placeholder="Ex.: Estou chegando, pode me receber?"
+        />
         <button type="submit" disabled={!texto.trim() || enviando} style={{ minHeight: "var(--alvo-g)", flex: "none" }}>
           <Icone nome="enviar" /> {enviando ? "Enviando…" : "Enviar"}
         </button>

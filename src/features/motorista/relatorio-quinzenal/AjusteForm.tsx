@@ -41,7 +41,11 @@ export function AjusteForm({ viagemId, aoSalvar, aoCancelar }: { viagemId: strin
   }
 
   return (
-    <form onSubmit={salvar} className="nao-imprimir" style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--borda-suave)" }}>
+    <form
+      onSubmit={salvar}
+      className="nao-imprimir"
+      style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--borda-suave)" }}
+    >
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
       <label htmlFor={`campo-${viagemId}`}>O que corrigir</label>
       <select id={`campo-${viagemId}`} value={campo} onChange={(e) => setCampo(e.target.value as CampoAjuste)}>
@@ -54,16 +58,37 @@ export function AjusteForm({ viagemId, aoSalvar, aoCancelar }: { viagemId: strin
 
       <div className="mt-3">
         <label htmlFor={`valor-${viagemId}`}>
-          Valor correto <span className="campo-obrigatorio" aria-hidden="true">*</span>
+          Valor correto{" "}
+          <span className="campo-obrigatorio" aria-hidden="true">
+            *
+          </span>
         </label>
-        <input id={`valor-${viagemId}`} aria-required="true" type="number" step="any" min="0" value={valorNovo} onChange={(e) => setValorNovo(e.target.value)} />
+        <input
+          id={`valor-${viagemId}`}
+          aria-required="true"
+          type="number"
+          step="any"
+          min="0"
+          value={valorNovo}
+          onChange={(e) => setValorNovo(e.target.value)}
+        />
       </div>
 
       <div className="mt-3">
         <label htmlFor={`just-${viagemId}`}>
-          Justificativa <span className="campo-obrigatorio" aria-hidden="true">*</span>
+          Justificativa{" "}
+          <span className="campo-obrigatorio" aria-hidden="true">
+            *
+          </span>
         </label>
-        <textarea id={`just-${viagemId}`} aria-required="true" rows={2} value={justificativa} onChange={(e) => setJustificativa(e.target.value)} placeholder="Por que este valor está errado?" />
+        <textarea
+          id={`just-${viagemId}`}
+          aria-required="true"
+          rows={2}
+          value={justificativa}
+          onChange={(e) => setJustificativa(e.target.value)}
+          placeholder="Por que este valor está errado?"
+        />
       </div>
 
       <div className="linha-acoes mt-3">

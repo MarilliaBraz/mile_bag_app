@@ -21,7 +21,12 @@ export function FotosParaConferir({ bdos }: { bdos: BdoResponse[] }) {
       <ul className="lista">
         {bdos.map((bdo) => {
           const estado: EstadoCapturaBdo = { bdoParaConferir: bdo };
-          const capturadoEm = new Date(bdo.dataCaptura).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+          const capturadoEm = new Date(bdo.dataCaptura).toLocaleString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
           return (
             <li key={bdo.id}>
               <Link to="/motorista/captura-bdo" state={estado} className="cartao-link">

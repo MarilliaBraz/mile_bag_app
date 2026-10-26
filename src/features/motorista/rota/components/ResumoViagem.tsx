@@ -47,7 +47,9 @@ export function ResumoViagem({ trajeto }: { trajeto: TrajetoDetalhado }) {
             )}
           </div>
         )}
-        {encerrado && trajeto.justificativaDivergencia && <p className="texto-apoio">Justificativa de divergência: {trajeto.justificativaDivergencia}</p>}
+        {encerrado && trajeto.justificativaDivergencia && (
+          <p className="texto-apoio">Justificativa de divergência: {trajeto.justificativaDivergencia}</p>
+        )}
 
         <h3>Linha do tempo · início às {horaDe(trajeto.dataInicio)}</h3>
         <ol className="linha-tempo">

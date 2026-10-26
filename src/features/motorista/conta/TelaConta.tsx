@@ -34,9 +34,7 @@ export function TelaConta() {
             <Icone nome="chave" />
             <span className="cartao-corpo">
               <strong>Minha senha</strong>
-              <span className="texto-apoio em-bloco">
-                Trocar a senha de acesso
-              </span>
+              <span className="texto-apoio em-bloco">Trocar a senha de acesso</span>
             </span>
             <Icone nome="chevron" />
           </Link>
@@ -48,9 +46,7 @@ export function TelaConta() {
 
       <div className="mt-8">
         <BotaoSair className="perigo-contorno grande bloco" />
-        <p className="texto-apoio centro">
-          O que ainda não foi enviado continua guardado para o próximo login.
-        </p>
+        <p className="texto-apoio centro">O que ainda não foi enviado continua guardado para o próximo login.</p>
       </div>
     </TelaMotorista>
   );

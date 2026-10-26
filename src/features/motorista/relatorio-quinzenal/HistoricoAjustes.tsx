@@ -46,7 +46,10 @@ export function HistoricoAjustes({ viagemId }: { viagemId: string }) {
   }
 
   return (
-    <div className="nao-imprimir texto-apoio" style={{ marginTop: "1rem", paddingTop: "0.75rem", borderTop: "1px solid var(--borda-suave)" }}>
+    <div
+      className="nao-imprimir texto-apoio"
+      style={{ marginTop: "1rem", paddingTop: "0.75rem", borderTop: "1px solid var(--borda-suave)" }}
+    >
       <strong>Valor original preservado</strong>
       <ul>
         {[...originalPorCampo].map(([campo, original]) => (

@@ -82,8 +82,12 @@ export function TelaTarifas() {
               <thead>
                 <tr>
                   <th scope="col">Aplica a</th>
-                  <th scope="col" className="numero">Valor fixo</th>
-                  <th scope="col" className="numero">Por km</th>
+                  <th scope="col" className="numero">
+                    Valor fixo
+                  </th>
+                  <th scope="col" className="numero">
+                    Por km
+                  </th>
                   <th scope="col">Vigente desde</th>
                   <th scope="col" className="coluna-acoes">
                     <span className="visualmente-oculto">Ações</span>
@@ -102,10 +106,20 @@ export function TelaTarifas() {
                     <td>{formatarData(tarifa.vigenteDesde)}</td>
                     <td className="coluna-acoes">
                       <span className="acoes-linha">
-                        <button type="button" className="fantasma compacto" onClick={() => setEditando(tarifa)} aria-label={`Editar tarifa ${ROTULO_ESCOPO[tarifa.escopo]} ${alvoDe(tarifa, motoristas)}`}>
+                        <button
+                          type="button"
+                          className="fantasma compacto"
+                          onClick={() => setEditando(tarifa)}
+                          aria-label={`Editar tarifa ${ROTULO_ESCOPO[tarifa.escopo]} ${alvoDe(tarifa, motoristas)}`}
+                        >
                           <Icone nome="lapis" /> Editar
                         </button>
-                        <button type="button" className="fantasma compacto" onClick={() => setExcluindo(tarifa)} aria-label={`Excluir tarifa ${ROTULO_ESCOPO[tarifa.escopo]} ${alvoDe(tarifa, motoristas)}`}>
+                        <button
+                          type="button"
+                          className="fantasma compacto"
+                          onClick={() => setExcluindo(tarifa)}
+                          aria-label={`Excluir tarifa ${ROTULO_ESCOPO[tarifa.escopo]} ${alvoDe(tarifa, motoristas)}`}
+                        >
                           <Icone nome="lixeira" /> Excluir
                         </button>
                       </span>
@@ -121,7 +135,11 @@ export function TelaTarifas() {
       <ConfirmarAcao
         aberto={excluindo !== null}
         titulo="Excluir esta tarifa?"
-        descricao={excluindo ? `A tarifa ${ROTULO_ESCOPO[excluindo.escopo].toLowerCase()} (${alvoDe(excluindo, motoristas)}) deixa de valer para os próximos cálculos. Fechamentos já emitidos não mudam.` : ""}
+        descricao={
+          excluindo
+            ? `A tarifa ${ROTULO_ESCOPO[excluindo.escopo].toLowerCase()} (${alvoDe(excluindo, motoristas)}) deixa de valer para os próximos cálculos. Fechamentos já emitidos não mudam.`
+            : ""
+        }
         rotuloConfirmar="Excluir tarifa"
         perigo
         aoConfirmar={() => excluindo && excluir(excluindo.id)}

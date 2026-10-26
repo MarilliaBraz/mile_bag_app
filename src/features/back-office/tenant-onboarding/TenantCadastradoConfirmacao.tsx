@@ -63,7 +63,10 @@ export function TenantCadastradoConfirmacao() {
           </Painel>
 
           <div className="grade-paineis mt-5">
-            <Painel titulo="Convite do administrador" descricao="Se o convite não chegou ou expirou, gere um novo. O anterior deixa de valer.">
+            <Painel
+              titulo="Convite do administrador"
+              descricao="Se o convite não chegou ou expirou, gere um novo. O anterior deixa de valer."
+            >
               {erroConvite && <Alerta tipo="erro">{erroConvite}</Alerta>}
               {conviteReenviado && <Alerta tipo="sucesso">Novo convite enviado.</Alerta>}
               <button type="button" className="secundario" onClick={reenviar}>

@@ -34,9 +34,7 @@ export function AvisoEmergenciasAbertas() {
   return (
     <div role="alert" className="faixa-emergencia">
       <Icone nome="alerta" />
-      <span>
-        {abertos === 1 ? "1 alerta de emergência em aberto." : `${abertos} alertas de emergência em aberto.`}
-      </span>
+      <span>{abertos === 1 ? "1 alerta de emergência em aberto." : `${abertos} alertas de emergência em aberto.`}</span>
       <Link to="/admin/emergencias" className="botao perigo compacto">
         Ver agora
       </Link>

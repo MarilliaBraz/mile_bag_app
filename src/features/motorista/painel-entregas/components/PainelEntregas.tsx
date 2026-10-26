@@ -77,7 +77,16 @@ export function PainelEntregas() {
   }
 
   return (
-    <TelaMotorista titulo="Minhas entregas" navegacao aoSincronizar={carregar} acoesTopo={<span className="marca" aria-hidden="true"><img src="/icone-app.svg" alt="" /></span>}>
+    <TelaMotorista
+      titulo="Minhas entregas"
+      navegacao
+      aoSincronizar={carregar}
+      acoesTopo={
+        <span className="marca" aria-hidden="true">
+          <img src="/icone-app.svg" alt="" />
+        </span>
+      }
+    >
       {aviso && (
         <Alerta tipo="sucesso" aoFechar={() => setAviso(null)}>
           {aviso}
@@ -145,7 +154,9 @@ export function PainelEntregas() {
                         {item.bagagensCarona.length > 0 && (
                           <div className="linha-icone texto-apoio">
                             <Icone nome="mala" />
-                            <span>{item.bagagensCarona.length === 1 ? "+ 1 bagagem carona" : `+ ${item.bagagensCarona.length} bagagens carona`}</span>
+                            <span>
+                              {item.bagagensCarona.length === 1 ? "+ 1 bagagem carona" : `+ ${item.bagagensCarona.length} bagagens carona`}
+                            </span>
                           </div>
                         )}
                       </div>
@@ -160,7 +171,10 @@ export function PainelEntregas() {
           {bdosDisponiveis && <ListaBdosDisponiveis bdos={bdosDisponiveis.bdos} aoAutoatribuir={aoAutoatribuir} />}
 
           <Ajuda>
-            <p>Toque em uma entrega para ver os detalhes, calcular a rota e registrar o comprovante. Em “Disponíveis para assumir”, toque em “Assumir” para incluir uma entrega na sua lista. Sem internet, o que você registrar fica salvo no aparelho e é enviado depois.</p>
+            <p>
+              Toque em uma entrega para ver os detalhes, calcular a rota e registrar o comprovante. Em “Disponíveis para assumir”, toque em
+              “Assumir” para incluir uma entrega na sua lista. Sem internet, o que você registrar fica salvo no aparelho e é enviado depois.
+            </p>
           </Ajuda>
         </>
       )}

@@ -59,14 +59,19 @@ export function PreferenciasAcessibilidade({ aberto = false }: { aberto?: boolea
         </button>
         <div className="segmentado base-cheia" role="group" aria-label="Tema">
           {TEMAS.map((opcao) => (
-            <button key={opcao.valor} type="button" aria-pressed={tema === opcao.valor} onClick={() => escolherTema(opcao.valor)} style={{ flex: 1 }}>
+            <button
+              key={opcao.valor}
+              type="button"
+              aria-pressed={tema === opcao.valor}
+              onClick={() => escolherTema(opcao.valor)}
+              style={{ flex: 1 }}
+            >
               {opcao.rotulo}
             </button>
           ))}
         </div>
         <span role="status" className="texto-apoio base-cheia">
-          Texto em {fonte}%.{" "}
-          {contraste ? "Alto contraste ligado: o tema fica sempre claro." : `Tema ${NOME_TEMA[tema]}.`}
+          Texto em {fonte}%. {contraste ? "Alto contraste ligado: o tema fica sempre claro." : `Tema ${NOME_TEMA[tema]}.`}
         </span>
       </div>
     </details>

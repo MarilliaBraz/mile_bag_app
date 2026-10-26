@@ -3,7 +3,14 @@ import { formatarData, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { LoteMotoristas } from "./LoteMotoristas";
-import { criarMotorista, definirAtivoMotorista, listarMotoristas, redefinirSenhaMotorista, atualizarMotorista, type Motorista } from "./motoristasApi";
+import {
+  criarMotorista,
+  definirAtivoMotorista,
+  listarMotoristas,
+  redefinirSenhaMotorista,
+  atualizarMotorista,
+  type Motorista,
+} from "./motoristasApi";
 import { Alerta, Carregando, Vazio } from "../../../shared/ui/Alerta";
 import { Icone } from "../../../shared/ui/Icone";
 import { Avatar, Gaveta, Pagina, Painel } from "../layout/Pagina";
@@ -41,14 +48,29 @@ function NovoMotoristaForm({ aoCriar }: { aoCriar: (nome: string) => Promise<voi
       </div>
       <div>
         <label htmlFor={`${uid}-login`}>Login</label>
-        <input id={`${uid}-login`} autoComplete="off" autoCapitalize="none" spellCheck={false} value={login} onChange={(e) => setLogin(e.target.value)} aria-describedby={`${uid}-login-ajuda`} />
+        <input
+          id={`${uid}-login`}
+          autoComplete="off"
+          autoCapitalize="none"
+          spellCheck={false}
+          value={login}
+          onChange={(e) => setLogin(e.target.value)}
+          aria-describedby={`${uid}-login-ajuda`}
+        />
         <span id={`${uid}-login-ajuda`} className="texto-apoio">
           O que o motorista digita para entrar. Pode ser um e-mail.
         </span>
       </div>
       <div>
         <label htmlFor={`${uid}-senha`}>Senha inicial</label>
-        <input id={`${uid}-senha`} type="password" autoComplete="new-password" value={senha} onChange={(e) => setSenha(e.target.value)} aria-describedby={`${uid}-senha-ajuda`} />
+        <input
+          id={`${uid}-senha`}
+          type="password"
+          autoComplete="new-password"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+          aria-describedby={`${uid}-senha-ajuda`}
+        />
         <span id={`${uid}-senha-ajuda`} className="texto-apoio">
           Mínimo de {TAMANHO_MINIMO_SENHA} caracteres. Entregue ao motorista junto com o login.
         </span>
@@ -95,7 +117,9 @@ function EditarForm({ motorista, aoConcluir }: { motorista: Motorista; aoConclui
         <input id={`${uid}-login`} autoCapitalize="none" value={login} onChange={(e) => setLogin(e.target.value)} />
       </div>
       {loginMudou && (
-        <Alerta tipo="aviso">O motorista passa a entrar com o login novo. Um pedido de redefinição de senha que estava pendente é cancelado.</Alerta>
+        <Alerta tipo="aviso">
+          O motorista passa a entrar com o login novo. Um pedido de redefinição de senha que estava pendente é cancelado.
+        </Alerta>
       )}
       <button type="submit" className="bloco" disabled={!nomeMudou && !loginMudou}>
         Salvar alterações
@@ -125,7 +149,13 @@ function NovaSenhaForm({ motorista, aoConcluir }: { motorista: Motorista; aoConc
   }
 
   return (
-    <form onSubmit={(evento) => { evento.preventDefault(); setConfirmando(true); }} className="formulario">
+    <form
+      onSubmit={(evento) => {
+        evento.preventDefault();
+        setConfirmando(true);
+      }}
+      className="formulario"
+    >
       <ConfirmarAcao
         aberto={confirmando}
         titulo={`Trocar a senha de ${motorista.nome}?`}
@@ -138,7 +168,14 @@ function NovaSenhaForm({ motorista, aoConcluir }: { motorista: Motorista; aoConc
       {salva && <Alerta tipo="sucesso">Senha redefinida. Avise {motorista.nome} da senha nova.</Alerta>}
       <div>
         <label htmlFor={`${uid}-nova`}>Nova senha</label>
-        <input id={`${uid}-nova`} type="password" autoComplete="new-password" value={senha} onChange={(e) => setSenha(e.target.value)} aria-describedby={`${uid}-nova-ajuda`} />
+        <input
+          id={`${uid}-nova`}
+          type="password"
+          autoComplete="new-password"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+          aria-describedby={`${uid}-nova-ajuda`}
+        />
         <span id={`${uid}-nova-ajuda`} className="texto-apoio">
           Mínimo de {TAMANHO_MINIMO_SENHA} caracteres. As sessões abertas dele serão encerradas.
         </span>
@@ -230,7 +267,13 @@ export function TelaMotoristas() {
         <div className="barra-filtros">
           <div className="campo-busca">
             <Icone nome="busca" />
-            <input type="search" aria-label="Buscar motorista por nome ou login" placeholder="Buscar por nome ou login" value={busca} onChange={(e) => setBusca(e.target.value)} />
+            <input
+              type="search"
+              aria-label="Buscar motorista por nome ou login"
+              placeholder="Buscar por nome ou login"
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+            />
           </div>
           <div className="segmentado" role="group" aria-label="Filtrar por situação">
             {FILTROS.map((opcao) => (
@@ -292,10 +335,20 @@ export function TelaMotoristas() {
                     <td>{formatarData(motorista.criadoEm)}</td>
                     <td className="coluna-acoes">
                       <span className="acoes-linha">
-                        <button type="button" className="fantasma compacto" onClick={() => setEditando(motorista)} aria-label={`Editar ${motorista.nome}`}>
+                        <button
+                          type="button"
+                          className="fantasma compacto"
+                          onClick={() => setEditando(motorista)}
+                          aria-label={`Editar ${motorista.nome}`}
+                        >
                           <Icone nome="lapis" /> Editar
                         </button>
-                        <button type="button" className="fantasma compacto" onClick={() => setRedefinindo(motorista)} aria-label={`Nova senha para ${motorista.nome}`}>
+                        <button
+                          type="button"
+                          className="fantasma compacto"
+                          onClick={() => setRedefinindo(motorista)}
+                          aria-label={`Nova senha para ${motorista.nome}`}
+                        >
                           <Icone nome="chave" /> Senha
                         </button>
                         <button
@@ -343,7 +396,11 @@ export function TelaMotoristas() {
         descricao="Cole uma linha por motorista. Cada linha é tratada separadamente: as com erro aparecem com o motivo e as outras são criadas."
         aoFechar={() => setEmLote(false)}
       >
-        <LoteMotoristas aoConcluir={async () => { await recarregar(); }} />
+        <LoteMotoristas
+          aoConcluir={async () => {
+            await recarregar();
+          }}
+        />
       </Gaveta>
 
       <Gaveta aberta={editando !== null} titulo={`Editar ${editando?.nome ?? ""}`} aoFechar={() => setEditando(null)}>

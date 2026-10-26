@@ -107,27 +107,35 @@ export function RegistrarOcorrencia() {
 
   return (
     <TelaMotorista titulo="Não consegui entregar" voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar="Voltar para a entrega">
-      <p className="texto-apoio">A entrega volta para a lista de disponíveis, para uma nova tentativa (sua ou de outro motorista), sem perder o histórico.</p>
+      <p className="texto-apoio">
+        A entrega volta para a lista de disponíveis, para uma nova tentativa (sua ou de outro motorista), sem perder o histórico.
+      </p>
 
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
 
       {!motivos && <Carregando texto="Carregando motivos…" />}
 
       {motivos && motivos.length === 0 && !erro && (
-        <Alerta tipo="aviso">Nenhum motivo de ocorrência está configurado para a sua empresa. Fale com o administrador antes de continuar.</Alerta>
+        <Alerta tipo="aviso">
+          Nenhum motivo de ocorrência está configurado para a sua empresa. Fale com o administrador antes de continuar.
+        </Alerta>
       )}
 
       {motivos && motivos.length > 0 && (
         <>
           {motivosDoCache && (
             <Alerta tipo="aviso">
-              Sem conexão: usando a lista de motivos salva neste aparelho. Se o administrador mudou os motivos, o registro pode ser recusado ao sincronizar.
+              Sem conexão: usando a lista de motivos salva neste aparelho. Se o administrador mudou os motivos, o registro pode ser recusado
+              ao sincronizar.
             </Alerta>
           )}
 
           <fieldset className="escolhas mt-5">
             <legend>
-              O que aconteceu? <span className="campo-obrigatorio" aria-hidden="true">*</span>
+              O que aconteceu?{" "}
+              <span className="campo-obrigatorio" aria-hidden="true">
+                *
+              </span>
             </legend>
             {motivos.map((motivo) => (
               <label key={motivo.id} className="escolha">
@@ -147,7 +155,10 @@ export function RegistrarOcorrencia() {
           {exigeJanela && (
             <fieldset className="cartao formulario mt-5">
               <legend>
-                Quando o passageiro pode receber? <span className="campo-obrigatorio" aria-hidden="true">*</span>
+                Quando o passageiro pode receber?{" "}
+                <span className="campo-obrigatorio" aria-hidden="true">
+                  *
+                </span>
               </legend>
               <div className="campo">
                 <label htmlFor="data-reagendada">Data combinada</label>
@@ -164,7 +175,13 @@ export function RegistrarOcorrencia() {
               <div className="form-linha">
                 <div>
                   <label htmlFor="hora-inicio">Das</label>
-                  <input id="hora-inicio" type="time" required value={horaInicio} onChange={(evento) => setHoraInicio(evento.target.value)} />
+                  <input
+                    id="hora-inicio"
+                    type="time"
+                    required
+                    value={horaInicio}
+                    onChange={(evento) => setHoraInicio(evento.target.value)}
+                  />
                 </div>
                 <div>
                   <label htmlFor="hora-fim">Até</label>
@@ -188,14 +205,15 @@ export function RegistrarOcorrencia() {
           </div>
 
           <div className="acao-fixa">
-            <button type="button" className="grande bloco" onClick={() => setConfirmando(true)} disabled={!motivoOcorrenciaId || !janelaPronta || enviando}>
+            <button
+              type="button"
+              className="grande bloco"
+              onClick={() => setConfirmando(true)}
+              disabled={!motivoOcorrenciaId || !janelaPronta || enviando}
+            >
               {enviando ? "Registrando…" : "Registrar ocorrência"}
             </button>
-            {!motivoOcorrenciaId && (
-              <p className="texto-apoio centro mb-0">
-                Escolha um motivo para continuar.
-              </p>
-            )}
+            {!motivoOcorrenciaId && <p className="texto-apoio centro mb-0">Escolha um motivo para continuar.</p>}
             {motivoOcorrenciaId && !janelaPronta && !erroJanela && (
               <p className="texto-apoio centro mb-0">Informe a data e a faixa de horário combinadas com o passageiro.</p>
             )}
@@ -217,7 +235,11 @@ export function RegistrarOcorrencia() {
       )}
 
       <Ajuda>
-        <p>Use quando não for possível entregar a bagagem. Escolha o motivo e, se quiser, descreva o que aconteceu. Se você combinou outro dia ou horário com o passageiro, escolha o motivo de reagendamento e informe a data e a faixa de horário. A entrega volta para a lista de disponíveis para uma nova tentativa, sem perder o histórico.</p>
+        <p>
+          Use quando não for possível entregar a bagagem. Escolha o motivo e, se quiser, descreva o que aconteceu. Se você combinou outro
+          dia ou horário com o passageiro, escolha o motivo de reagendamento e informe a data e a faixa de horário. A entrega volta para a
+          lista de disponíveis para uma nova tentativa, sem perder o histórico.
+        </p>
       </Ajuda>
     </TelaMotorista>
   );

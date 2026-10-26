@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { atenderAlerta, linkMapa, listarAlertas, type AlertaEmergencia, type StatusAlertaEmergencia } from "../../../shared/api/emergenciaApi";
+import {
+  atenderAlerta,
+  linkMapa,
+  listarAlertas,
+  type AlertaEmergencia,
+  type StatusAlertaEmergencia,
+} from "../../../shared/api/emergenciaApi";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
 import { Alerta, Carregando, Vazio } from "../../../shared/ui/Alerta";
@@ -24,7 +30,10 @@ export function TelaEmergencias() {
   const encerrados = dados?.filter((alerta) => alerta.status !== "ABERTO") ?? [];
 
   return (
-    <Pagina titulo="Emergências" descricao="Alertas acionados pelos motoristas. Entre em contato com o motorista e marque o alerta como atendido.">
+    <Pagina
+      titulo="Emergências"
+      descricao="Alertas acionados pelos motoristas. Entre em contato com o motorista e marque o alerta como atendido."
+    >
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
       {!dados && !erro && <Carregando texto="Carregando alertas…" />}
 

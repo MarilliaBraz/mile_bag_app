@@ -104,8 +104,10 @@ export function TelaEmergencia() {
       {alerta && (
         <section className="cartao mt-4" aria-live="assertive">
           <Alerta tipo="sucesso">
-            <strong>Alerta enviado às {new Date(alerta.dataHora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}.</strong> A
-            empresa foi avisada{alerta.latitude === null ? " (sem localização: o GPS não respondeu)" : " com a sua localização"}.
+            <strong>
+              Alerta enviado às {new Date(alerta.dataHora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}.
+            </strong>{" "}
+            A empresa foi avisada{alerta.latitude === null ? " (sem localização: o GPS não respondeu)" : " com a sua localização"}.
           </Alerta>
           <p className="texto-apoio">Fique em local seguro. A empresa vai entrar em contato.</p>
           <button type="button" className="secundario bloco" onClick={cancelar}>

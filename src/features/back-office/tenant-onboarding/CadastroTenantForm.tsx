@@ -38,14 +38,17 @@ export function CadastroTenantForm({ aoCadastrar }: { aoCadastrar: (tenant: Tena
 
   return (
     <form onSubmit={enviar} className="formulario">
-      {(erro || erroPlanos) && (
-        <Alerta tipo="erro">
-          {erro ?? erroPlanos}
-        </Alerta>
-      )}
+      {(erro || erroPlanos) && <Alerta tipo="erro">{erro ?? erroPlanos}</Alerta>}
       <div>
         <label htmlFor="identificadorEmpresa">Identificador da empresa</label>
-        <input id="identificadorEmpresa" value={identificador} spellCheck={false} autoCapitalize="none" onChange={(e) => setIdentificador(e.target.value)} placeholder="Ex.: transportes-alfa" />
+        <input
+          id="identificadorEmpresa"
+          value={identificador}
+          spellCheck={false}
+          autoCapitalize="none"
+          onChange={(e) => setIdentificador(e.target.value)}
+          placeholder="Ex.: transportes-alfa"
+        />
       </div>
       <div>
         <label htmlFor="nomeEmpresa">Nome</label>

@@ -36,12 +36,7 @@ export function IndicadorSincronizacao({ online, pendentes }: EstadoSincronizaca
     <Alerta tipo={online ? "info" : "aviso"} className="nao-imprimir">
       <strong>{online ? "Enviando registros" : "Sem conexão"}</strong>
       {!online && ": o que você registrar fica salvo no aparelho e é enviado sozinho quando a internet voltar."}
-      {pendentes > 0 && (
-        <>
-          {" "}
-          {pendentes === 1 ? "1 registro aguardando envio." : `${pendentes} registros aguardando envio.`}
-        </>
-      )}{" "}
+      {pendentes > 0 && <> {pendentes === 1 ? "1 registro aguardando envio." : `${pendentes} registros aguardando envio.`}</>}{" "}
       <Link to="/motorista/registros">Ver registros</Link>
     </Alerta>
   );

@@ -9,8 +9,8 @@ import { Alerta } from "../../../../shared/ui/Alerta";
 export function AvisoSemContato() {
   return (
     <Alerta tipo="aviso">
-      Este passageiro não tem e-mail cadastrado no BDO, então não é possível trocar mensagens por aqui. Se houver telefone, use o
-      botão “Ligar”.
+      Este passageiro não tem e-mail cadastrado no BDO, então não é possível trocar mensagens por aqui. Se houver telefone, use o botão
+      “Ligar”.
     </Alerta>
   );
 }

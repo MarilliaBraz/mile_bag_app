@@ -68,11 +68,7 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
 
   return (
     <form onSubmit={enviar} className="formulario">
-      {erro && (
-        <Alerta tipo="erro">
-          {erro}
-        </Alerta>
-      )}
+      {erro && <Alerta tipo="erro">{erro}</Alerta>}
 
       {!tarifa && (
         <div>
@@ -112,11 +108,23 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
       <div className="form-linha">
         <div>
           <label htmlFor={`${uid}-valorFixo`}>Valor fixo por entrega (R$)</label>
-          <input id={`${uid}-valorFixo`} inputMode="decimal" placeholder="0,00" value={valorFixo} onChange={(e) => setValorFixo(e.target.value)} />
+          <input
+            id={`${uid}-valorFixo`}
+            inputMode="decimal"
+            placeholder="0,00"
+            value={valorFixo}
+            onChange={(e) => setValorFixo(e.target.value)}
+          />
         </div>
         <div>
           <label htmlFor={`${uid}-valorPorKm`}>Valor por km (R$)</label>
-          <input id={`${uid}-valorPorKm`} inputMode="decimal" placeholder="0,00" value={valorPorKm} onChange={(e) => setValorPorKm(e.target.value)} />
+          <input
+            id={`${uid}-valorPorKm`}
+            inputMode="decimal"
+            placeholder="0,00"
+            value={valorPorKm}
+            onChange={(e) => setValorPorKm(e.target.value)}
+          />
         </div>
       </div>
       {semValor && <p className="texto-apoio m-0">Informe o valor fixo, o valor por km ou os dois.</p>}

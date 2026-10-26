@@ -37,9 +37,7 @@ export type Ajuste = {
 
 /** GET /api/v1/motorista/relatorio-quinzenal (HU17, FR-001). */
 export function consultarRelatorio(periodoInicio: string, periodoFim: string): Promise<RelatorioQuinzenal> {
-  return requisitar<RelatorioQuinzenal>(
-    `/api/v1/motorista/relatorio-quinzenal?periodoInicio=${periodoInicio}&periodoFim=${periodoFim}`,
-  );
+  return requisitar<RelatorioQuinzenal>(`/api/v1/motorista/relatorio-quinzenal?periodoInicio=${periodoInicio}&periodoFim=${periodoFim}`);
 }
 
 /** GET /api/v1/motorista/viagens/{viagemId}/ajustes - histórico completo, mais recente primeiro (FR-005). */

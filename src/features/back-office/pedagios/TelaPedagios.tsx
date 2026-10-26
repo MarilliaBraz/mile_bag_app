@@ -36,17 +36,27 @@ function LocalizacaoForm({ praca, aoConcluir }: { praca: PracaPedagio; aoConclui
       className="formulario"
     >
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
-      <p className="texto-apoio m-0">
-        No Google Maps, clique com o botão direito no local da praça e copie as coordenadas.
-      </p>
+      <p className="texto-apoio m-0">No Google Maps, clique com o botão direito no local da praça e copie as coordenadas.</p>
       <div className="form-linha">
         <div>
           <label htmlFor={`${uid}-lat`}>Latitude</label>
-          <input id={`${uid}-lat`} inputMode="decimal" placeholder="-16.6869" value={latitude} onChange={(e) => setLatitude(e.target.value)} />
+          <input
+            id={`${uid}-lat`}
+            inputMode="decimal"
+            placeholder="-16.6869"
+            value={latitude}
+            onChange={(e) => setLatitude(e.target.value)}
+          />
         </div>
         <div>
           <label htmlFor={`${uid}-lon`}>Longitude</label>
-          <input id={`${uid}-lon`} inputMode="decimal" placeholder="-49.2648" value={longitude} onChange={(e) => setLongitude(e.target.value)} />
+          <input
+            id={`${uid}-lon`}
+            inputMode="decimal"
+            placeholder="-49.2648"
+            value={longitude}
+            onChange={(e) => setLongitude(e.target.value)}
+          />
         </div>
       </div>
       <div className="linha-acoes">
@@ -66,11 +76,7 @@ function LocalizacaoForm({ praca, aoConcluir }: { praca: PracaPedagio; aoConclui
 function HistoricoValores({ praca }: { praca: PracaPedagio }) {
   const { dados, erro, carregando } = useRecurso(() => historicoDaPraca(praca.id), "Não foi possível carregar o histórico.");
   if (erro) {
-    return (
-      <Alerta tipo="erro">
-        {erro}
-      </Alerta>
-    );
+    return <Alerta tipo="erro">{erro}</Alerta>;
   }
   if (carregando || !dados) {
     return <Carregando texto="Carregando histórico…" />;
@@ -117,7 +123,8 @@ export function TelaPedagios() {
       )}
       {semLocalizacao > 0 && (
         <Alerta tipo="aviso">
-          <strong>{semLocalizacao} praça(s) sem localização.</strong> Elas não são detectadas nas rotas, e o reembolso desses pedágios fica pendente.
+          <strong>{semLocalizacao} praça(s) sem localização.</strong> Elas não são detectadas nas rotas, e o reembolso desses pedágios fica
+          pendente.
         </Alerta>
       )}
       {carregando && <Carregando texto="Carregando praças…" />}
@@ -134,7 +141,9 @@ export function TelaPedagios() {
               <thead>
                 <tr>
                   <th scope="col">Praça</th>
-                  <th scope="col" className="numero">Valor vigente</th>
+                  <th scope="col" className="numero">
+                    Valor vigente
+                  </th>
                   <th scope="col">Desde</th>
                   <th scope="col">Localização</th>
                   <th scope="col" className="coluna-acoes">
@@ -151,7 +160,13 @@ export function TelaPedagios() {
                         <td>
                           <strong>{praca.nome}</strong>
                         </td>
-                        <td className="numero">{praca.valorVigente === null ? <span className="texto-apoio">Sem valor hoje</span> : formatarMoeda(praca.valorVigente)}</td>
+                        <td className="numero">
+                          {praca.valorVigente === null ? (
+                            <span className="texto-apoio">Sem valor hoje</span>
+                          ) : (
+                            formatarMoeda(praca.valorVigente)
+                          )}
+                        </td>
                         <td>{formatarData(praca.vigenteDesde)}</td>
                         <td>
                           {localizada ? (
@@ -166,13 +181,29 @@ export function TelaPedagios() {
                         </td>
                         <td className="coluna-acoes">
                           <span className="acoes-linha">
-                            <button type="button" className="fantasma compacto" aria-expanded={aberta === praca.id} onClick={() => setAberta(aberta === praca.id ? null : praca.id)} aria-label={`Histórico de valores de ${praca.nome}`}>
+                            <button
+                              type="button"
+                              className="fantasma compacto"
+                              aria-expanded={aberta === praca.id}
+                              onClick={() => setAberta(aberta === praca.id ? null : praca.id)}
+                              aria-label={`Histórico de valores de ${praca.nome}`}
+                            >
                               <Icone nome="historico" /> Histórico
                             </button>
-                            <button type="button" className="fantasma compacto" onClick={() => setLocalizandoEm(praca)} aria-label={`Localização de ${praca.nome}`}>
+                            <button
+                              type="button"
+                              className="fantasma compacto"
+                              onClick={() => setLocalizandoEm(praca)}
+                              aria-label={`Localização de ${praca.nome}`}
+                            >
                               <Icone nome="pino" /> Localização
                             </button>
-                            <button type="button" className="fantasma compacto" onClick={() => setNovoValorEm(praca)} aria-label={`Novo valor para ${praca.nome}`}>
+                            <button
+                              type="button"
+                              className="fantasma compacto"
+                              onClick={() => setNovoValorEm(praca)}
+                              aria-label={`Novo valor para ${praca.nome}`}
+                            >
                               <Icone nome="mais" /> Novo valor
                             </button>
                           </span>

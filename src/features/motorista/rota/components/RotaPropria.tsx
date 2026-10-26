@@ -35,13 +35,17 @@ export function RotaPropria({
   const [justificativa, setJustificativa] = useState("");
 
   const podeConfirmar = justificativa.trim().length > 0 && tracado.length > 0 && !desabilitado;
-  const referencias = [...(origem ? [{ posicao: origem, rotulo: "Sua posição" }] : []), { posicao: destino, rotulo: "Endereço de entrega" }];
+  const referencias = [
+    ...(origem ? [{ posicao: origem, rotulo: "Sua posição" }] : []),
+    { posicao: destino, rotulo: "Endereço de entrega" },
+  ];
   const posicoes = tracado.map((ponto) => [ponto.latitude, ponto.longitude] as [number, number]);
 
   return (
     <section>
       <p className="texto-apoio">
-        Os alfinetes mostram a sua posição e o endereço de entrega. Toque no mapa para marcar, em ordem, os pontos do caminho que você vai fazer.
+        Os alfinetes mostram a sua posição e o endereço de entrega. Toque no mapa para marcar, em ordem, os pontos do caminho que você vai
+        fazer.
       </p>
 
       <MapaBase centro={destino} descricao="Mapa para marcar os pontos da rota própria" marcadores={referencias}>
@@ -64,7 +68,10 @@ export function RotaPropria({
       </div>
 
       <label htmlFor="justificativa-rota">
-        Justificativa <span className="campo-obrigatorio" aria-hidden="true">*</span>
+        Justificativa{" "}
+        <span className="campo-obrigatorio" aria-hidden="true">
+          *
+        </span>
       </label>
       <textarea
         id="justificativa-rota"

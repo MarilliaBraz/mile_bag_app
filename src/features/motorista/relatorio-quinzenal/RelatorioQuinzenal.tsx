@@ -110,7 +110,8 @@ export function RelatorioQuinzenal() {
               </div>
               {totais.semValor > 0 && (
                 <Alerta tipo="aviso">
-                  {totais.semValor} entrega(s) ainda sem tarifa calculada (aparecem como “Sem valor”). Elas não entram no total até a tarifa ser definida.
+                  {totais.semValor} entrega(s) ainda sem tarifa calculada (aparecem como “Sem valor”). Elas não entram no total até a tarifa
+                  ser definida.
                 </Alerta>
               )}
 
@@ -142,11 +143,21 @@ export function RelatorioQuinzenal() {
                       </div>
                     </dl>
                     <div className="linha-acoes nao-imprimir mt-3">
-                      <button type="button" className="secundario" aria-expanded={corrigindo === item.viagemId} onClick={() => setCorrigindo(corrigindo === item.viagemId ? null : item.viagemId)}>
+                      <button
+                        type="button"
+                        className="secundario"
+                        aria-expanded={corrigindo === item.viagemId}
+                        onClick={() => setCorrigindo(corrigindo === item.viagemId ? null : item.viagemId)}
+                      >
                         Corrigir valor
                       </button>
                       {item.temAjuste && (
-                        <button type="button" className="fantasma" aria-expanded={verHistorico === item.viagemId} onClick={() => setVerHistorico(verHistorico === item.viagemId ? null : item.viagemId)}>
+                        <button
+                          type="button"
+                          className="fantasma"
+                          aria-expanded={verHistorico === item.viagemId}
+                          onClick={() => setVerHistorico(verHistorico === item.viagemId ? null : item.viagemId)}
+                        >
                           Ver histórico
                         </button>
                       )}
@@ -177,7 +188,10 @@ export function RelatorioQuinzenal() {
       )}
 
       <Ajuda>
-        <p>Confira as quilometragens, tarifas e pedágios do período. Para corrigir um valor, use “Corrigir valor” e explique o motivo: o valor original continua visível no histórico. “Imprimir” gera uma versão limpa para papel ou PDF.</p>
+        <p>
+          Confira as quilometragens, tarifas e pedágios do período. Para corrigir um valor, use “Corrigir valor” e explique o motivo: o
+          valor original continua visível no histórico. “Imprimir” gera uma versão limpa para papel ou PDF.
+        </p>
       </Ajuda>
     </TelaMotorista>
   );

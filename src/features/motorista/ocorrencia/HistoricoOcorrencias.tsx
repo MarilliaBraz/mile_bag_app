@@ -37,9 +37,13 @@ export function HistoricoOcorrencias({ entregaId }: { entregaId: string }) {
         {ocorrencias.map((ocorrencia) => (
           <li key={ocorrencia.id}>
             <strong>{descricaoPorMotivo[ocorrencia.motivoOcorrenciaId] ?? "Motivo não disponível"}</strong>
-            <div className="texto-apoio">{new Date(ocorrencia.dataHora).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}</div>
+            <div className="texto-apoio">
+              {new Date(ocorrencia.dataHora).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
+            </div>
             {ocorrencia.janelaInicio && ocorrencia.janelaFim && (
-              <div className="texto-apoio">Reagendada para {formatarJanela({ inicio: ocorrencia.janelaInicio, fim: ocorrencia.janelaFim })}</div>
+              <div className="texto-apoio">
+                Reagendada para {formatarJanela({ inicio: ocorrencia.janelaInicio, fim: ocorrencia.janelaFim })}
+              </div>
             )}
           </li>
         ))}

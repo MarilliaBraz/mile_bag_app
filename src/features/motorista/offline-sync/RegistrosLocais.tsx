@@ -37,10 +37,12 @@ export function RegistrosLocais() {
   const [falhas, setFalhas] = useState<FalhaRegistrada[]>(() => listarFalhas());
 
   useEffect(() => {
-    const assinatura = liveQuery(() => bancoLocal.registrosPendentes.orderBy("sequenciaLocal").reverse().limit(LIMITE).toArray()).subscribe({
-      next: setRegistros,
-      error: () => setRegistros([]),
-    });
+    const assinatura = liveQuery(() => bancoLocal.registrosPendentes.orderBy("sequenciaLocal").reverse().limit(LIMITE).toArray()).subscribe(
+      {
+        next: setRegistros,
+        error: () => setRegistros([]),
+      },
+    );
     return () => assinatura.unsubscribe();
   }, []);
 
@@ -88,7 +90,8 @@ export function RegistrosLocais() {
                 <div className="texto-apoio">{new Date(registro.timestampCriacaoLocal).toLocaleString("pt-BR")}</div>
                 {registro.status === "ERRO" && (
                   <Alerta tipo="erro">
-                    {registro.motivo ?? "O servidor não aceitou este registro."} Tentativas: {registro.tentativas}. O registro continua guardado e será reenviado.
+                    {registro.motivo ?? "O servidor não aceitou este registro."} Tentativas: {registro.tentativas}. O registro continua
+                    guardado e será reenviado.
                   </Alerta>
                 )}
               </li>
@@ -112,7 +115,9 @@ export function RegistrosLocais() {
                   {falha.local && (
                     <details>
                       <summary className="texto-apoio">Onde aconteceu</summary>
-                      <pre className="mono fs-xs quebrar" style={{ whiteSpace: "pre-wrap" }}>{falha.local}</pre>
+                      <pre className="mono fs-xs quebrar" style={{ whiteSpace: "pre-wrap" }}>
+                        {falha.local}
+                      </pre>
                     </details>
                   )}
                 </span>

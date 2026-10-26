@@ -70,10 +70,7 @@ function cabecalhoAutorizacao(): HeadersInit {
 }
 
 /** GET/DELETE/POST/PATCH com corpo JSON - nunca usado para envio de arquivos (ver {@link enviarFormulario}). */
-export async function requisitar<T>(
-  caminho: string,
-  opcoes: { metodo?: string; corpo?: unknown } = {},
-): Promise<T> {
+export async function requisitar<T>(caminho: string, opcoes: { metodo?: string; corpo?: unknown } = {}): Promise<T> {
   const resposta = await fetch(`${BASE_URL}${caminho}`, {
     method: opcoes.metodo ?? "GET",
     headers: {

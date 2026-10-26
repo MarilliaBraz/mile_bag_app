@@ -42,56 +42,61 @@ export function AtivarConviteForm() {
   return (
     <div className="tela-entrada">
       <main>
-      <div className="marca">
-        <img src="/icone-app.svg" alt="" /> Milebag
-      </div>
-      <h1>Ativar acesso</h1>
+        <div className="marca">
+          <img src="/icone-app.svg" alt="" /> Milebag
+        </div>
+        <h1>Ativar acesso</h1>
 
-      {carregando && <Carregando texto="Verificando o convite…" />}
-      {erro && (
-        <Alerta tipo="erro">
-          {erro} Peça um novo convite a quem cadastrou a empresa.
-        </Alerta>
-      )}
+        {carregando && <Carregando texto="Verificando o convite…" />}
+        {erro && <Alerta tipo="erro">{erro} Peça um novo convite a quem cadastrou a empresa.</Alerta>}
 
-      {convite && convite.status !== "PENDENTE" && (
-        <Alerta tipo="erro">
-          {convite.status === "EXPIRADO" ? "Este convite expirou." : "Este convite já foi usado ou substituído por outro."} Peça um novo convite a quem
-          cadastrou a empresa.
-        </Alerta>
-      )}
+        {convite && convite.status !== "PENDENTE" && (
+          <Alerta tipo="erro">
+            {convite.status === "EXPIRADO" ? "Este convite expirou." : "Este convite já foi usado ou substituído por outro."} Peça um novo
+            convite a quem cadastrou a empresa.
+          </Alerta>
+        )}
 
-      {ativado && (
-        <Alerta tipo="sucesso">
-          Senha definida para {convite?.emailDestinatario}. O acesso por login ainda está em construção: a conta já existe, mas não há tela de entrada com
-          e-mail e senha nesta versão.
-        </Alerta>
-      )}
+        {ativado && (
+          <Alerta tipo="sucesso">
+            Senha definida para {convite?.emailDestinatario}. O acesso por login ainda está em construção: a conta já existe, mas não há
+            tela de entrada com e-mail e senha nesta versão.
+          </Alerta>
+        )}
 
-      {convite && convite.status === "PENDENTE" && !ativado && (
-        <form onSubmit={ativar} className="cartao formulario">
-          <p className="m-0">
-            Você foi convidado a administrar <strong>{convite.tenantNome}</strong> com o e-mail <strong>{convite.emailDestinatario}</strong>.
-          </p>
-          {erroAcao && (
-            <Alerta tipo="erro">
-              {erroAcao}
-            </Alerta>
-          )}
-          <div>
-            <label htmlFor="senha">Senha (mínimo {TAMANHO_MINIMO_SENHA} caracteres)</label>
-            <input id="senha" type="password" autoComplete="new-password" value={senha} onChange={(e) => setSenha(e.target.value)} />
-          </div>
-          <div>
-            <label htmlFor="confirmacaoSenha">Repita a senha</label>
-            <input id="confirmacaoSenha" type="password" autoComplete="new-password" aria-invalid={!!confirmacao && senha !== confirmacao} aria-describedby={!!confirmacao && senha !== confirmacao ? "confirmacaoSenha-erro" : undefined} value={confirmacao} onChange={(e) => setConfirmacao(e.target.value)} />
-            {confirmacao && senha !== confirmacao && <span id="confirmacaoSenha-erro" role="alert" className="texto-erro">As senhas não conferem.</span>}
-          </div>
-          <button type="submit" className="grande bloco" disabled={invalido || enviando}>
-            {enviando ? "Ativando…" : "Ativar acesso"}
-          </button>
-        </form>
-      )}
+        {convite && convite.status === "PENDENTE" && !ativado && (
+          <form onSubmit={ativar} className="cartao formulario">
+            <p className="m-0">
+              Você foi convidado a administrar <strong>{convite.tenantNome}</strong> com o e-mail{" "}
+              <strong>{convite.emailDestinatario}</strong>.
+            </p>
+            {erroAcao && <Alerta tipo="erro">{erroAcao}</Alerta>}
+            <div>
+              <label htmlFor="senha">Senha (mínimo {TAMANHO_MINIMO_SENHA} caracteres)</label>
+              <input id="senha" type="password" autoComplete="new-password" value={senha} onChange={(e) => setSenha(e.target.value)} />
+            </div>
+            <div>
+              <label htmlFor="confirmacaoSenha">Repita a senha</label>
+              <input
+                id="confirmacaoSenha"
+                type="password"
+                autoComplete="new-password"
+                aria-invalid={!!confirmacao && senha !== confirmacao}
+                aria-describedby={!!confirmacao && senha !== confirmacao ? "confirmacaoSenha-erro" : undefined}
+                value={confirmacao}
+                onChange={(e) => setConfirmacao(e.target.value)}
+              />
+              {confirmacao && senha !== confirmacao && (
+                <span id="confirmacaoSenha-erro" role="alert" className="texto-erro">
+                  As senhas não conferem.
+                </span>
+              )}
+            </div>
+            <button type="submit" className="grande bloco" disabled={invalido || enviando}>
+              {enviando ? "Ativando…" : "Ativar acesso"}
+            </button>
+          </form>
+        )}
       </main>
     </div>
   );

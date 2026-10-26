@@ -59,9 +59,15 @@ export function PlanosLista() {
               <thead>
                 <tr>
                   <th scope="col">Plano</th>
-                  <th scope="col" className="numero">Motoristas ativos</th>
-                  <th scope="col" className="numero">BDOs por mês</th>
-                  <th scope="col" className="numero">Empresas</th>
+                  <th scope="col" className="numero">
+                    Motoristas ativos
+                  </th>
+                  <th scope="col" className="numero">
+                    BDOs por mês
+                  </th>
+                  <th scope="col" className="numero">
+                    Empresas
+                  </th>
                   <th scope="col" className="coluna-acoes">
                     <span className="visualmente-oculto">Ações</span>
                   </th>
@@ -84,7 +90,12 @@ export function PlanosLista() {
                           Em uso
                         </span>
                       ) : (
-                        <button type="button" className="fantasma compacto" onClick={() => setExcluindo(item)} aria-label={`Remover plano ${item.plano.nome}`}>
+                        <button
+                          type="button"
+                          className="fantasma compacto"
+                          onClick={() => setExcluindo(item)}
+                          aria-label={`Remover plano ${item.plano.nome}`}
+                        >
                           <Icone nome="lixeira" /> Remover
                         </button>
                       )}

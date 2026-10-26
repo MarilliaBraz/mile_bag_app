@@ -3,7 +3,13 @@ import { useCallback, useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { useIntervaloEmPrimeiroPlano } from "../../../../shared/hooks/useIntervaloEmPrimeiroPlano";
 import { Alerta, Carregando } from "../../../../shared/ui/Alerta";
-import { consultarConversa, enviarMensagem, type CanalMensagem, type Conversa as ConversaDados, type Mensagem } from "../services/mensagemService";
+import {
+  consultarConversa,
+  enviarMensagem,
+  type CanalMensagem,
+  type Conversa as ConversaDados,
+  type Mensagem,
+} from "../services/mensagemService";
 import { AvisoSemContato } from "./AvisoSemContato";
 import { CampoMensagem } from "./CampoMensagem";
 

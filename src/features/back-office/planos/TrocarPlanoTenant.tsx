@@ -34,12 +34,14 @@ export function TrocarPlanoTenant({ tenantId, planoAtualId, aoTrocar }: { tenant
   }
 
   return (
-    <form onSubmit={(evento) => { evento.preventDefault(); setConfirmando(true); }} className="formulario">
-      {(erro || erroAcao) && (
-        <Alerta tipo="erro">
-          {erro ?? erroAcao}
-        </Alerta>
-      )}
+    <form
+      onSubmit={(evento) => {
+        evento.preventDefault();
+        setConfirmando(true);
+      }}
+      className="formulario"
+    >
+      {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
       <div>
         <label htmlFor="novoPlano">Novo plano</label>
         <select id="novoPlano" value={escolhido} onChange={(e) => setEscolhido(e.target.value)}>

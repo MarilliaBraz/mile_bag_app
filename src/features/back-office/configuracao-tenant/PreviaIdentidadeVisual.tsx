@@ -7,7 +7,15 @@ import { baixarLogotipo } from "./identidadeVisualApi";
  * autorização, então é baixado como arquivo e exibido por URL local; `versao`
  * força nova busca depois de um upload.
  */
-export function PreviaIdentidadeVisual({ identidade, versao = 0, arquivoLocal }: { identidade: IdentidadeVisual; versao?: number; arquivoLocal?: File | null }) {
+export function PreviaIdentidadeVisual({
+  identidade,
+  versao = 0,
+  arquivoLocal,
+}: {
+  identidade: IdentidadeVisual;
+  versao?: number;
+  arquivoLocal?: File | null;
+}) {
   const [urlLogotipo, setUrlLogotipo] = useState<string | null>(null);
   const temLogotipo = identidade.logotipoUrl !== null;
 
