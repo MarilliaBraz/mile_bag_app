@@ -1088,6 +1088,19 @@ dd {
   gap: 0.5rem;
 }
 
+/* Traçado das rotas no mapa (HU03): a cor vem do tema, por isso por classe CSS e não pela cor do Leaflet. */
+.tracado-rota {
+  stroke: var(--acao);
+  stroke-width: 6;
+  stroke-opacity: 0.9;
+}
+
+.tracado-rota-alternativa {
+  stroke: var(--texto-suave);
+  stroke-width: 4;
+  stroke-opacity: 0.6;
+}
+
 .balao {
   max-width: 85%;
   padding: 0.625rem 0.875rem;
