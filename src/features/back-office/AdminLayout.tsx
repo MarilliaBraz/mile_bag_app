@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { BotaoSair } from "../../shared/auth/BotaoSair";
 import { Icone, type NomeIcone } from "../../shared/ui/Icone";
@@ -8,8 +9,9 @@ type Item = { para: string; rotulo: string; icone: NomeIcone };
 /**
  * Moldura das áreas administrativas: barra lateral com as seções (no
  * computador) ou faixa rolável no topo (no celular), e a área de conteúdo.
+ * `aviso` aparece acima de todas as telas da área (ex.: emergências, HU30).
  */
-export function AdminLayout({ titulo, itens }: { titulo: string; itens: Item[] }) {
+export function AdminLayout({ titulo, itens, aviso }: { titulo: string; itens: Item[]; aviso?: ReactNode }) {
   return (
     <div className="admin">
       <aside className="admin-lateral">
@@ -40,6 +42,7 @@ export function AdminLayout({ titulo, itens }: { titulo: string; itens: Item[] }
       </aside>
 
       <div className="admin-conteudo">
+        {aviso}
         <Outlet />
         <div className="admin-preferencias">
           <PreferenciasAcessibilidade />
@@ -51,6 +54,7 @@ export function AdminLayout({ titulo, itens }: { titulo: string; itens: Item[] }
 
 export const ITENS_TENANT: Item[] = [
   { para: "/admin/motoristas", rotulo: "Motoristas", icone: "usuarios" },
+  { para: "/admin/emergencias", rotulo: "Emergências", icone: "alerta" },
   { para: "/admin/tarifas", rotulo: "Tarifas", icone: "moeda" },
   { para: "/admin/pedagios", rotulo: "Pedágios", icone: "pedagio" },
   { para: "/admin/fechamentos", rotulo: "Fechamentos", icone: "calendario" },
