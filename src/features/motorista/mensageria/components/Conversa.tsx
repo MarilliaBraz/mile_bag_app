@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { useIntervaloEmPrimeiroPlano } from "../../../../shared/hooks/useIntervaloEmPrimeiroPlano";
 import { Alerta, Carregando } from "../../../../shared/ui/Alerta";
-import { consultarConversa, type CanalMensagem, type Conversa as ConversaDados, type Mensagem } from "../services/mensagemService";
+import { consultarConversa, enviarMensagem, type CanalMensagem, type Conversa as ConversaDados, type Mensagem } from "../services/mensagemService";
 import { AvisoSemContato } from "./AvisoSemContato";
 import { CampoMensagem } from "./CampoMensagem";
 
@@ -31,6 +31,8 @@ function agrupar(mensagens: Mensagem[]): Balao[] {
         balao.mensagem.conteudo === mensagem.conteudo &&
         balao.mensagem.tipoEvento === mensagem.tipoEvento &&
         mensagem.autor !== "PASSAGEIRO" &&
+        // Mesmo canal de novo é um reenvio ("Enviar de novo"), não o mesmo envio por outro canal.
+        !balao.canais.some(({ canal }) => canal === mensagem.canal) &&
         Math.abs(new Date(mensagem.criadoEm).getTime() - new Date(balao.mensagem.criadoEm).getTime()) < JANELA_AGRUPAMENTO_MS,
     );
     const canal = { canal: mensagem.canal, falhou: mensagem.statusEnvio === "FALHOU" };
@@ -41,6 +43,42 @@ function agrupar(mensagens: Mensagem[]): Balao[] {
     }
   }
   return baloes;
+}
+
+/**
+ * Mensagem do motorista que não chegou por nenhum canal: reenvia o mesmo
+ * texto (o servidor escolhe de novo os canais, FR-003). Só aparece quando
+ * todos falharam, para não duplicar o que já chegou por outro canal.
+ */
+function ReenviarMensagem({ entregaId, conteudo, aoEnviar }: { entregaId: string; conteudo: string; aoEnviar: () => void }) {
+  const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
+  async function reenviar() {
+    setErro(null);
+    setEnviando(true);
+    try {
+      await enviarMensagem(entregaId, conteudo);
+      aoEnviar();
+    } catch (excecao) {
+      setErro(excecao instanceof ApiError ? excecao.message : "Sem conexão: tente de novo quando a rede voltar.");
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  return (
+    <div className="mt-2">
+      <button type="button" className="secundario" onClick={reenviar} disabled={enviando}>
+        <Icone nome="sincronizar" /> {enviando ? "Enviando…" : "Enviar de novo"}
+      </button>
+      {erro && (
+        <p role="alert" className="selo-falha mt-2 mb-0">
+          {erro}
+        </p>
+      )}
+    </div>
+  );
 }
 
 /**
@@ -94,13 +132,22 @@ export function Conversa({ entregaId }: { entregaId: string }) {
               </div>
               <div>{mensagem.conteudo}</div>
               <div className="texto-apoio" style={{ fontSize: "0.8125rem", marginTop: "0.25rem" }}>
-                {canais.map(({ canal, falhou }) => (
-                  <span key={canal} style={{ marginRight: "0.5rem", ...(falhou ? { color: "var(--erro)", fontWeight: 700 } : {}) }}>
-                    <Icone nome={canal === "EMAIL" ? "email" : "enviar"} /> {ROTULO_CANAL[canal]}
-                    {falhou ? " (falhou)" : ""}
-                  </span>
-                ))}
+                {canais.map(({ canal, falhou }) =>
+                  falhou ? (
+                    // Selo com fundo próprio: legível sobre qualquer balão (o do motorista é azul).
+                    <span key={canal} className="selo-falha" style={{ marginRight: "0.5rem" }}>
+                      <Icone nome="alerta" /> {ROTULO_CANAL[canal]} não enviado
+                    </span>
+                  ) : (
+                    <span key={canal} style={{ marginRight: "0.5rem" }}>
+                      <Icone nome={canal === "EMAIL" ? "email" : "enviar"} /> {ROTULO_CANAL[canal]}
+                    </span>
+                  ),
+                )}
               </div>
+              {mensagem.autor === "MOTORISTA" && canais.every(({ falhou }) => falhou) && (
+                <ReenviarMensagem entregaId={entregaId} conteudo={mensagem.conteudo} aoEnviar={carregar} />
+              )}
             </li>
           ))}
         </ul>
