@@ -1,11 +1,12 @@
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Icone, type NomeIcone } from "../../../../shared/ui/Icone";
 import type { ItemPainel } from "../types";
 
-const ETAPAS: { rotulo: string; icone: NomeIcone }[] = [
-  { rotulo: "Assumida", icone: "mala" },
-  { rotulo: "A caminho", icone: "carro" },
-  { rotulo: "No endereço", icone: "pino" },
-  { rotulo: "Entregue", icone: "checkCirculo" },
+const ETAPAS: { rotulo: "assumida" | "aCaminho" | "noEndereco" | "entregue"; icone: NomeIcone }[] = [
+  { rotulo: "assumida", icone: "mala" },
+  { rotulo: "aCaminho", icone: "carro" },
+  { rotulo: "noEndereco", icone: "pino" },
+  { rotulo: "entregue", icone: "checkCirculo" },
 ];
 
 /** Etapa em que a entrega está agora, a partir do status e do marco mais recente (RF19). Entregue = todas concluídas. */
@@ -29,11 +30,9 @@ function etapaAtual(entrega: Pick<ItemPainel, "status" | "marcoMaisRecente" | "t
  */
 export function EtapasEntrega({ entrega }: { entrega: Pick<ItemPainel, "status" | "marcoMaisRecente" | "temTrajetoIniciado"> }) {
   const atual = etapaAtual(entrega);
+  const t = useTextos().motorista.etapas;
   return (
-    <ol
-      className="etapas"
-      aria-label={atual >= ETAPAS.length ? "Andamento: entrega concluída" : `Andamento: etapa ${atual + 1} de ${ETAPAS.length}`}
-    >
+    <ol className="etapas" aria-label={atual >= ETAPAS.length ? t.concluida : t.etapaDe(atual + 1, ETAPAS.length)}>
       {ETAPAS.map((etapa, indice) => {
         const feita = indice < atual;
         const classe = feita ? "etapa-feita" : indice === atual ? "etapa-atual" : undefined;
@@ -42,8 +41,8 @@ export function EtapasEntrega({ entrega }: { entrega: Pick<ItemPainel, "status" 
             <span className="etapa-marca">
               <Icone nome={feita ? "check" : etapa.icone} />
             </span>
-            {etapa.rotulo}
-            <span className="visualmente-oculto">{feita ? " (concluída)" : indice === atual ? " (etapa atual)" : " (a fazer)"}</span>
+            {t[etapa.rotulo]}
+            <span className="visualmente-oculto">{feita ? t.feita : indice === atual ? t.atual : t.aFazer}</span>
           </li>
         );
       })}

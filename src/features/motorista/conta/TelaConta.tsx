@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { BotaoSair } from "../../../shared/auth/BotaoSair";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { Icone } from "../../../shared/ui/Icone";
 import { PreferenciasAcessibilidade } from "../../../shared/ui/PreferenciasAcessibilidade";
+import { SeletorIdioma } from "../../../shared/ui/SeletorIdioma";
 import { TelaMotorista } from "../layout/TelaMotorista";
 import { useSincronizacaoAutomatica } from "../offline-sync/useSincronizacaoAutomatica";
 
@@ -12,18 +14,17 @@ import { useSincronizacaoAutomatica } from "../offline-sync/useSincronizacaoAuto
  */
 export function TelaConta() {
   const { pendentes } = useSincronizacaoAutomatica();
+  const t = useTextos().motorista.conta;
 
   return (
-    <TelaMotorista titulo="Conta" navegacao>
+    <TelaMotorista titulo={t.titulo} navegacao>
       <ul className="lista">
         <li>
           <Link to="/motorista/registros" className="cartao-link">
             <Icone nome="sincronizar" />
             <span className="cartao-corpo">
-              <strong>Registros do aparelho</strong>
-              <span className="texto-apoio em-bloco">
-                {pendentes > 0 ? `${pendentes} aguardando envio` : "Tudo o que foi registrado neste celular"}
-              </span>
+              <strong>{t.registros}</strong>
+              <span className="texto-apoio em-bloco">{pendentes > 0 ? t.aguardandoEnvio(pendentes) : t.tudoRegistrado}</span>
             </span>
             {pendentes > 0 && <span className="selo selo-aviso">{pendentes}</span>}
             <Icone nome="chevron" />
@@ -33,20 +34,23 @@ export function TelaConta() {
           <Link to="/conta/senha" className="cartao-link">
             <Icone nome="chave" />
             <span className="cartao-corpo">
-              <strong>Minha senha</strong>
-              <span className="texto-apoio em-bloco">Trocar a senha de acesso</span>
+              <strong>{t.minhaSenha}</strong>
+              <span className="texto-apoio em-bloco">{t.trocarSenha}</span>
             </span>
             <Icone nome="chevron" />
           </Link>
         </li>
       </ul>
 
-      <h2>Leitura</h2>
+      <h2>{t.idioma}</h2>
+      <SeletorIdioma />
+
+      <h2>{t.leitura}</h2>
       <PreferenciasAcessibilidade aberto />
 
       <div className="mt-8">
         <BotaoSair className="perigo-contorno grande bloco" />
-        <p className="texto-apoio centro">O que ainda não foi enviado continua guardado para o próximo login.</p>
+        <p className="texto-apoio centro">{t.guardadoProximoLogin}</p>
       </div>
     </TelaMotorista>
   );

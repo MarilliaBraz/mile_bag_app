@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { formatarDataHora } from "../../../../shared/format/formatar";
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Icone } from "../../../../shared/ui/Icone";
 import type { EstadoCapturaBdo } from "../../captura-bdo/components/CapturaBdo";
 import type { BdoResponse } from "../../captura-bdo/types";
@@ -10,35 +12,31 @@ import type { BdoResponse } from "../../captura-bdo/types";
  * de conferência, com confirmar ou descartar.
  */
 export function FotosParaConferir({ bdos }: { bdos: BdoResponse[] }) {
+  const t = useTextos().motorista.fotosConferir;
   if (bdos.length === 0) {
     return null;
   }
 
   return (
     <section>
-      <h2>Fotos de BDO para conferir ({bdos.length})</h2>
-      <p className="texto-apoio">O BDO só fica disponível para entrega depois que você conferir os campos e confirmar.</p>
+      <h2>{t.titulo(bdos.length)}</h2>
+      <p className="texto-apoio">{t.explicacao}</p>
       <ul className="lista">
         {bdos.map((bdo) => {
           const estado: EstadoCapturaBdo = { bdoParaConferir: bdo };
-          const capturadoEm = new Date(bdo.dataCaptura).toLocaleString("pt-BR", {
-            day: "2-digit",
-            month: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-          });
+          const capturadoEm = formatarDataHora(bdo.dataCaptura);
           return (
             <li key={bdo.id}>
               <Link to="/motorista/captura-bdo" state={estado} className="cartao-link">
                 <div className="cartao-corpo">
                   <div className="cartao-cabecalho">
-                    <span className="codigo">{bdo.camposExtraidos.numero || "Número não lido"}</span>
-                    <span className="selo selo-aviso">Conferir</span>
+                    <span className="codigo">{bdo.camposExtraidos.numero || t.numeroNaoLido}</span>
+                    <span className="selo selo-aviso">{t.conferir}</span>
                   </div>
-                  <div className="destaque">{bdo.camposExtraidos.passageiroNome || "Passageiro não lido"}</div>
+                  <div className="destaque">{bdo.camposExtraidos.passageiroNome || t.passageiroNaoLido}</div>
                   <div className="linha-icone texto-apoio">
                     <Icone nome="camera" />
-                    <span>Foto de {capturadoEm}</span>
+                    <span>{t.fotoDe(capturadoEm)}</span>
                   </div>
                 </div>
                 <Icone nome="chevron" />

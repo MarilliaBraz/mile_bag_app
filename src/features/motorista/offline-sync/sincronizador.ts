@@ -1,4 +1,5 @@
 import { requisitar } from "../../../shared/api/httpClient";
+import { obterTextos } from "../../../shared/i18n/idioma";
 import { bancoLocal } from "./db";
 import { listarParaEnviar } from "./fila";
 
@@ -70,7 +71,7 @@ export async function sincronizar(): Promise<{ enviados: number; comErro: number
         await bancoLocal.registrosPendentes.update(resultado.idLocal, {
           status: "ERRO",
           tentativas: (registro?.tentativas ?? 0) + 1,
-          motivo: resultado.motivo ?? "O servidor recusou este registro.",
+          motivo: resultado.motivo ?? obterTextos().motorista.conexao.servidorRecusou,
         });
         comErro += 1;
       }

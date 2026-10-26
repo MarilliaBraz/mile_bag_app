@@ -4,6 +4,7 @@ import { ApiError } from "../../../../shared/api/ApiError";
 import { Ajuda } from "../../../../shared/ui/Ajuda";
 import { Alerta, Vazio } from "../../../../shared/ui/Alerta";
 import { AvisoJanelaReagendamento } from "../../../../shared/ui/AvisoJanelaReagendamento";
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Icone, type NomeIcone } from "../../../../shared/ui/Icone";
 import { TelaMotorista } from "../../layout/TelaMotorista";
 import { listarPendentesDeConferencia } from "../../captura-bdo/services/bdoService";
@@ -13,11 +14,11 @@ import { consultarBdosDisponiveis, consultarPainel } from "../services/painelSer
 import type { BdosDisponiveis, ItemPainel, PainelEntregas as PainelEntregasResposta } from "../types";
 import { FotosParaConferir } from "./FotosParaConferir";
 import { ListaBdosDisponiveis } from "./ListaBdosDisponiveis";
-import { STATUS_ENTREGA } from "./statusEntrega";
+import { TOM_STATUS_ENTREGA } from "./statusEntrega";
 
-const ROTULO_MARCO: Record<NonNullable<ItemPainel["marcoMaisRecente"]>, { icone: NomeIcone; texto: string }> = {
-  A_CAMINHO: { icone: "carro", texto: "A caminho" },
-  CHEGADA: { icone: "pino", texto: "Chegou ao endereço" },
+const ROTULO_MARCO: Record<NonNullable<ItemPainel["marcoMaisRecente"]>, { icone: NomeIcone; texto: "marcoACaminho" | "marcoChegada" }> = {
+  A_CAMINHO: { icone: "carro", texto: "marcoACaminho" },
+  CHEGADA: { icone: "pino", texto: "marcoChegada" },
 };
 
 /**
@@ -30,6 +31,7 @@ export function PainelEntregas() {
   const [bdosDisponiveis, setBdosDisponiveis] = useState<BdosDisponiveis | null>(null);
   const [fotosParaConferir, setFotosParaConferir] = useState<BdoResponse[]>([]);
   const [erro, setErro] = useState<string | null>(null);
+  const t = useTextos().motorista;
   const localizacao = useLocation();
   const navegar = useNavigate();
   const [aviso, setAviso] = useState<string | null>((localizacao.state as { aviso?: string } | null)?.aviso ?? null);
@@ -45,8 +47,9 @@ export function PainelEntregas() {
         .then(setFotosParaConferir)
         .catch(() => undefined);
     } catch (excecao) {
-      setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível carregar o painel. Tente novamente.");
+      setErro(excecao instanceof ApiError ? excecao.message : t.painel.falhaAoCarregar);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -66,7 +69,7 @@ export function PainelEntregas() {
   // pendentes/contador precisam refletir a nova entrega - reconsulta o
   // painel inteiro em vez de tentar montar o item localmente.
   function aoAutoatribuir(bdoId: string) {
-    setAviso("Entrega assumida. Ela já está na sua lista de pendentes.");
+    setAviso(t.painel.entregaAssumida);
     setBdosDisponiveis((atual) => (atual ? { bdos: atual.bdos.filter((bdo) => bdo.bdoId !== bdoId) } : atual));
     consultarPainel()
       .then(setPainel)
@@ -78,7 +81,7 @@ export function PainelEntregas() {
 
   return (
     <TelaMotorista
-      titulo="Minhas entregas"
+      titulo={t.painel.titulo}
       navegacao
       aoSincronizar={carregar}
       acoesTopo={
@@ -97,13 +100,13 @@ export function PainelEntregas() {
         <Alerta tipo="erro">
           <p>{erro}</p>
           <button type="button" className="secundario" onClick={carregar}>
-            <Icone nome="sincronizar" /> Tentar de novo
+            <Icone nome="sincronizar" /> {t.geral.tentarDeNovo}
           </button>
         </Alerta>
       )}
 
       {!painel && !erro && (
-        <div className="pilha" role="status" aria-label="Carregando entregas">
+        <div className="pilha" role="status" aria-label={t.painel.carregando}>
           <div className="esqueleto esqueleto-curto" />
           <div className="esqueleto" />
           <div className="esqueleto" />
@@ -115,48 +118,47 @@ export function PainelEntregas() {
           <div className="resumo">
             <span className="resumo-numero">{painel.contadorPendentes}</span>
             <span className="resumo-texto">
-              {painel.contadorPendentes === 1 ? "entrega pendente" : "entregas pendentes"}
-              <small>Toque em uma entrega para ver rota, contato e comprovante.</small>
+              {t.painel.pendentes(painel.contadorPendentes)}
+              <small>{t.painel.toqueParaVer}</small>
             </span>
           </div>
 
           <FotosParaConferir bdos={fotosParaConferir} />
 
-          <h2>Para entregar</h2>
+          <h2>{t.painel.paraEntregar}</h2>
           {painel.entregas.length === 0 ? (
-            <Vazio icone="checkCirculo" titulo="Nenhuma entrega pendente">
-              Assuma um BDO disponível abaixo ou capture um novo pelo botão da câmera.
+            <Vazio icone="checkCirculo" titulo={t.painel.nenhumaPendente}>
+              {t.painel.nenhumaPendenteDica}
             </Vazio>
           ) : (
             <ul className="lista">
               {painel.entregas.map((item) => {
-                const status = STATUS_ENTREGA[item.status];
+                const status = { texto: t.status[item.status], tom: TOM_STATUS_ENTREGA[item.status] };
                 return (
                   <li key={item.entregaId}>
                     <Link to={`/motorista/entregas/${item.entregaId}`} viewTransition className="cartao-link">
                       <div className="cartao-corpo">
                         <div className="cartao-cabecalho">
-                          <span className="codigo">{item.bdoNumero ?? "BDO sem número"}</span>
+                          <span className="codigo">{item.bdoNumero ?? t.geral.bdoSemNumero}</span>
                           {item.marcoMaisRecente ? (
                             <span className="selo selo-info">
-                              <Icone nome={ROTULO_MARCO[item.marcoMaisRecente].icone} /> {ROTULO_MARCO[item.marcoMaisRecente].texto}
+                              <Icone nome={ROTULO_MARCO[item.marcoMaisRecente].icone} />{" "}
+                              {t.painel[ROTULO_MARCO[item.marcoMaisRecente].texto]}
                             </span>
                           ) : (
                             <span className={`selo selo-${status.tom}`}>{status.texto}</span>
                           )}
                         </div>
-                        <div className="destaque">{item.passageiroNome ?? "Passageiro não identificado"}</div>
+                        <div className="destaque">{item.passageiroNome ?? t.geral.passageiroNaoIdentificado}</div>
                         <div className="linha-icone texto-apoio">
                           <Icone nome="pino" />
-                          <span>{item.endereco ?? "Endereço não informado"}</span>
+                          <span>{item.endereco ?? t.geral.enderecoNaoInformado}</span>
                         </div>
                         <AvisoJanelaReagendamento janela={item.janelaReagendamento} />
                         {item.bagagensCarona.length > 0 && (
                           <div className="linha-icone texto-apoio">
                             <Icone nome="mala" />
-                            <span>
-                              {item.bagagensCarona.length === 1 ? "+ 1 bagagem carona" : `+ ${item.bagagensCarona.length} bagagens carona`}
-                            </span>
+                            <span>{t.painel.bagagensCarona(item.bagagensCarona.length)}</span>
                           </div>
                         )}
                       </div>
@@ -171,10 +173,7 @@ export function PainelEntregas() {
           {bdosDisponiveis && <ListaBdosDisponiveis bdos={bdosDisponiveis.bdos} aoAutoatribuir={aoAutoatribuir} />}
 
           <Ajuda>
-            <p>
-              Toque em uma entrega para ver os detalhes, calcular a rota e registrar o comprovante. Em “Disponíveis para assumir”, toque em
-              “Assumir” para incluir uma entrega na sua lista. Sem internet, o que você registrar fica salvo no aparelho e é enviado depois.
-            </p>
+            <p>{t.painel.ajuda}</p>
           </Ajuda>
         </>
       )}
