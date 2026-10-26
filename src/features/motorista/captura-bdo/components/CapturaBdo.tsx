@@ -4,8 +4,10 @@ import { ApiError } from "../../../../shared/api/ApiError";
 import { arquivoParaBase64, enfileirar } from "../../offline-sync/fila";
 import { Link } from "react-router-dom";
 import { Alerta, Carregando } from "../../../../shared/ui/Alerta";
+import { AvisoContatoIncompleto } from "../../../../shared/ui/AvisoContatoIncompleto";
 import { Icone } from "../../../../shared/ui/Icone";
 import { TelaMotorista } from "../../layout/TelaMotorista";
+import { avaliarCompletudeContato } from "../completudeContato";
 import { capturarBdo, confirmarConferencia } from "../services/bdoService";
 import type { BdoResponse, CamposExtraidosBdo } from "../types";
 
@@ -150,6 +152,9 @@ export function CapturaBdo() {
             <CampoTexto label="E-mail do passageiro" tipo="email" valor={campos.emailPassageiro} aoAlterar={(v) => atualizarCampo("emailPassageiro", v)} />
             <CampoTexto label="Etiqueta da bagagem" valor={campos.etiquetaBagagem} aoAlterar={(v) => atualizarCampo("etiquetaBagagem", v)} />
           </div>
+
+          {/* RN15/HU28: só avisa, não impede confirmar - acompanha a correção dos campos. */}
+          <AvisoContatoIncompleto pendencias={avaliarCompletudeContato(campos.enderecoEntrega ?? "", campos.telefonePassageiro ?? "")} />
 
           <div className="acao-fixa">
             <button type="submit" className="grande bloco">

@@ -58,7 +58,11 @@ export function MapaRotas({
 
       <h2>{titulo}</h2>
       {children}
-      {calculo.alternativas.length === 0 ? (
+      {calculo.motorRotasDisponivel === false ? (
+        <Vazio icone="alerta" titulo="Serviço de rotas indisponível">
+          Não foi possível calcular as rotas agora. Tente recalcular em alguns minutos ou trace uma rota própria.
+        </Vazio>
+      ) : calculo.alternativas.length === 0 ? (
         <Vazio icone="rota" titulo="Nenhuma rota encontrada">
           Tente recalcular ou trace uma rota própria.
         </Vazio>
