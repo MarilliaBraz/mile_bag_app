@@ -24,7 +24,8 @@ function quinzenaAtual(): { inicio: string; fim: string } {
   return { inicio: paraIso(new Date(ano, mes, 16)), fim: paraIso(new Date(ano, mes + 1, 0)) };
 }
 
-const km = (valor: number | null) => (valor === null ? "Não calculado" : `${valor.toFixed(1).replace(".", ",")} km`);
+// Duas casas: com uma só, ida 6,34 + volta 6,34 apareciam como 6,3 + 6,3 e o total (12,68) como 12,7.
+const km = (valor: number | null) => (valor === null ? "Não calculado" : `${valor.toFixed(2).replace(".", ",")} km`);
 const dataBr = (iso: string) => iso.split("-").reverse().join("/");
 
 /**
