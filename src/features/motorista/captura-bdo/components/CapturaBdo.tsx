@@ -8,7 +8,7 @@ import { AvisoContatoIncompleto } from "../../../../shared/ui/AvisoContatoIncomp
 import { Icone } from "../../../../shared/ui/Icone";
 import { TelaMotorista } from "../../layout/TelaMotorista";
 import { avaliarCompletudeContato } from "../completudeContato";
-import { capturarBdo, confirmarConferencia } from "../services/bdoService";
+import { capturarBdo, confirmarConferencia, descartarCaptura } from "../services/bdoService";
 import type { BdoResponse, CamposExtraidosBdo } from "../types";
 
 type Etapa = "captura" | "conferencia" | "enviando" | "concluido" | "enfileirado";
@@ -28,6 +28,10 @@ const CAMPO_VAZIO: CamposExtraidosBdo = {
  * o OCR extraiu e confirmar - nunca grava automaticamente a partir do OCR
  * (FR-003). Numero, passageiroNome e enderecoEntrega sao os campos que
  * BdoService.confirmarConferencia exige (os demais podem ficar vazios).
+ *
+ * <p>A captura já cria o BDO como pendente no servidor (com a foto). Ele só
+ * entra na lista de disponíveis depois da confirmação; se o motorista
+ * descartar ou tirar outra foto, a captura anterior é apagada.</p>
  */
 export function CapturaBdo() {
   const [etapa, setEtapa] = useState<Etapa>("captura");
@@ -79,6 +83,15 @@ export function CapturaBdo() {
 
   function atualizarCampo(nome: keyof CamposExtraidosBdo, valor: string) {
     setCampos((atual) => ({ ...atual, [nome]: valor }));
+  }
+
+  /** Apaga a captura pendente no servidor; se falhar (ex.: sem rede), ela segue pendente e nunca vira entrega. */
+  async function descartarEFotografarDeNovo() {
+    const pendente = bdo;
+    recomecar();
+    if (pendente) {
+      await descartarCaptura(pendente.id).catch(() => undefined);
+    }
   }
 
   function recomecar() {
@@ -141,7 +154,7 @@ export function CapturaBdo() {
 
       {etapa === "conferencia" && bdo && (
         <form onSubmit={confirmar}>
-          <Alerta tipo="info">Confira os campos lidos automaticamente e corrija o que estiver errado. Nada é salvo sem a sua confirmação.</Alerta>
+          <Alerta tipo="info">Confira os campos lidos automaticamente e corrija o que estiver errado. O BDO só fica disponível para entrega depois que você confirmar.</Alerta>
 
           <div className="cartao formulario">
             <CampoTexto label="Número do BDO" valor={campos.numero} aoAlterar={(v) => atualizarCampo("numero", v)} obrigatorio />
@@ -160,12 +173,15 @@ export function CapturaBdo() {
             <button type="submit" className="grande bloco">
               <Icone nome="check" /> Confirmar BDO
             </button>
+            <button type="button" className="secundario bloco mt-2" onClick={descartarEFotografarDeNovo}>
+              <Icone nome="camera" /> Descartar e fotografar de novo
+            </button>
           </div>
         </form>
       )}
 
       <Ajuda>
-        <p>Fotografe o documento do BDO. O sistema lê os campos, e você confere e corrige tudo antes de confirmar. Nada é salvo sem a sua conferência.</p>
+        <p>Fotografe o documento do BDO. O sistema lê os campos, e você confere e corrige tudo antes de confirmar. O BDO só fica disponível para entrega depois da sua confirmação; se a foto ficou ruim, use “Descartar e fotografar de novo”.</p>
       </Ajuda>
     </TelaMotorista>
   );
