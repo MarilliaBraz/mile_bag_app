@@ -73,6 +73,7 @@ export function DetalheFechamento() {
                           </td>
                           <td title={item.entregaId}>
                             <span className="codigo">{item.entregaId.slice(0, 8)}</span>
+                            {item.tentativaSemSucesso && <div className="texto-apoio">Tentativa sem sucesso</div>}
                           </td>
                           <td className="numero">{formatarMoeda(item.valorPagamentoEntrega)}</td>
                           <td className="numero">{formatarMoeda(item.valorReembolsoPedagio)}</td>

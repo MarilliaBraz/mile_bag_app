@@ -22,3 +22,19 @@ export function hojeIso(): string {
 export function mensagemDeErro(excecao: unknown, padrao: string): string {
   return excecao instanceof Error && excecao.message ? excecao.message : padrao;
 }
+
+/** Espelha com.marillia.milebag.business.entrega.model.JanelaReagendamento (mile_bag_api) - instantes ISO. */
+export type JanelaReagendamento = { inicio: string; fim: string };
+
+const DIA = new Intl.DateTimeFormat("pt-BR", { weekday: "short", day: "2-digit", month: "2-digit" });
+const HORA = new Intl.DateTimeFormat("pt-BR", { hour: "2-digit", minute: "2-digit" });
+
+/** "qui., 23/10, 14:00 às 16:00" - no fuso do aparelho, que é o do motorista em campo. */
+export function formatarJanela(janela: JanelaReagendamento): string {
+  const inicio = new Date(janela.inicio);
+  const fim = new Date(janela.fim);
+  const mesmoDia = inicio.toDateString() === fim.toDateString();
+  return mesmoDia
+    ? `${DIA.format(inicio)}, ${HORA.format(inicio)} às ${HORA.format(fim)}`
+    : `${DIA.format(inicio)} ${HORA.format(inicio)} até ${DIA.format(fim)} ${HORA.format(fim)}`;
+}

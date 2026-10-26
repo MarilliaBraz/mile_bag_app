@@ -14,6 +14,8 @@ export type ItemRelatorio = {
   tarifaAplicada: number | null;
   valorPedagio: number | null;
   temAjuste: boolean;
+  /** Viagem de uma tentativa sem sucesso (ocorrência): paga a quem dirigiu, mesmo sem a entrega concluída. */
+  tentativaSemSucesso?: boolean;
 };
 
 /** Espelha com.marillia.milebag.business.viagem.model.RelatorioQuinzenalResponse. */

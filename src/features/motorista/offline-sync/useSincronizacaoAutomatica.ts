@@ -1,5 +1,6 @@
 import { liveQuery } from "dexie";
 import { useCallback, useEffect, useState } from "react";
+import { useIntervaloEmPrimeiroPlano } from "../../../shared/hooks/useIntervaloEmPrimeiroPlano";
 import { contarPendentes } from "./fila";
 import { sincronizar } from "./sincronizador";
 import { useConectividade } from "./useConectividade";
@@ -10,7 +11,8 @@ const INTERVALO_REFORCO_MS = 60_000;
  * Sincronização automática da fila local (HU08, FR-004) - dispara na
  * transição para online e, como reforço enquanto online, em intervalo
  * periódico (para os registros que o servidor recusou e continuam na fila).
- * O motorista nunca precisa acionar nada manualmente.
+ * O motorista nunca precisa acionar nada manualmente. O reforço só roda com o
+ * app visível (RNF11): em segundo plano não gasta bateria.
  *
  * <p>A contagem de pendentes é reativa ({@code liveQuery}): reflete um
  * registro enfileirado na hora, na mesma tela, sem depender de a tela ser
@@ -46,14 +48,7 @@ export function useSincronizacaoAutomatica(aoSincronizar?: () => void) {
     }
   }, [aoSincronizar]);
 
-  useEffect(() => {
-    if (!online) {
-      return;
-    }
-    sincronizarAgora();
-    const intervalo = setInterval(sincronizarAgora, INTERVALO_REFORCO_MS);
-    return () => clearInterval(intervalo);
-  }, [online, sincronizarAgora]);
+  useIntervaloEmPrimeiroPlano(sincronizarAgora, INTERVALO_REFORCO_MS, online);
 
   return { online, pendentes, sincronizarAgora };
 }
