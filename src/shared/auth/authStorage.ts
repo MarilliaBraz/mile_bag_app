@@ -18,17 +18,33 @@ export function limparToken(): void {
   localStorage.removeItem(CHAVE_TOKEN);
 }
 
-function lerClaims(): { papel?: string; tenantId?: string } | null {
+/** Disparado quando a API responde que a sessão expirou (ver httpClient); o app oferece entrar de novo. */
+export const EVENTO_SESSAO_EXPIRADA = "milebag:sessao-expirada";
+
+/** Para onde o login leva depois de entrar de novo, e se mostra o aviso de sessão expirada. */
+export type EstadoLogin = { sessaoExpirada?: boolean; voltarPara?: string };
+
+function lerClaims(): { papel?: string; tenantId?: string; exp?: number } | null {
   const token = obterToken();
   if (!token) {
     return null;
   }
   try {
     const carga = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-    return JSON.parse(atob(carga)) as { papel?: string; tenantId?: string };
+    return JSON.parse(atob(carga)) as { papel?: string; tenantId?: string; exp?: number };
   } catch {
     return null;
   }
+}
+
+/**
+ * Há um token guardado, mas ele já passou da validade (claim `exp`). A API
+ * recusaria qualquer chamada com ele; melhor ir direto para o login do que
+ * mostrar telas que só dão erro.
+ */
+export function tokenExpirado(): boolean {
+  const exp = lerClaims()?.exp;
+  return obterToken() !== null && exp !== undefined && exp * 1000 <= Date.now();
 }
 
 /**
