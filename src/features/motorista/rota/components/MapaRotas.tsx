@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { MapaBase } from "../../../../shared/mapa/MapaBase";
 import { Vazio } from "../../../../shared/ui/Alerta";
 import { Icone } from "../../../../shared/ui/Icone";
@@ -29,10 +30,15 @@ export function MapaRotas({
   calculo,
   alternativaSelecionada,
   aoSelecionar,
+  titulo = "Escolha a rota",
+  children,
 }: {
   calculo: CalculoRotas;
   alternativaSelecionada: string | null;
   aoSelecionar: (alternativa: RotaAlternativa) => void;
+  titulo?: string;
+  /** Texto de apoio logo abaixo do título (ex.: o que acontece ao trocar de rota durante a viagem). */
+  children?: ReactNode;
 }) {
   const indiceMaisRapida = calculo.alternativas.reduce(
     (melhor, alternativa, indice, todas) => (alternativa.duracaoSegundos < todas[melhor].duracaoSegundos ? indice : melhor),
@@ -50,7 +56,8 @@ export function MapaRotas({
         ]}
       />
 
-      <h2>Escolha a rota</h2>
+      <h2>{titulo}</h2>
+      {children}
       {calculo.motorRotasDisponivel === false ? (
         <Vazio icone="alerta" titulo="Serviço de rotas indisponível">
           Não foi possível calcular as rotas agora. Tente recalcular em alguns minutos ou trace uma rota própria.
