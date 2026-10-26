@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { useTextos } from "../i18n/idioma";
 
 const NOME_SISTEMA = "Milebag";
 
@@ -12,6 +13,7 @@ const NOME_SISTEMA = "Milebag";
 export function AcessibilidadeDeRota() {
   const { pathname } = useLocation();
   const primeira = useRef(true);
+  const t = useTextos();
 
   useEffect(() => {
     const atualizarTitulo = () => {
@@ -47,7 +49,7 @@ export function AcessibilidadeDeRota() {
 
   return (
     <a href="#principal" className="pular-conteudo">
-      Pular para o conteúdo
+      {t.comum.pularConteudo}
     </a>
   );
 }

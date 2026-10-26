@@ -5,6 +5,7 @@ import icone from "leaflet/dist/images/marker-icon.png";
 import { Icon, latLngBounds } from "leaflet";
 import { useState, type ReactNode } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { useTextos } from "../i18n/idioma";
 
 /** Coordenada geográfica (WGS84); espelha com.marillia.milebag.core.geo.Coordenada. */
 export type Coordenada = {
@@ -42,7 +43,7 @@ export function MapaBase({
   marcadores = [],
   zoom = 13,
   altura = 280,
-  descricao = "Mapa",
+  descricao,
   children,
 }: {
   centro: Coordenada;
@@ -53,12 +54,13 @@ export function MapaBase({
   descricao?: string;
   children?: ReactNode;
 }) {
+  const t = useTextos();
   const [enquadramento] = useState(() =>
     marcadores.length >= 2 ? latLngBounds(marcadores.map((m) => [m.posicao.latitude, m.posicao.longitude])) : undefined,
   );
 
   return (
-    <div role="region" aria-label={descricao} className="mapa">
+    <div role="region" aria-label={descricao ?? t.comum.mapa} className="mapa">
       <MapContainer
         center={enquadramento ? undefined : [centro.latitude, centro.longitude]}
         zoom={enquadramento ? undefined : zoom}

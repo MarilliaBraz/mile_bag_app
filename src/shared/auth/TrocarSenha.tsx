@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { requisitar } from "../api/httpClient";
 import { mensagemDeErro } from "../format/formatar";
+import { useTextos } from "../i18n/idioma";
 import { Alerta } from "../ui/Alerta";
 import { definirToken, obterPapel, rotaInicialDo } from "./authStorage";
 
@@ -12,6 +13,7 @@ const TAMANHO_MINIMO_SENHA = 8;
  * outras sessões da conta caem) e a tela o guarda para quem trocou continuar logado.
  */
 export function TrocarSenha() {
+  const t = useTextos();
   const [atual, setAtual] = useState("");
   const [nova, setNova] = useState("");
   const [confirmacao, setConfirmacao] = useState("");
@@ -36,7 +38,7 @@ export function TrocarSenha() {
       setConfirmacao("");
       setTrocada(true);
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível trocar a senha."));
+      setErro(mensagemDeErro(excecao, t.senha.trocar.falha));
     } finally {
       setEnviando(false);
     }
@@ -45,21 +47,21 @@ export function TrocarSenha() {
   return (
     <div className="tela-entrada">
       <main>
-        <Link to={rotaInicialDo(obterPapel())}>← Voltar</Link>
-        <h1>Minha senha</h1>
-        {trocada && <Alerta tipo="sucesso">Senha alterada. As outras sessões desta conta foram encerradas.</Alerta>}
+        <Link to={rotaInicialDo(obterPapel())}>← {t.comum.voltar}</Link>
+        <h1>{t.senha.trocar.titulo}</h1>
+        {trocada && <Alerta tipo="sucesso">{t.senha.trocar.alterada}</Alerta>}
         <form onSubmit={enviar} className="cartao formulario">
           {erro && <Alerta tipo="erro">{erro}</Alerta>}
           <div>
-            <label htmlFor="atual">Senha atual</label>
+            <label htmlFor="atual">{t.senha.trocar.atual}</label>
             <input id="atual" type="password" autoComplete="current-password" value={atual} onChange={(e) => setAtual(e.target.value)} />
           </div>
           <div>
-            <label htmlFor="nova">Senha nova (mínimo {TAMANHO_MINIMO_SENHA} caracteres)</label>
+            <label htmlFor="nova">{t.senha.minimo(t.senha.trocar.senhaNova, TAMANHO_MINIMO_SENHA)}</label>
             <input id="nova" type="password" autoComplete="new-password" value={nova} onChange={(e) => setNova(e.target.value)} />
           </div>
           <div>
-            <label htmlFor="confirmacao">Repita a senha nova</label>
+            <label htmlFor="confirmacao">{t.senha.trocar.repita}</label>
             <input
               id="confirmacao"
               type="password"
@@ -71,13 +73,13 @@ export function TrocarSenha() {
             />
             {confirmacao && nova !== confirmacao && (
               <span id="confirmacao-erro" role="alert" className="texto-erro">
-                As senhas não conferem.
+                {t.senha.naoConferem}
               </span>
             )}
           </div>
           <div>
             <button type="submit" className="grande bloco" disabled={invalido || enviando}>
-              {enviando ? "Salvando…" : "Trocar senha"}
+              {enviando ? t.comum.salvando : t.senha.trocar.trocar}
             </button>
           </div>
         </form>

@@ -4,17 +4,6 @@ export type MotivoFalhaPosicao = "NAO_SUPORTADA" | "CONTEXTO_INSEGURO" | "NEGADA
 
 export type ResultadoPosicao = { posicao: Coordenada; motivo: null } | { posicao: null; motivo: MotivoFalhaPosicao };
 
-/** Instrução para o motorista de acordo com o motivo da falha (heurística 9: diz o que fazer, não só que falhou). */
-export const ORIENTACAO_FALHA_POSICAO: Record<MotivoFalhaPosicao, string> = {
-  NAO_SUPORTADA: "Este navegador não oferece localização. Use o Chrome, Edge ou Safari atualizado.",
-  CONTEXTO_INSEGURO: "A localização só funciona em conexão segura (https) ou em localhost. Abra o sistema pelo endereço https.",
-  NEGADA:
-    "O acesso à localização está bloqueado para este site. Clique no ícone de cadeado ao lado do endereço, escolha Localização, marque Permitir e toque em “Tentar novamente”.",
-  INDISPONIVEL:
-    "Não foi possível determinar a posição. Confira se a localização do aparelho está ligada (no Windows: Configurações > Privacidade e segurança > Localização) e toque em “Tentar novamente”.",
-  TEMPO_ESGOTADO: "A localização demorou demais para responder. Vá para um local aberto, se possível, e toque em “Tentar novamente”.",
-};
-
 function pedirPosicao(opcoes: PositionOptions, tempoLimiteMs: number): Promise<ResultadoPosicao> {
   return new Promise((resolver) => {
     // A opção `timeout` do navegador só conta depois da resposta ao prompt de

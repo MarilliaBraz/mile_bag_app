@@ -16,6 +16,9 @@ export const IDIOMAS: Idioma[] = ["pt-BR", "es", "en"];
 
 const TEXTOS: Record<Idioma, Textos> = { "pt-BR": pt, es, en };
 
+/** Item de menu: guarda a chave do texto, e o rótulo sai no idioma da vez. */
+export type ChaveMenu = Exclude<keyof Textos["menu"], "atalho">;
+
 const CHAVE_IDIOMA = "milebag_idioma";
 const EVENTO = "milebag:idioma";
 
@@ -59,6 +62,16 @@ export function escolherIdioma(idioma: Idioma) {
 export function aplicarIdiomaSalvo() {
   atual = lerIdioma();
   aplicar(atual);
+}
+
+/** Textos no idioma atual, para código fora dos componentes (serviços, mensagens de erro). */
+export function obterTextos(): Textos {
+  return TEXTOS[atual];
+}
+
+/** Localidade do Intl (datas, números e moeda) que acompanha o idioma: inglês segue o formato americano. */
+export function localeAtual(): string {
+  return atual === "en" ? "en-US" : atual;
 }
 
 export function useIdioma(): Idioma {

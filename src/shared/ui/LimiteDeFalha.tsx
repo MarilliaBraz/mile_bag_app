@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { registrarFalha } from "../diagnostico/registroFalhas";
+import { obterTextos } from "../i18n/idioma";
 import { Icone } from "./Icone";
 
 type Estado = { falhou: boolean };
@@ -25,17 +26,19 @@ export class LimiteDeFalha extends Component<{ children: ReactNode }, Estado> {
     if (!this.state.falhou) {
       return this.props.children;
     }
+    // Componente de classe não usa hooks; o App redesenha tudo quando o idioma muda.
+    const t = obterTextos().falhaTela;
     const areaAdministrativa = /^\/(admin|plataforma)/.test(window.location.pathname);
     return (
       <main className="tela-falha" role="alert">
         <Icone nome="alerta" />
-        <h1>Algo deu errado nesta tela</h1>
-        <p>O que você já registrou continua salvo neste aparelho. Tente de novo ou volte para o início.</p>
+        <h1>{t.titulo}</h1>
+        <p>{t.texto}</p>
         <button type="button" className="grande bloco" onClick={() => this.setState({ falhou: false })}>
-          <Icone nome="sincronizar" /> Tentar de novo
+          <Icone nome="sincronizar" /> {t.tentarDeNovo}
         </button>
         <a className="botao secundario bloco mt-3" href={areaAdministrativa ? "/admin" : "/motorista"}>
-          Voltar ao início
+          {t.voltarInicio}
         </a>
       </main>
     );

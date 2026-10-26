@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef } from "react";
+import { useTextos } from "../i18n/idioma";
 
 type Props = {
   aberto: boolean;
@@ -15,6 +16,7 @@ type Props = {
 export function ConfirmarAcao({ aberto, titulo, descricao, rotuloConfirmar, perigo, ocupado, aoConfirmar, aoCancelar }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const uid = useId();
+  const t = useTextos().comum;
 
   useEffect(() => {
     const dialogo = ref.current;
@@ -36,10 +38,10 @@ export function ConfirmarAcao({ aberto, titulo, descricao, rotuloConfirmar, peri
       <p id={`${uid}-descricao`}>{descricao}</p>
       <div className="acoes">
         <button type="button" className="secundario" onClick={aoCancelar} autoFocus>
-          Cancelar
+          {t.cancelar}
         </button>
         <button type="button" className={perigo ? "perigo" : undefined} onClick={aoConfirmar} disabled={ocupado}>
-          {ocupado ? "Aguarde…" : rotuloConfirmar}
+          {ocupado ? t.aguarde : rotuloConfirmar}
         </button>
       </div>
     </dialog>

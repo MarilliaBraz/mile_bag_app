@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { requisitar } from "../api/httpClient";
 import { mensagemDeErro } from "../format/formatar";
+import { useTextos } from "../i18n/idioma";
 import { Alerta } from "../ui/Alerta";
 
 /**
@@ -10,6 +11,7 @@ import { Alerta } from "../ui/Alerta";
  * o aviso manda pedir ao administrador.
  */
 export function EsqueciSenha() {
+  const t = useTextos();
   const [login, setLogin] = useState("");
   const [enviado, setEnviado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -23,7 +25,7 @@ export function EsqueciSenha() {
       await requisitar<void>("/api/v1/auth/esqueci-senha", { metodo: "POST", corpo: { login: login.trim() } });
       setEnviado(true);
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível enviar o pedido. Tente de novo."));
+      setErro(mensagemDeErro(excecao, t.senha.esqueci.falha));
     } finally {
       setEnviando(false);
     }
@@ -32,28 +34,25 @@ export function EsqueciSenha() {
   return (
     <div className="tela-entrada">
       <main>
-        <h1>Esqueci minha senha</h1>
+        <h1>{t.senha.esqueci.titulo}</h1>
         {enviado ? (
-          <p role="status">
-            Se existir uma conta com esse e-mail, enviamos um link para escolher uma senha nova. Ele vale por 1 hora e só pode ser usado uma
-            vez. Se o seu login não é um e-mail, peça ao administrador da sua empresa para redefinir a senha.
-          </p>
+          <p role="status">{t.senha.esqueci.enviado}</p>
         ) : (
           <form onSubmit={enviar} className="cartao formulario">
             {erro && <Alerta tipo="erro">{erro}</Alerta>}
             <div>
-              <label htmlFor="login">E-mail de login</label>
+              <label htmlFor="login">{t.senha.esqueci.emailLogin}</label>
               <input id="login" type="email" autoComplete="username" value={login} onChange={(e) => setLogin(e.target.value)} autoFocus />
             </div>
             <div>
               <button type="submit" className="grande bloco" disabled={!login.includes("@") || enviando}>
-                {enviando ? "Enviando…" : "Enviar link"}
+                {enviando ? t.comum.enviando : t.senha.esqueci.enviarLink}
               </button>
             </div>
           </form>
         )}
         <p>
-          <Link to="/login">← Voltar ao login</Link>
+          <Link to="/login">{t.senha.esqueci.voltarLogin}</Link>
         </p>
       </main>
     </div>

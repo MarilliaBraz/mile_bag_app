@@ -32,10 +32,13 @@ import { RedefinirSenha } from "./shared/auth/RedefinirSenha";
 import { TrocarSenha } from "./shared/auth/TrocarSenha";
 import { AvisoSessaoExpirada } from "./shared/auth/AvisoSessaoExpirada";
 import { RequireAuth } from "./shared/auth/RequireAuth";
+import { useTextos } from "./shared/i18n/idioma";
 
 export function App() {
   // RNF11: uma falha numa tela não derruba o app; mudar de rota sai do estado de falha.
   const { pathname } = useLocation();
+  // Acompanhar o idioma aqui redesenha o app inteiro na troca, inclusive datas e números formatados fora dos componentes.
+  const t = useTextos();
   return (
     <>
       <AcessibilidadeDeRota />
@@ -141,7 +144,7 @@ export function App() {
             path="/admin"
             element={
               <RequireAuth papeis={["ADMINISTRADOR_TENANT"]}>
-                <AdminLayout titulo="Administração" itens={ITENS_TENANT} aviso={<AvisoEmergenciasAbertas />} />
+                <AdminLayout titulo={t.menu.administracao} itens={ITENS_TENANT} aviso={<AvisoEmergenciasAbertas />} />
               </RequireAuth>
             }
           >
@@ -159,7 +162,7 @@ export function App() {
             path="/plataforma"
             element={
               <RequireAuth papeis={["ADMINISTRADOR_PLATAFORMA"]}>
-                <AdminLayout titulo="Plataforma" itens={ITENS_PLATAFORMA} />
+                <AdminLayout titulo={t.menu.plataforma} itens={ITENS_PLATAFORMA} />
               </RequireAuth>
             }
           >

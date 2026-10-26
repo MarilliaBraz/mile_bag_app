@@ -2,7 +2,8 @@ import { Icone } from "../../../shared/ui/Icone";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "../../../shared/api/ApiError";
-import { obterPosicaoDetalhada, ORIENTACAO_FALHA_POSICAO, type MotivoFalhaPosicao } from "../../../shared/geo/posicaoAtual";
+import { obterPosicaoDetalhada, type MotivoFalhaPosicao } from "../../../shared/geo/posicaoAtual";
+import { obterTextos } from "../../../shared/i18n/idioma";
 import type { Coordenada } from "../../../shared/mapa/MapaBase";
 import { arquivoParaBase64, executarOuEnfileirar } from "../offline-sync/fila";
 import { TelaMotorista } from "../layout/TelaMotorista";
@@ -194,7 +195,7 @@ export function RegistrarComprovante() {
             <p>
               <strong>Não foi possível capturar a localização</strong>, e ela é obrigatória no comprovante.
             </p>
-            {motivoFalhaPosicao && <p>{ORIENTACAO_FALHA_POSICAO[motivoFalhaPosicao]}</p>}
+            {motivoFalhaPosicao && <p>{obterTextos().posicao[motivoFalhaPosicao]}</p>}
             <button type="button" className="secundario" onClick={capturarPosicao}>
               <Icone nome="pino" /> Tentar novamente
             </button>

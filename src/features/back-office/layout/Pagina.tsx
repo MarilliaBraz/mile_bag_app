@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { Icone } from "../../../shared/ui/Icone";
 
 /**
@@ -12,7 +13,7 @@ export function Pagina({
   descricao,
   acoes,
   voltarPara,
-  rotuloVoltar = "Voltar",
+  rotuloVoltar,
   children,
 }: {
   titulo: ReactNode;
@@ -22,11 +23,12 @@ export function Pagina({
   rotuloVoltar?: string;
   children: ReactNode;
 }) {
+  const t = useTextos();
   return (
     <main className="pagina">
       {voltarPara && (
         <Link to={voltarPara} className="pagina-voltar">
-          <Icone nome="voltar" /> {rotuloVoltar}
+          <Icone nome="voltar" /> {rotuloVoltar ?? t.comum.voltar}
         </Link>
       )}
       <header className="pagina-cabecalho">
@@ -115,6 +117,7 @@ export function Gaveta({
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const id = useId();
+  const t = useTextos();
 
   useEffect(() => {
     const dialogo = ref.current;
@@ -150,7 +153,7 @@ export function Gaveta({
             <h2 id={`${id}-titulo`}>{titulo}</h2>
             {descricao && <p className="texto-apoio">{descricao}</p>}
           </div>
-          <button type="button" className="botao-icone" onClick={aoFechar} aria-label="Fechar">
+          <button type="button" className="botao-icone" onClick={aoFechar} aria-label={t.comum.fechar}>
             <Icone nome="fechar" />
           </button>
         </div>

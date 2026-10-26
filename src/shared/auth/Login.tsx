@@ -93,7 +93,7 @@ export function Login() {
             </Alerta>
           )}
           <div>
-            <label htmlFor="login">{t.login}</label>
+            <label htmlFor="login">{t.rotuloLogin}</label>
             <input
               id="login"
               aria-invalid={!!erro}
@@ -108,7 +108,7 @@ export function Login() {
             />
           </div>
           <div>
-            <label htmlFor="senha">{t.senha}</label>
+            <label htmlFor="senha">{t.rotuloSenha}</label>
             <div className="campo-senha">
               <input
                 id="senha"

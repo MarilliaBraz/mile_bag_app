@@ -1,16 +1,17 @@
 import type { ReactNode } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { useTextos, type ChaveMenu } from "../../../shared/i18n/idioma";
 import { Icone, type NomeIcone } from "../../../shared/ui/Icone";
 import { IndicadorSincronizacao, StatusConexao } from "../offline-sync/IndicadorSincronizacao";
 import { useSincronizacaoAutomatica } from "../offline-sync/useSincronizacaoAutomatica";
 
-type ItemNavegacao = { para: string; rotulo: string; icone: NomeIcone; destaque?: boolean; fim?: boolean };
+type ItemNavegacao = { para: string; rotulo: ChaveMenu; icone: NomeIcone; destaque?: boolean; fim?: boolean };
 
 const ITENS: ItemNavegacao[] = [
-  { para: "/motorista", rotulo: "Entregas", icone: "casa", fim: true },
-  { para: "/motorista/captura-bdo", rotulo: "Capturar", icone: "camera", destaque: true },
-  { para: "/motorista/relatorio", rotulo: "Relatório", icone: "documento" },
-  { para: "/motorista/conta", rotulo: "Conta", icone: "usuario" },
+  { para: "/motorista", rotulo: "entregas", icone: "casa", fim: true },
+  { para: "/motorista/captura-bdo", rotulo: "capturar", icone: "camera", destaque: true },
+  { para: "/motorista/relatorio", rotulo: "relatorio", icone: "documento" },
+  { para: "/motorista/conta", rotulo: "conta", icone: "usuario" },
 ];
 
 /**
@@ -18,14 +19,15 @@ const ITENS: ItemNavegacao[] = [
  * alcance do polegar, como nos apps de corrida que ele já usa.
  */
 function NavegacaoMotorista() {
+  const t = useTextos().menu;
   return (
-    <nav className="nav-inferior nao-imprimir" aria-label="Menu do motorista">
+    <nav className="nav-inferior nao-imprimir" aria-label={t.menuMotorista}>
       {ITENS.map((item) => (
         <NavLink key={item.para} to={item.para} end={item.fim} viewTransition className={item.destaque ? "nav-destaque" : undefined}>
           <span className="nav-icone">
             <Icone nome={item.icone} />
           </span>
-          {item.rotulo}
+          {t[item.rotulo]}
         </NavLink>
       ))}
     </nav>
@@ -41,7 +43,7 @@ function NavegacaoMotorista() {
 export function TelaMotorista({
   titulo,
   voltarPara,
-  rotuloVoltar = "Voltar",
+  rotuloVoltar,
   navegacao = false,
   aoSincronizar,
   acoesTopo,
@@ -56,13 +58,15 @@ export function TelaMotorista({
   children: ReactNode;
 }) {
   const { online, pendentes } = useSincronizacaoAutomatica(aoSincronizar);
+  const t = useTextos();
+  const voltar = rotuloVoltar ?? t.comum.voltar;
 
   return (
     <div className="app-motorista">
       <main className={`tela${navegacao ? " com-nav" : ""}`}>
         <header className="barra-topo">
           {voltarPara && (
-            <Link to={voltarPara} viewTransition className="botao-icone nao-imprimir" aria-label={rotuloVoltar} title={rotuloVoltar}>
+            <Link to={voltarPara} viewTransition className="botao-icone nao-imprimir" aria-label={voltar} title={voltar}>
               <Icone nome="voltar" />
             </Link>
           )}
@@ -70,7 +74,12 @@ export function TelaMotorista({
           {acoesTopo}
           <StatusConexao online={online} pendentes={pendentes} />
           {/* HU30/RI18: emergência ao alcance em toda tela (abrir + confirmar = dois toques). */}
-          <Link to="/motorista/emergencia" className="botao-icone botao-emergencia nao-imprimir" aria-label="Emergência" title="Emergência">
+          <Link
+            to="/motorista/emergencia"
+            className="botao-icone botao-emergencia nao-imprimir"
+            aria-label={t.menu.emergencia}
+            title={t.menu.emergencia}
+          >
             <Icone nome="alerta" />
           </Link>
         </header>
