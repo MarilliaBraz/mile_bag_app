@@ -1,8 +1,8 @@
 import { Ajuda } from "../../../../shared/ui/Ajuda";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { arquivoParaBase64, enfileirar } from "../../offline-sync/fila";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Alerta, Carregando } from "../../../../shared/ui/Alerta";
 import { AvisoContatoIncompleto } from "../../../../shared/ui/AvisoContatoIncompleto";
 import { Icone } from "../../../../shared/ui/Icone";
@@ -12,6 +12,9 @@ import { capturarBdo, confirmarConferencia, descartarCaptura } from "../services
 import type { BdoResponse, CamposExtraidosBdo } from "../types";
 
 type Etapa = "captura" | "conferencia" | "enviando" | "concluido" | "enfileirado";
+
+/** Vindo do painel ("Fotos de BDO para conferir"): abre direto a conferência de uma captura já enviada. */
+export type EstadoCapturaBdo = { bdoParaConferir?: BdoResponse };
 
 const CAMPO_VAZIO: CamposExtraidosBdo = {
   numero: "",
@@ -34,10 +37,20 @@ const CAMPO_VAZIO: CamposExtraidosBdo = {
  * descartar ou tirar outra foto, a captura anterior é apagada.</p>
  */
 export function CapturaBdo() {
-  const [etapa, setEtapa] = useState<Etapa>("captura");
-  const [bdo, setBdo] = useState<BdoResponse | null>(null);
-  const [campos, setCampos] = useState<CamposExtraidosBdo>(CAMPO_VAZIO);
+  const localizacao = useLocation();
+  const navegar = useNavigate();
+  const [paraConferir] = useState(() => (localizacao.state as EstadoCapturaBdo | null)?.bdoParaConferir ?? null);
+  const [etapa, setEtapa] = useState<Etapa>(paraConferir ? "conferencia" : "captura");
+  const [bdo, setBdo] = useState<BdoResponse | null>(paraConferir);
+  const [campos, setCampos] = useState<CamposExtraidosBdo>({ ...CAMPO_VAZIO, ...paraConferir?.camposExtraidos });
   const [erro, setErro] = useState<string | null>(null);
+
+  // A captura já foi copiada para o estado: limpa a da navegação para recarregar a página não reabrir uma conferência já concluída.
+  useEffect(() => {
+    if (localizacao.state) {
+      navegar(localizacao.pathname, { replace: true, state: null });
+    }
+  }, [localizacao, navegar]);
 
   async function aoSelecionarFoto(evento: React.ChangeEvent<HTMLInputElement>) {
     const arquivo = evento.target.files?.[0];
@@ -124,8 +137,8 @@ export function CapturaBdo() {
     return (
       <TelaMotorista titulo="Foto salva no aparelho" navegacao>
         <Alerta tipo="aviso">
-          Sem conexão agora: a foto do BDO foi salva e será enviada automaticamente quando houver rede. A conferência dos campos ficará
-          disponível depois que o servidor processar a imagem.
+          Sem conexão agora: a foto do BDO foi salva e será enviada automaticamente quando houver rede. Depois do envio, ela aparece em
+          “Fotos de BDO para conferir”, no painel de entregas, para você conferir os campos e confirmar.
         </Alerta>
         <button type="button" className="grande bloco" onClick={() => setEtapa("captura")}>
           <Icone nome="camera" /> Capturar outro BDO
