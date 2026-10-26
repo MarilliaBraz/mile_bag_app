@@ -1,3 +1,4 @@
+import { obterTextos, useTextos } from "../../../../shared/i18n/idioma";
 import { Ajuda } from "../../../../shared/ui/Ajuda";
 import { useEffect, useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
@@ -44,6 +45,7 @@ export function CapturaBdo() {
   const [bdo, setBdo] = useState<BdoResponse | null>(paraConferir);
   const [campos, setCampos] = useState<CamposExtraidosBdo>({ ...CAMPO_VAZIO, ...paraConferir?.camposExtraidos });
   const [erro, setErro] = useState<string | null>(null);
+  const t = useTextos().motorista.captura;
 
   // A captura já foi copiada para o estado: limpa a da navegação para recarregar a página não reabrir uma conferência já concluída.
   useEffect(() => {
@@ -115,18 +117,18 @@ export function CapturaBdo() {
 
   if (etapa === "concluido") {
     return (
-      <TelaMotorista titulo="BDO confirmado" navegacao>
+      <TelaMotorista titulo={t.bdoConfirmado} navegacao>
         <div className="vazio" role="status">
           <Icone nome="checkCirculo" />
-          <strong>BDO {campos.numero} confirmado</strong>
-          <span>Ele já está disponível para ser assumido no painel de entregas.</span>
+          <strong>{t.bdoNumeroConfirmado(campos.numero ?? "")}</strong>
+          <span>{t.disponivelPainel}</span>
         </div>
         <div className="pilha mt-4">
           <Link to="/motorista" className="botao grande bloco">
-            Ir para minhas entregas
+            {t.irParaEntregas}
           </Link>
           <button type="button" className="secundario grande bloco" onClick={recomecar}>
-            <Icone nome="camera" /> Capturar outro BDO
+            <Icone nome="camera" /> {t.capturarOutro}
           </button>
         </div>
       </TelaMotorista>
@@ -135,29 +137,26 @@ export function CapturaBdo() {
 
   if (etapa === "enfileirado") {
     return (
-      <TelaMotorista titulo="Foto salva no aparelho" navegacao>
-        <Alerta tipo="aviso">
-          Sem conexão agora: a foto do BDO foi salva e será enviada automaticamente quando houver rede. Depois do envio, ela aparece em
-          “Fotos de BDO para conferir”, no painel de entregas, para você conferir os campos e confirmar.
-        </Alerta>
+      <TelaMotorista titulo={t.fotoSalva} navegacao>
+        <Alerta tipo="aviso">{t.fotoNaFila}</Alerta>
         <button type="button" className="grande bloco" onClick={() => setEtapa("captura")}>
-          <Icone nome="camera" /> Capturar outro BDO
+          <Icone nome="camera" /> {t.capturarOutro}
         </button>
       </TelaMotorista>
     );
   }
 
   return (
-    <TelaMotorista titulo={etapa === "conferencia" ? "Conferir dados do BDO" : "Capturar BDO"} navegacao>
+    <TelaMotorista titulo={etapa === "conferencia" ? t.conferirDados : t.capturarBdo} navegacao>
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
 
       {etapa === "captura" && (
         <>
-          <p className="texto-apoio">Fotografe o documento do BDO. O sistema lê os campos, e você confere tudo antes de confirmar.</p>
+          <p className="texto-apoio">{t.instrucao}</p>
           <label className="seletor-foto" style={{ padding: "3rem 1rem" }}>
             <Icone nome="camera" />
-            <strong>Fotografar BDO</strong>
-            <span>Documento inteiro, bem iluminado e sem reflexo.</span>
+            <strong>{t.fotografar}</strong>
+            <span>{t.dicaFoto}</span>
             <input
               id="foto-bdo"
               className="visualmente-oculto"
@@ -170,44 +169,51 @@ export function CapturaBdo() {
         </>
       )}
 
-      {etapa === "enviando" && <Carregando texto="Lendo o documento…" />}
+      {etapa === "enviando" && <Carregando texto={t.lendo} />}
 
       {etapa === "conferencia" && bdo && (
         <form onSubmit={confirmar}>
-          <Alerta tipo="info">
-            Confira os campos lidos automaticamente e corrija o que estiver errado. O BDO só fica disponível para entrega depois que você
-            confirmar.
-          </Alerta>
+          <Alerta tipo="info">{t.confiraCampos}</Alerta>
 
           <div className="cartao formulario">
-            <CampoTexto label="Número do BDO" valor={campos.numero} aoAlterar={(v) => atualizarCampo("numero", v)} obrigatorio />
+            <CampoTexto id="numero" label={t.numero} valor={campos.numero} aoAlterar={(v) => atualizarCampo("numero", v)} obrigatorio />
             <CampoTexto
-              label="Nome do passageiro"
+              id="passageiro"
+              label={t.passageiro}
               valor={campos.passageiroNome}
               aoAlterar={(v) => atualizarCampo("passageiroNome", v)}
               obrigatorio
             />
             <CampoTexto
-              label="Endereço de entrega"
+              id="endereco"
+              label={t.endereco}
               valor={campos.enderecoEntrega}
               aoAlterar={(v) => atualizarCampo("enderecoEntrega", v)}
               obrigatorio
             />
-            <CampoTexto label="Companhia aérea" valor={campos.companhiaAerea} aoAlterar={(v) => atualizarCampo("companhiaAerea", v)} />
             <CampoTexto
-              label="Telefone do passageiro"
+              id="companhia"
+              label={t.companhia}
+              valor={campos.companhiaAerea}
+              aoAlterar={(v) => atualizarCampo("companhiaAerea", v)}
+            />
+            <CampoTexto
+              id="telefone"
+              label={t.telefone}
               tipo="tel"
               valor={campos.telefonePassageiro}
               aoAlterar={(v) => atualizarCampo("telefonePassageiro", v)}
             />
             <CampoTexto
-              label="E-mail do passageiro"
+              id="email"
+              label={t.email}
               tipo="email"
               valor={campos.emailPassageiro}
               aoAlterar={(v) => atualizarCampo("emailPassageiro", v)}
             />
             <CampoTexto
-              label="Etiqueta da bagagem"
+              id="etiqueta"
+              label={t.etiqueta}
               valor={campos.etiquetaBagagem}
               aoAlterar={(v) => atualizarCampo("etiquetaBagagem", v)}
             />
@@ -218,39 +224,38 @@ export function CapturaBdo() {
 
           <div className="acao-fixa">
             <button type="submit" className="grande bloco">
-              <Icone nome="check" /> Confirmar BDO
+              <Icone nome="check" /> {t.confirmar}
             </button>
             <button type="button" className="secundario bloco mt-2" onClick={descartarEFotografarDeNovo}>
-              <Icone nome="camera" /> Descartar e fotografar de novo
+              <Icone nome="camera" /> {t.descartar}
             </button>
           </div>
         </form>
       )}
 
       <Ajuda>
-        <p>
-          Fotografe o documento do BDO. O sistema lê os campos, e você confere e corrige tudo antes de confirmar. O BDO só fica disponível
-          para entrega depois da sua confirmação; se a foto ficou ruim, use “Descartar e fotografar de novo”.
-        </p>
+        <p>{t.ajuda}</p>
       </Ajuda>
     </TelaMotorista>
   );
 }
 
 function CampoTexto({
+  id: nome,
   label,
   valor,
   aoAlterar,
   obrigatorio = false,
   tipo = "text",
 }: {
+  id: string;
   label: string;
   valor: string | null;
   aoAlterar: (valor: string) => void;
   obrigatorio?: boolean;
   tipo?: "text" | "tel" | "email";
 }) {
-  const id = `campo-${label.toLowerCase().replace(/\W+/g, "-")}`;
+  const id = `campo-${nome}`;
   return (
     <div>
       <label htmlFor={id}>
@@ -277,5 +282,5 @@ function mensagemDeErro(excecao: unknown): string {
   if (excecao instanceof ApiError) {
     return excecao.message;
   }
-  return "Não foi possível concluir a operação. Tente novamente.";
+  return obterTextos().motorista.captura.falha;
 }

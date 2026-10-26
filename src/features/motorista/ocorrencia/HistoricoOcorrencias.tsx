@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { formatarJanela } from "../../../shared/format/formatar";
+import { formatarDataHora, formatarJanela } from "../../../shared/format/formatar";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { listarMotivos, listarOcorrencias, type OcorrenciaResponse } from "./ocorrenciaService";
 
 /**
@@ -14,6 +15,7 @@ import { listarMotivos, listarOcorrencias, type OcorrenciaResponse } from "./oco
 export function HistoricoOcorrencias({ entregaId }: { entregaId: string }) {
   const [ocorrencias, setOcorrencias] = useState<OcorrenciaResponse[]>([]);
   const [descricaoPorMotivo, setDescricaoPorMotivo] = useState<Record<string, string>>({});
+  const t = useTextos().motorista.ocorrencia;
 
   useEffect(() => {
     // Falha aqui não deve derrubar a tela de detalhe: o histórico é
@@ -32,17 +34,15 @@ export function HistoricoOcorrencias({ entregaId }: { entregaId: string }) {
 
   return (
     <section>
-      <h2>Tentativas anteriores ({ocorrencias.length})</h2>
+      <h2>{t.tentativasAnteriores(ocorrencias.length)}</h2>
       <ul className="linha-tempo cartao">
         {ocorrencias.map((ocorrencia) => (
           <li key={ocorrencia.id}>
-            <strong>{descricaoPorMotivo[ocorrencia.motivoOcorrenciaId] ?? "Motivo não disponível"}</strong>
-            <div className="texto-apoio">
-              {new Date(ocorrencia.dataHora).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
-            </div>
+            <strong>{descricaoPorMotivo[ocorrencia.motivoOcorrenciaId] ?? t.motivoIndisponivel}</strong>
+            <div className="texto-apoio">{formatarDataHora(ocorrencia.dataHora)}</div>
             {ocorrencia.janelaInicio && ocorrencia.janelaFim && (
               <div className="texto-apoio">
-                Reagendada para {formatarJanela({ inicio: ocorrencia.janelaInicio, fim: ocorrencia.janelaFim })}
+                {t.reagendadaPara(formatarJanela({ inicio: ocorrencia.janelaInicio, fim: ocorrencia.janelaFim }))}
               </div>
             )}
           </li>

@@ -1,6 +1,7 @@
 import { Icone } from "../../../../shared/ui/Icone";
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Alerta } from "../../../../shared/ui/Alerta";
 import { executarOuEnfileirar } from "../../offline-sync/fila";
 import { consultarBdosDisponiveis } from "../../painel-entregas/services/painelService";
@@ -32,6 +33,7 @@ export function VincularBagagemCarona({
   const [erro, setErro] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
   const [ocupado, setOcupado] = useState(false);
+  const t = useTextos().motorista;
 
   async function abrirCandidatos() {
     setErro(null);
@@ -40,7 +42,7 @@ export function VincularBagagemCarona({
       const resposta = await consultarBdosDisponiveis();
       setCandidatos(resposta.bdos);
     } catch (excecao) {
-      setErro(mensagem(excecao, "Não foi possível carregar os BDOs disponíveis."));
+      setErro(mensagem(excecao, t.bagagem.falhaCarregar));
     } finally {
       setOcupado(false);
     }
@@ -60,13 +62,13 @@ export function VincularBagagemCarona({
       });
       setCandidatos(null);
       if (enfileirado) {
-        setAviso("Vínculo salvo no aparelho e será enviado quando houver conexão.");
+        setAviso(t.bagagem.vinculoNaFila);
         return;
       }
-      setAviso("Bagagem carona vinculada.");
+      setAviso(t.bagagem.vinculada);
       aoAlterar();
     } catch (excecao) {
-      setErro(mensagem(excecao, "Não foi possível vincular esta bagagem carona."));
+      setErro(mensagem(excecao, t.bagagem.falhaVincular));
     } finally {
       setOcupado(false);
     }
@@ -78,10 +80,10 @@ export function VincularBagagemCarona({
     setOcupado(true);
     try {
       await desvincularBagagemCarona(entregaId, bagagemCaronaId);
-      setAviso("Vínculo removido.");
+      setAviso(t.bagagem.vinculoRemovido);
       aoAlterar();
     } catch (excecao) {
-      setErro(mensagem(excecao, "Não foi possível remover este vínculo."));
+      setErro(mensagem(excecao, t.bagagem.falhaRemover));
     } finally {
       setOcupado(false);
     }
@@ -90,7 +92,7 @@ export function VincularBagagemCarona({
   return (
     <section>
       <h2>
-        <Icone nome="mala" /> Bagagens carona
+        <Icone nome="mala" /> {t.bagagem.titulo}
       </h2>
 
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
@@ -98,21 +100,21 @@ export function VincularBagagemCarona({
 
       <div className="cartao">
         {bagagens.length === 0 ? (
-          <p className="texto-apoio">Nenhuma bagagem carona vinculada a esta entrega.</p>
+          <p className="texto-apoio">{t.bagagem.nenhuma}</p>
         ) : (
           <ul className="lista" style={{ gap: "0.5rem" }}>
             {bagagens.map((bagagem) => (
               <li key={bagagem.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem" }}>
-                <span className="codigo">{bagagem.etiquetaBagagem ?? "Sem etiqueta"}</span>
+                <span className="codigo">{bagagem.etiquetaBagagem ?? t.bagagem.semEtiqueta}</span>
                 {!encerrada && (
                   <button
                     type="button"
                     className="fantasma"
                     onClick={() => desvincular(bagagem.id)}
                     disabled={ocupado}
-                    aria-label={`Desvincular bagagem ${bagagem.etiquetaBagagem ?? "sem etiqueta"}`}
+                    aria-label={t.bagagem.desvincularRotulo(bagagem.etiquetaBagagem)}
                   >
-                    Desvincular
+                    {t.bagagem.desvincular}
                   </button>
                 )}
               </li>
@@ -124,23 +126,23 @@ export function VincularBagagemCarona({
             em vez de só falhar com 409 depois do toque. */}
         {!encerrada && candidatos === null && (
           <button type="button" className="secundario bloco mt-3" onClick={abrirCandidatos} disabled={ocupado}>
-            {ocupado ? "Carregando…" : "+ Levar outra bagagem junto"}
+            {ocupado ? t.bagagem.carregando : t.bagagem.levarOutra}
           </button>
         )}
 
         {candidatos !== null && (
           <div className="mt-3">
-            <h3>Escolha o BDO que vai junto</h3>
+            <h3>{t.bagagem.escolhaBdo}</h3>
             {candidatos.length === 0 ? (
-              <p className="texto-apoio">Nenhum BDO disponível para vincular no momento.</p>
+              <p className="texto-apoio">{t.bagagem.nenhumBdo}</p>
             ) : (
               <ul className="lista" style={{ gap: "0.5rem" }}>
                 {candidatos.map((bdo) => (
                   <li key={bdo.bdoId}>
                     <button type="button" onClick={() => vincular(bdo.bdoId)} disabled={ocupado} className="opcao">
                       <span>
-                        <span className="codigo">{bdo.bdoNumero ?? "BDO sem número"}</span>
-                        <span className="texto-apoio em-bloco">{bdo.endereco ?? "endereço não informado"}</span>
+                        <span className="codigo">{bdo.bdoNumero ?? t.geral.bdoSemNumero}</span>
+                        <span className="texto-apoio em-bloco">{bdo.endereco ?? t.bagagem.enderecoNaoInformado}</span>
                       </span>
                       <Icone nome="chevron" />
                     </button>
@@ -149,7 +151,7 @@ export function VincularBagagemCarona({
               </ul>
             )}
             <button type="button" className="fantasma bloco mt-2" onClick={() => setCandidatos(null)} disabled={ocupado}>
-              Cancelar
+              {t.bagagem.cancelar}
             </button>
           </div>
         )}

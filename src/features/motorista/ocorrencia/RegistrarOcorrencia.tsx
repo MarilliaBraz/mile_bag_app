@@ -7,6 +7,7 @@ import { Ajuda } from "../../../shared/ui/Ajuda";
 import { Alerta, Carregando } from "../../../shared/ui/Alerta";
 import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { formatarJanela } from "../../../shared/format/formatar";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { listarMotivosComOrigem, registrarOcorrencia, type MotivoOcorrencia } from "./ocorrenciaService";
 
 /** Junta data e hora digitadas (fuso do aparelho) num instante ISO; nulo enquanto falta algum dos dois. */
@@ -38,6 +39,8 @@ export function RegistrarOcorrencia() {
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
+  const textos = useTextos();
+  const t = textos.motorista.ocorrencia;
 
   useEffect(() => {
     listarMotivosComOrigem()
@@ -46,9 +49,10 @@ export function RegistrarOcorrencia() {
         setMotivosDoCache(resposta.doCache);
       })
       .catch((excecao) => {
-        setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível carregar os motivos de ocorrência.");
+        setErro(excecao instanceof ApiError ? excecao.message : t.falhaMotivos);
         setMotivos([]);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const exigeJanela = motivos?.find((motivo) => motivo.id === motivoOcorrenciaId)?.reagendamento === true;
@@ -58,9 +62,9 @@ export function RegistrarOcorrencia() {
   const erroJanela =
     janelaInicio && janelaFim
       ? new Date(janelaFim) <= new Date(janelaInicio)
-        ? "O horário de fim deve ser depois do horário de início."
+        ? t.fimAntesInicio
         : new Date(janelaFim) <= new Date()
-          ? "Essa faixa de horário já passou. Confira a data combinada."
+          ? t.jaPassou
           : null
       : null;
   const janelaPronta = !exigeJanela || (janelaInicio !== null && janelaFim !== null && erroJanela === null);
@@ -90,49 +94,34 @@ export function RegistrarOcorrencia() {
       );
       navegar("/motorista", {
         state: {
-          aviso: enfileirado
-            ? "Ocorrência salva neste aparelho. Ela será enviada assim que houver conexão."
-            : exigeJanela
-              ? "Reagendamento registrado. A entrega voltou para a lista de disponíveis com o horário combinado."
-              : "Ocorrência registrada. A entrega voltou para a lista de disponíveis, para nova tentativa.",
+          aviso: enfileirado ? t.naFila : exigeJanela ? t.reagendamentoRegistrado : t.registrada,
         },
       });
     } catch (excecao) {
       setConfirmando(false);
-      setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível registrar a ocorrência.");
+      setErro(excecao instanceof ApiError ? excecao.message : t.falha);
     } finally {
       setEnviando(false);
     }
   }
 
   return (
-    <TelaMotorista titulo="Não consegui entregar" voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar="Voltar para a entrega">
-      <p className="texto-apoio">
-        A entrega volta para a lista de disponíveis, para uma nova tentativa (sua ou de outro motorista), sem perder o histórico.
-      </p>
+    <TelaMotorista titulo={t.titulo} voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar={textos.motorista.geral.voltarEntrega}>
+      <p className="texto-apoio">{t.explicacao}</p>
 
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
 
-      {!motivos && <Carregando texto="Carregando motivos…" />}
+      {!motivos && <Carregando texto={t.carregandoMotivos} />}
 
-      {motivos && motivos.length === 0 && !erro && (
-        <Alerta tipo="aviso">
-          Nenhum motivo de ocorrência está configurado para a sua empresa. Fale com o administrador antes de continuar.
-        </Alerta>
-      )}
+      {motivos && motivos.length === 0 && !erro && <Alerta tipo="aviso">{t.semMotivos}</Alerta>}
 
       {motivos && motivos.length > 0 && (
         <>
-          {motivosDoCache && (
-            <Alerta tipo="aviso">
-              Sem conexão: usando a lista de motivos salva neste aparelho. Se o administrador mudou os motivos, o registro pode ser recusado
-              ao sincronizar.
-            </Alerta>
-          )}
+          {motivosDoCache && <Alerta tipo="aviso">{t.motivosDoCache}</Alerta>}
 
           <fieldset className="escolhas mt-5">
             <legend>
-              O que aconteceu?{" "}
+              {t.oQueAconteceu}{" "}
               <span className="campo-obrigatorio" aria-hidden="true">
                 *
               </span>
@@ -155,13 +144,13 @@ export function RegistrarOcorrencia() {
           {exigeJanela && (
             <fieldset className="cartao formulario mt-5">
               <legend>
-                Quando o passageiro pode receber?{" "}
+                {t.quandoPode}{" "}
                 <span className="campo-obrigatorio" aria-hidden="true">
                   *
                 </span>
               </legend>
               <div className="campo">
-                <label htmlFor="data-reagendada">Data combinada</label>
+                <label htmlFor="data-reagendada">{t.dataCombinada}</label>
                 {/* min: o calendário já não oferece dias passados (a validação abaixo continua cobrindo o horário). */}
                 <input
                   id="data-reagendada"
@@ -174,7 +163,7 @@ export function RegistrarOcorrencia() {
               </div>
               <div className="form-linha">
                 <div>
-                  <label htmlFor="hora-inicio">Das</label>
+                  <label htmlFor="hora-inicio">{t.das}</label>
                   <input
                     id="hora-inicio"
                     type="time"
@@ -184,23 +173,23 @@ export function RegistrarOcorrencia() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="hora-fim">Até</label>
+                  <label htmlFor="hora-fim">{t.ate}</label>
                   <input id="hora-fim" type="time" required value={horaFim} onChange={(evento) => setHoraFim(evento.target.value)} />
                 </div>
               </div>
               {erroJanela && <Alerta tipo="erro">{erroJanela}</Alerta>}
-              <p className="texto-apoio mb-0">O passageiro recebe a confirmação automaticamente, se houver contato cadastrado.</p>
+              <p className="texto-apoio mb-0">{t.passageiroConfirmacao}</p>
             </fieldset>
           )}
 
           <div className="mt-5">
-            <label htmlFor="descricao">Descrição adicional (opcional)</label>
+            <label htmlFor="descricao">{t.descricao}</label>
             <textarea
               id="descricao"
               rows={3}
               value={descricaoAdicional}
               onChange={(evento) => setDescricaoAdicional(evento.target.value)}
-              placeholder="Ex.: portaria fechada, ninguém atendeu o interfone"
+              placeholder={t.descricaoDica}
             />
           </div>
 
@@ -211,22 +200,20 @@ export function RegistrarOcorrencia() {
               onClick={() => setConfirmando(true)}
               disabled={!motivoOcorrenciaId || !janelaPronta || enviando}
             >
-              {enviando ? "Registrando…" : "Registrar ocorrência"}
+              {enviando ? t.registrando : t.registrar}
             </button>
-            {!motivoOcorrenciaId && <p className="texto-apoio centro mb-0">Escolha um motivo para continuar.</p>}
-            {motivoOcorrenciaId && !janelaPronta && !erroJanela && (
-              <p className="texto-apoio centro mb-0">Informe a data e a faixa de horário combinadas com o passageiro.</p>
-            )}
+            {!motivoOcorrenciaId && <p className="texto-apoio centro mb-0">{t.escolhaMotivo}</p>}
+            {motivoOcorrenciaId && !janelaPronta && !erroJanela && <p className="texto-apoio centro mb-0">{t.informeJanela}</p>}
           </div>
           <ConfirmarAcao
             aberto={confirmando}
-            titulo="Registrar ocorrência?"
+            titulo={t.confirmarTitulo}
             descricao={
               janelaInicio && janelaFim
-                ? `A entrega voltará para a lista de disponíveis reagendada para ${formatarJanela({ inicio: janelaInicio, fim: janelaFim })}, e o passageiro recebe a confirmação. Isso não pode ser desfeito por aqui.`
-                : "A entrega será marcada como não realizada e voltará para a lista de disponíveis. Isso não pode ser desfeito por aqui."
+                ? t.confirmarReagendada(formatarJanela({ inicio: janelaInicio, fim: janelaFim }))
+                : t.confirmarSemJanela
             }
-            rotuloConfirmar="Registrar ocorrência"
+            rotuloConfirmar={t.registrar}
             ocupado={enviando}
             aoConfirmar={enviar}
             aoCancelar={() => setConfirmando(false)}
@@ -235,11 +222,7 @@ export function RegistrarOcorrencia() {
       )}
 
       <Ajuda>
-        <p>
-          Use quando não for possível entregar a bagagem. Escolha o motivo e, se quiser, descreva o que aconteceu. Se você combinou outro
-          dia ou horário com o passageiro, escolha o motivo de reagendamento e informe a data e a faixa de horário. A entrega volta para a
-          lista de disponíveis para uma nova tentativa, sem perder o histórico.
-        </p>
+        <p>{t.ajuda}</p>
       </Ajuda>
     </TelaMotorista>
   );
