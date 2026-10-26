@@ -1,6 +1,7 @@
 import { Icone } from "../../../shared/ui/Icone";
 import { useId, useState } from "react";
 import { hojeIso, mensagemDeErro } from "../../../shared/format/formatar";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { Alerta } from "../../../shared/ui/Alerta";
 
 type Props = {
@@ -22,6 +23,8 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
   const [salvo, setSalvo] = useState(false);
+  const textos = useTextos().backOffice;
+  const t = textos.pedagios;
 
   const numero = Number(valor.trim().replace(",", "."));
   const lat = latitude.trim() === "" ? null : Number(latitude.trim().replace(",", "."));
@@ -57,7 +60,7 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
       setLongitude("");
       setSalvo(true);
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível salvar."));
+      setErro(mensagemDeErro(excecao, t.falhaSalvar));
     } finally {
       setSalvando(false);
     }
@@ -68,41 +71,33 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
       {pedirNome && (
         <div>
-          <label htmlFor={`${uid}-nomePraca`}>Nome da praça</label>
-          <input
-            id={`${uid}-nomePraca`}
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            placeholder="Ex.: Pedágio Rodovia dos Bandeirantes km 30"
-          />
+          <label htmlFor={`${uid}-nomePraca`}>{t.nomePraca}</label>
+          <input id={`${uid}-nomePraca`} value={nome} onChange={(e) => setNome(e.target.value)} placeholder={t.nomePracaExemplo} />
         </div>
       )}
       <div className="form-linha">
         <div>
-          <label htmlFor={`${uid}-valorPedagio`}>Valor por passagem (R$)</label>
+          <label htmlFor={`${uid}-valorPedagio`}>{t.valorPassagem}</label>
           <input
             id={`${uid}-valorPedagio`}
             inputMode="decimal"
-            placeholder="0,00"
+            placeholder={t.exemploValor}
             value={valor}
             onChange={(e) => setValor(e.target.value)}
           />
         </div>
         <div>
-          <label htmlFor={`${uid}-vigenciaPedagio`}>Vigente desde</label>
+          <label htmlFor={`${uid}-vigenciaPedagio`}>{t.vigenteDesde}</label>
           <input id={`${uid}-vigenciaPedagio`} type="date" value={vigenteDesde} onChange={(e) => setVigenteDesde(e.target.value)} />
         </div>
       </div>
       {pedirNome && (
         <fieldset style={{ border: "1px solid var(--borda-suave)", borderRadius: "var(--raio)", padding: "0.75rem 1rem 1rem", margin: 0 }}>
-          <legend style={{ fontWeight: 600, padding: "0 0.25rem" }}>Localização da praça (opcional)</legend>
-          <p className="texto-apoio mt-0">
-            Sem a localização, a praça não é detectada nas rotas e o reembolso do pedágio fica pendente. No Google Maps, clique com o botão
-            direito no local da praça e copie as coordenadas.
-          </p>
+          <legend style={{ fontWeight: 600, padding: "0 0.25rem" }}>{t.localizacaoOpcional}</legend>
+          <p className="texto-apoio mt-0">{t.localizacaoExplicacao}</p>
           <div className="form-linha">
             <div>
-              <label htmlFor={`${uid}-lat`}>Latitude</label>
+              <label htmlFor={`${uid}-lat`}>{t.latitude}</label>
               <input
                 id={`${uid}-lat`}
                 inputMode="decimal"
@@ -112,7 +107,7 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
               />
             </div>
             <div>
-              <label htmlFor={`${uid}-lon`}>Longitude</label>
+              <label htmlFor={`${uid}-lon`}>{t.longitude}</label>
               <input
                 id={`${uid}-lon`}
                 inputMode="decimal"
@@ -122,21 +117,21 @@ export function ValorPedagioForm({ pedirNome = false, rotuloAcao, aoSalvar, aoCa
               />
             </div>
           </div>
-          {localizacaoInvalida && <p className="texto-erro">Informe as duas coordenadas, dentro dos limites válidos.</p>}
+          {localizacaoInvalida && <p className="texto-erro">{t.coordenadasInvalidas}</p>}
         </fieldset>
       )}
       <div className="linha-acoes">
         <button type="submit" disabled={invalido || salvando}>
-          {salvando ? "Salvando…" : rotuloAcao}
+          {salvando ? textos.geral.salvando : rotuloAcao}
         </button>
         {salvo && !aoCancelar && (
           <span role="status" style={{ color: "var(--confirmacao)", alignSelf: "center" }}>
-            <Icone nome="checkCirculo" /> Valor salvo.
+            <Icone nome="checkCirculo" /> {t.valorSalvo}
           </span>
         )}
         {aoCancelar && (
           <button type="button" className="secundario" onClick={aoCancelar}>
-            Cancelar
+            {textos.geral.cancelar}
           </button>
         )}
       </div>

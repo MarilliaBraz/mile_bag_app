@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { formatarData, formatarMoeda, hojeIso, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { ConfirmarAcao } from "../../../shared/ui/ConfirmarAcao";
 import { gerarFechamento, listarFechamentos } from "./fechamentoApi";
 import { Alerta, Carregando, Vazio } from "../../../shared/ui/Alerta";
@@ -14,7 +15,9 @@ import { Pagina, Painel } from "../layout/Pagina";
  * recusado pela API (409), e a mensagem dela aparece aqui.
  */
 export function TelaFechamentos() {
-  const { dados, erro, carregando, recarregar } = useRecurso(listarFechamentos, "Não foi possível carregar os fechamentos.");
+  const textos = useTextos().backOffice;
+  const t = textos.fechamentos;
+  const { dados, erro, carregando, recarregar } = useRecurso(listarFechamentos, t.falhaCarregar);
   const [inicio, setInicio] = useState(hojeIso());
   const [fim, setFim] = useState(hojeIso());
   const [erroAcao, setErroAcao] = useState<string | null>(null);
@@ -29,9 +32,9 @@ export function TelaFechamentos() {
     try {
       await gerarFechamento(inicio, fim);
       await recarregar();
-      setGerado(`Fechamento de ${formatarData(inicio)} a ${formatarData(fim)} gerado.`);
+      setGerado(t.gerado(t.periodo(formatarData(inicio), formatarData(fim))));
     } catch (excecao) {
-      setErroAcao(mensagemDeErro(excecao, "Não foi possível gerar o fechamento."));
+      setErroAcao(mensagemDeErro(excecao, t.falhaGerar));
     } finally {
       setGerando(false);
       setConfirmando(false);
@@ -39,14 +42,8 @@ export function TelaFechamentos() {
   }
 
   return (
-    <Pagina
-      titulo="Fechamentos"
-      descricao="Gere o fechamento de um período para ver quanto pagar a cada motorista. Pagamento de entregas e reembolso de pedágios saem sempre separados."
-    >
-      <Painel
-        titulo="Gerar fechamento"
-        descricao="Gerar o mesmo período de novo devolve o fechamento existente. Períodos que cruzam um fechamento já feito são recusados."
-      >
+    <Pagina titulo={t.titulo} descricao={t.descricao}>
+      <Painel titulo={t.gerarTitulo} descricao={t.gerarDescricao}>
         <form
           onSubmit={(evento) => {
             evento.preventDefault();
@@ -55,11 +52,11 @@ export function TelaFechamentos() {
           className="form-linha"
         >
           <div>
-            <label htmlFor="periodoInicio">De</label>
+            <label htmlFor="periodoInicio">{t.de}</label>
             <input id="periodoInicio" type="date" value={inicio} onChange={(e) => setInicio(e.target.value)} />
           </div>
           <div>
-            <label htmlFor="periodoFim">Até</label>
+            <label htmlFor="periodoFim">{t.ate}</label>
             <input
               id="periodoFim"
               type="date"
@@ -70,21 +67,21 @@ export function TelaFechamentos() {
             />
           </div>
           <button type="submit" disabled={!inicio || !fim || fim < inicio || gerando}>
-            <Icone nome="calendario" /> {gerando ? "Gerando…" : "Gerar fechamento"}
+            <Icone nome="calendario" /> {gerando ? t.gerando : t.gerar}
           </button>
         </form>
         {fim < inicio && (
           <p id="periodo-erro" className="texto-erro">
-            A data final precisa ser igual ou depois da inicial.
+            {t.dataFinalAntes}
           </p>
         )}
       </Painel>
 
       <ConfirmarAcao
         aberto={confirmando}
-        titulo="Gerar o fechamento?"
-        descricao={`Será gerado o fechamento de ${formatarData(inicio)} a ${formatarData(fim)}. Repetir o mesmo período devolve o fechamento já existente.`}
-        rotuloConfirmar="Gerar fechamento"
+        titulo={t.confirmarTitulo}
+        descricao={t.confirmarDescricao(t.periodo(formatarData(inicio), formatarData(fim)))}
+        rotuloConfirmar={t.gerar}
         ocupado={gerando}
         aoConfirmar={gerar}
         aoCancelar={() => setConfirmando(false)}
@@ -96,43 +93,43 @@ export function TelaFechamentos() {
         </Alerta>
       )}
       {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
-      {carregando && <Carregando texto="Carregando fechamentos…" />}
+      {carregando && <Carregando texto={t.carregando} />}
 
       {dados && dados.length === 0 && (
         <div className="mt-5">
-          <Vazio icone="calendario" titulo="Nenhum fechamento gerado ainda">
-            Escolha o período acima e gere o primeiro.
+          <Vazio icone="calendario" titulo={t.nenhum}>
+            {t.nenhumDica}
           </Vazio>
         </div>
       )}
 
       {dados && dados.length > 0 && (
-        <Painel titulo="Fechamentos gerados" className="sem-recuo">
+        <Painel titulo={t.gerados} className="sem-recuo">
           <div className="tabela-rolavel">
             <table className="tabela">
               <thead>
                 <tr>
-                  <th scope="col">Período</th>
-                  <th scope="col">Situação</th>
+                  <th scope="col">{t.colunaPeriodo}</th>
+                  <th scope="col">{t.colunaSituacao}</th>
                   <th scope="col" className="numero">
-                    Motoristas
+                    {t.colunaMotoristas}
                   </th>
                   <th scope="col" className="numero">
-                    Pagamento de entregas
+                    {t.pagamentoEntregas}
                   </th>
                   <th scope="col" className="numero">
-                    Reembolso de pedágios
+                    {t.reembolsoPedagios}
                   </th>
                   <th scope="col" className="coluna-acoes">
-                    <span className="visualmente-oculto">Ações</span>
+                    <span className="visualmente-oculto">{textos.geral.acoes}</span>
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {dados.map((fechamento) => {
-                  const pagamento = fechamento.totaisPorMotorista.reduce((soma, t) => soma + t.totalPagamentoEntregas, 0);
-                  const pedagio = fechamento.totaisPorMotorista.reduce((soma, t) => soma + t.totalReembolsoPedagios, 0);
-                  const periodo = `${formatarData(fechamento.periodoInicio)} a ${formatarData(fechamento.periodoFim)}`;
+                  const pagamento = fechamento.totaisPorMotorista.reduce((soma, total) => soma + total.totalPagamentoEntregas, 0);
+                  const pedagio = fechamento.totaisPorMotorista.reduce((soma, total) => soma + total.totalReembolsoPedagios, 0);
+                  const periodo = t.periodo(formatarData(fechamento.periodoInicio), formatarData(fechamento.periodoFim));
                   return (
                     <tr key={fechamento.id}>
                       <td className="sem-quebra">
@@ -141,11 +138,11 @@ export function TelaFechamentos() {
                       <td>
                         {fechamento.status === "COM_PENDENCIAS" ? (
                           <span className="selo selo-aviso">
-                            <Icone nome="alerta" /> Com pendências
+                            <Icone nome="alerta" /> {t.comPendencias}
                           </span>
                         ) : (
                           <span className="selo selo-sucesso">
-                            <Icone nome="check" /> Completo
+                            <Icone nome="check" /> {t.completo}
                           </span>
                         )}
                       </td>
@@ -158,9 +155,9 @@ export function TelaFechamentos() {
                         <Link
                           to={`/admin/fechamentos/${fechamento.id}`}
                           className="botao fantasma compacto"
-                          aria-label={`Ver fechamento de ${periodo}`}
+                          aria-label={t.verRotulo(periodo)}
                         >
-                          Ver detalhes <Icone nome="chevron" />
+                          {t.verDetalhes} <Icone nome="chevron" />
                         </Link>
                       </td>
                     </tr>

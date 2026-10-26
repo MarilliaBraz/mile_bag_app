@@ -1,6 +1,7 @@
 import { Fragment, useId, useState } from "react";
 import { formatarData, formatarMoeda, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { adicionarValor, criarPraca, definirLocalizacaoDaPraca, historicoDaPraca, listarPracas, type PracaPedagio } from "./pedagiosApi";
 import { ValorPedagioForm } from "./ValorPedagioForm";
 import { Alerta, Carregando, Vazio } from "../../../shared/ui/Alerta";
@@ -12,6 +13,7 @@ function LocalizacaoForm({ praca, aoConcluir }: { praca: PracaPedagio; aoConclui
   const [latitude, setLatitude] = useState(praca.latitude?.toString() ?? "");
   const [longitude, setLongitude] = useState(praca.longitude?.toString() ?? "");
   const [erro, setErro] = useState<string | null>(null);
+  const t = useTextos().backOffice.pedagios;
 
   const lat = Number(latitude.trim().replace(",", "."));
   const lon = Number(longitude.trim().replace(",", "."));
@@ -23,7 +25,7 @@ function LocalizacaoForm({ praca, aoConcluir }: { praca: PracaPedagio; aoConclui
       await definirLocalizacaoDaPraca(praca.id, latitudeNova, longitudeNova);
       await aoConcluir();
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível salvar a localização."));
+      setErro(mensagemDeErro(excecao, t.falhaLocalizacao));
     }
   }
 
@@ -36,10 +38,10 @@ function LocalizacaoForm({ praca, aoConcluir }: { praca: PracaPedagio; aoConclui
       className="formulario"
     >
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
-      <p className="texto-apoio m-0">No Google Maps, clique com o botão direito no local da praça e copie as coordenadas.</p>
+      <p className="texto-apoio m-0">{t.dicaCoordenadas}</p>
       <div className="form-linha">
         <div>
-          <label htmlFor={`${uid}-lat`}>Latitude</label>
+          <label htmlFor={`${uid}-lat`}>{t.latitude}</label>
           <input
             id={`${uid}-lat`}
             inputMode="decimal"
@@ -49,7 +51,7 @@ function LocalizacaoForm({ praca, aoConcluir }: { praca: PracaPedagio; aoConclui
           />
         </div>
         <div>
-          <label htmlFor={`${uid}-lon`}>Longitude</label>
+          <label htmlFor={`${uid}-lon`}>{t.longitude}</label>
           <input
             id={`${uid}-lon`}
             inputMode="decimal"
@@ -61,11 +63,11 @@ function LocalizacaoForm({ praca, aoConcluir }: { praca: PracaPedagio; aoConclui
       </div>
       <div className="linha-acoes">
         <button type="submit" disabled={!valida}>
-          Salvar localização
+          {t.salvarLocalizacao}
         </button>
         {praca.latitude !== null && (
           <button type="button" className="perigo-contorno" onClick={() => void salvar(null, null)}>
-            Remover localização
+            {t.removerLocalizacao}
           </button>
         )}
       </div>
@@ -74,18 +76,19 @@ function LocalizacaoForm({ praca, aoConcluir }: { praca: PracaPedagio; aoConclui
 }
 
 function HistoricoValores({ praca }: { praca: PracaPedagio }) {
-  const { dados, erro, carregando } = useRecurso(() => historicoDaPraca(praca.id), "Não foi possível carregar o histórico.");
+  const t = useTextos().backOffice.pedagios;
+  const { dados, erro, carregando } = useRecurso(() => historicoDaPraca(praca.id), t.falhaHistorico);
   if (erro) {
     return <Alerta tipo="erro">{erro}</Alerta>;
   }
   if (carregando || !dados) {
-    return <Carregando texto="Carregando histórico…" />;
+    return <Carregando texto={t.carregandoHistorico} />;
   }
   return (
     <ol className="linha-tempo" style={{ margin: "0.25rem 0 0" }}>
       {dados.map((item) => (
         <li key={item.vigenteDesde}>
-          <strong>{formatarMoeda(item.valor)}</strong> <span className="texto-apoio">a partir de {formatarData(item.vigenteDesde)}</span>
+          <strong>{formatarMoeda(item.valor)}</strong> <span className="texto-apoio">{t.aPartirDe(formatarData(item.vigenteDesde))}</span>
         </li>
       ))}
     </ol>
@@ -94,7 +97,9 @@ function HistoricoValores({ praca }: { praca: PracaPedagio }) {
 
 /** Praças de pedágio da empresa (HU10): cada mudança de valor vira uma nova vigência, sem apagar a anterior. */
 export function TelaPedagios() {
-  const { dados: pracas, erro, carregando, recarregar } = useRecurso(listarPracas, "Não foi possível carregar as praças.");
+  const textos = useTextos().backOffice;
+  const t = textos.pedagios;
+  const { dados: pracas, erro, carregando, recarregar } = useRecurso(listarPracas, t.falhaCarregar);
   const [criando, setCriando] = useState(false);
   const [aberta, setAberta] = useState<string | null>(null);
   const [novoValorEm, setNovoValorEm] = useState<PracaPedagio | null>(null);
@@ -107,11 +112,11 @@ export function TelaPedagios() {
 
   return (
     <Pagina
-      titulo="Praças de pedágio"
-      descricao="O reembolso ao motorista usa ida e volta, com o valor vigente na data da viagem. Cada mudança de valor vira uma nova vigência, sem apagar a anterior."
+      titulo={t.titulo}
+      descricao={t.descricao}
       acoes={
         <button type="button" onClick={() => setCriando(true)}>
-          <Icone nome="mais" /> Nova praça
+          <Icone nome="mais" /> {t.novaPraca}
         </button>
       }
     >
@@ -123,14 +128,13 @@ export function TelaPedagios() {
       )}
       {semLocalizacao > 0 && (
         <Alerta tipo="aviso">
-          <strong>{semLocalizacao} praça(s) sem localização.</strong> Elas não são detectadas nas rotas, e o reembolso desses pedágios fica
-          pendente.
+          <strong>{t.semLocalizacao(semLocalizacao)}</strong> {t.semLocalizacaoDica}
         </Alerta>
       )}
-      {carregando && <Carregando texto="Carregando praças…" />}
+      {carregando && <Carregando texto={t.carregando} />}
       {pracas && pracas.length === 0 && (
-        <Vazio icone="pedagio" titulo="Nenhuma praça cadastrada">
-          Cadastre as praças por onde seus motoristas passam.
+        <Vazio icone="pedagio" titulo={t.nenhuma}>
+          {t.nenhumaDica}
         </Vazio>
       )}
 
@@ -140,14 +144,14 @@ export function TelaPedagios() {
             <table className="tabela">
               <thead>
                 <tr>
-                  <th scope="col">Praça</th>
+                  <th scope="col">{t.colunaPraca}</th>
                   <th scope="col" className="numero">
-                    Valor vigente
+                    {t.colunaValor}
                   </th>
-                  <th scope="col">Desde</th>
-                  <th scope="col">Localização</th>
+                  <th scope="col">{t.colunaDesde}</th>
+                  <th scope="col">{t.colunaLocalizacao}</th>
                   <th scope="col" className="coluna-acoes">
-                    <span className="visualmente-oculto">Ações</span>
+                    <span className="visualmente-oculto">{textos.geral.acoes}</span>
                   </th>
                 </tr>
               </thead>
@@ -162,7 +166,7 @@ export function TelaPedagios() {
                         </td>
                         <td className="numero">
                           {praca.valorVigente === null ? (
-                            <span className="texto-apoio">Sem valor hoje</span>
+                            <span className="texto-apoio">{t.semValorHoje}</span>
                           ) : (
                             formatarMoeda(praca.valorVigente)
                           )}
@@ -171,11 +175,11 @@ export function TelaPedagios() {
                         <td>
                           {localizada ? (
                             <span className="selo selo-sucesso" title={`${praca.latitude}, ${praca.longitude}`}>
-                              <Icone nome="pino" /> Localizada
+                              <Icone nome="pino" /> {t.localizada}
                             </span>
                           ) : (
                             <span className="selo selo-aviso">
-                              <Icone nome="alerta" /> Sem localização
+                              <Icone nome="alerta" /> {t.seloSemLocalizacao}
                             </span>
                           )}
                         </td>
@@ -186,25 +190,25 @@ export function TelaPedagios() {
                               className="fantasma compacto"
                               aria-expanded={aberta === praca.id}
                               onClick={() => setAberta(aberta === praca.id ? null : praca.id)}
-                              aria-label={`Histórico de valores de ${praca.nome}`}
+                              aria-label={t.historicoRotulo(praca.nome)}
                             >
-                              <Icone nome="historico" /> Histórico
+                              <Icone nome="historico" /> {t.historico}
                             </button>
                             <button
                               type="button"
                               className="fantasma compacto"
                               onClick={() => setLocalizandoEm(praca)}
-                              aria-label={`Localização de ${praca.nome}`}
+                              aria-label={t.localizacaoRotulo(praca.nome)}
                             >
-                              <Icone nome="pino" /> Localização
+                              <Icone nome="pino" /> {t.localizacao}
                             </button>
                             <button
                               type="button"
                               className="fantasma compacto"
                               onClick={() => setNovoValorEm(praca)}
-                              aria-label={`Novo valor para ${praca.nome}`}
+                              aria-label={t.novoValorRotulo(praca.nome)}
                             >
-                              <Icone nome="mais" /> Novo valor
+                              <Icone nome="mais" /> {t.novoValor}
                             </button>
                           </span>
                         </td>
@@ -225,15 +229,15 @@ export function TelaPedagios() {
         </Painel>
       )}
 
-      <Gaveta aberta={criando} titulo="Nova praça de pedágio" aoFechar={() => setCriando(false)}>
+      <Gaveta aberta={criando} titulo={t.novaPracaTitulo} aoFechar={() => setCriando(false)}>
         <ValorPedagioForm
           pedirNome
-          rotuloAcao="Cadastrar praça"
+          rotuloAcao={t.cadastrarPraca}
           aoCancelar={() => setCriando(false)}
           aoSalvar={async (dados) => {
             await criarPraca(dados);
             setCriando(false);
-            setResultado(`Praça “${dados.nome}” cadastrada.`);
+            setResultado(t.pracaCadastrada(dados.nome));
             await recarregar();
           }}
         />
@@ -241,17 +245,17 @@ export function TelaPedagios() {
 
       <Gaveta
         aberta={novoValorEm !== null}
-        titulo={`Novo valor · ${novoValorEm?.nome ?? ""}`}
-        descricao="O valor atual continua no histórico e vale até a data escolhida."
+        titulo={t.novoValorTitulo(novoValorEm?.nome ?? "")}
+        descricao={t.novoValorDescricao}
         aoFechar={() => setNovoValorEm(null)}
       >
         {novoValorEm && (
           <ValorPedagioForm
-            rotuloAcao="Registrar novo valor"
+            rotuloAcao={t.registrarNovoValor}
             aoCancelar={() => setNovoValorEm(null)}
             aoSalvar={async ({ valor, vigenteDesde }) => {
               await adicionarValor(novoValorEm.id, { valor, vigenteDesde });
-              setResultado(`Novo valor registrado para ${novoValorEm.nome}.`);
+              setResultado(t.novoValorRegistrado(novoValorEm.nome));
               setNovoValorEm(null);
               setVersao((v) => v + 1);
               await recarregar();
@@ -262,15 +266,15 @@ export function TelaPedagios() {
 
       <Gaveta
         aberta={localizandoEm !== null}
-        titulo={`Localização · ${localizandoEm?.nome ?? ""}`}
-        descricao="Sem a localização, a praça não é detectada nas rotas e o reembolso fica pendente."
+        titulo={t.localizacaoTitulo(localizandoEm?.nome ?? "")}
+        descricao={t.localizacaoDescricao}
         aoFechar={() => setLocalizandoEm(null)}
       >
         {localizandoEm && (
           <LocalizacaoForm
             praca={localizandoEm}
             aoConcluir={async () => {
-              setResultado(`Localização de ${localizandoEm.nome} atualizada.`);
+              setResultado(t.localizacaoAtualizada(localizandoEm.nome));
               setLocalizandoEm(null);
               await recarregar();
             }}
