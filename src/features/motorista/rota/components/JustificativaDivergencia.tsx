@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Alerta } from "../../../../shared/ui/Alerta";
 
 /**
@@ -17,12 +18,13 @@ export function JustificativaDivergencia({
   ocupado?: boolean;
 }) {
   const [justificativa, setJustificativa] = useState("");
+  const t = useTextos().motorista.rota;
 
   return (
     <section className="mt-4">
       <Alerta tipo="aviso">{mensagem}</Alerta>
       <label htmlFor="justificativa-divergencia">
-        Justificativa da divergência{" "}
+        {t.justificativaDivergencia}{" "}
         <span className="campo-obrigatorio" aria-hidden="true">
           *
         </span>
@@ -33,7 +35,7 @@ export function JustificativaDivergencia({
         rows={3}
         value={justificativa}
         onChange={(evento) => setJustificativa(evento.target.value)}
-        placeholder="Ex.: desvio por interdição da via"
+        placeholder={t.exemploDivergencia}
       />
       <button
         type="button"
@@ -41,7 +43,7 @@ export function JustificativaDivergencia({
         onClick={() => aoReenviar(justificativa.trim())}
         disabled={justificativa.trim().length === 0 || ocupado}
       >
-        {ocupado ? "Encerrando…" : "Encerrar com justificativa"}
+        {ocupado ? t.encerrando : t.encerrarComJustificativa}
       </button>
     </section>
   );

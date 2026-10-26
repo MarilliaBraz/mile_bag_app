@@ -1,20 +1,12 @@
+import { formatarHora, formatarNumero } from "../../../../shared/format/formatar";
+import { useTextos } from "../../../../shared/i18n/idioma";
 import type { TrajetoDetalhado } from "../types";
 import { formatarDuracao } from "./MapaRotas";
 
-const ROTULO_CHECKPOINT: Record<string, string> = {
-  PARTIDA: "Partida",
-  A_CAMINHO: "A caminho",
-  CHEGADA: "Chegada",
-  COMPROVANTE: "Comprovante",
-  OCORRENCIA: "Ocorrência",
-};
-
-function horaDe(dataHora: string): string {
-  return new Date(dataHora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-}
+const horaDe = formatarHora;
 
 function formatarKm(valor: string): string {
-  return `${Number(valor).toFixed(1).replace(".", ",")} km`;
+  return `${formatarNumero(Number(valor), 1)} km`;
 }
 
 /**
@@ -24,55 +16,57 @@ function formatarKm(valor: string): string {
  */
 export function ResumoViagem({ trajeto }: { trajeto: TrajetoDetalhado }) {
   const encerrado = trajeto.status === "ENCERRADO";
+  const t = useTextos().motorista.rota;
 
   return (
     <section>
-      <h2>Viagem {encerrado ? "encerrada" : "em andamento"}</h2>
+      <h2>{encerrado ? t.viagemEncerrada : t.viagemEmAndamento}</h2>
       <div className="cartao">
         {encerrado && trajeto.kmIdaFinal && trajeto.kmVoltaFinal && (
           <div className="dados-grade mb-4">
             <div>
-              <div className="texto-apoio">Ida</div>
+              <div className="texto-apoio">{t.ida}</div>
               <div className="destaque">{formatarKm(trajeto.kmIdaFinal)}</div>
             </div>
             <div>
-              <div className="texto-apoio">Volta</div>
+              <div className="texto-apoio">{t.volta}</div>
               <div className="destaque">{formatarKm(trajeto.kmVoltaFinal)}</div>
             </div>
             {trajeto.tempoFinal !== null && (
               <div>
-                <div className="texto-apoio">Tempo</div>
+                <div className="texto-apoio">{t.tempo}</div>
                 <div className="destaque">{formatarDuracao(trajeto.tempoFinal)}</div>
               </div>
             )}
           </div>
         )}
         {encerrado && trajeto.justificativaDivergencia && (
-          <p className="texto-apoio">Justificativa de divergência: {trajeto.justificativaDivergencia}</p>
+          <p className="texto-apoio">{t.justificativaDivergenciaValor(trajeto.justificativaDivergencia)}</p>
         )}
 
-        <h3>Linha do tempo · início às {horaDe(trajeto.dataInicio)}</h3>
+        <h3>{t.linhaDoTempo(horaDe(trajeto.dataInicio))}</h3>
         <ol className="linha-tempo">
           {trajeto.checkpoints.map((checkpoint) => (
             <li key={checkpoint.id}>
-              <strong>{ROTULO_CHECKPOINT[checkpoint.tipo] ?? checkpoint.tipo}</strong>{" "}
+              <strong>{t.checkpoints[checkpoint.tipo] ?? checkpoint.tipo}</strong>{" "}
               <span className="texto-apoio">
                 {horaDe(checkpoint.dataHora)}
-                {checkpoint.ausente ? " · sem GPS" : ""}
+                {checkpoint.ausente ? t.semGps : ""}
               </span>
             </li>
           ))}
         </ol>
 
         <details className="ajuda sem-icone">
-          <summary>Cálculos de rota ({trajeto.calculosRota.length})</summary>
+          <summary>{t.calculos(trajeto.calculosRota.length)}</summary>
           <ul className="linha-tempo">
             {trajeto.calculosRota.map((calculo) => (
               <li key={calculo.id}>
-                <strong>{calculo.ehRotaInicial ? "Rota inicial" : "Recálculo"}</strong>
-                {calculo.origemSelecao === "PROPRIA" ? " (própria)" : ""} <span className="texto-apoio">{horaDe(calculo.dataHora)}</span>
+                <strong>{calculo.ehRotaInicial ? t.rotaInicial : t.recalculo}</strong>
+                {calculo.origemSelecao === "PROPRIA" ? t.propriaEntreParenteses : ""}{" "}
+                <span className="texto-apoio">{horaDe(calculo.dataHora)}</span>
                 <div className="texto-apoio">
-                  {formatarKm(calculo.kmIda)} ida · {formatarKm(calculo.kmVolta)} volta
+                  {t.idaVolta(formatarKm(calculo.kmIda), formatarKm(calculo.kmVolta))}
                   {calculo.origemSelecao === "PROPRIA" ? "" : ` · ${formatarDuracao(calculo.tempoEstimado)}`}
                 </div>
               </li>

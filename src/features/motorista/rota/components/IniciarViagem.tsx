@@ -1,3 +1,4 @@
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Icone } from "../../../../shared/ui/Icone";
 import type { RotaSelecionada } from "../types";
 import { formatarDistancia, formatarDuracao } from "./MapaRotas";
@@ -16,16 +17,17 @@ export function IniciarViagem({
   aoIniciar: () => void;
   ocupado?: boolean;
 }) {
+  const t = useTextos().motorista.rota;
   return (
     <section className="cartao mt-4">
-      <div className="texto-apoio">Rota escolhida · {selecao.tipoSelecao === "PROPRIA" ? "própria" : "sugerida"}</div>
+      <div className="texto-apoio">{t.rotaEscolhida(selecao.tipoSelecao === "PROPRIA" ? t.tipoPropria : t.tipoSugerida)}</div>
       <p className="destaque">
         {formatarDuracao(selecao.rotaEscolhida.duracaoSegundos)} · {formatarDistancia(selecao.rotaEscolhida.distanciaMetros)}
       </p>
-      {selecao.justificativa && <p className="texto-apoio">Justificativa: {selecao.justificativa}</p>}
+      {selecao.justificativa && <p className="texto-apoio">{t.justificativa(selecao.justificativa)}</p>}
 
       <button type="button" className="grande bloco" onClick={aoIniciar} disabled={ocupado}>
-        <Icone nome="carro" /> {ocupado ? "Iniciando…" : "Iniciar viagem"}
+        <Icone nome="carro" /> {ocupado ? t.iniciando : t.iniciarViagem}
       </button>
     </section>
   );
