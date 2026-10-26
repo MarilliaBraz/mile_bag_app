@@ -104,7 +104,7 @@ export function RelatorioQuinzenal() {
                   </span>
                 </span>
                 <span className="resumo-texto direita">
-                  {relatorio.entregas.length} entrega(s)
+                  {relatorio.entregas.length} viagem(ns)
                   <small>{km(totais.km)} rodados</small>
                 </span>
               </div>
@@ -116,9 +116,11 @@ export function RelatorioQuinzenal() {
 
               <ul className="lista mt-4">
                 {relatorio.entregas.map((item) => (
-                  <li key={item.entregaId} className="cartao">
+                  // A mesma entrega pode aparecer duas vezes (tentativa sem sucesso e entrega concluída): a chave é a viagem.
+                  <li key={item.viagemId} className="cartao">
                     <div className="cartao-cabecalho">
                       <span className="codigo">{item.bdoNumero ?? "BDO sem número"}</span>
+                      {item.tentativaSemSucesso && <span className="selo">Tentativa sem sucesso</span>}
                       {item.temAjuste && <span className="selo selo-aviso">Corrigido</span>}
                     </div>
                     <dl className="dados-grade">

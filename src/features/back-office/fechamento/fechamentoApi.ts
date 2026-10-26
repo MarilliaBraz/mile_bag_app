@@ -25,6 +25,8 @@ export type ItemFechamento = {
   valorReembolsoPedagio: number | null;
   statusItem: StatusItemFechamento;
   motivoPendencia: string | null;
+  /** Viagem de uma tentativa sem sucesso (ocorrência), paga a quem dirigiu. */
+  tentativaSemSucesso?: boolean;
 };
 
 /** Espelha FechamentoDetalheResponse. */
