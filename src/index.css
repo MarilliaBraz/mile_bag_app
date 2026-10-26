@@ -1999,6 +1999,35 @@ button.compacto.botao-icone {
   box-shadow: var(--sombra-1);
 }
 
+/* Bandeiras do idioma: pequenas, mas cada botão mantém a área de toque mínima. */
+.seletor-idioma button {
+  min-width: var(--alvo);
+  min-height: var(--alvo);
+  padding: 0.375rem;
+  display: inline-grid;
+  place-items: center;
+}
+
+/* No celular os outros segmentados ocupam a largura toda; as bandeiras continuam compactas. */
+.segmentado.seletor-idioma {
+  width: auto;
+}
+
+.segmentado.seletor-idioma button {
+  flex: none;
+}
+
+.seletor-idioma button:not([aria-pressed="true"]) .bandeira {
+  opacity: 0.6;
+}
+
+.bandeira {
+  width: 1.5rem;
+  height: 1rem;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px var(--borda-suave);
+}
+
 @media (max-width: 480px) {
   .segmentado {
     width: 100%;
@@ -2877,4 +2906,11 @@ dialog.gaveta::backdrop {
 
 .faixa-emergencia > span {
   flex: 1 1 12rem;
+}
+
+/* Bandeiras do idioma no topo das telas de entrada. */
+.entrada-idioma {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
 }

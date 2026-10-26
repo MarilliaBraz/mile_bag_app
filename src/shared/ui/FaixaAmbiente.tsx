@@ -1,3 +1,5 @@
+import { useTextos } from "../i18n/idioma";
+
 /**
  * Faixa no topo de todas as telas quando o app NÃO é o de produção
  * (VITE_AMBIENTE preenchida no build, ex.: "Homologação"). Quem valida uma
@@ -5,19 +7,20 @@
  * variável fica vazia e nada aparece.
  */
 export function FaixaAmbiente() {
+  const t = useTextos().ambiente;
   const ambiente = import.meta.env.VITE_AMBIENTE?.trim();
   if (!ambiente) {
     return null;
   }
   const versao = import.meta.env.VITE_VERSAO?.trim();
   return (
-    <div className="faixa-ambiente" role="note" aria-label={`Ambiente de ${ambiente}: dados de teste, não use para entregas reais`}>
+    <div className="faixa-ambiente" role="note" aria-label={t.rotulo(ambiente)}>
       {/* No celular cabe só o essencial numa linha; a frase completa e a versão aparecem em telas largas. */}
       <span className="faixa-curta" aria-hidden="true">
-        {ambiente}: dados de teste
+        {t.curta(ambiente)}
       </span>
       <span className="faixa-longa" aria-hidden="true">
-        Ambiente de {ambiente}: dados de teste, não use para entregas reais.
+        {t.longa(ambiente)}
       </span>
       {versao && <small className="faixa-longa">{versao}</small>}
     </div>

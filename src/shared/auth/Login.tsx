@@ -2,10 +2,12 @@ import { Ajuda } from "../ui/Ajuda";
 import { Alerta } from "../ui/Alerta";
 import { Icone } from "../ui/Icone";
 import { PreferenciasAcessibilidade } from "../ui/PreferenciasAcessibilidade";
+import { SeletorIdioma } from "../ui/SeletorIdioma";
 import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { requisitar } from "../api/httpClient";
 import { mensagemDeErro } from "../format/formatar";
+import { useTextos } from "../i18n/idioma";
 import { definirToken, obterPapel, obterToken, rotaInicialDo, tokenExpirado, type EstadoLogin, type Papel } from "./authStorage";
 
 /** Espelha AutenticacaoController.LoginResponse. */
@@ -20,6 +22,7 @@ function destinoDepoisDeEntrar(papel: Papel, voltarPara: string | undefined): st
 /** Entrada por login e senha (HU22): o servidor devolve o JWT e o papel decide para onde ir. */
 export function Login() {
   const navigate = useNavigate();
+  const t = useTextos().login;
   const estado = (useLocation().state ?? {}) as EstadoLogin;
   const [login, setLogin] = useState("");
   const [senha, setSenha] = useState("");
@@ -40,7 +43,7 @@ export function Login() {
       definirToken(sessao.token);
       navigate(destinoDepoisDeEntrar(sessao.papel, estado.voltarPara), { replace: true });
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível entrar. Verifique a conexão e tente de novo."));
+      setErro(mensagemDeErro(excecao, t.falhaAoEntrar));
     } finally {
       setEntrando(false);
     }
@@ -54,31 +57,34 @@ export function Login() {
           <img src="/icone-app.svg" alt="" /> Milebag
         </span>
         <div>
-          <h2>A bagagem certa, na porta certa, com comprovante.</h2>
+          <h2>{t.slogan}</h2>
           <ul>
             <li>
-              <Icone nome="camera" /> BDO pela câmera ou pelo e-mail
+              <Icone nome="camera" /> {t.destaqueBdo}
             </li>
             <li>
-              <Icone nome="rota" /> Rota e pedágios calculados
+              <Icone nome="rota" /> {t.destaqueRota}
             </li>
             <li>
-              <Icone nome="checkCirculo" /> Comprovante mesmo sem internet
+              <Icone nome="checkCirculo" /> {t.destaqueComprovante}
             </li>
           </ul>
         </div>
-        <span>Gestão de última milha de bagagens</span>
+        <span>{t.subtitulo}</span>
       </aside>
       <main>
+        <div className="entrada-idioma">
+          <SeletorIdioma />
+        </div>
         <div className="marca">
           <img src="/icone-app.svg" alt="" /> Milebag
         </div>
-        <h1>Entrar</h1>
-        <p className="texto-apoio">Use o login e a senha que a sua empresa informou.</p>
+        <h1>{t.titulo}</h1>
+        <p className="texto-apoio">{t.instrucao}</p>
         <form onSubmit={entrar} className="cartao formulario mt-4">
           {estado.sessaoExpirada && !erro && (
             <Alerta tipo="aviso" className="sem-margem">
-              Sua sessão expirou. Entre de novo para continuar de onde parou.
+              {t.sessaoExpirada}
             </Alerta>
           )}
           {erro && (
@@ -87,7 +93,7 @@ export function Login() {
             </Alerta>
           )}
           <div>
-            <label htmlFor="login">Login</label>
+            <label htmlFor="login">{t.login}</label>
             <input
               id="login"
               aria-invalid={!!erro}
@@ -102,7 +108,7 @@ export function Login() {
             />
           </div>
           <div>
-            <label htmlFor="senha">Senha</label>
+            <label htmlFor="senha">{t.senha}</label>
             <div className="campo-senha">
               <input
                 id="senha"
@@ -114,22 +120,19 @@ export function Login() {
                 onChange={(e) => setSenha(e.target.value)}
               />
               <button type="button" className="fantasma" onClick={() => setMostrarSenha((v) => !v)} aria-pressed={mostrarSenha}>
-                {mostrarSenha ? "Ocultar" : "Mostrar"}
+                {mostrarSenha ? t.ocultar : t.mostrar}
               </button>
             </div>
           </div>
           <button type="submit" className="grande bloco" disabled={!login.trim() || !senha || entrando}>
-            {entrando ? "Entrando…" : "Entrar"}
+            {entrando ? t.entrando : t.entrar}
           </button>
           <Link to="/esqueci-senha" className="centro">
-            Esqueci minha senha
+            {t.esqueciSenha}
           </Link>
         </form>
-        <Ajuda titulo="Não consegue entrar?">
-          <p>
-            Confira se o login está escrito igual ao que recebeu e se a tecla Caps Lock está desligada. Se esqueceu a senha, use “Esqueci
-            minha senha”. Se o problema continuar, fale com o administrador da sua empresa.
-          </p>
+        <Ajuda titulo={t.ajudaTitulo}>
+          <p>{t.ajudaTexto}</p>
         </Ajuda>
         <PreferenciasAcessibilidade />
       </main>

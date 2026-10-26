@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import { useTextos } from "../i18n/idioma";
 import { Icone } from "./Icone";
 import {
   alternarContraste,
@@ -12,13 +13,7 @@ import {
   type Tema,
 } from "./preferencias";
 
-const TEMAS: { valor: Tema; rotulo: string }[] = [
-  { valor: "automatico", rotulo: "Automático" },
-  { valor: "claro", rotulo: "Claro" },
-  { valor: "escuro", rotulo: "Escuro" },
-];
-
-const NOME_TEMA: Record<Tema, string> = { automatico: "automático", claro: "claro", escuro: "escuro" };
+const TEMAS: Tema[] = ["automatico", "claro", "escuro"];
 
 /**
  * Preferências de leitura para baixa visão e uso noturno: tamanho do texto,
@@ -27,11 +22,12 @@ const NOME_TEMA: Record<Tema, string> = { automatico: "automático", claro: "cla
  */
 export function PreferenciasAcessibilidade({ aberto = false }: { aberto?: boolean }) {
   const { fonte, contraste, tema } = useSyncExternalStore(assinarPreferencias, obterPreferencias);
+  const t = useTextos().preferencias;
 
   return (
     <details className="ajuda sem-icone nao-imprimir" open={aberto}>
       <summary>
-        <Icone nome="contraste" /> Texto, contraste e tema
+        <Icone nome="contraste" /> {t.titulo}
       </summary>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
         <button
@@ -39,7 +35,7 @@ export function PreferenciasAcessibilidade({ aberto = false }: { aberto?: boolea
           className="secundario"
           onClick={() => mudarFonte(fonte - PASSO_FONTE)}
           disabled={fonte <= FONTE_MIN}
-          aria-label="Diminuir o tamanho do texto"
+          aria-label={t.diminuirTexto}
           style={{ minWidth: "var(--alvo-g)", fontSize: "0.9rem" }}
         >
           A−
@@ -49,29 +45,23 @@ export function PreferenciasAcessibilidade({ aberto = false }: { aberto?: boolea
           className="secundario"
           onClick={() => mudarFonte(fonte + PASSO_FONTE)}
           disabled={fonte >= FONTE_MAX}
-          aria-label="Aumentar o tamanho do texto"
+          aria-label={t.aumentarTexto}
           style={{ minWidth: "var(--alvo-g)", fontSize: "1.2rem" }}
         >
           A+
         </button>
         <button type="button" className="secundario" onClick={alternarContraste} aria-pressed={contraste}>
-          <Icone nome="contraste" /> Alto contraste
+          <Icone nome="contraste" /> {t.altoContraste}
         </button>
-        <div className="segmentado base-cheia" role="group" aria-label="Tema">
+        <div className="segmentado base-cheia" role="group" aria-label={t.tema}>
           {TEMAS.map((opcao) => (
-            <button
-              key={opcao.valor}
-              type="button"
-              aria-pressed={tema === opcao.valor}
-              onClick={() => escolherTema(opcao.valor)}
-              style={{ flex: 1 }}
-            >
-              {opcao.rotulo}
+            <button key={opcao} type="button" aria-pressed={tema === opcao} onClick={() => escolherTema(opcao)} style={{ flex: 1 }}>
+              {t.temas[opcao]}
             </button>
           ))}
         </div>
         <span role="status" className="texto-apoio base-cheia">
-          Texto em {fonte}%. {contraste ? "Alto contraste ligado: o tema fica sempre claro." : `Tema ${NOME_TEMA[tema]}.`}
+          {t.textoEm(fonte)} {contraste ? t.contrasteLigado : t.temaAtual(t.temas[tema])}
         </span>
       </div>
     </details>

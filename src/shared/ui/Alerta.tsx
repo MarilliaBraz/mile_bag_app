@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTextos } from "../i18n/idioma";
 import { Icone, type NomeIcone } from "./Icone";
 
 export type TipoAlerta = "info" | "sucesso" | "aviso" | "erro";
@@ -28,12 +29,13 @@ export function Alerta({
   id?: string;
   className?: string;
 }) {
+  const t = useTextos();
   return (
     <div id={id} role={tipo === "erro" ? "alert" : "status"} className={`alerta alerta-${tipo} ${className}`.trim()}>
       <Icone nome={ICONE[tipo]} />
       <div className="alerta-conteudo">{children}</div>
       {aoFechar && (
-        <button type="button" className="botao-icone" onClick={aoFechar} aria-label="Fechar aviso">
+        <button type="button" className="botao-icone" onClick={aoFechar} aria-label={t.comum.fecharAviso}>
           <Icone nome="fechar" />
         </button>
       )}
@@ -42,11 +44,12 @@ export function Alerta({
 }
 
 /** Indicador de carregamento com texto (o leitor de tela anuncia o que está sendo carregado). */
-export function Carregando({ texto = "Carregando…" }: { texto?: string }) {
+export function Carregando({ texto }: { texto?: string }) {
+  const t = useTextos();
   return (
     <p role="status" className="carregando">
       <span className="giro" aria-hidden="true" />
-      {texto}
+      {texto ?? t.comum.carregando}
     </p>
   );
 }
