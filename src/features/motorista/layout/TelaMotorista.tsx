@@ -69,6 +69,10 @@ export function TelaMotorista({
           <h1>{titulo}</h1>
           {acoesTopo}
           <StatusConexao online={online} pendentes={pendentes} />
+          {/* HU30/RI18: emergência ao alcance em toda tela (abrir + confirmar = dois toques). */}
+          <Link to="/motorista/emergencia" className="botao-icone botao-emergencia nao-imprimir" aria-label="Emergência" title="Emergência">
+            <Icone nome="alerta" />
+          </Link>
         </header>
         <IndicadorSincronizacao online={online} pendentes={pendentes} />
         <div className="tela-conteudo">{children}</div>

@@ -37,13 +37,23 @@ function pedirPosicao(opcoes: PositionOptions, tempoLimiteMs: number): Promise<R
   });
 }
 
+// Quando a posição por rede chega primeiro, quanto ainda vale esperar pelo GPS, mais preciso.
+const CARENCIA_ALTA_PRECISAO_MS = 1_500;
+
+function esperar(ms: number): Promise<null> {
+  return new Promise((resolver) => setTimeout(() => resolver(null), ms));
+}
+
 /**
  * Posição atual do dispositivo (GPS), com o motivo quando falha.
  *
- * <p>Tenta primeiro com alta precisão (GPS) e, se o aparelho não tiver GPS ou
- * ele não responder (comum em notebooks e desktops), tenta de novo com precisão
- * normal (Wi-Fi/rede), que basta para o comprovante e os marcos. Nunca rejeita:
- * a falha volta em `motivo` para a tela orientar o motorista.</p>
+ * <p>Pede ao mesmo tempo a posição de alta precisão (GPS) e a de precisão
+ * normal (Wi-Fi/rede), que basta para o comprovante e os marcos. Se o GPS
+ * responder, vale o GPS; se a rede responder antes, espera no máximo
+ * {@link CARENCIA_ALTA_PRECISAO_MS} pelo GPS e segue com a rede. Antes os
+ * pedidos eram em sequência, e sem GPS (notebooks e desktops) cada ação
+ * esperava até 8 s antes de tentar a rede. Nunca rejeita: a falha volta em
+ * `motivo` para a tela orientar o motorista.</p>
  */
 export async function obterPosicaoDetalhada(tempoLimiteMs = 10_000): Promise<ResultadoPosicao> {
   if (!("geolocation" in navigator)) {
@@ -53,11 +63,24 @@ export async function obterPosicaoDetalhada(tempoLimiteMs = 10_000): Promise<Res
     return { posicao: null, motivo: "CONTEXTO_INSEGURO" };
   }
 
-  const alta = await pedirPosicao({ enableHighAccuracy: true, maximumAge: 30_000 }, Math.min(tempoLimiteMs, 8_000));
-  if (alta.posicao || alta.motivo === "NEGADA") {
+  const alta = pedirPosicao({ enableHighAccuracy: true, maximumAge: 30_000 }, tempoLimiteMs);
+  const normal = pedirPosicao({ enableHighAccuracy: false, maximumAge: 5 * 60_000 }, tempoLimiteMs);
+
+  const { resultado, ehAlta } = await Promise.race([
+    alta.then((resultado) => ({ resultado, ehAlta: true })),
+    normal.then((resultado) => ({ resultado, ehAlta: false })),
+  ]);
+  if (resultado.motivo === "NEGADA") {
+    return resultado;
+  }
+  if (ehAlta) {
+    return resultado.posicao ? resultado : normal;
+  }
+  if (!resultado.posicao) {
     return alta;
   }
-  return pedirPosicao({ enableHighAccuracy: false, maximumAge: 5 * 60_000 }, tempoLimiteMs);
+  const altaNaCarencia = await Promise.race([alta, esperar(CARENCIA_ALTA_PRECISAO_MS)]);
+  return altaNaCarencia?.posicao ? altaNaCarencia : resultado;
 }
 
 /**

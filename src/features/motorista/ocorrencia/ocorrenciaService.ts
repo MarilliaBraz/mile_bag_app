@@ -6,6 +6,8 @@ import { obterTenantId } from "../../../shared/auth/authStorage";
 export type MotivoOcorrencia = {
   id: string;
   descricao: string;
+  /** HU29: pede a janela combinada. Ausente no cache salvo antes do campo existir (= falso). */
+  reagendamento?: boolean;
 };
 
 /** Espelha com.marillia.milebag.business.ocorrencia.model.OcorrenciaResponse. */
@@ -15,6 +17,8 @@ export type OcorrenciaResponse = {
   motivoOcorrenciaId: string;
   dataHora: string;
   entregaStatus: string;
+  janelaInicio: string | null;
+  janelaFim: string | null;
 };
 
 const chaveCacheMotivos = () => `milebag.motivosOcorrencia.${obterTenantId() ?? "sem-empresa"}`;
@@ -62,7 +66,13 @@ export async function listarMotivos(): Promise<MotivoOcorrencia[]> {
 /** POST /api/v1/entregas/{entregaId}/ocorrencias (HU07) - reabre a entrega para nova tentativa. */
 export function registrarOcorrencia(
   entregaId: string,
-  dados: { motivoOcorrenciaId: string; descricaoAdicional: string | null; idLocal: string },
+  dados: {
+    motivoOcorrenciaId: string;
+    descricaoAdicional: string | null;
+    idLocal: string;
+    janelaInicio: string | null;
+    janelaFim: string | null;
+  },
 ): Promise<OcorrenciaResponse> {
   return requisitar<OcorrenciaResponse>(`/api/v1/entregas/${entregaId}/ocorrencias`, { metodo: "POST", corpo: dados });
 }

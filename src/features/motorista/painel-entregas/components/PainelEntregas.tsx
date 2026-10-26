@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { Ajuda } from "../../../../shared/ui/Ajuda";
 import { Alerta, Vazio } from "../../../../shared/ui/Alerta";
+import { AvisoJanelaReagendamento } from "../../../../shared/ui/AvisoJanelaReagendamento";
 import { Icone, type NomeIcone } from "../../../../shared/ui/Icone";
 import { TelaMotorista } from "../../layout/TelaMotorista";
 import { listarMotivos } from "../../ocorrencia/ocorrenciaService";
@@ -130,6 +131,7 @@ export function PainelEntregas() {
                           <Icone nome="pino" />
                           <span>{item.endereco ?? "Endereço não informado"}</span>
                         </div>
+                        <AvisoJanelaReagendamento janela={item.janelaReagendamento} />
                         {item.bagagensCarona.length > 0 && (
                           <div className="linha-icone texto-apoio">
                             <Icone nome="mala" />

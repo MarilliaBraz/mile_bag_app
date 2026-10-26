@@ -65,6 +65,9 @@ export function MapaBase({
       // Com dois ou mais pontos (ex.: sua posição e o destino), o mapa abre enquadrando todos eles.
       bounds={enquadramento}
       boundsOptions={{ padding: [32, 32] }}
+      // A roda do mouse rola a página, não dá zoom: senão quem rola a tela fica preso no mapa.
+      // O zoom continua pelos botões +/−, pinça e toque duplo.
+      scrollWheelZoom={false}
       style={{ height: altura, width: "100%" }}
     >
       <TileLayer

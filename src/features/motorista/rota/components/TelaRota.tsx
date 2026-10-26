@@ -12,7 +12,9 @@ import { JustificativaDivergencia } from "./JustificativaDivergencia";
 import { MapaRotas } from "./MapaRotas";
 import { MarcosProgresso } from "./MarcosProgresso";
 import { ResumoViagem } from "./ResumoViagem";
+import { RotaEmUso } from "./RotaEmUso";
 import { RotaPropria } from "./RotaPropria";
+import type { RotaAlternativa } from "../types";
 
 // Centro de fallback do mapa de ajuste manual (Goiânia): só usado quando a
 // geocodificação falhou e ainda não há nenhuma coordenada conhecida da
@@ -29,12 +31,15 @@ export function TelaRota() {
   const { entregaId } = useParams<{ entregaId: string }>();
   const rota = useRota(entregaId ?? "");
   const [confirmandoEncerrar, setConfirmandoEncerrar] = useState(false);
+  const [alternativaParaTrocar, setAlternativaParaTrocar] = useState<RotaAlternativa | null>(null);
 
   if (!entregaId) {
     return null;
   }
 
   const emExecucao = rota.trajeto?.status === "EM_EXECUCAO";
+  // Os cálculos vêm em ordem cronológica: o último é o que está valendo.
+  const rotaEmUso = emExecucao ? rota.trajeto?.calculosRota.at(-1) : undefined;
 
   return (
     <TelaMotorista titulo={emExecucao ? "Viagem em andamento" : "Rota da entrega"} voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar="Voltar para a entrega">
@@ -43,7 +48,7 @@ export function TelaRota() {
       {rota.pendenteDeSincronizacao && <Alerta tipo="aviso">Registro salvo no aparelho e será enviado quando houver conexão.</Alerta>}
 
       {/* Durante a viagem, o que importa primeiro são os marcos e o encerramento - a escolha de rota desce. */}
-      {emExecucao && <MarcosProgresso entregaId={entregaId} aoRegistrar={rota.recarregarTrajeto} />}
+      {emExecucao && <MarcosProgresso entregaId={entregaId} checkpoints={rota.trajeto?.checkpoints} aoRegistrar={rota.recarregarTrajeto} />}
 
       {emExecucao && !rota.divergenciaPendente && (
         <button type="button" className="sucesso grande bloco mt-4" onClick={() => setConfirmandoEncerrar(true)} disabled={rota.ocupado}>
@@ -71,6 +76,8 @@ export function TelaRota() {
         />
       )}
 
+      {rotaEmUso && <RotaEmUso calculo={rotaEmUso} />}
+
       {rota.precisaDestinoManual ? (
         <AjusteDestinoManual
           centroInicial={rota.calculo?.origem ?? CENTRO_PADRAO}
@@ -86,7 +93,27 @@ export function TelaRota() {
               <MapaRotas
                 calculo={rota.calculo}
                 alternativaSelecionada={rota.selecao?.rotaEscolhida.id ?? null}
-                aoSelecionar={rota.selecionarSugerida}
+                // Durante a viagem, tocar numa alternativa troca a rota em uso: pede confirmação.
+                aoSelecionar={emExecucao ? setAlternativaParaTrocar : rota.selecionarSugerida}
+                titulo={emExecucao ? "Trocar de rota" : undefined}
+              >
+                {emExecucao && (
+                  <p className="texto-apoio">Rotas a partir da sua posição atual. Escolha uma só se quiser trocar a rota em uso.</p>
+                )}
+              </MapaRotas>
+              <ConfirmarAcao
+                aberto={alternativaParaTrocar !== null}
+                titulo="Trocar de rota?"
+                descricao="A rota escolhida passa a valer a partir de agora. A rota anterior fica guardada no histórico da viagem."
+                rotuloConfirmar="Trocar de rota"
+                ocupado={rota.ocupado}
+                aoConfirmar={() => {
+                  if (alternativaParaTrocar) {
+                    rota.selecionarSugerida(alternativaParaTrocar);
+                  }
+                  setAlternativaParaTrocar(null);
+                }}
+                aoCancelar={() => setAlternativaParaTrocar(null)}
               />
 
               {!rota.trajeto && rota.selecao && <IniciarViagem selecao={rota.selecao} aoIniciar={rota.iniciar} ocupado={rota.ocupado} />}
