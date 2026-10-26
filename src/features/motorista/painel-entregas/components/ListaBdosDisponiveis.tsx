@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { Alerta } from "../../../../shared/ui/Alerta";
+import { AvisoContatoIncompleto } from "../../../../shared/ui/AvisoContatoIncompleto";
+import { AvisoJanelaReagendamento } from "../../../../shared/ui/AvisoJanelaReagendamento";
 import { Icone } from "../../../../shared/ui/Icone";
 import { executarOuEnfileirar } from "../../offline-sync/fila";
 import { autoatribuir } from "../services/painelService";
@@ -52,10 +54,16 @@ export function ListaBdosDisponiveis({
           <li key={bdo.bdoId} className="cartao">
             <div className="cartao-cabecalho">
               <span className="codigo">{bdo.bdoNumero ?? "BDO sem número"}</span>
-              {bdo.origem === "EMAIL_AUTOMATICO" && (
-                <span className="selo selo-info">
-                  <Icone nome="email" /> Por e-mail
+              {bdo.reaberta ? (
+                <span className="selo selo-aviso">
+                  <Icone nome="sincronizar" /> Nova tentativa
                 </span>
+              ) : (
+                bdo.origem === "EMAIL_AUTOMATICO" && (
+                  <span className="selo selo-info">
+                    <Icone nome="email" /> Por e-mail
+                  </span>
+                )
               )}
             </div>
             <div className="destaque">{bdo.passageiroNome ?? "Passageiro não identificado"}</div>
@@ -63,6 +71,8 @@ export function ListaBdosDisponiveis({
               <Icone nome="pino" />
               <span>{bdo.endereco ?? "Endereço não informado"}</span>
             </div>
+            <AvisoJanelaReagendamento janela={bdo.janelaReagendamento} />
+            <AvisoContatoIncompleto pendencias={bdo.pendenciasContato} compacto />
             <button
               type="button"
               className="secundario bloco mt-3"

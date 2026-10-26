@@ -1088,6 +1088,19 @@ dd {
   gap: 0.5rem;
 }
 
+/* Traçado das rotas no mapa (HU03): a cor vem do tema, por isso por classe CSS e não pela cor do Leaflet. */
+.tracado-rota {
+  stroke: var(--acao);
+  stroke-width: 6;
+  stroke-opacity: 0.9;
+}
+
+.tracado-rota-alternativa {
+  stroke: var(--texto-suave);
+  stroke-width: 4;
+  stroke-opacity: 0.6;
+}
+
 /* Rota própria (HU03): os pontos marcados pelo motorista, ligados na ordem em que foram tocados. */
 .tracado-proprio {
   stroke: var(--acao);
@@ -1124,6 +1137,17 @@ dd {
 .balao-passageiro {
   justify-self: start;
   border-bottom-left-radius: 6px;
+}
+
+.selo-falha {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--raio-g);
+  background: var(--erro-suave);
+  color: var(--erro);
+  font-weight: 700;
 }
 
 .balao-sistema {
@@ -2682,4 +2706,54 @@ dialog.gaveta::backdrop {
   .icone :is(path, line, polyline, polygon, rect, circle) {
     stroke-dashoffset: 0 !important;
   }
+}
+
+/* ---------- Tela de recuperação de falha (RNF11) ---------- */
+
+.tela-falha {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  max-width: 28rem;
+  margin: 3rem auto;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  background: var(--superficie);
+  color: var(--texto);
+  border: 1.5px solid var(--borda-suave);
+  border-radius: var(--raio-g);
+}
+
+.tela-falha > .icone {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--acao);
+}
+
+/* ---------- Emergência (HU30) ---------- */
+
+.botao-icone.botao-emergencia {
+  color: var(--erro);
+}
+
+.botao-icone.botao-emergencia:hover {
+  background: var(--erro-suave);
+}
+
+.faixa-emergencia {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--raio);
+  background: var(--erro-suave);
+  color: var(--erro);
+  border: 1.5px solid var(--erro);
+  font-weight: 600;
+}
+
+.faixa-emergencia > span {
+  flex: 1 1 12rem;
 }

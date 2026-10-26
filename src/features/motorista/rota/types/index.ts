@@ -6,10 +6,9 @@ export type { Coordenada };
 export type TipoSelecao = "SUGERIDA" | "PROPRIA";
 
 /**
- * Espelha com.marillia.milebag.core.geo.RotaAlternativa. Sem traçado
- * (polilinha): o back-end extrai do motor de rotas apenas o resumo
- * (distância, tempo, indicador de pedágio), então o mapa só posiciona
- * origem e destino; as alternativas são comparadas pelos números.
+ * Espelha com.marillia.milebag.core.geo.RotaAlternativa: o resumo de cada
+ * opção (distância, tempo, pedágio). O traçado para o mapa vem à parte, em
+ * {@link CalculoRotas.tracados}, porque só serve para exibir.
  */
 export type RotaAlternativa = {
   id: string;
@@ -29,7 +28,14 @@ export type CalculoRotas = {
   origem: Coordenada;
   destino: Coordenada;
   alternativas: RotaAlternativa[];
+  /** false quando a lista veio vazia porque o serviço de rotas está fora do ar (não por falta de caminho). */
+  motorRotasDisponivel?: boolean;
+  /** Caminho de cada alternativa, para desenhar no mapa. Ausente em respostas de versões anteriores da API. */
+  tracados?: TracadoAlternativa[];
 };
+
+/** Espelha com.marillia.milebag.core.geo.TracadoAlternativa. */
+export type TracadoAlternativa = { alternativaId: string; pontos: Coordenada[] };
 
 /** Espelha com.marillia.milebag.business.rota.model.SelecionarRotaResponse. */
 export type RotaSelecionada = {

@@ -73,7 +73,7 @@ export function TelaRota() {
       {rota.pendenteDeSincronizacao && <Alerta tipo="aviso">Registro salvo no aparelho e será enviado quando houver conexão.</Alerta>}
 
       {/* Durante a viagem, o que importa primeiro são os marcos e o encerramento - a escolha de rota desce. */}
-      {emExecucao && <MarcosProgresso entregaId={entregaId} aoRegistrar={rota.recarregarTrajeto} />}
+      {emExecucao && <MarcosProgresso entregaId={entregaId} checkpoints={rota.trajeto?.checkpoints} aoRegistrar={rota.recarregarTrajeto} />}
 
       {emExecucao && !rota.divergenciaPendente && (
         <button type="button" className="sucesso grande bloco mt-4" onClick={() => setConfirmandoEncerrar(true)} disabled={rota.ocupado}>

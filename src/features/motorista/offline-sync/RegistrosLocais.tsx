@@ -1,5 +1,6 @@
 import { liveQuery } from "dexie";
 import { useEffect, useState } from "react";
+import { limparFalhas, listarFalhas, type FalhaRegistrada } from "../../../shared/diagnostico/registroFalhas";
 import { Icone, type NomeIcone } from "../../../shared/ui/Icone";
 import { bancoLocal, type RegistroPendente, type StatusRegistro, type TipoEventoSincronizacao } from "./db";
 import { Alerta, Carregando, Vazio } from "../../../shared/ui/Alerta";
@@ -33,6 +34,7 @@ export function RegistrosLocais() {
   const [registros, setRegistros] = useState<RegistroPendente[] | null>(null);
   const [sincronizando, setSincronizando] = useState(false);
   const { online, sincronizarAgora } = useSincronizacaoAutomatica();
+  const [falhas, setFalhas] = useState<FalhaRegistrada[]>(() => listarFalhas());
 
   useEffect(() => {
     const assinatura = liveQuery(() => bancoLocal.registrosPendentes.orderBy("sequenciaLocal").reverse().limit(LIMITE).toArray()).subscribe({
@@ -95,6 +97,40 @@ export function RegistrosLocais() {
         </ul>
       )}
       {registros && registros.length >= LIMITE && <p className="texto-apoio">Mostrando os {LIMITE} registros mais recentes.</p>}
+
+      {/* RNF11: falhas inesperadas guardadas só neste aparelho, para conferência do suporte. */}
+      {falhas.length > 0 && (
+        <section>
+          <h2>Falhas recentes do aplicativo ({falhas.length})</h2>
+          <ul className="lista-simples">
+            {falhas.map((falha) => (
+              <li key={falha.dataHora + falha.tela}>
+                <span>
+                  {new Date(falha.dataHora).toLocaleString("pt-BR")} — {falha.tela}
+                  <br />
+                  <span className="texto-apoio">{falha.mensagem}</span>
+                  {falha.local && (
+                    <details>
+                      <summary className="texto-apoio">Onde aconteceu</summary>
+                      <pre className="mono fs-xs quebrar" style={{ whiteSpace: "pre-wrap" }}>{falha.local}</pre>
+                    </details>
+                  )}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            className="fantasma compacto"
+            onClick={() => {
+              limparFalhas();
+              setFalhas([]);
+            }}
+          >
+            Limpar lista de falhas
+          </button>
+        </section>
+      )}
     </TelaMotorista>
   );
 }

@@ -1,3 +1,5 @@
+import type { PendenciaContatoBdo } from "../../../shared/ui/AvisoContatoIncompleto";
+
 /** Espelha com.marillia.milebag.business.bdo.model.CamposExtraidosBdo (mile_bag_api). */
 export type CamposExtraidosBdo = {
   numero: string | null;
@@ -17,4 +19,5 @@ export type BdoResponse = {
   imagemOriginal: string | null;
   statusConferencia: "PENDENTE" | "CONFIRMADO";
   dataCaptura: string;
+  pendenciasContato: PendenciaContatoBdo[];
 };
