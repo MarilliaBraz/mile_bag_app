@@ -19,11 +19,14 @@ function data(opcoes: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
   return formatadores.get(chave) as Intl.DateTimeFormat;
 }
 
-/** Valores em reais em qualquer idioma: muda só a escrita (R$ 1.234,56 ou R$1,234.56). */
+/**
+ * Valores em reais em qualquer idioma: muda só a escrita (R$ 1.234,56, R$1,234.56, 1234,56 R$). O símbolo
+ * "estreito" porque o espanhol, sem símbolo próprio para o real, escreveria "BRL".
+ */
 export function formatarMoeda(valor: number | null | undefined): string {
   return valor === null || valor === undefined
     ? obterTextos().comum.semValor
-    : numero({ style: "currency", currency: "BRL" }).format(valor);
+    : numero({ style: "currency", currency: "BRL", currencyDisplay: "narrowSymbol" }).format(valor);
 }
 
 /** Número com casas decimais fixas (km, litros) ou inteiro com separador de milhar. */
