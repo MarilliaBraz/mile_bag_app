@@ -1,3 +1,4 @@
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Icone } from "../../../../shared/ui/Icone";
 
 /**
@@ -11,13 +12,14 @@ import { Icone } from "../../../../shared/ui/Icone";
  * incompleto continua sendo oferecido, e quem trata isso é o dispositivo.</p>
  */
 export function BotaoLigar({ telefone }: { telefone: string | null }) {
+  const t = useTextos().motorista.mensagens;
   if (!telefone || !telefone.trim()) {
     return null;
   }
 
   return (
-    <a href={`tel:${telefone.replace(/\D/g, "")}`} className="botao grande secundario" aria-label="Ligar para o passageiro">
-      <Icone nome="telefone" /> Ligar
+    <a href={`tel:${telefone.replace(/\D/g, "")}`} className="botao grande secundario" aria-label={t.ligarPara}>
+      <Icone nome="telefone" /> {t.ligar}
     </a>
   );
 }

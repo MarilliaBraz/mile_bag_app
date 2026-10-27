@@ -1,26 +1,18 @@
 import { liveQuery } from "dexie";
 import { useEffect, useState } from "react";
 import { limparFalhas, listarFalhas, type FalhaRegistrada } from "../../../shared/diagnostico/registroFalhas";
+import { formatarDataHora } from "../../../shared/format/formatar";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { Icone, type NomeIcone } from "../../../shared/ui/Icone";
-import { bancoLocal, type RegistroPendente, type StatusRegistro, type TipoEventoSincronizacao } from "./db";
+import { bancoLocal, type RegistroPendente, type StatusRegistro } from "./db";
 import { Alerta, Carregando, Vazio } from "../../../shared/ui/Alerta";
 import { TelaMotorista } from "../layout/TelaMotorista";
 import { useSincronizacaoAutomatica } from "./useSincronizacaoAutomatica";
 
-const ROTULO_TIPO: Record<TipoEventoSincronizacao, string> = {
-  BDO_CAPTURADO: "BDO capturado",
-  ENTREGA_AUTOATRIBUIDA: "Entrega assumida",
-  ROTA_ESCOLHIDA: "Rota escolhida",
-  VIAGEM_INICIADA: "Viagem iniciada",
-  BAGAGEM_CARONA_VINCULADA: "Bagagem carona vinculada",
-  COMPROVANTE_REGISTRADO: "Comprovante de entrega",
-  OCORRENCIA_REGISTRADA: "Ocorrência de não entrega",
-};
-
-const STATUS: Record<StatusRegistro, { icone: NomeIcone; texto: string; tom: "aviso" | "sucesso" | "erro" }> = {
-  PENDENTE: { icone: "sincronizar", texto: "Aguardando envio", tom: "aviso" },
-  SINCRONIZADO: { icone: "checkCirculo", texto: "Enviado", tom: "sucesso" },
-  ERRO: { icone: "alerta", texto: "Falha no envio", tom: "erro" },
+const STATUS: Record<StatusRegistro, { icone: NomeIcone; tom: "aviso" | "sucesso" | "erro" }> = {
+  PENDENTE: { icone: "sincronizar", tom: "aviso" },
+  SINCRONIZADO: { icone: "checkCirculo", tom: "sucesso" },
+  ERRO: { icone: "alerta", tom: "erro" },
 };
 
 const LIMITE = 50;
@@ -35,6 +27,7 @@ export function RegistrosLocais() {
   const [sincronizando, setSincronizando] = useState(false);
   const { online, sincronizarAgora } = useSincronizacaoAutomatica();
   const [falhas, setFalhas] = useState<FalhaRegistrada[]>(() => listarFalhas());
+  const t = useTextos().motorista.registros;
 
   useEffect(() => {
     const assinatura = liveQuery(() => bancoLocal.registrosPendentes.orderBy("sequenciaLocal").reverse().limit(LIMITE).toArray()).subscribe(
@@ -55,25 +48,23 @@ export function RegistrosLocais() {
   const aguardando = registros?.filter((r) => r.status !== "SINCRONIZADO").length ?? 0;
 
   return (
-    <TelaMotorista titulo="Registros do aparelho" voltarPara="/motorista/conta" rotuloVoltar="Voltar para a conta">
-      <p className="texto-apoio">
-        Tudo o que você registra fica salvo aqui e é enviado ao escritório assim que houver conexão. Cada item mostra se já chegou.
-      </p>
+    <TelaMotorista titulo={t.titulo} voltarPara="/motorista/conta" rotuloVoltar={t.voltarConta}>
+      <p className="texto-apoio">{t.explicacao}</p>
 
       <div className="cartao" style={{ margin: "1rem 0" }}>
         <button type="button" className="bloco" onClick={enviarAgora} disabled={!online || sincronizando || aguardando === 0}>
-          <Icone nome="sincronizar" /> {sincronizando ? "Enviando…" : aguardando > 0 ? `Enviar agora (${aguardando})` : "Enviar agora"}
+          <Icone nome="sincronizar" /> {sincronizando ? t.enviando : aguardando > 0 ? t.enviarAgoraQuantos(aguardando) : t.enviarAgora}
         </button>
-        {!online && <p className="texto-apoio centro">Sem conexão: o envio recomeça sozinho quando a rede voltar.</p>}
+        {!online && <p className="texto-apoio centro">{t.semConexao}</p>}
         {online && aguardando === 0 && registros && registros.length > 0 && (
           <p role="status" className="texto-apoio centro texto-sucesso">
-            <Icone nome="checkCirculo" /> Tudo enviado.
+            <Icone nome="checkCirculo" /> {t.tudoEnviado}
           </p>
         )}
       </div>
 
       {!registros && <Carregando />}
-      {registros && registros.length === 0 && <Vazio icone="sincronizar" titulo="Nenhum registro neste aparelho ainda" />}
+      {registros && registros.length === 0 && <Vazio icone="sincronizar" titulo={t.nenhum} />}
 
       {registros && registros.length > 0 && (
         <ul className="lista">
@@ -82,16 +73,15 @@ export function RegistrosLocais() {
             return (
               <li key={registro.idLocal} className="cartao">
                 <div className="cartao-cabecalho">
-                  <strong>{ROTULO_TIPO[registro.tipoEvento] ?? registro.tipoEvento}</strong>
+                  <strong>{t.tipos[registro.tipoEvento] ?? registro.tipoEvento}</strong>
                   <span className={`selo selo-${status.tom}`}>
-                    <Icone nome={status.icone} /> {status.texto}
+                    <Icone nome={status.icone} /> {t.situacoes[registro.status]}
                   </span>
                 </div>
-                <div className="texto-apoio">{new Date(registro.timestampCriacaoLocal).toLocaleString("pt-BR")}</div>
+                <div className="texto-apoio">{formatarDataHora(registro.timestampCriacaoLocal)}</div>
                 {registro.status === "ERRO" && (
                   <Alerta tipo="erro">
-                    {registro.motivo ?? "O servidor não aceitou este registro."} Tentativas: {registro.tentativas}. O registro continua
-                    guardado e será reenviado.
+                    {registro.motivo ?? t.naoAceito} {t.tentativas(registro.tentativas)}
                   </Alerta>
                 )}
               </li>
@@ -99,22 +89,22 @@ export function RegistrosLocais() {
           })}
         </ul>
       )}
-      {registros && registros.length >= LIMITE && <p className="texto-apoio">Mostrando os {LIMITE} registros mais recentes.</p>}
+      {registros && registros.length >= LIMITE && <p className="texto-apoio">{t.mostrando(LIMITE)}</p>}
 
       {/* RNF11: falhas inesperadas guardadas só neste aparelho, para conferência do suporte. */}
       {falhas.length > 0 && (
         <section>
-          <h2>Falhas recentes do aplicativo ({falhas.length})</h2>
+          <h2>{t.falhasRecentes(falhas.length)}</h2>
           <ul className="lista-simples">
             {falhas.map((falha) => (
               <li key={falha.dataHora + falha.tela}>
                 <span>
-                  {new Date(falha.dataHora).toLocaleString("pt-BR")} — {falha.tela}
+                  {formatarDataHora(falha.dataHora)} — {falha.tela}
                   <br />
                   <span className="texto-apoio">{falha.mensagem}</span>
                   {falha.local && (
                     <details>
-                      <summary className="texto-apoio">Onde aconteceu</summary>
+                      <summary className="texto-apoio">{t.ondeAconteceu}</summary>
                       <pre className="mono fs-xs quebrar" style={{ whiteSpace: "pre-wrap" }}>
                         {falha.local}
                       </pre>
@@ -132,7 +122,7 @@ export function RegistrosLocais() {
               setFalhas([]);
             }}
           >
-            Limpar lista de falhas
+            {t.limparFalhas}
           </button>
         </section>
       )}

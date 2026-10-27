@@ -2,15 +2,12 @@ import { Icone } from "../../../shared/ui/Icone";
 import { useId, useState } from "react";
 import { hojeIso, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { listarMotoristas } from "../motoristas/motoristasApi";
 import type { EscopoTarifa, NovaTarifa, Tarifa } from "./tarifasApi";
 import { Alerta } from "../../../shared/ui/Alerta";
 
-const ROTULO_ESCOPO: Record<EscopoTarifa, string> = {
-  PADRAO: "Padrão da empresa",
-  MOTORISTA: "Por motorista",
-  REGIAO: "Por região",
-};
+const ESCOPOS: EscopoTarifa[] = ["PADRAO", "MOTORISTA", "REGIAO"];
 
 function paraNumero(texto: string): number | null {
   const limpo = texto.trim().replace(",", ".");
@@ -27,7 +24,9 @@ type Props = {
 /** Formulário de tarifa (HU09): exige valor fixo e/ou por km (FR-005) e o alvo do escopo escolhido. */
 export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
   const uid = useId();
-  const { dados: motoristas } = useRecurso(listarMotoristas, "Não foi possível carregar os motoristas.");
+  const textos = useTextos().backOffice;
+  const t = textos.tarifas;
+  const { dados: motoristas } = useRecurso(listarMotoristas, textos.motoristas.falhaCarregar);
   const [escopo, setEscopo] = useState<EscopoTarifa>(tarifa?.escopo ?? "PADRAO");
   const [motoristaId, setMotoristaId] = useState(tarifa?.motoristaId ?? "");
   const [regiao, setRegiao] = useState(tarifa?.regiao ?? "");
@@ -60,7 +59,7 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
       });
       setSalvo(true);
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível salvar a tarifa."));
+      setErro(mensagemDeErro(excecao, t.falhaSalvar));
     } finally {
       setSalvando(false);
     }
@@ -72,11 +71,11 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
 
       {!tarifa && (
         <div>
-          <label htmlFor={`${uid}-escopo`}>Aplicar a</label>
+          <label htmlFor={`${uid}-escopo`}>{t.aplicarA}</label>
           <select id={`${uid}-escopo`} value={escopo} onChange={(e) => setEscopo(e.target.value as EscopoTarifa)}>
-            {(Object.keys(ROTULO_ESCOPO) as EscopoTarifa[]).map((chave) => (
+            {ESCOPOS.map((chave) => (
               <option key={chave} value={chave}>
-                {ROTULO_ESCOPO[chave]}
+                {t.escoposForm[chave]}
               </option>
             ))}
           </select>
@@ -85,13 +84,13 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
 
       {!tarifa && escopo === "MOTORISTA" && (
         <div>
-          <label htmlFor={`${uid}-motoristaId`}>Motorista</label>
+          <label htmlFor={`${uid}-motoristaId`}>{t.motorista}</label>
           <select id={`${uid}-motoristaId`} value={motoristaId} onChange={(e) => setMotoristaId(e.target.value)}>
-            <option value="">Escolha um motorista</option>
+            <option value="">{t.escolhaMotorista}</option>
             {motoristas?.map((m) => (
               <option key={m.id} value={m.id}>
                 {m.nome}
-                {m.ativo ? "" : " (desativado)"}
+                {m.ativo ? "" : t.desativadoEntreParenteses}
               </option>
             ))}
           </select>
@@ -100,52 +99,52 @@ export function TarifaForm({ tarifa, aoSalvar, aoCancelar }: Props) {
 
       {!tarifa && escopo === "REGIAO" && (
         <div>
-          <label htmlFor={`${uid}-regiao`}>Região</label>
-          <input id={`${uid}-regiao`} value={regiao} onChange={(e) => setRegiao(e.target.value)} placeholder="Ex.: Zona Sul" />
+          <label htmlFor={`${uid}-regiao`}>{t.regiao}</label>
+          <input id={`${uid}-regiao`} value={regiao} onChange={(e) => setRegiao(e.target.value)} placeholder={t.regiaoExemplo} />
         </div>
       )}
 
       <div className="form-linha">
         <div>
-          <label htmlFor={`${uid}-valorFixo`}>Valor fixo por entrega (R$)</label>
+          <label htmlFor={`${uid}-valorFixo`}>{t.valorFixo}</label>
           <input
             id={`${uid}-valorFixo`}
             inputMode="decimal"
-            placeholder="0,00"
+            placeholder={t.exemploValor}
             value={valorFixo}
             onChange={(e) => setValorFixo(e.target.value)}
           />
         </div>
         <div>
-          <label htmlFor={`${uid}-valorPorKm`}>Valor por km (R$)</label>
+          <label htmlFor={`${uid}-valorPorKm`}>{t.valorPorKm}</label>
           <input
             id={`${uid}-valorPorKm`}
             inputMode="decimal"
-            placeholder="0,00"
+            placeholder={t.exemploValor}
             value={valorPorKm}
             onChange={(e) => setValorPorKm(e.target.value)}
           />
         </div>
       </div>
-      {semValor && <p className="texto-apoio m-0">Informe o valor fixo, o valor por km ou os dois.</p>}
+      {semValor && <p className="texto-apoio m-0">{t.informeValor}</p>}
 
       <div>
-        <label htmlFor={`${uid}-vigenteDesde`}>Vigente desde</label>
+        <label htmlFor={`${uid}-vigenteDesde`}>{t.vigenteDesde}</label>
         <input id={`${uid}-vigenteDesde`} type="date" value={vigenteDesde} onChange={(e) => setVigenteDesde(e.target.value)} />
       </div>
 
       <div className="linha-acoes">
         <button type="submit" disabled={invalido || salvando}>
-          {salvando ? "Salvando…" : tarifa ? "Salvar alterações" : "Cadastrar tarifa"}
+          {salvando ? textos.geral.salvando : tarifa ? textos.geral.salvarAlteracoes : t.cadastrar}
         </button>
         {salvo && !aoCancelar && (
           <span role="status" style={{ color: "var(--confirmacao)", alignSelf: "center" }}>
-            <Icone nome="checkCirculo" /> Tarifa salva.
+            <Icone nome="checkCirculo" /> {t.salva}
           </span>
         )}
         {aoCancelar && (
           <button type="button" className="secundario" onClick={aoCancelar}>
-            Cancelar
+            {textos.geral.cancelar}
           </button>
         )}
       </div>

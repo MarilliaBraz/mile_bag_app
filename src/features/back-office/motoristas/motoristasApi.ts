@@ -1,4 +1,5 @@
 import { requisitar } from "../../../shared/api/httpClient";
+import { obterTextos } from "../../../shared/i18n/idioma";
 
 /** Espelha MotoristaController.MotoristaResponse; `login` é o que o motorista digita para entrar. */
 export type Motorista = { id: string; nome: string; login: string; ativo: boolean; criadoEm: string };
@@ -36,7 +37,7 @@ export const redefinirSenhaMotorista = (id: string, senha: string) =>
 /** Nome do motorista para exibição; sem cadastro (ex.: registros antigos) cai no id abreviado. */
 export function nomeDoMotorista(motoristas: Motorista[] | null, id: string | null): string {
   if (!id) {
-    return "Sem motorista";
+    return obterTextos().backOffice.geral.semMotorista;
   }
   return motoristas?.find((m) => m.id === id)?.nome ?? id.slice(0, 8);
 }

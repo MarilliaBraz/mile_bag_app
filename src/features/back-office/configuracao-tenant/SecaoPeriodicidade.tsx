@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { formatarData, hojeIso, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { agendarPeriodicidade, consultarPeriodicidade } from "./configuracoesTenantApi";
 import { Alerta } from "../../../shared/ui/Alerta";
 import { Painel } from "../layout/Pagina";
 
-const ROTULO: Record<string, string> = { QUINZENAL: "Quinzenal" };
-
 /** Periodicidade do fechamento (HU11): a troca é agendada para uma data futura, nunca vale retroativamente. */
 export function SecaoPeriodicidade() {
-  const { dados, erro, recarregar } = useRecurso(consultarPeriodicidade, "Não foi possível carregar a periodicidade.");
+  const t = useTextos().backOffice.configuracoes;
+  const ROTULO: Record<string, string> = t.periodicidades;
+  const { dados, erro, recarregar } = useRecurso(consultarPeriodicidade, t.falhaPeriodicidade);
   const [vigenteDesde, setVigenteDesde] = useState(hojeIso());
   const [erroAcao, setErroAcao] = useState<string | null>(null);
 
@@ -20,37 +21,37 @@ export function SecaoPeriodicidade() {
       await agendarPeriodicidade({ periodicidade: "QUINZENAL", vigenteDesde });
       await recarregar();
     } catch (excecao) {
-      setErroAcao(mensagemDeErro(excecao, "Não foi possível agendar a periodicidade."));
+      setErroAcao(mensagemDeErro(excecao, t.falhaAgendar));
     }
   }
 
   return (
-    <Painel titulo="Periodicidade do fechamento" descricao="A troca é agendada para uma data futura, nunca vale para trás.">
+    <Painel titulo={t.periodicidadeTitulo} descricao={t.periodicidadeDescricao}>
       {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
       {dados && (
         <p>
-          Vigente: <span className="selo selo-info">{ROTULO[dados.vigente] ?? dados.vigente}</span>
+          {t.vigente} <span className="selo selo-info">{ROTULO[dados.vigente] ?? dados.vigente}</span>
           {dados.proxima && (
             <>
               {" "}
-              · próxima: <strong>{ROTULO[dados.proxima] ?? dados.proxima}</strong> a partir de {formatarData(dados.proximaVigenteDesde)}
+              · {t.proxima} <strong>{ROTULO[dados.proxima] ?? dados.proxima}</strong> {t.aPartirDe(formatarData(dados.proximaVigenteDesde))}
             </>
           )}
         </p>
       )}
       <form onSubmit={agendar} className="form-linha">
         <div>
-          <label htmlFor="periodicidade">Periodicidade</label>
+          <label htmlFor="periodicidade">{t.periodicidade}</label>
           <select id="periodicidade" defaultValue="QUINZENAL">
-            <option value="QUINZENAL">Quinzenal</option>
+            <option value="QUINZENAL">{t.periodicidades.QUINZENAL}</option>
           </select>
         </div>
         <div>
-          <label htmlFor="vigentePeriodicidade">A partir de</label>
+          <label htmlFor="vigentePeriodicidade">{t.aPartirDeRotulo}</label>
           <input id="vigentePeriodicidade" type="date" value={vigenteDesde} onChange={(e) => setVigenteDesde(e.target.value)} />
         </div>
         <button type="submit" disabled={!vigenteDesde}>
-          Agendar
+          {t.agendar}
         </button>
       </form>
     </Painel>

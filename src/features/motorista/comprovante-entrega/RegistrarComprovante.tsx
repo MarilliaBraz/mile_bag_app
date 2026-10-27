@@ -2,7 +2,8 @@ import { Icone } from "../../../shared/ui/Icone";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "../../../shared/api/ApiError";
-import { obterPosicaoDetalhada, ORIENTACAO_FALHA_POSICAO, type MotivoFalhaPosicao } from "../../../shared/geo/posicaoAtual";
+import { obterPosicaoDetalhada, type MotivoFalhaPosicao } from "../../../shared/geo/posicaoAtual";
+import { useTextos } from "../../../shared/i18n/idioma";
 import type { Coordenada } from "../../../shared/mapa/MapaBase";
 import { arquivoParaBase64, executarOuEnfileirar } from "../offline-sync/fila";
 import { TelaMotorista } from "../layout/TelaMotorista";
@@ -39,6 +40,8 @@ export function RegistrarComprovante() {
   const [divergencia, setDivergencia] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
+  const textos = useTextos();
+  const t = textos.motorista.comprovante;
 
   useEffect(() => {
     capturarPosicao();
@@ -105,9 +108,7 @@ export function RegistrarComprovante() {
       );
       navegar("/motorista", {
         state: {
-          aviso: enfileirado
-            ? "Comprovante salvo neste aparelho. Ele será enviado assim que houver conexão."
-            : "Comprovante enviado e entrega encerrada.",
+          aviso: enfileirado ? t.naFila : t.enviado,
         },
       });
     } catch (excecao) {
@@ -115,7 +116,7 @@ export function RegistrarComprovante() {
       if (excecao instanceof ApiError && excecao.status === 422 && excecao.tipo?.includes(TIPO_DIVERGENCIA)) {
         setDivergencia(excecao.message);
       } else {
-        setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível registrar o comprovante.");
+        setErro(excecao instanceof ApiError ? excecao.message : t.falha);
       }
     } finally {
       setEnviando(false);
@@ -124,28 +125,28 @@ export function RegistrarComprovante() {
 
   const podeEnviar = !!foto && identificacaoRecebedor.trim().length > 0 && !!posicao && !enviando;
   const pendencias = [
-    !foto && "tire a foto",
-    !identificacaoRecebedor.trim() && "informe quem recebeu",
-    !posicao && (capturandoPosicao ? "aguarde a localização" : "libere a localização"),
+    !foto && t.pendenciaFoto,
+    !identificacaoRecebedor.trim() && t.pendenciaRecebedor,
+    !posicao && (capturandoPosicao ? t.pendenciaAguardeLocal : t.pendenciaLibereLocal),
   ].filter(Boolean);
 
   return (
-    <TelaMotorista titulo="Comprovante de entrega" voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar="Voltar para a entrega">
+    <TelaMotorista titulo={t.titulo} voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar={textos.motorista.geral.voltarEntrega}>
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
 
       <div className="formulario">
         <div>
           <span id="rotulo-foto" className="destaque" style={{ display: "block", marginBottom: "0.375rem", fontSize: "1rem" }}>
-            1. Foto do documento assinado{" "}
+            {t.foto}{" "}
             <span className="campo-obrigatorio" aria-hidden="true">
               *
             </span>
           </span>
-          {urlPrevia && <img src={urlPrevia} alt="Foto do comprovante escolhida" className="previa-foto mb-2" />}
+          {urlPrevia && <img src={urlPrevia} alt={t.previa} className="previa-foto mb-2" />}
           <label className={`seletor-foto${foto ? " preenchido" : ""}`}>
             <Icone nome={foto ? "checkCirculo" : "camera"} />
-            <strong>{foto ? "Foto pronta. Toque para trocar" : "Tirar foto do documento"}</strong>
-            {!foto && <span>Use a câmera traseira, com o documento inteiro na imagem.</span>}
+            <strong>{foto ? t.fotoPronta : t.tirarFoto}</strong>
+            {!foto && <span>{t.dicaFoto}</span>}
             <input
               id="foto-comprovante"
               className="visualmente-oculto"
@@ -162,7 +163,7 @@ export function RegistrarComprovante() {
 
         <div>
           <label htmlFor="recebedor">
-            2. Quem recebeu{" "}
+            {t.quemRecebeu}{" "}
             <span className="campo-obrigatorio" aria-hidden="true">
               *
             </span>
@@ -176,7 +177,7 @@ export function RegistrarComprovante() {
             autoCapitalize="words"
             value={identificacaoRecebedor}
             onChange={(evento) => setIdentificacaoRecebedor(evento.target.value)}
-            placeholder="Nome e/ou documento de quem recebeu"
+            placeholder={t.quemRecebeuDica}
           />
         </div>
 
@@ -184,19 +185,20 @@ export function RegistrarComprovante() {
             preenchidos - o formulário continua montado e só a captura é
             refeita. */}
         {capturandoPosicao ? (
-          <Carregando texto="Capturando a localização…" />
+          <Carregando texto={t.capturandoLocal} />
         ) : posicao ? (
           <Alerta tipo="sucesso">
-            <strong>Localização capturada.</strong> Data, hora e local entram no comprovante automaticamente.
+            <strong>{t.localCapturado}</strong> {t.localAutomatico}
           </Alerta>
         ) : (
           <Alerta tipo="aviso">
             <p>
-              <strong>Não foi possível capturar a localização</strong>, e ela é obrigatória no comprovante.
+              <strong>{t.localFalhou}</strong>
+              {t.localObrigatorio}
             </p>
-            {motivoFalhaPosicao && <p>{ORIENTACAO_FALHA_POSICAO[motivoFalhaPosicao]}</p>}
+            {motivoFalhaPosicao && <p>{textos.posicao[motivoFalhaPosicao]}</p>}
             <button type="button" className="secundario" onClick={capturarPosicao}>
-              <Icone nome="pino" /> Tentar novamente
+              <Icone nome="pino" /> {t.tentarNovamente}
             </button>
           </Alerta>
         )}
@@ -208,15 +210,15 @@ export function RegistrarComprovante() {
         <>
           <div className="acao-fixa">
             <button type="button" className="sucesso grande bloco" onClick={() => setConfirmando(true)} disabled={!podeEnviar}>
-              <Icone nome="checkCirculo" /> {enviando ? "Registrando…" : "Registrar e encerrar entrega"}
+              <Icone nome="checkCirculo" /> {enviando ? t.registrando : t.registrarEncerrar}
             </button>
-            {!podeEnviar && !enviando && <p className="texto-apoio centro mb-0">Para continuar: {pendencias.join(", ")}.</p>}
+            {!podeEnviar && !enviando && <p className="texto-apoio centro mb-0">{t.paraContinuar(pendencias.join(", "))}</p>}
           </div>
           <ConfirmarAcao
             aberto={confirmando}
-            titulo="Encerrar a entrega?"
-            descricao="O comprovante será registrado e a entrega será encerrada. Confira a foto e o nome de quem recebeu antes de continuar."
-            rotuloConfirmar="Encerrar entrega"
+            titulo={t.encerrarTitulo}
+            descricao={t.encerrarDescricao}
+            rotuloConfirmar={t.encerrarEntrega}
             ocupado={enviando}
             aoConfirmar={() => enviar()}
             aoCancelar={() => setConfirmando(false)}
@@ -225,10 +227,7 @@ export function RegistrarComprovante() {
       )}
 
       <Ajuda>
-        <p>
-          Tire uma foto do documento assinado e informe quem recebeu a bagagem. A data, a hora e a localização são registradas
-          automaticamente. Sem internet, o comprovante fica salvo no aparelho e é enviado depois.
-        </p>
+        <p>{t.ajuda}</p>
       </Ajuda>
     </TelaMotorista>
   );

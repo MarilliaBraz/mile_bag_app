@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { obterPosicaoAtual } from "../../../../shared/geo/posicaoAtual";
+import { obterTextos } from "../../../../shared/i18n/idioma";
 import { executarOuEnfileirar } from "../../offline-sync/fila";
 import { calcularRotas, selecionarRota } from "../services/rotaService";
 import { consultarTrajeto, encerrarTrajeto, iniciarViagem } from "../services/viagemService";
@@ -42,7 +43,7 @@ export function useRota(entregaId: string) {
         if (excecao instanceof ApiError && excecao.status === 422) {
           setPrecisaDestinoManual(true);
         } else {
-          setErro(mensagemDeErro(excecao, "Não foi possível calcular a rota."));
+          setErro(mensagemDeErro(excecao, obterTextos().motorista.rota.falhaCalcular));
         }
       } finally {
         setOcupado(false);
@@ -111,7 +112,7 @@ export function useRota(entregaId: string) {
       }
       return true;
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível registrar a rota escolhida."));
+      setErro(mensagemDeErro(excecao, obterTextos().motorista.rota.falhaRegistrar));
       return false;
     } finally {
       setOcupado(false);
@@ -134,7 +135,7 @@ export function useRota(entregaId: string) {
       }
       setTrajeto(await consultarTrajeto(entregaId));
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível iniciar a viagem."));
+      setErro(mensagemDeErro(excecao, obterTextos().motorista.rota.falhaIniciar));
     } finally {
       setOcupado(false);
     }
@@ -152,7 +153,7 @@ export function useRota(entregaId: string) {
       if (excecao instanceof ApiError && excecao.status === 422) {
         setDivergenciaPendente(excecao.message);
       } else {
-        setErro(mensagemDeErro(excecao, "Não foi possível encerrar a viagem."));
+        setErro(mensagemDeErro(excecao, obterTextos().motorista.rota.falhaEncerrar));
       }
     } finally {
       setOcupado(false);

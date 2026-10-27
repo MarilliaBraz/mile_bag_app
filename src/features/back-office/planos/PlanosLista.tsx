@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { mensagemDeErro } from "../../../shared/format/formatar";
+import { formatarNumero, mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { PlanoForm } from "./PlanoForm";
 import { criarPlano, listarPlanos, removerPlano, type PlanoComUso } from "./planosApi";
 import { Alerta, Carregando, Vazio } from "../../../shared/ui/Alerta";
@@ -10,7 +11,9 @@ import { Gaveta, Pagina, Painel } from "../layout/Pagina";
 
 /** Planos de assinatura (HU16). Um plano com empresas associadas não pode ser removido - o botão nem aparece. */
 export function PlanosLista() {
-  const { dados, erro, carregando, recarregar } = useRecurso(listarPlanos, "Não foi possível carregar os planos.");
+  const textos = useTextos().backOffice;
+  const t = textos.planos;
+  const { dados, erro, carregando, recarregar } = useRecurso(listarPlanos, t.falhaCarregar);
   const [erroAcao, setErroAcao] = useState<string | null>(null);
   const [criando, setCriando] = useState(false);
   const [excluindo, setExcluindo] = useState<PlanoComUso | null>(null);
@@ -20,10 +23,10 @@ export function PlanosLista() {
     setErroAcao(null);
     try {
       await removerPlano(id);
-      setResultado("Plano removido.");
+      setResultado(t.removido);
       await recarregar();
     } catch (excecao) {
-      setErroAcao(mensagemDeErro(excecao, "Não foi possível remover o plano."));
+      setErroAcao(mensagemDeErro(excecao, t.falhaRemover));
     } finally {
       setExcluindo(null);
     }
@@ -31,11 +34,11 @@ export function PlanosLista() {
 
   return (
     <Pagina
-      titulo="Planos de assinatura"
-      descricao="Cada plano limita os motoristas ativos e os BDOs por mês. Cadastre um plano antes de cadastrar empresas."
+      titulo={t.titulo}
+      descricao={t.descricao}
       acoes={
         <button type="button" onClick={() => setCriando(true)}>
-          <Icone nome="mais" /> Novo plano
+          <Icone nome="mais" /> {t.novoPlano}
         </button>
       }
     >
@@ -45,10 +48,10 @@ export function PlanosLista() {
           {resultado}
         </Alerta>
       )}
-      {carregando && <Carregando texto="Carregando planos…" />}
+      {carregando && <Carregando texto={t.carregando} />}
       {dados && dados.length === 0 && (
-        <Vazio icone="lista" titulo="Nenhum plano cadastrado">
-          Cadastre um plano antes de cadastrar empresas.
+        <Vazio icone="lista" titulo={t.nenhum}>
+          {t.nenhumDica}
         </Vazio>
       )}
 
@@ -58,18 +61,18 @@ export function PlanosLista() {
             <table className="tabela">
               <thead>
                 <tr>
-                  <th scope="col">Plano</th>
+                  <th scope="col">{t.colunaPlano}</th>
                   <th scope="col" className="numero">
-                    Motoristas ativos
+                    {t.motoristasAtivos}
                   </th>
                   <th scope="col" className="numero">
-                    BDOs por mês
+                    {t.bdosPorMes}
                   </th>
                   <th scope="col" className="numero">
-                    Empresas
+                    {t.colunaEmpresas}
                   </th>
                   <th scope="col" className="coluna-acoes">
-                    <span className="visualmente-oculto">Ações</span>
+                    <span className="visualmente-oculto">{textos.geral.acoes}</span>
                   </th>
                 </tr>
               </thead>
@@ -79,24 +82,24 @@ export function PlanosLista() {
                     <td>
                       <strong>{item.plano.nome}</strong>
                     </td>
-                    <td className="numero">{item.plano.limiteMotoristasAtivos.toLocaleString("pt-BR")}</td>
-                    <td className="numero">{item.plano.limiteVolumeMensalBdos.toLocaleString("pt-BR")}</td>
+                    <td className="numero">{formatarNumero(item.plano.limiteMotoristasAtivos)}</td>
+                    <td className="numero">{formatarNumero(item.plano.limiteVolumeMensalBdos)}</td>
                     <td className="numero">
                       <span className={`selo ${item.tenantsAssociados > 0 ? "selo-info" : ""}`}>{item.tenantsAssociados}</span>
                     </td>
                     <td className="coluna-acoes">
                       {item.tenantsAssociados > 0 ? (
-                        <span className="texto-apoio" title="Planos com empresas associadas não podem ser removidos">
-                          Em uso
+                        <span className="texto-apoio" title={t.emUsoDica}>
+                          {t.emUso}
                         </span>
                       ) : (
                         <button
                           type="button"
                           className="fantasma compacto"
                           onClick={() => setExcluindo(item)}
-                          aria-label={`Remover plano ${item.plano.nome}`}
+                          aria-label={t.removerRotulo(item.plano.nome)}
                         >
-                          <Icone nome="lixeira" /> Remover
+                          <Icone nome="lixeira" /> {t.remover}
                         </button>
                       )}
                     </td>
@@ -110,20 +113,20 @@ export function PlanosLista() {
 
       <ConfirmarAcao
         aberto={excluindo !== null}
-        titulo={`Remover o plano ${excluindo?.plano.nome ?? ""}?`}
-        descricao="Nenhuma empresa usa este plano. Ele deixa de aparecer no cadastro de empresas."
-        rotuloConfirmar="Remover plano"
+        titulo={t.removerTitulo(excluindo?.plano.nome ?? "")}
+        descricao={t.removerDescricao}
+        rotuloConfirmar={t.removerPlano}
         perigo
         aoConfirmar={() => excluindo && excluir(excluindo.plano.id)}
         aoCancelar={() => setExcluindo(null)}
       />
 
-      <Gaveta aberta={criando} titulo="Novo plano" aoFechar={() => setCriando(false)}>
+      <Gaveta aberta={criando} titulo={t.novoPlano} aoFechar={() => setCriando(false)}>
         <PlanoForm
           aoSalvar={async (dados) => {
             await criarPlano(dados);
             setCriando(false);
-            setResultado(`Plano “${dados.nome}” criado.`);
+            setResultado(t.criado(dados.nome));
             await recarregar();
           }}
         />

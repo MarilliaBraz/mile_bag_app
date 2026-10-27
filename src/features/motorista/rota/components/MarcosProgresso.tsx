@@ -1,3 +1,5 @@
+import { formatarHora } from "../../../../shared/format/formatar";
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Icone, type NomeIcone } from "../../../../shared/ui/Icone";
 import { useState } from "react";
 import { Alerta } from "../../../../shared/ui/Alerta";
@@ -9,15 +11,15 @@ import type { Checkpoint, TipoCheckpoint } from "../types";
 const MARCOS: {
   tipo: Extract<TipoCheckpoint, "A_CAMINHO" | "CHEGADA">;
   icone: NomeIcone;
-  rotulo: string;
-  registrado: string;
-  confirmacao: string;
+  rotulo: "estouACaminho" | "cheguei";
+  registrado: "marcoACaminho" | "marcoChegada";
+  confirmacao: "confirmacaoACaminho" | "confirmacaoChegada";
 }[] = [
-  { tipo: "A_CAMINHO", icone: "carro", rotulo: "Estou a caminho", registrado: "A caminho", confirmacao: 'Marco "a caminho" registrado.' },
-  { tipo: "CHEGADA", icone: "pino", rotulo: "Cheguei", registrado: "Chegada", confirmacao: 'Marco "chegada" registrado.' },
+  { tipo: "A_CAMINHO", icone: "carro", rotulo: "estouACaminho", registrado: "marcoACaminho", confirmacao: "confirmacaoACaminho" },
+  { tipo: "CHEGADA", icone: "pino", rotulo: "cheguei", registrado: "marcoChegada", confirmacao: "confirmacaoChegada" },
 ];
 
-const hora = (dataHora: string) => new Date(dataHora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+const hora = formatarHora;
 
 /**
  * Marcos de progresso (HU20) - dois botões de um toque, sem tela
@@ -48,6 +50,7 @@ export function MarcosProgresso({
   const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
   // Registrados nesta tela, até a viagem recarregada trazer o checkpoint (evita o botão reabilitar nesse intervalo).
   const [registradosAgora, setRegistradosAgora] = useState<Checkpoint[]>([]);
+  const t = useTextos().motorista.rota;
 
   const registroDo = (tipo: TipoCheckpoint) =>
     [...checkpoints, ...registradosAgora]
@@ -67,9 +70,7 @@ export function MarcosProgresso({
       const offline = !(excecao instanceof ApiError);
       setAviso({
         tipo: "erro",
-        texto: offline
-          ? "Sem conexão: este marco precisa de internet para ser registrado. Tente de novo quando a rede voltar."
-          : excecao.message,
+        texto: offline ? t.marcoSemConexao : excecao.message,
       });
     } finally {
       setOcupado(null);
@@ -78,7 +79,7 @@ export function MarcosProgresso({
 
   return (
     <section>
-      <h2 className="mt-2">Avisar o passageiro</h2>
+      <h2 className="mt-2">{t.avisarPassageiro}</h2>
       <div className="grade-acoes">
         {MARCOS.map((marco) => {
           const registro = registroDo(marco.tipo);
@@ -88,19 +89,19 @@ export function MarcosProgresso({
               type="button"
               className="grande"
               disabled
-              aria-label={`${marco.registrado} registrado às ${hora(registro.dataHora)}`}
+              aria-label={t.registradoAs(t[marco.registrado], hora(registro.dataHora))}
             >
-              <Icone nome="check" /> {marco.registrado} · {hora(registro.dataHora)}
+              <Icone nome="check" /> {t[marco.registrado]} · {hora(registro.dataHora)}
             </button>
           ) : (
             <button
               key={marco.tipo}
               type="button"
               className="grande"
-              onClick={() => registrar(marco.tipo, marco.confirmacao)}
+              onClick={() => registrar(marco.tipo, t[marco.confirmacao])}
               disabled={ocupado !== null}
             >
-              <Icone nome={marco.icone} /> {ocupado === marco.tipo ? "Registrando…" : marco.rotulo}
+              <Icone nome={marco.icone} /> {ocupado === marco.tipo ? t.registrando : t[marco.rotulo]}
             </button>
           );
         })}

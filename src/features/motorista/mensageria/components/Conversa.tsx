@@ -2,6 +2,8 @@ import { Icone } from "../../../../shared/ui/Icone";
 import { useCallback, useState } from "react";
 import { ApiError } from "../../../../shared/api/ApiError";
 import { useIntervaloEmPrimeiroPlano } from "../../../../shared/hooks/useIntervaloEmPrimeiroPlano";
+import { formatarHora } from "../../../../shared/format/formatar";
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Alerta, Carregando } from "../../../../shared/ui/Alerta";
 import {
   consultarConversa,
@@ -16,9 +18,6 @@ import { CampoMensagem } from "./CampoMensagem";
 const INTERVALO_ATUALIZACAO_MS = 10_000;
 // Envios do mesmo texto por canais diferentes saem quase juntos.
 const JANELA_AGRUPAMENTO_MS = 60_000;
-
-const ROTULO_CANAL: Record<CanalMensagem, string> = { TELEGRAM: "Telegram", EMAIL: "E-mail" };
-const ROTULO_AUTOR = { MOTORISTA: "Você", PASSAGEIRO: "Passageiro", SISTEMA: "Aviso automático" } as const;
 
 type Balao = { chave: string; mensagem: Mensagem; canais: { canal: CanalMensagem; falhou: boolean }[] };
 
@@ -59,6 +58,7 @@ function agrupar(mensagens: Mensagem[]): Balao[] {
 function ReenviarMensagem({ entregaId, conteudo, aoEnviar }: { entregaId: string; conteudo: string; aoEnviar: () => void }) {
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const t = useTextos().motorista.mensagens;
 
   async function reenviar() {
     setErro(null);
@@ -67,7 +67,7 @@ function ReenviarMensagem({ entregaId, conteudo, aoEnviar }: { entregaId: string
       await enviarMensagem(entregaId, conteudo);
       aoEnviar();
     } catch (excecao) {
-      setErro(excecao instanceof ApiError ? excecao.message : "Sem conexão: tente de novo quando a rede voltar.");
+      setErro(excecao instanceof ApiError ? excecao.message : t.semConexaoReenviar);
     } finally {
       setEnviando(false);
     }
@@ -76,7 +76,7 @@ function ReenviarMensagem({ entregaId, conteudo, aoEnviar }: { entregaId: string
   return (
     <div className="mt-2">
       <button type="button" className="secundario" onClick={reenviar} disabled={enviando}>
-        <Icone nome="sincronizar" /> {enviando ? "Enviando…" : "Enviar de novo"}
+        <Icone nome="sincronizar" /> {enviando ? t.enviando : t.enviarDeNovo}
       </button>
       {erro && (
         <p role="alert" className="selo-falha mt-2 mb-0">
@@ -96,14 +96,16 @@ function ReenviarMensagem({ entregaId, conteudo, aoEnviar }: { entregaId: string
 export function Conversa({ entregaId }: { entregaId: string }) {
   const [conversa, setConversa] = useState<ConversaDados | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const t = useTextos().motorista.mensagens;
 
   const carregar = useCallback(async () => {
     try {
       setConversa(await consultarConversa(entregaId));
       setErro(null);
     } catch (excecao) {
-      setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível carregar a conversa.");
+      setErro(excecao instanceof ApiError ? excecao.message : t.falhaCarregar);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entregaId]);
 
   useIntervaloEmPrimeiroPlano(carregar, INTERVALO_ATUALIZACAO_MS);
@@ -112,7 +114,7 @@ export function Conversa({ entregaId }: { entregaId: string }) {
     return <Alerta tipo="erro">{erro}</Alerta>;
   }
   if (!conversa) {
-    return <Carregando texto="Carregando conversa…" />;
+    return <Carregando texto={t.carregando} />;
   }
   if (!conversa.contatoDisponivel.email) {
     return <AvisoSemContato />;
@@ -122,19 +124,16 @@ export function Conversa({ entregaId }: { entregaId: string }) {
 
   return (
     <div className="cartao">
-      {!conversa.contatoDisponivel.telegram && (
-        <p className="texto-apoio">As mensagens vão por e-mail, com um link para o passageiro continuar a conversa pelo Telegram.</p>
-      )}
+      {!conversa.contatoDisponivel.telegram && <p className="texto-apoio">{t.viaEmail}</p>}
 
       {baloes.length === 0 ? (
-        <p className="texto-apoio">Nenhuma mensagem ainda. Os avisos de andamento da entrega saem automaticamente.</p>
+        <p className="texto-apoio">{t.nenhuma}</p>
       ) : (
         <ul className="conversa">
           {baloes.map(({ chave, mensagem, canais }) => (
             <li key={chave} className={`balao balao-${mensagem.autor.toLowerCase()}`}>
               <div className="texto-apoio fs-xs">
-                {ROTULO_AUTOR[mensagem.autor]} ·{" "}
-                {new Date(mensagem.criadoEm).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                {t.autores[mensagem.autor]} · {formatarHora(mensagem.criadoEm)}
               </div>
               <div>{mensagem.conteudo}</div>
               <div className="texto-apoio" style={{ fontSize: "0.8125rem", marginTop: "0.25rem" }}>
@@ -142,11 +141,11 @@ export function Conversa({ entregaId }: { entregaId: string }) {
                   falhou ? (
                     // Selo com fundo próprio: legível sobre qualquer balão (o do motorista é azul).
                     <span key={canal} className="selo-falha" style={{ marginRight: "0.5rem" }}>
-                      <Icone nome="alerta" /> {ROTULO_CANAL[canal]} não enviado
+                      <Icone nome="alerta" /> {t.naoEnviado(t.canais[canal])}
                     </span>
                   ) : (
                     <span key={canal} style={{ marginRight: "0.5rem" }}>
-                      <Icone nome={canal === "EMAIL" ? "email" : "enviar"} /> {ROTULO_CANAL[canal]}
+                      <Icone nome={canal === "EMAIL" ? "email" : "enviar"} /> {t.canais[canal]}
                     </span>
                   ),
                 )}

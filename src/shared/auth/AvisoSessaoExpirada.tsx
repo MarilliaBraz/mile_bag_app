@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTextos } from "../i18n/idioma";
 import { ConfirmarAcao } from "../ui/ConfirmarAcao";
 import { EVENTO_SESSAO_EXPIRADA, type EstadoLogin } from "./authStorage";
 
@@ -12,6 +13,7 @@ export function AvisoSessaoExpirada() {
   const [aberto, setAberto] = useState(false);
   const navegar = useNavigate();
   const local = useLocation();
+  const t = useTextos().sessao;
 
   useEffect(() => {
     const abrir = () => setAberto(true);
@@ -26,9 +28,9 @@ export function AvisoSessaoExpirada() {
   return (
     <ConfirmarAcao
       aberto={aberto}
-      titulo="Sua sessão expirou"
-      descricao="Por segurança, é preciso entrar de novo. Depois de entrar, você volta para esta tela."
-      rotuloConfirmar="Entrar de novo"
+      titulo={t.titulo}
+      descricao={t.descricao}
+      rotuloConfirmar={t.entrarDeNovo}
       aoConfirmar={() => {
         setAberto(false);
         const estado: EstadoLogin = { sessaoExpirada: true, voltarPara: local.pathname + local.search };

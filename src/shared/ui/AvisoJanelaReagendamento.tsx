@@ -1,4 +1,5 @@
 import { formatarJanela, type JanelaReagendamento } from "../format/formatar";
+import { useTextos } from "../i18n/idioma";
 import { Icone } from "./Icone";
 
 /**
@@ -6,6 +7,7 @@ import { Icone } from "./Icone";
  * ordem das listas não muda por causa dela (RN12).
  */
 export function AvisoJanelaReagendamento({ janela }: { janela?: JanelaReagendamento | null }) {
+  const t = useTextos().contato;
   if (!janela) {
     return null;
   }
@@ -13,7 +15,7 @@ export function AvisoJanelaReagendamento({ janela }: { janela?: JanelaReagendame
     <div className="linha-icone texto-apoio">
       <Icone nome="calendario" />
       <span>
-        <strong>Reagendada:</strong> {formatarJanela(janela)}
+        <strong>{t.reagendada}</strong> {formatarJanela(janela)}
       </span>
     </div>
   );

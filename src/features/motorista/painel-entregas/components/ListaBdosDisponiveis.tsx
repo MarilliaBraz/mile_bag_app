@@ -3,6 +3,7 @@ import { ApiError } from "../../../../shared/api/ApiError";
 import { Alerta } from "../../../../shared/ui/Alerta";
 import { AvisoContatoIncompleto } from "../../../../shared/ui/AvisoContatoIncompleto";
 import { AvisoJanelaReagendamento } from "../../../../shared/ui/AvisoJanelaReagendamento";
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Icone } from "../../../../shared/ui/Icone";
 import { executarOuEnfileirar } from "../../offline-sync/fila";
 import { autoatribuir } from "../services/painelService";
@@ -16,6 +17,7 @@ import type { ItemBdoDisponivel } from "../types";
 export function ListaBdosDisponiveis({ bdos, aoAutoatribuir }: { bdos: ItemBdoDisponivel[]; aoAutoatribuir: (bdoId: string) => void }) {
   const [atribuindo, setAtribuindo] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const t = useTextos().motorista;
 
   async function atribuir(bdoId: string) {
     setErro(null);
@@ -29,7 +31,7 @@ export function ListaBdosDisponiveis({ bdos, aoAutoatribuir }: { bdos: ItemBdoDi
       });
       aoAutoatribuir(bdoId);
     } catch (excecao) {
-      setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível assumir esta entrega. Tente novamente.");
+      setErro(excecao instanceof ApiError ? excecao.message : t.disponiveis.falha);
     } finally {
       setAtribuindo(null);
     }
@@ -41,29 +43,29 @@ export function ListaBdosDisponiveis({ bdos, aoAutoatribuir }: { bdos: ItemBdoDi
 
   return (
     <section>
-      <h2>Disponíveis para assumir ({bdos.length})</h2>
+      <h2>{t.disponiveis.titulo(bdos.length)}</h2>
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
       <ul className="lista">
         {bdos.map((bdo) => (
           <li key={bdo.bdoId} className="cartao">
             <div className="cartao-cabecalho">
-              <span className="codigo">{bdo.bdoNumero ?? "BDO sem número"}</span>
+              <span className="codigo">{bdo.bdoNumero ?? t.geral.bdoSemNumero}</span>
               {bdo.reaberta ? (
                 <span className="selo selo-aviso">
-                  <Icone nome="sincronizar" /> Nova tentativa
+                  <Icone nome="sincronizar" /> {t.disponiveis.novaTentativa}
                 </span>
               ) : (
                 bdo.origem === "EMAIL_AUTOMATICO" && (
                   <span className="selo selo-info">
-                    <Icone nome="email" /> Por e-mail
+                    <Icone nome="email" /> {t.disponiveis.porEmail}
                   </span>
                 )
               )}
             </div>
-            <div className="destaque">{bdo.passageiroNome ?? "Passageiro não identificado"}</div>
+            <div className="destaque">{bdo.passageiroNome ?? t.geral.passageiroNaoIdentificado}</div>
             <div className="linha-icone texto-apoio">
               <Icone nome="pino" />
-              <span>{bdo.endereco ?? "Endereço não informado"}</span>
+              <span>{bdo.endereco ?? t.geral.enderecoNaoInformado}</span>
             </div>
             <AvisoJanelaReagendamento janela={bdo.janelaReagendamento} />
             <AvisoContatoIncompleto pendencias={bdo.pendenciasContato} compacto />
@@ -72,9 +74,9 @@ export function ListaBdosDisponiveis({ bdos, aoAutoatribuir }: { bdos: ItemBdoDi
               className="secundario bloco mt-3"
               onClick={() => atribuir(bdo.bdoId)}
               disabled={atribuindo === bdo.bdoId}
-              aria-label={`Assumir BDO ${bdo.bdoNumero ?? "sem número"}`}
+              aria-label={t.disponiveis.assumirRotulo(bdo.bdoNumero)}
             >
-              {atribuindo === bdo.bdoId ? "Assumindo…" : "Assumir entrega"}
+              {atribuindo === bdo.bdoId ? t.disponiveis.assumindo : t.disponiveis.assumir}
             </button>
           </li>
         ))}

@@ -1,5 +1,6 @@
 import { ApiError } from "./ApiError";
 import { EVENTO_SESSAO_EXPIRADA, limparToken, obterToken } from "../auth/authStorage";
+import { obterTextos } from "../i18n/idioma";
 
 // Endereço da API vem do arquivo .env do ambiente (modelo em .env.example), nunca fixo no código.
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -42,10 +43,11 @@ function lerProblema(texto: string): ProblemDetail | undefined {
 
 /** Mensagem para quando não veio `detail` - nunca o statusText cru ("Bad Gateway"). */
 function mensagemPadrao(status: number): string {
+  const t = obterTextos().erroServidor;
   if (status === 502 || status === 503 || status === 504) {
-    return "O servidor está indisponível no momento. Tente de novo em instantes.";
+    return t.indisponivel;
   }
-  return status >= 500 ? "O servidor encontrou um erro. Tente de novo em instantes." : `Não foi possível concluir a ação (erro ${status}).`;
+  return status >= 500 ? t.erroInterno : t.falhaAcao(status);
 }
 
 async function tratarResposta<T>(resposta: Response): Promise<T> {

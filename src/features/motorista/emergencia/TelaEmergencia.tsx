@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { ApiError } from "../../../shared/api/ApiError";
 import { acionarAlerta, cancelarAlerta, consultarMeuAlertaAberto, type AlertaEmergencia } from "../../../shared/api/emergenciaApi";
 import { registrarFalha } from "../../../shared/diagnostico/registroFalhas";
+import { formatarHora } from "../../../shared/format/formatar";
 import { obterPosicaoAtual } from "../../../shared/geo/posicaoAtual";
+import { obterTextos, useTextos } from "../../../shared/i18n/idioma";
 import { Alerta, Carregando } from "../../../shared/ui/Alerta";
 import { Icone } from "../../../shared/ui/Icone";
 import { TelaMotorista } from "../layout/TelaMotorista";
@@ -16,10 +18,11 @@ const NUMERO_POLICIA = "190";
  * técnico (que vai para os registros do aparelho via registrarFalha).
  */
 function mensagemFalhaEnvio(excecao: unknown): string {
+  const t = obterTextos().motorista.emergencia;
   if (excecao instanceof ApiError && (excecao.status === 401 || excecao.status === 403)) {
-    return `Sua sessão expirou e o alerta não chegou à empresa. Se precisar de ajuda agora, ligue ${NUMERO_POLICIA}. Depois, entre de novo no aplicativo para avisar a empresa.`;
+    return t.sessaoExpirou(NUMERO_POLICIA);
   }
-  return `O alerta não chegou à empresa. Se precisar de ajuda agora, ligue ${NUMERO_POLICIA}. Você também pode tocar em “Enviar alerta de emergência” para tentar de novo.`;
+  return t.naoChegou(NUMERO_POLICIA);
 }
 
 /**
@@ -33,6 +36,8 @@ export function TelaEmergencia() {
   const [carregando, setCarregando] = useState(true);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const textos = useTextos();
+  const t = textos.motorista.emergencia;
 
   useEffect(() => {
     // Offline o "carregando" nem aparece (só é exibido com conexão); ao voltar a rede, consulta.
@@ -69,34 +74,28 @@ export function TelaEmergencia() {
       await cancelarAlerta(alerta.id);
       setAlerta(null);
     } catch (excecao) {
-      setErro(excecao instanceof ApiError ? excecao.message : "Não foi possível cancelar o alerta. Tente de novo.");
+      setErro(excecao instanceof ApiError ? excecao.message : t.falhaCancelar);
     }
   }
 
   return (
-    <TelaMotorista titulo="Emergência" voltarPara="/motorista" rotuloVoltar="Voltar para o painel">
+    <TelaMotorista titulo={t.titulo} voltarPara="/motorista" rotuloVoltar={textos.motorista.geral.voltarPainel}>
       <a href={`tel:${NUMERO_POLICIA}`} className="botao grande bloco perigo">
-        <Icone nome="telefone" /> Ligar {NUMERO_POLICIA} (Polícia)
+        <Icone nome="telefone" /> {t.ligar(NUMERO_POLICIA)}
       </a>
 
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
 
-      {!online && (
-        <Alerta tipo="aviso">
-          Sem conexão: o alerta para a empresa não pode ser enviado agora. Se precisar de ajuda, ligue {NUMERO_POLICIA}.
-        </Alerta>
-      )}
+      {!online && <Alerta tipo="aviso">{t.semConexao(NUMERO_POLICIA)}</Alerta>}
 
-      {online && carregando && <Carregando texto="Verificando alertas…" />}
+      {online && carregando && <Carregando texto={t.verificando} />}
 
       {online && !carregando && !alerta && (
         <section className="cartao mt-4">
-          <h2 className="mt-0">Avisar a empresa</h2>
-          <p className="texto-apoio">
-            Os administradores da empresa recebem na hora o seu nome, o horário e a sua localização (se o GPS responder).
-          </p>
+          <h2 className="mt-0">{t.avisarEmpresa}</h2>
+          <p className="texto-apoio">{t.explicacao}</p>
           <button type="button" className="grande bloco perigo" onClick={enviar} disabled={enviando}>
-            <Icone nome="alerta" /> {enviando ? "Enviando alerta…" : "Enviar alerta de emergência"}
+            <Icone nome="alerta" /> {enviando ? t.enviandoAlerta : t.enviarAlerta}
           </button>
         </section>
       )}
@@ -104,14 +103,11 @@ export function TelaEmergencia() {
       {alerta && (
         <section className="cartao mt-4" aria-live="assertive">
           <Alerta tipo="sucesso">
-            <strong>
-              Alerta enviado às {new Date(alerta.dataHora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}.
-            </strong>{" "}
-            A empresa foi avisada{alerta.latitude === null ? " (sem localização: o GPS não respondeu)" : " com a sua localização"}.
+            <strong>{t.enviadoAs(formatarHora(alerta.dataHora))}</strong> {alerta.latitude === null ? t.avisadaSemLocal : t.avisadaComLocal}
           </Alerta>
-          <p className="texto-apoio">Fique em local seguro. A empresa vai entrar em contato.</p>
+          <p className="texto-apoio">{t.fiqueSeguro}</p>
           <button type="button" className="secundario bloco" onClick={cancelar}>
-            Cancelar alerta (acionei por engano)
+            {t.cancelar}
           </button>
         </section>
       )}

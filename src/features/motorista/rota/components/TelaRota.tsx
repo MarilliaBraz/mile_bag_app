@@ -1,3 +1,4 @@
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Ajuda } from "../../../../shared/ui/Ajuda";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
@@ -39,6 +40,8 @@ export function TelaRota() {
   // Muda a cada rota própria registrada: recria o formulário vazio.
   const [versaoRotaPropria, setVersaoRotaPropria] = useState(0);
   const [avisoRota, setAvisoRota] = useState<string | null>(null);
+  const t = useTextos().motorista;
+  const aguarde = useTextos().comum.aguarde;
 
   if (!entregaId) {
     return null;
@@ -51,7 +54,7 @@ export function TelaRota() {
   async function trocarParaSugerida(alternativa: RotaAlternativa) {
     setAvisoRota(null);
     if (await rota.selecionarSugerida(alternativa)) {
-      setAvisoRota("Rota trocada. Ela passa a valer a partir de agora.");
+      setAvisoRota(t.rota.rotaTrocada);
     }
   }
 
@@ -61,34 +64,34 @@ export function TelaRota() {
       setRotaPropriaAberta(false);
       setVersaoRotaPropria((versao) => versao + 1);
       if (emExecucao) {
-        setAvisoRota("Rota própria registrada. Ela passa a valer a partir de agora.");
+        setAvisoRota(t.rota.rotaPropriaRegistrada);
       }
     }
   }
 
   return (
     <TelaMotorista
-      titulo={emExecucao ? "Viagem em andamento" : "Rota da entrega"}
+      titulo={emExecucao ? t.rota.tituloViagem : t.rota.tituloRota}
       voltarPara={`/motorista/entregas/${entregaId}`}
-      rotuloVoltar="Voltar para a entrega"
+      rotuloVoltar={t.geral.voltarEntrega}
     >
       {rota.erro && <Alerta tipo="erro">{rota.erro}</Alerta>}
 
-      {rota.pendenteDeSincronizacao && <Alerta tipo="aviso">Registro salvo no aparelho e será enviado quando houver conexão.</Alerta>}
+      {rota.pendenteDeSincronizacao && <Alerta tipo="aviso">{t.rota.pendenteSincronizacao}</Alerta>}
 
       {/* Durante a viagem, o que importa primeiro são os marcos e o encerramento - a escolha de rota desce. */}
       {emExecucao && <MarcosProgresso entregaId={entregaId} checkpoints={rota.trajeto?.checkpoints} aoRegistrar={rota.recarregarTrajeto} />}
 
       {emExecucao && !rota.divergenciaPendente && (
         <button type="button" className="sucesso grande bloco mt-4" onClick={() => setConfirmandoEncerrar(true)} disabled={rota.ocupado}>
-          <Icone nome="checkCirculo" /> {rota.ocupado ? "Aguarde…" : "Encerrar viagem"}
+          <Icone nome="checkCirculo" /> {rota.ocupado ? aguarde : t.rota.encerrarViagem}
         </button>
       )}
       <ConfirmarAcao
         aberto={confirmandoEncerrar}
-        titulo="Encerrar a viagem?"
-        descricao="A quilometragem e o tempo serão consolidados com o que foi registrado até agora."
-        rotuloConfirmar="Encerrar viagem"
+        titulo={t.rota.encerrarTitulo}
+        descricao={t.rota.encerrarDescricao}
+        rotuloConfirmar={t.rota.encerrarViagem}
         ocupado={rota.ocupado}
         aoConfirmar={() => {
           setConfirmandoEncerrar(false);
@@ -121,7 +124,7 @@ export function TelaRota() {
         />
       ) : (
         <>
-          {!rota.calculo && !rota.erro && <Carregando texto="Calculando rota a partir da sua posição…" />}
+          {!rota.calculo && !rota.erro && <Carregando texto={t.rota.calculando} />}
 
           {rota.calculo && (
             <>
@@ -130,17 +133,15 @@ export function TelaRota() {
                 alternativaSelecionada={rota.selecao?.rotaEscolhida.id ?? null}
                 // Durante a viagem, tocar numa alternativa troca a rota em uso: pede confirmação.
                 aoSelecionar={emExecucao ? setAlternativaParaTrocar : rota.selecionarSugerida}
-                titulo={emExecucao ? "Trocar de rota" : undefined}
+                titulo={emExecucao ? t.rota.trocarDeRota : undefined}
               >
-                {emExecucao && (
-                  <p className="texto-apoio">Rotas a partir da sua posição atual. Escolha uma só se quiser trocar a rota em uso.</p>
-                )}
+                {emExecucao && <p className="texto-apoio">{t.rota.rotasDaPosicao}</p>}
               </MapaRotas>
               <ConfirmarAcao
                 aberto={alternativaParaTrocar !== null}
-                titulo="Trocar de rota?"
-                descricao="A rota escolhida passa a valer a partir de agora. A rota anterior fica guardada no histórico da viagem."
-                rotuloConfirmar="Trocar de rota"
+                titulo={t.rota.trocarTitulo}
+                descricao={t.rota.trocarDescricao}
+                rotuloConfirmar={t.rota.trocarDeRota}
                 ocupado={rota.ocupado}
                 aoConfirmar={() => {
                   if (alternativaParaTrocar) {
@@ -154,7 +155,7 @@ export function TelaRota() {
               {!rota.trajeto && rota.selecao && <IniciarViagem selecao={rota.selecao} aoIniciar={rota.iniciar} ocupado={rota.ocupado} />}
 
               <button type="button" className="secundario bloco mt-3" onClick={() => rota.recalcular()} disabled={rota.ocupado}>
-                <Icone nome="sincronizar" /> {rota.ocupado ? "Recalculando…" : "Recalcular a partir da minha posição"}
+                <Icone nome="sincronizar" /> {rota.ocupado ? t.rota.recalculando : t.rota.recalcular}
               </button>
 
               <details
@@ -162,7 +163,7 @@ export function TelaRota() {
                 open={rotaPropriaAberta}
                 onToggle={(evento) => setRotaPropriaAberta(evento.currentTarget.open)}
               >
-                <summary>Usar uma rota própria</summary>
+                <summary>{t.rota.usarUmaPropria}</summary>
                 <RotaPropria
                   key={versaoRotaPropria}
                   origem={rota.calculo.origem}
@@ -176,9 +177,9 @@ export function TelaRota() {
               </details>
               <ConfirmarAcao
                 aberto={rotaPropriaParaTrocar !== null}
-                titulo="Usar a rota própria?"
-                descricao="A rota que você marcou passa a valer a partir de agora. A rota anterior fica guardada no histórico da viagem."
-                rotuloConfirmar="Usar rota própria"
+                titulo={t.rota.propriaTitulo}
+                descricao={t.rota.propriaDescricao}
+                rotuloConfirmar={t.rota.usarRotaPropria}
                 ocupado={rota.ocupado}
                 aoConfirmar={() => {
                   if (rotaPropriaParaTrocar) {
@@ -196,10 +197,7 @@ export function TelaRota() {
       {rota.trajeto && <ResumoViagem trajeto={rota.trajeto} />}
 
       <Ajuda>
-        <p>
-          Calcule as rotas, compare distância e tempo e escolha uma. Você também pode traçar uma rota própria. Ao recalcular, o cálculo
-          anterior fica guardado no histórico da viagem.
-        </p>
+        <p>{t.rota.ajuda}</p>
       </Ajuda>
     </TelaMotorista>
   );

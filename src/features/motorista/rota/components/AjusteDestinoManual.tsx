@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMapEvents } from "react-leaflet";
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { Alerta } from "../../../../shared/ui/Alerta";
 import { MapaBase } from "../../../../shared/mapa/MapaBase";
 import type { Coordenada } from "../types";
@@ -27,23 +28,22 @@ export function AjusteDestinoManual({
   ocupado?: boolean;
 }) {
   const [destino, setDestino] = useState<Coordenada | null>(null);
+  const t = useTextos().motorista.rota;
 
   return (
     <section>
-      <Alerta tipo="aviso">
-        Não foi possível localizar automaticamente o endereço deste BDO. Toque no mapa para marcar onde é a entrega.
-      </Alerta>
+      <Alerta tipo="aviso">{t.enderecoNaoLocalizado}</Alerta>
 
       <MapaBase
         centro={destino ?? centroInicial}
-        descricao="Mapa para marcar o endereço de entrega"
-        marcadores={destino ? [{ posicao: destino, rotulo: "Endereço de entrega" }] : []}
+        descricao={t.mapaMarcarEndereco}
+        marcadores={destino ? [{ posicao: destino, rotulo: t.enderecoEntrega }] : []}
       >
         <CapturarClique aoClicar={setDestino} />
       </MapaBase>
 
       <button type="button" className="grande bloco mt-3" onClick={() => destino && aoConfirmar(destino)} disabled={!destino || ocupado}>
-        {ocupado ? "Calculando…" : destino ? "Calcular rota até aqui" : "Toque no mapa para marcar o endereço"}
+        {ocupado ? t.calculandoCurto : destino ? t.calcularAteAqui : t.toqueParaMarcar}
       </button>
     </section>
   );

@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { mensagemDeErro } from "../../../shared/format/formatar";
 import { useRecurso } from "../../../shared/hooks/useRecurso";
+import { useTextos } from "../../../shared/i18n/idioma";
 import { listarPlanos } from "../planos/planosApi";
 import { cadastrarTenant, type Tenant } from "./tenantsApi";
 import { Alerta } from "../../../shared/ui/Alerta";
 
 /** Cadastro de empresa assinante (HU14) - já dispara o convite por e-mail ao primeiro administrador (HU15). */
 export function CadastroTenantForm({ aoCadastrar }: { aoCadastrar: (tenant: Tenant) => void }) {
-  const { dados: planos, erro: erroPlanos } = useRecurso(listarPlanos, "Não foi possível carregar os planos.");
+  const textos = useTextos().backOffice;
+  const t = textos.empresas;
+  const { dados: planos, erro: erroPlanos } = useRecurso(listarPlanos, textos.planos.falhaCarregar);
   const [identificador, setIdentificador] = useState("");
   const [nome, setNome] = useState("");
   const [planoId, setPlanoId] = useState("");
@@ -30,7 +33,7 @@ export function CadastroTenantForm({ aoCadastrar }: { aoCadastrar: (tenant: Tena
       });
       aoCadastrar(tenant);
     } catch (excecao) {
-      setErro(mensagemDeErro(excecao, "Não foi possível cadastrar a empresa."));
+      setErro(mensagemDeErro(excecao, t.falhaCadastrar));
     } finally {
       setSalvando(false);
     }
@@ -40,24 +43,24 @@ export function CadastroTenantForm({ aoCadastrar }: { aoCadastrar: (tenant: Tena
     <form onSubmit={enviar} className="formulario">
       {(erro || erroPlanos) && <Alerta tipo="erro">{erro ?? erroPlanos}</Alerta>}
       <div>
-        <label htmlFor="identificadorEmpresa">Identificador da empresa</label>
+        <label htmlFor="identificadorEmpresa">{t.identificador}</label>
         <input
           id="identificadorEmpresa"
           value={identificador}
           spellCheck={false}
           autoCapitalize="none"
           onChange={(e) => setIdentificador(e.target.value)}
-          placeholder="Ex.: transportes-alfa"
+          placeholder={t.identificadorExemplo}
         />
       </div>
       <div>
-        <label htmlFor="nomeEmpresa">Nome</label>
+        <label htmlFor="nomeEmpresa">{t.nome}</label>
         <input id="nomeEmpresa" value={nome} onChange={(e) => setNome(e.target.value)} />
       </div>
       <div>
-        <label htmlFor="planoEmpresa">Plano</label>
+        <label htmlFor="planoEmpresa">{t.plano}</label>
         <select id="planoEmpresa" value={planoId} onChange={(e) => setPlanoId(e.target.value)}>
-          <option value="">Escolha um plano</option>
+          <option value="">{t.escolhaPlano}</option>
           {planos?.map(({ plano }) => (
             <option key={plano.id} value={plano.id}>
               {plano.nome}
@@ -66,12 +69,12 @@ export function CadastroTenantForm({ aoCadastrar }: { aoCadastrar: (tenant: Tena
         </select>
       </div>
       <div>
-        <label htmlFor="emailAdministrador">E-mail do primeiro administrador</label>
+        <label htmlFor="emailAdministrador">{t.emailAdministrador}</label>
         <input id="emailAdministrador" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <span className="texto-apoio">Esse e-mail recebe o convite para definir a senha.</span>
+        <span className="texto-apoio">{t.emailAdministradorAjuda}</span>
       </div>
       <button type="submit" disabled={invalido || salvando}>
-        {salvando ? "Cadastrando…" : "Cadastrar empresa e enviar convite"}
+        {salvando ? t.cadastrando : t.cadastrarEnviar}
       </button>
     </form>
   );

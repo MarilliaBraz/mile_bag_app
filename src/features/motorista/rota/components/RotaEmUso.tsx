@@ -1,3 +1,5 @@
+import { formatarHora } from "../../../../shared/format/formatar";
+import { useTextos } from "../../../../shared/i18n/idioma";
 import type { CalculoRota } from "../types";
 import { formatarDistancia, formatarDuracao } from "./MapaRotas";
 
@@ -7,30 +9,29 @@ import { formatarDistancia, formatarDuracao } from "./MapaRotas";
  * abrir a tela não dizia qual delas o motorista estava seguindo.
  */
 export function RotaEmUso({ calculo }: { calculo: CalculoRota }) {
-  const hora = new Date(calculo.dataHora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  const hora = formatarHora(calculo.dataHora);
+  const t = useTextos().motorista.rota;
 
   return (
     <section className="mt-4">
-      <h2>Rota em uso</h2>
+      <h2>{t.rotaEmUso}</h2>
       <div className="cartao">
         <div className="dados-grade">
           <div>
-            <div className="texto-apoio">Ida</div>
+            <div className="texto-apoio">{t.ida}</div>
             <div className="destaque">{formatarDistancia(Number(calculo.kmIda) * 1000)}</div>
           </div>
           <div>
-            <div className="texto-apoio">Tempo estimado</div>
+            <div className="texto-apoio">{t.tempoEstimado}</div>
             {/* A rota própria não passa pelo motor de rotas: não há tempo estimado (o servidor grava 0). */}
-            <div className="destaque">{calculo.origemSelecao === "PROPRIA" ? "Não estimado" : formatarDuracao(calculo.tempoEstimado)}</div>
+            <div className="destaque">{calculo.origemSelecao === "PROPRIA" ? t.naoEstimado : formatarDuracao(calculo.tempoEstimado)}</div>
           </div>
           <div>
-            <div className="texto-apoio">Tipo</div>
-            <div className="destaque">{calculo.origemSelecao === "PROPRIA" ? "Rota própria" : "Sugerida"}</div>
+            <div className="texto-apoio">{t.tipo}</div>
+            <div className="destaque">{calculo.origemSelecao === "PROPRIA" ? t.rotaPropria : t.sugerida}</div>
           </div>
         </div>
-        <p className="texto-apoio mb-0 mt-2">
-          {calculo.ehRotaInicial ? "Escolhida no início da viagem" : "Trocada durante a viagem"}, às {hora}.
-        </p>
+        <p className="texto-apoio mb-0 mt-2">{calculo.ehRotaInicial ? t.escolhidaNoInicio(hora) : t.trocadaDurante(hora)}</p>
       </div>
     </section>
   );

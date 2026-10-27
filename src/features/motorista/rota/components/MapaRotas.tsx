@@ -1,14 +1,14 @@
 import type { ReactNode } from "react";
 import { Polyline } from "react-leaflet";
+import { formatarMoeda, formatarNumero } from "../../../../shared/format/formatar";
+import { useTextos } from "../../../../shared/i18n/idioma";
 import { MapaBase } from "../../../../shared/mapa/MapaBase";
 import { Vazio } from "../../../../shared/ui/Alerta";
 import { Icone } from "../../../../shared/ui/Icone";
 import type { CalculoRotas, RotaAlternativa } from "../types";
 
-const REAL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
-
 export function formatarDistancia(metros: number): string {
-  return `${(metros / 1000).toFixed(1).replace(".", ",")} km`;
+  return `${formatarNumero(metros / 1000, 1)} km`;
 }
 
 export function formatarDuracao(segundos: number): string {
@@ -29,7 +29,7 @@ export function MapaRotas({
   calculo,
   alternativaSelecionada,
   aoSelecionar,
-  titulo = "Escolha a rota",
+  titulo,
   children,
 }: {
   calculo: CalculoRotas;
@@ -39,6 +39,7 @@ export function MapaRotas({
   /** Texto de apoio logo abaixo do título (ex.: o que acontece ao trocar de rota durante a viagem). */
   children?: ReactNode;
 }) {
+  const t = useTextos().motorista.rota;
   const indiceMaisRapida = calculo.alternativas.reduce(
     (melhor, alternativa, indice, todas) => (alternativa.duracaoSegundos < todas[melhor].duracaoSegundos ? indice : melhor),
     0,
@@ -53,10 +54,10 @@ export function MapaRotas({
     <section>
       <MapaBase
         centro={calculo.destino}
-        descricao="Mapa com a sua posição e o endereço de entrega"
+        descricao={t.mapaPosicaoEndereco}
         marcadores={[
-          { posicao: calculo.origem, rotulo: "Sua posição" },
-          { posicao: calculo.destino, rotulo: "Endereço de entrega" },
+          { posicao: calculo.origem, rotulo: t.suaPosicao },
+          { posicao: calculo.destino, rotulo: t.enderecoEntrega },
         ]}
       >
         {tracados.map(({ alternativaId, pontos }) => (
@@ -69,15 +70,15 @@ export function MapaRotas({
         ))}
       </MapaBase>
 
-      <h2>{titulo}</h2>
+      <h2>{titulo ?? t.escolhaRota}</h2>
       {children}
       {calculo.motorRotasDisponivel === false ? (
-        <Vazio icone="alerta" titulo="Serviço de rotas indisponível">
-          Não foi possível calcular as rotas agora. Tente recalcular em alguns minutos ou trace uma rota própria.
+        <Vazio icone="alerta" titulo={t.servicoIndisponivel}>
+          {t.servicoIndisponivelDica}
         </Vazio>
       ) : calculo.alternativas.length === 0 ? (
-        <Vazio icone="rota" titulo="Nenhuma rota encontrada">
-          Tente recalcular ou trace uma rota própria.
+        <Vazio icone="rota" titulo={t.nenhumaRota}>
+          {t.nenhumaRotaDica}
         </Vazio>
       ) : (
         <ul className="lista" style={{ gap: "0.5rem" }}>
@@ -93,21 +94,21 @@ export function MapaRotas({
                       <span>{formatarDistancia(alternativa.distanciaMetros)}</span>
                     </span>
                     <span style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem", marginTop: "0.375rem" }}>
-                      {maisRapida && calculo.alternativas.length > 1 && <span className="selo selo-sucesso">Mais rápida</span>}
+                      {maisRapida && calculo.alternativas.length > 1 && <span className="selo selo-sucesso">{t.maisRapida}</span>}
                       <span className={`selo${alternativa.possuiPedagio ? " selo-aviso" : ""}`}>
-                        {alternativa.possuiPedagio ? "Com pedágio" : "Sem pedágio"}
+                        {alternativa.possuiPedagio ? t.comPedagio : t.semPedagio}
                       </span>
                     </span>
                     {alternativa.pracasPedagio.length > 0 && (
                       <span className="texto-apoio" style={{ display: "block", marginTop: "0.375rem" }}>
                         {alternativa.pracasPedagio
-                          .map((praca) => (praca.valor === null ? praca.nome : `${praca.nome} (${REAL.format(praca.valor)})`))
+                          .map((praca) => (praca.valor === null ? praca.nome : `${praca.nome} (${formatarMoeda(praca.valor)})`))
                           .join(" · ")}
                       </span>
                     )}
                     {alternativa.possuiPedagio && alternativa.pracasPedagio.length === 0 && (
                       <span className="texto-apoio" style={{ display: "block", marginTop: "0.375rem" }}>
-                        Nenhuma praça cadastrada neste trecho: o reembolso ficará pendente.
+                        {t.semPracaCadastrada}
                       </span>
                     )}
                   </span>
