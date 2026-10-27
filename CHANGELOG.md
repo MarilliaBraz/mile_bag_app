@@ -13,6 +13,12 @@ Em validação no ambiente de homologação (`mile_bag_infra/scripts/implantar.s
 
 ### Adicionado
 
+- Interface em português, espanhol e inglês, trocada pelas bandeiras do Brasil, da Espanha e dos EUA no
+  login e nas demais telas de entrada, na Conta do motorista e na barra do back-office. A escolha fica
+  salva no aparelho. Os textos ficam em `src/shared/i18n/textos/`, com o português como referência:
+  faltando uma frase em algum idioma, o build falha. Mensagens vindas da API, textos enviados ao
+  passageiro e dados cadastrados continuam em português.
+- Datas, horas, números e valores no formato do idioma escolhido (os valores continuam em reais).
 - Faixa "Ambiente de Homologação" no topo de todas as telas, com a versão implantada, quando
   `VITE_AMBIENTE` está preenchida (produção fica sem faixa).
 - Estado da conexão sempre visível na barra superior do motorista ("Conectado", "Sem conexão" ou
