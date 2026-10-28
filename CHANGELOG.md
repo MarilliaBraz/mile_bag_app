@@ -13,6 +13,9 @@ Em validação no ambiente de homologação (`mile_bag_infra/scripts/implantar.s
 
 ### Adicionado
 
+- Companhias aéreas (HU33): a plataforma cadastra as companhias (com código IATA) em "Companhias aéreas" e
+  convida o primeiro administrador; o administrador da companhia cadastra os funcionários, um a um ou em lote,
+  em "Funcionários"; o funcionário entra numa área própria, onde chegará o registro de bagagens encontradas.
 - Aviso de bagagem nova (HU32): quando um BDO chega por e-mail, o app do motorista aberto toca um sinal
   sonoro, vibra e mostra "Nova bagagem para retirar no aeroporto" em qualquer tela (consulta a cada 30 s, ou
   na hora com notificações ativadas). Com o app fechado, notificação do sistema para quem ativou os avisos na
@@ -38,6 +41,8 @@ Em validação no ambiente de homologação (`mile_bag_infra/scripts/implantar.s
 
 ### Alterado
 
+- A tela de motoristas passou a ser o cadastro de contas compartilhado (`shared/components/contas`), usado
+  também pelos funcionários das companhias aéreas, sem mudança de comportamento.
 - Design system v2: escalas de tipografia e espaço como tokens, paleta refinada, sombras e cantos
   mais suaves, botão "Capturar" em amarelo de sinalização (alto contraste ao sol).
 - Estilos soltos nos componentes (`style={{...}}`) trocados por classes utilitárias baseadas nos tokens.

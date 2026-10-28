@@ -1,21 +1,20 @@
 import { useId, useState } from "react";
-import { mensagemDeErro } from "../../../../shared/utils/formatar";
-import { useTextos } from "../../../../shared/utils/i18n/idioma";
-import { criarMotoristasEmLote } from "../../../../shared/services/motoristasService";
-import { interpretarLinhas } from "../utils/interpretarLinhas";
-import type { ResultadoLote } from "../../../../shared/types/motoristas";
-import { Alerta } from "../../../../shared/components/Alerta";
-import { Icone } from "../../../../shared/components/Icone";
+import { mensagemDeErro } from "../../utils/formatar";
+import { interpretarLinhas } from "../../utils/interpretarLinhas";
+import type { ResultadoLote } from "../../types/contas";
+import { useContas } from "./contexto";
+import { Alerta } from "../Alerta";
+import { Icone } from "../Icone";
 
 const MAXIMO_POR_LOTE = 100;
 
-function baixarSenhas(resultados: ResultadoLote[]) {
+function baixarSenhas(resultados: ResultadoLote[], arquivo: string) {
   const geradas = resultados.filter((r) => r.criado && r.senhaGerada);
   const csv = ["nome;login;senha", ...geradas.map((r) => `${r.nome};${r.login};${r.senhaGerada}`)].join("\n");
   const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
   const link = document.createElement("a");
   link.href = url;
-  link.download = "motoristas-senhas-iniciais.csv";
+  link.download = arquivo;
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -23,16 +22,16 @@ function baixarSenhas(resultados: ResultadoLote[]) {
 }
 
 /**
- * Cadastro de vários motoristas de uma vez (HU27). Cada linha é independente: as que falham aparecem com o motivo e as
+ * Cadastro de várias contas de uma vez (HU27): contas ou funcionários da companhia (HU33). Cada linha é independente: as que falham aparecem com o motivo e as
  * outras são criadas. Senhas geradas pelo sistema aparecem SÓ nesta tela (e no CSV baixado) - não há como consultá-las depois.
  */
-export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void> }) {
+export function LoteContas({ aoConcluir }: { aoConcluir: () => Promise<void> }) {
   const uid = useId();
   const [texto, setTexto] = useState("");
   const [resultados, setResultados] = useState<ResultadoLote[] | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
-  const t = useTextos().backOffice.motoristas;
+  const { t, servico } = useContas();
 
   const linhas = interpretarLinhas(texto);
   const excedeu = linhas.length > MAXIMO_POR_LOTE;
@@ -42,7 +41,7 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
     setErro(null);
     setEnviando(true);
     try {
-      const resposta = await criarMotoristasEmLote(linhas);
+      const resposta = await servico.criarEmLote(linhas);
       setResultados(resposta.resultados);
       if (resposta.criados > 0) {
         await aoConcluir();
@@ -90,7 +89,7 @@ export function LoteMotoristas({ aoConcluir }: { aoConcluir: () => Promise<void>
           {comSenhaGerada && (
             <Alerta tipo="aviso">
               {t.senhasSoAgora}{" "}
-              <button type="button" className="secundario compacto" onClick={() => baixarSenhas(resultados)}>
+              <button type="button" className="secundario compacto" onClick={() => baixarSenhas(resultados, t.arquivoSenhas)}>
                 <Icone nome="baixar" /> {t.baixarCsv}
               </button>
             </Alerta>

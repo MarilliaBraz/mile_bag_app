@@ -4,8 +4,11 @@ import { EsqueciSenha, Login, RedefinirSenha, TrocarSenha } from "./features/aut
 import { IdentidadeVisualForm, TelaConfiguracoes } from "./features/back-office/configuracao-tenant";
 import { AvisoEmergenciasAbertas, TelaEmergencias } from "./features/back-office/emergencias";
 import { DetalheFechamento, TelaFechamentos } from "./features/back-office/fechamento";
-import { AdminLayout, ITENS_PLATAFORMA, ITENS_TENANT } from "./features/back-office/layout";
+import { AdminLayout, ITENS_COMPANHIA, ITENS_PLATAFORMA, ITENS_TENANT } from "./features/back-office/layout";
+import { TelaCompanhias } from "./features/back-office/companhias-aereas";
 import { TelaMotoristas } from "./features/back-office/motoristas";
+import { TelaFuncionarios } from "./features/companhia/funcionarios";
+import { TelaInicioCompanhia } from "./features/companhia/inicio";
 import { TelaPedagios } from "./features/back-office/pedagios";
 import { PlanosLista } from "./features/back-office/planos";
 import { TelaTarifas } from "./features/back-office/tarifas";
@@ -91,7 +94,28 @@ export function App() {
             <Route path="empresas" element={<TelaEmpresas />} />
             <Route path="empresas/:tenantId" element={<TenantCadastradoConfirmacao />} />
             <Route path="planos" element={<PlanosLista />} />
+            <Route path="companhias" element={<TelaCompanhias />} />
           </Route>
+          {/* HU33: companhia aérea - o administrador cadastra os funcionários; o funcionário tem a área própria. */}
+          <Route
+            path="/companhia"
+            element={
+              <RequireAuth papeis={["ADMINISTRADOR_COMPANHIA"]}>
+                <AdminLayout titulo={t.menu.companhiaAerea} itens={ITENS_COMPANHIA} />
+              </RequireAuth>
+            }
+          >
+            <Route index element={<Navigate to="funcionarios" replace />} />
+            <Route path="funcionarios" element={<TelaFuncionarios />} />
+          </Route>
+          <Route
+            path="/companhia/inicio"
+            element={
+              <RequireAuth papeis={["FUNCIONARIO_COMPANHIA"]}>
+                <TelaInicioCompanhia />
+              </RequireAuth>
+            }
+          />
           <Route path="*" element={<Navigate to="/motorista" replace />} />
         </Routes>
       </LimiteDeFalha>

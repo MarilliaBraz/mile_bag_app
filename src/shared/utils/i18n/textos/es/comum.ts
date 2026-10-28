@@ -151,5 +151,8 @@ export const comum: TextosComuns = {
     identidadeVisual: "Identidad visual",
     empresas: "Empresas",
     planos: "Planes",
+    companhias: "Aerolíneas",
+    companhiaAerea: "Aerolínea",
+    funcionarios: "Empleados",
   },
 };
