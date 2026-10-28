@@ -10,6 +10,7 @@ import { formatarHora, formatarJanela } from "../../../shared/utils/formatar";
 import { useTextos } from "../../../shared/utils/i18n/idioma";
 import { consultarAcompanhamento } from "../services/acompanhamentoService";
 import type { Acompanhamento } from "../types";
+import { EnquadrarPontos } from "./EnquadrarPontos";
 
 const INTERVALO_MS = 15_000;
 // Acima disso a posição deixa de ser "atual" para o passageiro (RI19).
@@ -118,14 +119,9 @@ function Conteudo({ dados, consultadoEm, falhou }: { dados: Acompanhamento; cons
 
       {!encerrada && marcadores.length > 0 && (
         <div className="pilha">
-          {/* Remonta quando a primeira posição chega, para o mapa enquadrar motorista e destino juntos. */}
-          <MapaBase
-            key={posicao ? "com-posicao" : "sem-posicao"}
-            centro={marcadores[0].posicao}
-            marcadores={marcadores}
-            descricao={t.mapa}
-            altura={320}
-          />
+          <MapaBase centro={marcadores[0].posicao} marcadores={marcadores} descricao={t.mapa} altura={320}>
+            <EnquadrarPontos pontos={marcadores.map((marcador) => marcador.posicao)} />
+          </MapaBase>
           <p className="legenda-mapa texto-apoio">
             {posicao && (
               <span>
