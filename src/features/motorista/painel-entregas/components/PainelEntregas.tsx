@@ -10,6 +10,7 @@ import { TelaMotorista } from "../../../../shared/components/TelaMotorista";
 import { listarPendentesDeConferencia } from "../../../../shared/services/bdoService";
 import type { BdoResponse } from "../../../../shared/types/bdo";
 import { listarMotivos } from "../../../../shared/services/ocorrenciaService";
+import { marcarViagemEmAndamento } from "../../../../shared/utils/viagemEmAndamento";
 import { consultarBdosDisponiveis, consultarPainel } from "../services/painelService";
 import type { BdosDisponiveis, ItemPainel, PainelEntregas as PainelEntregasResposta } from "../types";
 import { FotosParaConferir } from "./FotosParaConferir";
@@ -42,6 +43,10 @@ export function PainelEntregas() {
       const [painelResposta, bdosResposta] = await Promise.all([consultarPainel(), consultarBdosDisponiveis()]);
       setPainel(painelResposta);
       setBdosDisponiveis(bdosResposta);
+      // HU31: viagem iniciada em outro momento (ou outro aparelho) também envia a posição ao link de acompanhamento.
+      if (painelResposta.entregas.some((item) => item.status === "EM_ANDAMENTO")) {
+        marcarViagemEmAndamento(true);
+      }
       // Complemento do painel: uma falha aqui não esconde as entregas.
       listarPendentesDeConferencia()
         .then(setFotosParaConferir)

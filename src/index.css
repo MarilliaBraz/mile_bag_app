@@ -2221,6 +2221,22 @@ dialog.gaveta::backdrop {
   margin-bottom: 0.5rem;
 }
 
+/* HU31: "Acompanhe sua bagagem" - mais larga que o login, para caber o mapa. */
+.tela-acompanhamento {
+  place-items: start center;
+}
+
+.tela-acompanhamento > main {
+  width: min(40rem, 100%);
+}
+
+.acompanhamento-logo {
+  display: block;
+  max-height: 3rem;
+  max-width: 12rem;
+  margin-bottom: 0.5rem;
+}
+
 /* ---------- Mapa ---------- */
 
 .mapa {
