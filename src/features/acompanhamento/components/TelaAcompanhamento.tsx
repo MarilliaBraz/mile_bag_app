@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Alerta, Carregando } from "../../../shared/components/Alerta";
+import { Icone } from "../../../shared/components/Icone";
 import { MapaBase, type MarcadorMapa } from "../../../shared/components/MapaBase";
 import { SeletorIdioma } from "../../../shared/components/SeletorIdioma";
 import { useIntervaloEmPrimeiroPlano } from "../../../shared/hooks/useIntervaloEmPrimeiroPlano";
@@ -74,7 +75,7 @@ function Conteudo({ dados, consultadoEm, falhou }: { dados: Acompanhamento; cons
   const { empresa, etapa, posicao, destino } = dados;
   const encerrada = etapa === "ENTREGUE" || etapa === "NAO_ENTREGUE";
   const marcadores: MarcadorMapa[] = [
-    ...(posicao ? [{ posicao, rotulo: t.motorista }] : []),
+    ...(posicao ? [{ posicao, rotulo: t.motorista, destaque: true }] : []),
     ...(destino ? [{ posicao: destino, rotulo: t.destino }] : []),
   ];
   const minutosSemAtualizar = posicao ? Math.floor((consultadoEm - Date.parse(posicao.registradaEm)) / 60_000) : 0;
@@ -116,14 +117,28 @@ function Conteudo({ dados, consultadoEm, falhou }: { dados: Acompanhamento; cons
       </section>
 
       {!encerrada && marcadores.length > 0 && (
-        // Remonta quando a primeira posição chega, para o mapa enquadrar motorista e destino juntos.
-        <MapaBase
-          key={posicao ? "com-posicao" : "sem-posicao"}
-          centro={marcadores[0].posicao}
-          marcadores={marcadores}
-          descricao={t.mapa}
-          altura={320}
-        />
+        <div className="pilha">
+          {/* Remonta quando a primeira posição chega, para o mapa enquadrar motorista e destino juntos. */}
+          <MapaBase
+            key={posicao ? "com-posicao" : "sem-posicao"}
+            centro={marcadores[0].posicao}
+            marcadores={marcadores}
+            descricao={t.mapa}
+            altura={320}
+          />
+          <p className="legenda-mapa texto-apoio">
+            {posicao && (
+              <span>
+                <span className="legenda-ponto" aria-hidden="true" /> {t.motorista}
+              </span>
+            )}
+            {destino && (
+              <span>
+                <Icone nome="pino" /> {t.destino}
+              </span>
+            )}
+          </p>
+        </div>
       )}
     </>
   );

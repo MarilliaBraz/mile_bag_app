@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { enviarPosicao } from "../services/posicaoService";
-import { obterPosicaoAtual } from "../utils/posicaoAtual";
+import { obterPosicaoDetalhada } from "../utils/posicaoAtual";
 import { EVENTO_VIAGEM, marcarViagemEmAndamento, temViagemEmAndamento } from "../utils/viagemEmAndamento";
 import { useIntervaloEmPrimeiroPlano } from "./useIntervaloEmPrimeiroPlano";
 
@@ -27,7 +27,8 @@ export function useCompartilharPosicao() {
       return;
     }
     ultimoEnvio = Date.now();
-    const posicao = await obterPosicaoAtual();
+    // Posição em cache só se for mais nova que o intervalo: senão o passageiro veria o motorista parado.
+    const { posicao } = await obterPosicaoDetalhada(10_000, INTERVALO_MS);
     if (!posicao) {
       return;
     }

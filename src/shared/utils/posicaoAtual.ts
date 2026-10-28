@@ -43,8 +43,12 @@ function esperar(ms: number): Promise<null> {
  * pedidos eram em sequência, e sem GPS (notebooks e desktops) cada ação
  * esperava até 8 s antes de tentar a rede. Nunca rejeita: a falha volta em
  * `motivo` para a tela orientar o motorista.</p>
+ *
+ * <p>`idadeMaximaMs` limita a idade de uma posição em cache aceita pelo navegador.
+ * Sem ele valem 30 s (GPS) e 5 min (rede), bons para um registro pontual; o
+ * acompanhamento em tempo real (HU31) precisa de uma leitura recente.</p>
  */
-export async function obterPosicaoDetalhada(tempoLimiteMs = 10_000): Promise<ResultadoPosicao> {
+export async function obterPosicaoDetalhada(tempoLimiteMs = 10_000, idadeMaximaMs?: number): Promise<ResultadoPosicao> {
   if (!("geolocation" in navigator)) {
     return { posicao: null, motivo: "NAO_SUPORTADA" };
   }
@@ -52,8 +56,8 @@ export async function obterPosicaoDetalhada(tempoLimiteMs = 10_000): Promise<Res
     return { posicao: null, motivo: "CONTEXTO_INSEGURO" };
   }
 
-  const alta = pedirPosicao({ enableHighAccuracy: true, maximumAge: 30_000 }, tempoLimiteMs);
-  const normal = pedirPosicao({ enableHighAccuracy: false, maximumAge: 5 * 60_000 }, tempoLimiteMs);
+  const alta = pedirPosicao({ enableHighAccuracy: true, maximumAge: idadeMaximaMs ?? 30_000 }, tempoLimiteMs);
+  const normal = pedirPosicao({ enableHighAccuracy: false, maximumAge: idadeMaximaMs ?? 5 * 60_000 }, tempoLimiteMs);
 
   const { resultado, ehAlta } = await Promise.race([
     alta.then((resultado) => ({ resultado, ehAlta: true })),
