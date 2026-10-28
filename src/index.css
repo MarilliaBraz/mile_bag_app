@@ -2237,6 +2237,28 @@ dialog.gaveta::backdrop {
   margin-bottom: 0.5rem;
 }
 
+/* HU32: bagagem nova recebida por e-mail - amarelo de sinalização, o mesmo destaque do "Capturar". */
+.aviso-bdo-novo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.75rem 1rem 0;
+  padding: 0.75rem 0.75rem 0.75rem 1rem;
+  border-radius: var(--raio-g);
+  background: var(--destaque);
+  color: var(--destaque-texto);
+  box-shadow: var(--sombra-1);
+}
+
+.aviso-bdo-novo > p {
+  flex: 1;
+  margin: 0;
+}
+
+.aviso-bdo-novo .botao-icone {
+  color: inherit;
+}
+
 /* Quem está em movimento (o motorista, HU31): círculo, distinto do alfinete do destino. */
 .marcador-destaque,
 .legenda-ponto {

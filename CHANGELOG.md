@@ -13,6 +13,10 @@ Em validação no ambiente de homologação (`mile_bag_infra/scripts/implantar.s
 
 ### Adicionado
 
+- Aviso de bagagem nova (HU32): quando um BDO chega por e-mail, o app do motorista aberto toca um sinal
+  sonoro, vibra e mostra "Nova bagagem para retirar no aeroporto" em qualquer tela (consulta a cada 30 s, ou
+  na hora com notificações ativadas). Com o app fechado, notificação do sistema para quem ativou os avisos na
+  Conta; tocar nela abre o painel. Sair da conta desativa os avisos do aparelho.
 - "Acompanhe sua bagagem" (HU31): página pública `/acompanhar/:codigo`, aberta pelo link que o passageiro
   recebe ao iniciar a viagem, com a etapa da entrega, o mapa com a posição do motorista e o destino, atualizada
   a cada 15 s. Entregue ou não entregue, mostra só o resultado, sem a posição. Com viagem em andamento, o app
