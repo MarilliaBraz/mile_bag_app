@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { ApiError } from "../../../../shared/api/ApiError";
-import { Alerta } from "../../../../shared/ui/Alerta";
-import { AvisoContatoIncompleto } from "../../../../shared/ui/AvisoContatoIncompleto";
-import { AvisoJanelaReagendamento } from "../../../../shared/ui/AvisoJanelaReagendamento";
-import { useTextos } from "../../../../shared/i18n/idioma";
-import { Icone } from "../../../../shared/ui/Icone";
-import { executarOuEnfileirar } from "../../offline-sync/fila";
+import { ApiError } from "../../../../shared/services/ApiError";
+import { Alerta } from "../../../../shared/components/Alerta";
+import { AvisoContatoIncompleto } from "../../../../shared/components/AvisoContatoIncompleto";
+import { AvisoJanelaReagendamento } from "../../../../shared/components/AvisoJanelaReagendamento";
+import { useTextos } from "../../../../shared/utils/i18n/idioma";
+import { Icone } from "../../../../shared/components/Icone";
+import { executarOuEnfileirar } from "../../../../shared/services/fila";
 import { autoatribuir } from "../services/painelService";
 import type { ItemBdoDisponivel } from "../types";
 

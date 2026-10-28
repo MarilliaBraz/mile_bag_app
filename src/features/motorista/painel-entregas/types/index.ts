@@ -1,5 +1,5 @@
-import type { JanelaReagendamento } from "../../../../shared/format/formatar";
-import type { PendenciaContatoBdo } from "../../../../shared/ui/AvisoContatoIncompleto";
+import type { JanelaReagendamento } from "../../../../shared/utils/formatar";
+import type { PendenciaContatoBdo } from "../../../../shared/components/AvisoContatoIncompleto";
 
 /** Espelha com.marillia.milebag.business.entrega.model.EntregaStatus (mile_bag_api). */
 export type EntregaStatus = "AGUARDANDO_ATRIBUICAO" | "ATRIBUIDA" | "EM_ANDAMENTO" | "ENCERRADA_COM_SUCESSO" | "REABERTA";

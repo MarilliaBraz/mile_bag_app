@@ -1,7 +1,7 @@
-import { formatarHora } from "../../../../shared/format/formatar";
-import { useTextos } from "../../../../shared/i18n/idioma";
+import { formatarHora } from "../../../../shared/utils/formatar";
+import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import type { CalculoRota } from "../types";
-import { formatarDistancia, formatarDuracao } from "./MapaRotas";
+import { formatarDistancia, formatarDuracao } from "../utils/formatarRota";
 
 /**
  * Rota que está valendo na viagem em andamento (HU04): o último cálculo do

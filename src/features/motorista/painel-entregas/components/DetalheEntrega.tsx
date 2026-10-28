@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ApiError } from "../../../../shared/api/ApiError";
-import { Alerta, Carregando } from "../../../../shared/ui/Alerta";
-import { AvisoContatoIncompleto } from "../../../../shared/ui/AvisoContatoIncompleto";
-import { AvisoJanelaReagendamento } from "../../../../shared/ui/AvisoJanelaReagendamento";
-import { useTextos } from "../../../../shared/i18n/idioma";
-import { Icone } from "../../../../shared/ui/Icone";
-import { VincularBagagemCarona } from "../../captura-bdo/bagagem-carona/VincularBagagemCarona";
-import { TelaMotorista } from "../../layout/TelaMotorista";
-import { BotaoLigar } from "../../mensageria/components/BotaoLigar";
-import { Conversa } from "../../mensageria/components/Conversa";
-import { HistoricoOcorrencias } from "../../ocorrencia/HistoricoOcorrencias";
+import { ApiError } from "../../../../shared/services/ApiError";
+import { Alerta, Carregando } from "../../../../shared/components/Alerta";
+import { AvisoContatoIncompleto } from "../../../../shared/components/AvisoContatoIncompleto";
+import { AvisoJanelaReagendamento } from "../../../../shared/components/AvisoJanelaReagendamento";
+import { useTextos } from "../../../../shared/utils/i18n/idioma";
+import { Icone } from "../../../../shared/components/Icone";
+import { VincularBagagemCarona } from "../bagagem-carona/components/VincularBagagemCarona";
+import { TelaMotorista } from "../../../../shared/components/TelaMotorista";
+import { BotaoLigar } from "../mensageria/components/BotaoLigar";
+import { Conversa } from "../mensageria/components/Conversa";
+import { HistoricoOcorrencias } from "./HistoricoOcorrencias";
 import { consultarDetalhe } from "../services/painelService";
 import type { ItemPainelDetalhe } from "../types";
 import { EtapasEntrega } from "./EtapasEntrega";
-import { TOM_STATUS_ENTREGA } from "./statusEntrega";
+import { TOM_STATUS_ENTREGA } from "../utils/statusEntrega";
 
 /**
  * Detalhe completo de uma entrega (HU19, FR-003) - passageiro, endereço,

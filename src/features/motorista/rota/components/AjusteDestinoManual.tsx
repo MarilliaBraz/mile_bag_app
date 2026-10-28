@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useMapEvents } from "react-leaflet";
-import { useTextos } from "../../../../shared/i18n/idioma";
-import { Alerta } from "../../../../shared/ui/Alerta";
-import { MapaBase } from "../../../../shared/mapa/MapaBase";
+import { useTextos } from "../../../../shared/utils/i18n/idioma";
+import { Alerta } from "../../../../shared/components/Alerta";
+import { MapaBase } from "../../../../shared/components/MapaBase";
 import type { Coordenada } from "../types";
 
 function CapturarClique({ aoClicar }: { aoClicar: (ponto: Coordenada) => void }) {

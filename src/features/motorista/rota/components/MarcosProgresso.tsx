@@ -1,10 +1,10 @@
-import { formatarHora } from "../../../../shared/format/formatar";
-import { useTextos } from "../../../../shared/i18n/idioma";
-import { Icone, type NomeIcone } from "../../../../shared/ui/Icone";
+import { formatarHora } from "../../../../shared/utils/formatar";
+import { useTextos } from "../../../../shared/utils/i18n/idioma";
+import { Icone, type NomeIcone } from "../../../../shared/components/Icone";
 import { useState } from "react";
-import { Alerta } from "../../../../shared/ui/Alerta";
-import { ApiError } from "../../../../shared/api/ApiError";
-import { obterPosicaoAtual } from "../../../../shared/geo/posicaoAtual";
+import { Alerta } from "../../../../shared/components/Alerta";
+import { ApiError } from "../../../../shared/services/ApiError";
+import { obterPosicaoAtual } from "../../../../shared/utils/posicaoAtual";
 import { registrarCheckpoint } from "../services/viagemService";
 import type { Checkpoint, TipoCheckpoint } from "../types";
 

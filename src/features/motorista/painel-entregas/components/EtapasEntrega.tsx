@@ -1,5 +1,5 @@
-import { useTextos } from "../../../../shared/i18n/idioma";
-import { Icone, type NomeIcone } from "../../../../shared/ui/Icone";
+import { useTextos } from "../../../../shared/utils/i18n/idioma";
+import { Icone, type NomeIcone } from "../../../../shared/components/Icone";
 import type { ItemPainel } from "../types";
 
 const ETAPAS: { rotulo: "assumida" | "aCaminho" | "noEndereco" | "entregue"; icone: NomeIcone }[] = [

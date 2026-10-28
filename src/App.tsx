@@ -1,38 +1,29 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { AdminLayout, ITENS_PLATAFORMA, ITENS_TENANT } from "./features/back-office/AdminLayout";
-import { AvisoEmergenciasAbertas } from "./features/back-office/emergencias/AvisoEmergenciasAbertas";
-import { TelaEmergencias } from "./features/back-office/emergencias/TelaEmergencias";
-import { IdentidadeVisualForm } from "./features/back-office/configuracao-tenant/IdentidadeVisualForm";
-import { TelaConfiguracoes } from "./features/back-office/configuracao-tenant/TelaConfiguracoes";
-import { DetalheFechamento } from "./features/back-office/fechamento/DetalheFechamento";
-import { TelaFechamentos } from "./features/back-office/fechamento/TelaFechamentos";
-import { TelaMotoristas } from "./features/back-office/motoristas/TelaMotoristas";
-import { TelaPedagios } from "./features/back-office/pedagios/TelaPedagios";
-import { PlanosLista } from "./features/back-office/planos/PlanosLista";
-import { TelaTarifas } from "./features/back-office/tarifas/TelaTarifas";
-import { AtivarConviteForm } from "./features/back-office/tenant-onboarding/AtivarConviteForm";
-import { TelaEmpresas } from "./features/back-office/tenant-onboarding/TelaEmpresas";
-import { TenantCadastradoConfirmacao } from "./features/back-office/tenant-onboarding/TenantCadastradoConfirmacao";
-import { TelaConta } from "./features/motorista/conta/TelaConta";
-import { CapturaBdo } from "./features/motorista/captura-bdo/components/CapturaBdo";
-import { TelaEmergencia } from "./features/motorista/emergencia/TelaEmergencia";
-import { DetalheEntrega } from "./features/motorista/painel-entregas/components/DetalheEntrega";
-import { PainelEntregas } from "./features/motorista/painel-entregas/components/PainelEntregas";
-import { RegistrarComprovante } from "./features/motorista/comprovante-entrega/RegistrarComprovante";
-import { RegistrarOcorrencia } from "./features/motorista/ocorrencia/RegistrarOcorrencia";
-import { RelatorioQuinzenal } from "./features/motorista/relatorio-quinzenal/RelatorioQuinzenal";
-import { TelaRota } from "./features/motorista/rota/components/TelaRota";
-import { RegistrosLocais } from "./features/motorista/offline-sync/RegistrosLocais";
-import { AcessibilidadeDeRota } from "./shared/ui/AcessibilidadeDeRota";
-import { FaixaAmbiente } from "./shared/ui/FaixaAmbiente";
-import { LimiteDeFalha } from "./shared/ui/LimiteDeFalha";
-import { EsqueciSenha } from "./shared/auth/EsqueciSenha";
-import { Login } from "./shared/auth/Login";
-import { RedefinirSenha } from "./shared/auth/RedefinirSenha";
-import { TrocarSenha } from "./shared/auth/TrocarSenha";
-import { AvisoSessaoExpirada } from "./shared/auth/AvisoSessaoExpirada";
-import { RequireAuth } from "./shared/auth/RequireAuth";
-import { useTextos } from "./shared/i18n/idioma";
+import { EsqueciSenha, Login, RedefinirSenha, TrocarSenha } from "./features/auth";
+import { IdentidadeVisualForm, TelaConfiguracoes } from "./features/back-office/configuracao-tenant";
+import { AvisoEmergenciasAbertas, TelaEmergencias } from "./features/back-office/emergencias";
+import { DetalheFechamento, TelaFechamentos } from "./features/back-office/fechamento";
+import { AdminLayout, ITENS_PLATAFORMA, ITENS_TENANT } from "./features/back-office/layout";
+import { TelaMotoristas } from "./features/back-office/motoristas";
+import { TelaPedagios } from "./features/back-office/pedagios";
+import { PlanosLista } from "./features/back-office/planos";
+import { TelaTarifas } from "./features/back-office/tarifas";
+import { AtivarConviteForm, TelaEmpresas, TenantCadastradoConfirmacao } from "./features/back-office/tenant-onboarding";
+import { CapturaBdo } from "./features/motorista/captura-bdo";
+import { RegistrarComprovante } from "./features/motorista/comprovante-entrega";
+import { TelaConta } from "./features/motorista/conta";
+import { TelaEmergencia } from "./features/motorista/emergencia";
+import { RegistrarOcorrencia } from "./features/motorista/ocorrencia";
+import { RegistrosLocais } from "./features/motorista/offline-sync";
+import { DetalheEntrega, PainelEntregas } from "./features/motorista/painel-entregas";
+import { RelatorioQuinzenal } from "./features/motorista/relatorio-quinzenal";
+import { TelaRota } from "./features/motorista/rota";
+import { AcessibilidadeDeRota } from "./shared/components/AcessibilidadeDeRota";
+import { FaixaAmbiente } from "./shared/components/FaixaAmbiente";
+import { LimiteDeFalha } from "./shared/components/LimiteDeFalha";
+import { AvisoSessaoExpirada } from "./shared/components/AvisoSessaoExpirada";
+import { RequireAuth } from "./shared/components/RequireAuth";
+import { useTextos } from "./shared/utils/i18n/idioma";
 
 export function App() {
   // RNF11: uma falha numa tela não derruba o app; mudar de rota sai do estado de falha.
@@ -47,99 +38,26 @@ export function App() {
       <LimiteDeFalha key={pathname}>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route
-            path="/motorista"
-            element={
-              <RequireAuth papeis={["MOTORISTA"]}>
-                <PainelEntregas />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/motorista/entregas/:entregaId"
-            element={
-              <RequireAuth>
-                <DetalheEntrega />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/motorista/entregas/:entregaId/rota"
-            element={
-              <RequireAuth>
-                <TelaRota />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/motorista/entregas/:entregaId/comprovante"
-            element={
-              <RequireAuth>
-                <RegistrarComprovante />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/motorista/entregas/:entregaId/ocorrencia"
-            element={
-              <RequireAuth>
-                <RegistrarOcorrencia />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/motorista/relatorio"
-            element={
-              <RequireAuth>
-                <RelatorioQuinzenal />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/motorista/registros"
-            element={
-              <RequireAuth>
-                <RegistrosLocais />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/motorista/conta"
-            element={
-              <RequireAuth>
-                <TelaConta />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/motorista/emergencia"
-            element={
-              <RequireAuth papeis={["MOTORISTA"]}>
-                <TelaEmergencia />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/motorista/captura-bdo"
-            element={
-              <RequireAuth>
-                <CapturaBdo />
-              </RequireAuth>
-            }
-          />
           {/* O e-mail de convite (HU15) usa /convites/{token}; /convite/{token} continua valendo por compatibilidade. */}
           <Route path="/convites/:token" element={<AtivarConviteForm />} />
           <Route path="/convite/:token" element={<AtivarConviteForm />} />
           <Route path="/esqueci-senha" element={<EsqueciSenha />} />
           <Route path="/redefinir-senha/:token" element={<RedefinirSenha />} />
-          <Route
-            path="/conta/senha"
-            element={
-              <RequireAuth>
-                <TrocarSenha />
-              </RequireAuth>
-            }
-          />
+          <Route element={<RequireAuth papeis={["MOTORISTA"]} />}>
+            <Route path="/motorista" element={<PainelEntregas />} />
+            <Route path="/motorista/emergencia" element={<TelaEmergencia />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/motorista/entregas/:entregaId" element={<DetalheEntrega />} />
+            <Route path="/motorista/entregas/:entregaId/rota" element={<TelaRota />} />
+            <Route path="/motorista/entregas/:entregaId/comprovante" element={<RegistrarComprovante />} />
+            <Route path="/motorista/entregas/:entregaId/ocorrencia" element={<RegistrarOcorrencia />} />
+            <Route path="/motorista/relatorio" element={<RelatorioQuinzenal />} />
+            <Route path="/motorista/registros" element={<RegistrosLocais />} />
+            <Route path="/motorista/conta" element={<TelaConta />} />
+            <Route path="/motorista/captura-bdo" element={<CapturaBdo />} />
+            <Route path="/conta/senha" element={<TrocarSenha />} />
+          </Route>
           <Route
             path="/admin"
             element={

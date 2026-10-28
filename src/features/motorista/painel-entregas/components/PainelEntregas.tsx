@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ApiError } from "../../../../shared/api/ApiError";
-import { Ajuda } from "../../../../shared/ui/Ajuda";
-import { Alerta, Vazio } from "../../../../shared/ui/Alerta";
-import { AvisoJanelaReagendamento } from "../../../../shared/ui/AvisoJanelaReagendamento";
-import { useTextos } from "../../../../shared/i18n/idioma";
-import { Icone, type NomeIcone } from "../../../../shared/ui/Icone";
-import { TelaMotorista } from "../../layout/TelaMotorista";
-import { listarPendentesDeConferencia } from "../../captura-bdo/services/bdoService";
-import type { BdoResponse } from "../../captura-bdo/types";
-import { listarMotivos } from "../../ocorrencia/ocorrenciaService";
+import { ApiError } from "../../../../shared/services/ApiError";
+import { Ajuda } from "../../../../shared/components/Ajuda";
+import { Alerta, Vazio } from "../../../../shared/components/Alerta";
+import { AvisoJanelaReagendamento } from "../../../../shared/components/AvisoJanelaReagendamento";
+import { useTextos } from "../../../../shared/utils/i18n/idioma";
+import { Icone, type NomeIcone } from "../../../../shared/components/Icone";
+import { TelaMotorista } from "../../../../shared/components/TelaMotorista";
+import { listarPendentesDeConferencia } from "../../../../shared/services/bdoService";
+import type { BdoResponse } from "../../../../shared/types/bdo";
+import { listarMotivos } from "../../../../shared/services/ocorrenciaService";
 import { consultarBdosDisponiveis, consultarPainel } from "../services/painelService";
 import type { BdosDisponiveis, ItemPainel, PainelEntregas as PainelEntregasResposta } from "../types";
 import { FotosParaConferir } from "./FotosParaConferir";
 import { ListaBdosDisponiveis } from "./ListaBdosDisponiveis";
-import { TOM_STATUS_ENTREGA } from "./statusEntrega";
+import { TOM_STATUS_ENTREGA } from "../utils/statusEntrega";
 
 const ROTULO_MARCO: Record<NonNullable<ItemPainel["marcoMaisRecente"]>, { icone: NomeIcone; texto: "marcoACaminho" | "marcoChegada" }> = {
   A_CAMINHO: { icone: "carro", texto: "marcoACaminho" },

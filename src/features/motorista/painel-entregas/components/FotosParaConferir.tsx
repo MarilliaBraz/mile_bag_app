@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { formatarDataHora } from "../../../../shared/format/formatar";
-import { useTextos } from "../../../../shared/i18n/idioma";
-import { Icone } from "../../../../shared/ui/Icone";
-import type { EstadoCapturaBdo } from "../../captura-bdo/components/CapturaBdo";
-import type { BdoResponse } from "../../captura-bdo/types";
+import { formatarDataHora } from "../../../../shared/utils/formatar";
+import { useTextos } from "../../../../shared/utils/i18n/idioma";
+import { Icone } from "../../../../shared/components/Icone";
+import type { EstadoCapturaBdo } from "../../../../shared/types/bdo";
+import type { BdoResponse } from "../../../../shared/types/bdo";
 
 /**
  * Fotos de BDO do motorista que ainda esperam conferência (HU01/HU08) -

@@ -1,4 +1,4 @@
-import { requisitar } from "../../../../shared/api/httpClient";
+import { requisitar } from "../../../../shared/services/httpClient";
 import type { Checkpoint, Coordenada, TipoCheckpoint, TrajetoDetalhado, TrajetoIniciado } from "../types";
 
 /** POST /api/v1/entregas/{entregaId}/viagem/iniciar (HU04, FR-001). */

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { ApiError } from "../../../../shared/api/ApiError";
-import { obterPosicaoAtual } from "../../../../shared/geo/posicaoAtual";
-import { obterTextos } from "../../../../shared/i18n/idioma";
-import { executarOuEnfileirar } from "../../offline-sync/fila";
+import { ApiError } from "../../../../shared/services/ApiError";
+import { obterPosicaoAtual } from "../../../../shared/utils/posicaoAtual";
+import { obterTextos } from "../../../../shared/utils/i18n/idioma";
+import { executarOuEnfileirar } from "../../../../shared/services/fila";
 import { calcularRotas, selecionarRota } from "../services/rotaService";
 import { consultarTrajeto, encerrarTrajeto, iniciarViagem } from "../services/viagemService";
 import type { CalculoRotas, Coordenada, RotaAlternativa, RotaSelecionada, TrajetoDetalhado } from "../types";

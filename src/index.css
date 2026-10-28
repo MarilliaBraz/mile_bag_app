@@ -107,7 +107,7 @@
 }
 
 /* Tema escuro: pensado para dirigir à noite, com fundo azul-petróleo profundo (não preto puro) e cores menos saturadas.
- * Única definição da paleta escura: o tema "automático" é resolvido em shared/ui/preferencias.ts, que sempre grava
+ * Única definição da paleta escura: o tema "automático" é resolvido em shared/utils/preferencias.ts, que sempre grava
  * data-tema="claro" ou "escuro" no <html>. :where() mantém a especificidade igual à de :root, para o alto contraste
  * (declarado depois) continuar vencendo. */
 :root:where([data-tema="escuro"]) {

@@ -11,7 +11,7 @@
     <title>Milebag Motorista</title>
     <script>
       // Aplica o tema antes da primeira pintura (sem piscar o claro para quem usa escuro).
-      // Mesma regra e mesma chave de src/shared/ui/preferencias.ts, que assume depois do carregamento.
+      // Mesma regra e mesma chave de src/shared/utils/preferencias.ts, que assume depois do carregamento.
       try {
         var tema = localStorage.getItem("milebag_tema");
         var escuro = tema === "escuro" || (tema !== "claro" && matchMedia("(prefers-color-scheme: dark)").matches);

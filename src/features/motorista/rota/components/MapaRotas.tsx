@@ -1,23 +1,12 @@
 import type { ReactNode } from "react";
 import { Polyline } from "react-leaflet";
-import { formatarMoeda, formatarNumero } from "../../../../shared/format/formatar";
-import { useTextos } from "../../../../shared/i18n/idioma";
-import { MapaBase } from "../../../../shared/mapa/MapaBase";
-import { Vazio } from "../../../../shared/ui/Alerta";
-import { Icone } from "../../../../shared/ui/Icone";
+import { formatarMoeda } from "../../../../shared/utils/formatar";
+import { useTextos } from "../../../../shared/utils/i18n/idioma";
+import { MapaBase } from "../../../../shared/components/MapaBase";
+import { Vazio } from "../../../../shared/components/Alerta";
+import { Icone } from "../../../../shared/components/Icone";
 import type { CalculoRotas, RotaAlternativa } from "../types";
-
-export function formatarDistancia(metros: number): string {
-  return `${formatarNumero(metros / 1000, 1)} km`;
-}
-
-export function formatarDuracao(segundos: number): string {
-  const minutos = Math.round(segundos / 60);
-  if (minutos < 60) {
-    return `${minutos} min`;
-  }
-  return `${Math.floor(minutos / 60)} h ${String(minutos % 60).padStart(2, "0")} min`;
-}
+import { formatarDistancia, formatarDuracao } from "../utils/formatarRota";
 
 /**
  * Alternativas de rota calculadas (HU03, FR-001/FR-002) - distância, tempo

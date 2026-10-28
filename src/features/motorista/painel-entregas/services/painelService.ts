@@ -1,4 +1,4 @@
-import { requisitar } from "../../../../shared/api/httpClient";
+import { requisitar } from "../../../../shared/services/httpClient";
 import type { BdosDisponiveis, ItemPainelDetalhe, PainelEntregas } from "../types";
 
 /** GET /api/v1/motorista/painel-entregas (HU19, FR-002). */

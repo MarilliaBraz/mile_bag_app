@@ -1,7 +1,7 @@
-import { formatarHora, formatarNumero } from "../../../../shared/format/formatar";
-import { useTextos } from "../../../../shared/i18n/idioma";
+import { formatarHora, formatarNumero } from "../../../../shared/utils/formatar";
+import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import type { TrajetoDetalhado } from "../types";
-import { formatarDuracao } from "./MapaRotas";
+import { formatarDuracao } from "../utils/formatarRota";
 
 const horaDe = formatarHora;
 

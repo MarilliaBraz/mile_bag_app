@@ -1,4 +1,4 @@
-import { requisitar } from "../../../../shared/api/httpClient";
+import { requisitar } from "../../../../shared/services/httpClient";
 import type { CalculoRotas, Coordenada, RotaSelecionada, TipoSelecao } from "../types";
 
 /** POST /api/v1/entregas/{entregaId}/rotas/calcular (HU03, FR-001/FR-002). */
