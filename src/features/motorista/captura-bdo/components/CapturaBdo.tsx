@@ -1,21 +1,19 @@
-import { obterTextos, useTextos } from "../../../../shared/i18n/idioma";
-import { Ajuda } from "../../../../shared/ui/Ajuda";
+import { obterTextos, useTextos } from "../../../../shared/utils/i18n/idioma";
+import { Ajuda } from "../../../../shared/components/Ajuda";
 import { useEffect, useState } from "react";
-import { ApiError } from "../../../../shared/api/ApiError";
-import { arquivoParaBase64, enfileirar } from "../../offline-sync/fila";
+import { ApiError } from "../../../../shared/services/ApiError";
+import { arquivoParaBase64, enfileirar } from "../../../../shared/services/fila";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Alerta, Carregando } from "../../../../shared/ui/Alerta";
-import { AvisoContatoIncompleto } from "../../../../shared/ui/AvisoContatoIncompleto";
-import { Icone } from "../../../../shared/ui/Icone";
-import { TelaMotorista } from "../../layout/TelaMotorista";
-import { avaliarCompletudeContato } from "../completudeContato";
-import { capturarBdo, confirmarConferencia, descartarCaptura } from "../services/bdoService";
-import type { BdoResponse, CamposExtraidosBdo } from "../types";
+import { Alerta, Carregando } from "../../../../shared/components/Alerta";
+import { AvisoContatoIncompleto } from "../../../../shared/components/AvisoContatoIncompleto";
+import { Icone } from "../../../../shared/components/Icone";
+import { TelaMotorista } from "../../../../shared/components/TelaMotorista";
+import { avaliarCompletudeContato } from "../utils/completudeContato";
+import { capturarBdo, confirmarConferencia, descartarCaptura } from "../../../../shared/services/bdoService";
+import type { BdoResponse, CamposExtraidosBdo } from "../../../../shared/types/bdo";
+import type { EstadoCapturaBdo } from "../../../../shared/types/bdo";
 
 type Etapa = "captura" | "conferencia" | "enviando" | "concluido" | "enfileirado";
-
-/** Vindo do painel ("Fotos de BDO para conferir"): abre direto a conferência de uma captura já enviada. */
-export type EstadoCapturaBdo = { bdoParaConferir?: BdoResponse };
 
 const CAMPO_VAZIO: CamposExtraidosBdo = {
   numero: "",

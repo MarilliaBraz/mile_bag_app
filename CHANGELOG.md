@@ -36,6 +36,15 @@ Em validação no ambiente de homologação (`mile_bag_infra/scripts/implantar.s
 - Ícones deixam de ser "desenhados" a cada tela; a animação ficou só nos estados vazio e de sucesso.
 - O brilho dos esqueletos de carregamento anima só `transform` (sem repintar a tela a cada quadro).
 - Seção atual do menu do back-office marcada também por uma barra lateral, não só pela cor.
+- Organização interna conforme o `CONVENTIONS.md` §1.2, sem mudança de comportamento:
+  - toda feature separa `components/`, `hooks/`, `services/`, `types/` e `utils/` e expõe um `index.ts`;
+    os tipos saíram dos arquivos de service e os `*Api.ts` passaram a se chamar `*Service.ts`;
+  - nenhuma feature importa de outra: o que é usado por duas ou mais (layouts `TelaMotorista` e `Pagina`,
+    fila offline, services de motoristas, planos, BDO, ocorrências e identidade visual) subiu para `shared/`,
+    agora organizado por tipo; o que só uma outra feature usava foi para dentro dela (mensageria e bagagem
+    carona em `painel-entregas`, `TrocarPlanoTenant` em `tenant-onboarding`);
+  - telas de login e senha em `features/auth`, com as chamadas à API em `authService`;
+  - rotas protegidas do `App.tsx` agrupadas sob um único `RequireAuth` por papel.
 
 ## [0.1.0] - 2026-10-05
 

@@ -3,9 +3,9 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import { App } from "./App.tsx";
-import { registrarFalhasGlobais } from "./shared/diagnostico/registroFalhas";
-import { aplicarIdiomaSalvo } from "./shared/i18n/idioma";
-import { aplicarPreferenciasSalvas } from "./shared/ui/preferencias";
+import { registrarFalhasGlobais } from "./shared/utils/registroFalhas";
+import { aplicarIdiomaSalvo } from "./shared/utils/i18n/idioma";
+import { aplicarPreferenciasSalvas } from "./shared/utils/preferencias";
 
 aplicarPreferenciasSalvas();
 aplicarIdiomaSalvo();

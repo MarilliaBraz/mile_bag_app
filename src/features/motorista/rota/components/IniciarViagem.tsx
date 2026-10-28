@@ -1,7 +1,7 @@
-import { useTextos } from "../../../../shared/i18n/idioma";
-import { Icone } from "../../../../shared/ui/Icone";
+import { useTextos } from "../../../../shared/utils/i18n/idioma";
+import { Icone } from "../../../../shared/components/Icone";
 import type { RotaSelecionada } from "../types";
-import { formatarDistancia, formatarDuracao } from "./MapaRotas";
+import { formatarDistancia, formatarDuracao } from "../utils/formatarRota";
 
 /**
  * Início da viagem (HU04, FR-001), encadeado à seleção de rota de HU03: o

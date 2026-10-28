@@ -1,4 +1,4 @@
-import type { Coordenada } from "../../../../shared/mapa/MapaBase";
+import type { Coordenada } from "../../../../shared/components/MapaBase";
 
 export type { Coordenada };
 

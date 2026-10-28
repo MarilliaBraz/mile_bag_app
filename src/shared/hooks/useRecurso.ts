@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { mensagemDeErro } from "../format/formatar";
-import { obterTextos } from "../i18n/idioma";
+import { mensagemDeErro } from "../utils/formatar";
+import { obterTextos } from "../utils/i18n/idioma";
 
 /** Carrega um recurso da API ao montar e expõe `recarregar` para depois de uma escrita. */
 export function useRecurso<T>(carregador: () => Promise<T>, mensagemPadrao?: string) {

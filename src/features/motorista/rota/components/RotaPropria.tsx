@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CircleMarker, Polyline, useMapEvents } from "react-leaflet";
-import { useTextos } from "../../../../shared/i18n/idioma";
-import { MapaBase } from "../../../../shared/mapa/MapaBase";
+import { useTextos } from "../../../../shared/utils/i18n/idioma";
+import { MapaBase } from "../../../../shared/components/MapaBase";
 import type { Coordenada } from "../types";
 
 function CapturarCliques({ aoClicar }: { aoClicar: (ponto: Coordenada) => void }) {

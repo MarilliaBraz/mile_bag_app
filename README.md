@@ -37,7 +37,10 @@ O projeto segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/). Ca
 
 ## Organização
 
-Estrutura por **feature** (`features/<dominio>`), com pasta `shared/` para componentes, hooks e utils usados por duas ou mais features. Veja o `CONVENTIONS.md` no repositório [`mile_bag_audite`](https://github.com/MarilliaBraz/mile_bag_audite) para o detalhamento das convenções técnicas e de código.
+Estrutura por **feature** (`features/<app>/<dominio>`, com `<app>` sendo `motorista` ou `back-office`, mais `features/auth`
+para as telas de entrada e senha). Cada feature separa `components/`, `hooks/`, `services/` (chamadas à API), `types/` e
+`utils/`, e expõe no `index.ts` só o que o `App.tsx` usa. Uma feature não importa de outra: o que é usado por duas ou mais
+fica em `shared/`, organizado da mesma forma (`components/`, `hooks/`, `services/`, `types/` e `utils/`). Veja o `CONVENTIONS.md` no repositório [`mile_bag_audite`](https://github.com/MarilliaBraz/mile_bag_audite) para o detalhamento das convenções técnicas e de código.
 
 ## Repositórios relacionados
 
