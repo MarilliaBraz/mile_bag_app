@@ -8,6 +8,7 @@ import { formatarDataHora, mensagemDeErro } from "../../../../shared/utils/forma
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { consultarBagagens, exportarCsv, listarAeroportos } from "../services/bagagensService";
 import type { BagagemEncontrada, PaginaBagagens } from "../types";
+import { classeEtapa } from "../utils/etapaEntrega";
 import { CAMPOS_FILTRO, filtrosDaUrl } from "../utils/filtrosConsulta";
 import { CORES, TIPOS_VOLUME } from "../utils/opcoesDescricao";
 
@@ -128,7 +129,15 @@ function LinhaBagagem({ bagagem: b, voltar }: { bagagem: BagagemEncontrada; volt
         </span>
       </td>
       <td>{b.aeroporto && <span className="selo selo-info">{b.aeroporto.codigo}</span>}</td>
-      <td>{dados}</td>
+      <td>
+        {dados}
+        {b.encaminhamento && (
+          <span className="em-bloco">
+            <span className={classeEtapa(b.encaminhamento.etapa)}>{textos.encaminhamento.etapas[b.encaminhamento.etapa]}</span>{" "}
+            <span className="texto-apoio">{b.encaminhamento.empresa}</span>
+          </span>
+        )}
+      </td>
       <td>
         {b.registradoPor}
         <span className="texto-apoio em-bloco">{formatarDataHora(b.registradaEm ?? b.criadoEm)}</span>

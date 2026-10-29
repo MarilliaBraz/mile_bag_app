@@ -5,7 +5,7 @@ import type { PendenciaContatoBdo } from "../../../../shared/components/AvisoCon
 export type EntregaStatus = "AGUARDANDO_ATRIBUICAO" | "ATRIBUIDA" | "EM_ANDAMENTO" | "ENCERRADA_COM_SUCESSO" | "REABERTA";
 
 /** Espelha com.marillia.milebag.business.bdo.model.BdoOrigem. */
-export type BdoOrigem = "FOTO_MANUAL" | "EMAIL_AUTOMATICO";
+export type BdoOrigem = "FOTO_MANUAL" | "EMAIL_AUTOMATICO" | "COMPANHIA_AEREA";
 
 /** Espelha com.marillia.milebag.business.entrega.model.BagagemCaronaResumo. */
 export type BagagemCaronaResumo = {

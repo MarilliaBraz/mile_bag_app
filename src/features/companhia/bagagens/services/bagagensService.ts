@@ -7,6 +7,8 @@ import type {
   BagagemNacional,
   ConfirmacaoEtiqueta,
   Descrever,
+  EmpresaEntrega,
+  EncaminharBagagem,
   FiltrosConsulta,
   PaginaBagagens,
 } from "../types";
@@ -65,3 +67,9 @@ export async function baixarFicha(bagagem: BagagemEncontrada): Promise<void> {
 /** Busca nacional por etiqueta (RD22): todas as companhias. */
 export const buscarNoPais = (etiqueta: string) =>
   requisitar<BagagemNacional[]>(`/api/v1/companhia/busca-nacional?etiqueta=${encodeURIComponent(etiqueta)}`);
+
+/** HU37: empresas de entrega parceiras da companhia, para o encaminhamento. */
+export const listarEmpresasEntrega = () => requisitar<EmpresaEntrega[]>("/api/v1/companhia/empresas-entrega");
+export const encaminharBagagem = (id: string, corpo: EncaminharBagagem) =>
+  requisitar<BagagemEncontrada>(`${BASE}/${id}/encaminhamento`, { metodo: "POST", corpo });
+export const cancelarEncaminhamento = (id: string) => requisitar<void>(`${BASE}/${id}/encaminhamento`, { metodo: "DELETE" });

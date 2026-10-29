@@ -14,7 +14,7 @@ export type CamposExtraidosBdo = {
 /** Espelha com.marillia.milebag.business.bdo.model.BdoResponse. */
 export type BdoResponse = {
   id: string;
-  origem: "FOTO_MANUAL" | "EMAIL_AUTOMATICO";
+  origem: "FOTO_MANUAL" | "EMAIL_AUTOMATICO" | "COMPANHIA_AEREA";
   camposExtraidos: CamposExtraidosBdo;
   imagemOriginal: string | null;
   statusConferencia: "PENDENTE" | "CONFIRMADO";

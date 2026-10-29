@@ -38,6 +38,7 @@ export const motorista: Textos["motorista"] = {
     falha: "No fue posible asumir esta entrega. Inténtelo de nuevo.",
     novaTentativa: "Nuevo intento",
     porEmail: "Por correo",
+    porCompanhia: "Aerolínea",
     assumirRotulo: (numero) => `Asumir BDO ${numero ?? "sin número"}`,
     assumindo: "Asumiendo…",
     assumir: "Asumir entrega",
