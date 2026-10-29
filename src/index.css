@@ -3146,3 +3146,28 @@ fieldset.escolhas-grade > .escolhas-ajuda {
   justify-content: flex-end;
   margin-bottom: 0.5rem;
 }
+
+/* HU36: filtros da consulta de bagagens em grade (texto e botões ocupam a linha toda) e a paginação. */
+.filtros-consulta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: 0.75rem 1rem;
+  align-items: end;
+}
+
+.filtros-consulta > div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.filtros-consulta > .filtro-largo {
+  grid-column: 1 / -1;
+}
+
+.paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+}

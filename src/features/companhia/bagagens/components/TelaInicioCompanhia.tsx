@@ -14,7 +14,7 @@ import type { BagagemEncontrada } from "../types";
 const conferenciaDo = (b: BagagemEncontrada) =>
   b.tipo === "SEM_ETIQUETA" ? `/companhia/sem-etiqueta/${b.id}` : `/companhia/registrar/${b.id}`;
 
-/** Início do funcionário da companhia aérea (HU33-HU35): registrar bagagem, rascunhos por conferir e registros recentes. */
+/** Início do funcionário da companhia aérea (HU33-HU36): registrar bagagem, consulta, rascunhos por conferir e registros recentes. */
 export function TelaInicioCompanhia() {
   const textos = useTextos();
   const t = textos.companhia.inicio;
@@ -53,6 +53,23 @@ export function TelaInicioCompanhia() {
           </span>
           <Icone nome="chevron" />
         </Link>
+        {/* HU36: consulta e busca nacional, na área da companhia. */}
+        <div className="linha-acoes">
+          <Link to="/companhia/bagagens" className="cartao-link">
+            <Icone nome="lista" />
+            <span className="cartao-corpo">
+              <strong>{t.consultar}</strong>
+              <span className="texto-apoio em-bloco">{t.consultarAjuda}</span>
+            </span>
+          </Link>
+          <Link to="/companhia/busca-nacional" className="cartao-link">
+            <Icone nome="busca" />
+            <span className="cartao-corpo">
+              <strong>{t.buscaNacional}</strong>
+              <span className="texto-apoio em-bloco">{t.buscaNacionalAjuda}</span>
+            </span>
+          </Link>
+        </div>
 
         {rascunhos && rascunhos.length > 0 && (
           <section className="pilha">
@@ -103,9 +120,15 @@ export function TelaInicioCompanhia() {
                     </Link>
                   </li>
                 ) : (
-                  <li key={b.id} className="cartao cartao-corpo">
-                    <strong className="mono">{b.etiqueta?.numeroEtiqueta}</strong> {aeroporto}
-                    {autoria}
+                  <li key={b.id}>
+                    <Link to={`/companhia/bagagens/${b.id}`} state={{ voltar: "/companhia/inicio" }} className="cartao-link">
+                      <Icone nome="camera" />
+                      <span className="cartao-corpo">
+                        <strong className="mono">{b.etiqueta?.numeroEtiqueta}</strong> {aeroporto}
+                        {autoria}
+                      </span>
+                      <Icone nome="chevron" />
+                    </Link>
                   </li>
                 );
               })}

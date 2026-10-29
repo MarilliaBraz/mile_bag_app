@@ -4,11 +4,19 @@ import { EsqueciSenha, Login, RedefinirSenha, TrocarSenha } from "./features/aut
 import { IdentidadeVisualForm, TelaConfiguracoes } from "./features/back-office/configuracao-tenant";
 import { AvisoEmergenciasAbertas, TelaEmergencias } from "./features/back-office/emergencias";
 import { DetalheFechamento, TelaFechamentos } from "./features/back-office/fechamento";
-import { AdminLayout, ITENS_COMPANHIA, ITENS_PLATAFORMA, ITENS_TENANT } from "./features/back-office/layout";
+import { AdminLayout, ITENS_COMPANHIA, ITENS_FUNCIONARIO_COMPANHIA, ITENS_PLATAFORMA, ITENS_TENANT } from "./features/back-office/layout";
 import { TelaCompanhias } from "./features/back-office/companhias-aereas";
 import { TelaMotoristas } from "./features/back-office/motoristas";
 import { TelaFuncionarios } from "./features/companhia/funcionarios";
-import { TelaEtiquetaSid, TelaInicioCompanhia, TelaRegistrarEtiqueta, TelaRegistrarSemEtiqueta } from "./features/companhia/bagagens";
+import {
+  TelaBuscaNacional,
+  TelaConsultaBagagens,
+  TelaEtiquetaSid,
+  TelaFichaBagagem,
+  TelaInicioCompanhia,
+  TelaRegistrarEtiqueta,
+  TelaRegistrarSemEtiqueta,
+} from "./features/companhia/bagagens";
 import { TelaPedagios } from "./features/back-office/pedagios";
 import { PlanosLista } from "./features/back-office/planos";
 import { TelaTarifas } from "./features/back-office/tarifas";
@@ -27,6 +35,7 @@ import { FaixaAmbiente } from "./shared/components/FaixaAmbiente";
 import { LimiteDeFalha } from "./shared/components/LimiteDeFalha";
 import { AvisoSessaoExpirada } from "./shared/components/AvisoSessaoExpirada";
 import { RequireAuth } from "./shared/components/RequireAuth";
+import { obterPapel } from "./shared/services/authStorage";
 import { useTextos } from "./shared/utils/i18n/idioma";
 
 export function App() {
@@ -96,17 +105,26 @@ export function App() {
             <Route path="planos" element={<PlanosLista />} />
             <Route path="companhias" element={<TelaCompanhias />} />
           </Route>
-          {/* HU33: companhia aérea - o administrador cadastra os funcionários; o funcionário tem a área própria. */}
+          {/* HU33: companhia aérea - o administrador cadastra os funcionários; o funcionário tem a área própria.
+              HU36: consulta, ficha e busca nacional para os dois perfis, cada um com o seu menu. */}
           <Route
             path="/companhia"
             element={
-              <RequireAuth papeis={["ADMINISTRADOR_COMPANHIA"]}>
-                <AdminLayout titulo={t.menu.companhiaAerea} itens={ITENS_COMPANHIA} />
+              <RequireAuth papeis={["ADMINISTRADOR_COMPANHIA", "FUNCIONARIO_COMPANHIA"]}>
+                <AdminLayout
+                  titulo={t.menu.companhiaAerea}
+                  itens={obterPapel() === "FUNCIONARIO_COMPANHIA" ? ITENS_FUNCIONARIO_COMPANHIA : ITENS_COMPANHIA}
+                />
               </RequireAuth>
             }
           >
             <Route index element={<Navigate to="funcionarios" replace />} />
-            <Route path="funcionarios" element={<TelaFuncionarios />} />
+            <Route element={<RequireAuth papeis={["ADMINISTRADOR_COMPANHIA"]} />}>
+              <Route path="funcionarios" element={<TelaFuncionarios />} />
+            </Route>
+            <Route path="bagagens" element={<TelaConsultaBagagens />} />
+            <Route path="bagagens/:id" element={<TelaFichaBagagem />} />
+            <Route path="busca-nacional" element={<TelaBuscaNacional />} />
           </Route>
           <Route
             path="/companhia/inicio"

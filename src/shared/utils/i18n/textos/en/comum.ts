@@ -154,5 +154,8 @@ export const comum: TextosComuns = {
     companhias: "Airlines",
     companhiaAerea: "Airline",
     funcionarios: "Employees",
+    bagagensEncontradas: "Found bags",
+    buscaNacional: "Nationwide search",
+    registrarBagagens: "Register bags",
   },
 };

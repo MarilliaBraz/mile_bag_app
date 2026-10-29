@@ -1,0 +1,11 @@
+/** Entrega ao navegador um arquivo baixado com a autorização da sessão (CSV, PDF). */
+export function salvarArquivo(conteudo: Blob, nome: string): void {
+  const url = URL.createObjectURL(conteudo);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = nome;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}

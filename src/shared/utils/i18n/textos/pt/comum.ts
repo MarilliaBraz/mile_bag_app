@@ -152,5 +152,8 @@ export const comum = {
     companhias: "Companhias aéreas",
     companhiaAerea: "Companhia aérea",
     funcionarios: "Funcionários",
+    bagagensEncontradas: "Bagagens encontradas",
+    buscaNacional: "Busca nacional",
+    registrarBagagens: "Registrar bagagens",
   },
 };
