@@ -194,6 +194,7 @@ export const companhia: Textos["companhia"] = {
     dadosEtiqueta: "Datos de la etiqueta",
     descricao: "Descripción",
     localizacao: "Ubicación",
+    origem: "Origen de la ubicación",
     coordenadas: "Coordenadas",
     distancia: "Distancia al aeropuerto",
     mapa: (codigo: string) => `Mapa del lugar donde se registró el equipaje ${codigo}`,

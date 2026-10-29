@@ -194,6 +194,7 @@ export const companhia: Textos["companhia"] = {
     dadosEtiqueta: "Tag details",
     descricao: "Description",
     localizacao: "Location",
+    origem: "Location source",
     coordenadas: "Coordinates",
     distancia: "Distance to the airport",
     mapa: (codigo: string) => `Map of where bag ${codigo} was registered`,

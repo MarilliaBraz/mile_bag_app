@@ -192,6 +192,7 @@ export const companhia = {
     dadosEtiqueta: "Dados da etiqueta",
     descricao: "Descrição",
     localizacao: "Localização",
+    origem: "Origem da localização",
     coordenadas: "Coordenadas",
     distancia: "Distância até o aeroporto",
     mapa: (codigo: string) => `Mapa do local onde a bagagem ${codigo} foi registrada`,

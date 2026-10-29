@@ -138,7 +138,7 @@ export function TelaFichaBagagem() {
                   valor={latitude !== undefined && longitude !== undefined ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : undefined}
                   mono
                 />
-                <Dado rotulo={textos.consulta.situacao} valor={textos.bagagens.localizacao[b.localizacao.origem]} />
+                <Dado rotulo={t.origem} valor={textos.bagagens.localizacao[b.localizacao.origem]} />
               </dl>
               {latitude !== undefined && longitude !== undefined ? (
                 <MapaBase
