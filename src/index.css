@@ -2253,6 +2253,134 @@ dialog.gaveta::backdrop {
   border: 2px solid var(--acao);
 }
 
+/* HU35: descrição da bagagem sem etiqueta - escolhas em grade (tipo, tamanho, cor, sinais) com amostra da cor. A cor
+ * vem sempre escrita ao lado da amostra: a amostra só ilustra. */
+fieldset.escolhas-grade {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+fieldset.escolhas-grade.escolhas-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+fieldset.escolhas-grade > .alerta,
+fieldset.escolhas-grade > .escolhas-ajuda {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.amostra-cor {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--borda);
+}
+
+.amostra-cor[data-cor="PRETA"] {
+  background: #1f1f1f;
+}
+.amostra-cor[data-cor="CINZA"] {
+  background: #8a8d91;
+}
+.amostra-cor[data-cor="BRANCA"] {
+  background: #f7f7f5;
+}
+.amostra-cor[data-cor="BEGE"] {
+  background: #d9c7a1;
+}
+.amostra-cor[data-cor="MARROM"] {
+  background: #6e4527;
+}
+.amostra-cor[data-cor="VERMELHA"] {
+  background: #c62828;
+}
+.amostra-cor[data-cor="LARANJA"] {
+  background: #ef6c00;
+}
+.amostra-cor[data-cor="AMARELA"] {
+  background: #f9c80e;
+}
+.amostra-cor[data-cor="VERDE"] {
+  background: #2e7d32;
+}
+.amostra-cor[data-cor="AZUL"] {
+  background: #1e3a8a;
+}
+.amostra-cor[data-cor="ROXA"] {
+  background: #6a1b9a;
+}
+.amostra-cor[data-cor="ROSA"] {
+  background: #e46aa6;
+}
+
+/* HU35: etiqueta do código SID - sempre preto no branco (é o que vai para o papel), também no tema escuro. */
+.etiqueta-sid {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  background: #fff;
+  color: #000;
+  border: 2px dashed var(--borda);
+  border-radius: var(--raio-g);
+  text-align: center;
+}
+
+.etiqueta-sid-cabecalho {
+  margin: 0;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.etiqueta-sid-qr {
+  width: min(15rem, 70%);
+  aspect-ratio: 1;
+  image-rendering: pixelated;
+}
+
+.etiqueta-sid-codigo {
+  margin: 0;
+  font-size: var(--fs-xg);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.etiqueta-sid-dados {
+  display: grid;
+  gap: 0.25rem;
+  width: 100%;
+  margin: 0;
+  font-size: var(--fs-p);
+}
+
+.etiqueta-sid-dados > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid #ccc;
+}
+
+.etiqueta-sid-dados dt {
+  font-weight: 600;
+}
+
+.etiqueta-sid-dados dd {
+  margin: 0;
+  text-align: right;
+}
+
+@media print {
+  .etiqueta-sid {
+    width: 9cm;
+    margin: 0 auto;
+    border: 1px solid #000;
+    break-inside: avoid;
+  }
+}
+
 /* HU31: "Acompanhe sua bagagem" - mais larga que o login, para caber o mapa. */
 .tela-acompanhamento {
   place-items: start center;

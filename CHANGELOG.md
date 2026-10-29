@@ -13,6 +13,10 @@ Em validação no ambiente de homologação (`mile_bag_infra/scripts/implantar.s
 
 ### Adicionado
 
+- Registro de bagagem encontrada sem etiqueta (HU35): o funcionário fotografa a bagagem; o Milebag sugere a cor
+  pela foto e o aeroporto pelo local; o funcionário descreve com toques (tipo, tamanho, cor, sinais particulares,
+  marca e observações) e registra. O registro gera o código SID (ex.: `SID-GRU-2026-000123`), único no país, numa
+  etiqueta com QR code para imprimir e colar na bagagem, que pode ser reaberta pelos registros recentes.
 - Registro de bagagem encontrada pela foto da etiqueta (HU34): o funcionário da companhia fotografa a
   etiqueta; o Milebag lê o código de barras e o texto, usa o GPS da foto ou do celular e sugere o aeroporto
   mais próximo; o funcionário confere e registra, ou descarta. O início mostra os rascunhos por conferir e os
