@@ -18,7 +18,14 @@ export function CampoAeroporto({ bagagem, valor, aoMudar }: Props) {
     <>
       <div>
         <label htmlFor={`${uid}-aeroporto`}>{t.aeroporto}</label>
-        <select id={`${uid}-aeroporto`} value={valor} onChange={(e) => aoMudar(e.target.value)} aria-describedby={`${uid}-local`}>
+        {/* A lista chega depois da montagem: remontar com ela faz o aeroporto sugerido aparecer escolhido. */}
+        <select
+          key={aeroportos?.length ?? 0}
+          id={`${uid}-aeroporto`}
+          value={valor}
+          onChange={(e) => aoMudar(e.target.value)}
+          aria-describedby={`${uid}-local`}
+        >
           <option value="">{t.escolhaAeroporto}</option>
           {aeroportos?.map((a) => (
             <option key={a.codigo} value={a.codigo}>
