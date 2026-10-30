@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { TelaAcompanhamento } from "./features/acompanhamento";
 import { EsqueciSenha, Login, RedefinirSenha, TrocarSenha } from "./features/auth";
@@ -38,6 +39,9 @@ import { RequireAuth } from "./shared/components/RequireAuth";
 import { obterPapel } from "./shared/services/authStorage";
 import { useTextos } from "./shared/utils/i18n/idioma";
 
+// HU38: a página institucional vai num pedaço à parte (com o motion), para não pesar o app do motorista.
+const PaginaInstitucional = lazy(() => import("./features/institucional").then((m) => ({ default: m.PaginaInstitucional })));
+
 export function App() {
   // RNF11: uma falha numa tela não derruba o app; mudar de rota sai do estado de falha.
   const { pathname } = useLocation();
@@ -50,6 +54,14 @@ export function App() {
       <AvisoSessaoExpirada />
       <LimiteDeFalha key={pathname}>
         <Routes>
+          <Route
+            path="/"
+            element={
+              <Suspense fallback={null}>
+                <PaginaInstitucional />
+              </Suspense>
+            }
+          />
           <Route path="/login" element={<Login />} />
           {/* O e-mail de convite (HU15) usa /convites/{token}; /convite/{token} continua valendo por compatibilidade. */}
           <Route path="/convites/:token" element={<AtivarConviteForm />} />
