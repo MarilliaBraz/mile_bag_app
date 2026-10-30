@@ -4,6 +4,7 @@ import { useTextos, type ChaveMenu } from "../utils/i18n/idioma";
 import { Icone, type NomeIcone } from "./Icone";
 import { IndicadorSincronizacao, StatusConexao } from "./IndicadorSincronizacao";
 import { useSincronizacaoAutomatica } from "../hooks/useSincronizacaoAutomatica";
+import { useCompartilharPosicao } from "../hooks/useCompartilharPosicao";
 
 type ItemNavegacao = { para: string; rotulo: ChaveMenu; icone: NomeIcone; destaque?: boolean; fim?: boolean };
 
@@ -58,6 +59,8 @@ export function TelaMotorista({
   children: ReactNode;
 }) {
   const { online, pendentes } = useSincronizacaoAutomatica(aoSincronizar);
+  // HU31: com viagem em andamento, a posição segue para o link "Acompanhe sua bagagem" de qualquer tela.
+  useCompartilharPosicao();
   const t = useTextos();
   const voltar = rotuloVoltar ?? t.comum.voltar;
 

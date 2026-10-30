@@ -1,3 +1,4 @@
+import { acompanhamento } from "./acompanhamento";
 import { backOffice } from "./backOffice";
 import { comum } from "./comum";
 import { motorista } from "./motorista";
@@ -7,7 +8,7 @@ import { motorista } from "./motorista";
  * Texto com valor variável é função: es e en recebem os mesmos parâmetros e
  * o TypeScript confere que nenhum ficou de fora.
  */
-export const pt = { ...comum, motorista, backOffice };
+export const pt = { ...comum, motorista, backOffice, acompanhamento };
 
 /** Formato que todo idioma precisa ter: o mesmo de pt, com qualquer texto no lugar de cada frase. */
 type Formato<T> = {

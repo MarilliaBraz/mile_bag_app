@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { TelaAcompanhamento } from "./features/acompanhamento";
 import { EsqueciSenha, Login, RedefinirSenha, TrocarSenha } from "./features/auth";
 import { IdentidadeVisualForm, TelaConfiguracoes } from "./features/back-office/configuracao-tenant";
 import { AvisoEmergenciasAbertas, TelaEmergencias } from "./features/back-office/emergencias";
@@ -43,6 +44,8 @@ export function App() {
           <Route path="/convite/:token" element={<AtivarConviteForm />} />
           <Route path="/esqueci-senha" element={<EsqueciSenha />} />
           <Route path="/redefinir-senha/:token" element={<RedefinirSenha />} />
+          {/* HU31: link "Acompanhe sua bagagem" enviado ao passageiro, que não tem conta. */}
+          <Route path="/acompanhar/:codigo" element={<TelaAcompanhamento />} />
           <Route element={<RequireAuth papeis={["MOTORISTA"]} />}>
             <Route path="/motorista" element={<PainelEntregas />} />
             <Route path="/motorista/emergencia" element={<TelaEmergencia />} />

@@ -13,6 +13,10 @@ Em validação no ambiente de homologação (`mile_bag_infra/scripts/implantar.s
 
 ### Adicionado
 
+- "Acompanhe sua bagagem" (HU31): página pública `/acompanhar/:codigo`, aberta pelo link que o passageiro
+  recebe ao iniciar a viagem, com a etapa da entrega, o mapa com a posição do motorista e o destino, atualizada
+  a cada 15 s. Entregue ou não entregue, mostra só o resultado, sem a posição. Com viagem em andamento, o app
+  do motorista envia a posição a cada 15 s de qualquer tela, só com o app aberto e com conexão.
 - Interface em português, espanhol e inglês, trocada pelas bandeiras do Brasil, da Espanha e dos EUA no
   login e nas demais telas de entrada, na Conta do motorista e na barra do back-office. A escolha fica
   salva no aparelho. Os textos ficam em `src/shared/i18n/textos/`, com o português como referência:

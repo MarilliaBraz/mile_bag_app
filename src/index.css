@@ -2221,6 +2221,50 @@ dialog.gaveta::backdrop {
   margin-bottom: 0.5rem;
 }
 
+/* HU31: "Acompanhe sua bagagem" - mais larga que o login, para caber o mapa. */
+.tela-acompanhamento {
+  place-items: start center;
+}
+
+.tela-acompanhamento > main {
+  width: min(40rem, 100%);
+}
+
+.acompanhamento-logo {
+  display: block;
+  max-height: 3rem;
+  max-width: 12rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Quem está em movimento (o motorista, HU31): círculo, distinto do alfinete do destino. */
+.marcador-destaque,
+.legenda-ponto {
+  border-radius: 50%;
+  background: var(--acao-fundo);
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 2px var(--acao-fundo-forte);
+}
+
+.legenda-mapa {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  align-items: center;
+}
+
+.legenda-mapa > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.legenda-ponto {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
 /* ---------- Mapa ---------- */
 
 .mapa {

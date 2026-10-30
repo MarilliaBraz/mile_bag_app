@@ -2,7 +2,7 @@ import "leaflet/dist/leaflet.css";
 import iconeSombra from "leaflet/dist/images/marker-shadow.png";
 import icone2x from "leaflet/dist/images/marker-icon-2x.png";
 import icone from "leaflet/dist/images/marker-icon.png";
-import { Icon, latLngBounds } from "leaflet";
+import { DivIcon, Icon, latLngBounds } from "leaflet";
 import { useState, type ReactNode } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { useTextos } from "../utils/i18n/idioma";
@@ -16,6 +16,8 @@ export type Coordenada = {
 export type MarcadorMapa = {
   posicao: Coordenada;
   rotulo: string;
+  /** Círculo em vez do alfinete: distingue quem está em movimento (ex.: o motorista, HU31) do destino. */
+  destaque?: boolean;
 };
 
 // Vite não resolve as URLs que o Leaflet monta sozinho em tempo de execução:
@@ -30,6 +32,8 @@ const ICONE_PADRAO = new Icon({
   popupAnchor: [1, -34],
   shadowSize: [41, 41],
 });
+
+const ICONE_DESTAQUE = new DivIcon({ className: "marcador-destaque", iconSize: [22, 22], iconAnchor: [11, 11], popupAnchor: [0, -12] });
 
 /**
  * Mapa base (Leaflet sobre OpenStreetMap) reutilizado pelas telas de rota
@@ -80,7 +84,7 @@ export function MapaBase({
           <Marker
             key={`${marcador.rotulo}-${marcador.posicao.latitude}-${marcador.posicao.longitude}`}
             position={[marcador.posicao.latitude, marcador.posicao.longitude]}
-            icon={ICONE_PADRAO}
+            icon={marcador.destaque ? ICONE_DESTAQUE : ICONE_PADRAO}
           >
             <Popup>{marcador.rotulo}</Popup>
           </Marker>
