@@ -2221,6 +2221,38 @@ dialog.gaveta::backdrop {
   margin-bottom: 0.5rem;
 }
 
+/* HU34: área do funcionário da companhia aérea (no celular, mas com espaço para a foto e a conferência). */
+.tela-companhia {
+  place-items: start center;
+}
+
+.tela-companhia > main {
+  width: min(36rem, 100%);
+}
+
+.foto-bagagem {
+  display: block;
+  width: 100%;
+  max-height: 22rem;
+  object-fit: contain;
+  border-radius: var(--raio-g);
+  background: var(--borda-suave);
+}
+
+.foto-bagagem-vazia {
+  height: 12rem;
+}
+
+.grade-campos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.destaque-acao {
+  border: 2px solid var(--acao);
+}
+
 /* HU31: "Acompanhe sua bagagem" - mais larga que o login, para caber o mapa. */
 .tela-acompanhamento {
   place-items: start center;

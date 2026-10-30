@@ -13,6 +13,10 @@ Em validação no ambiente de homologação (`mile_bag_infra/scripts/implantar.s
 
 ### Adicionado
 
+- Registro de bagagem encontrada pela foto da etiqueta (HU34): o funcionário da companhia fotografa a
+  etiqueta; o Milebag lê o código de barras e o texto, usa o GPS da foto ou do celular e sugere o aeroporto
+  mais próximo; o funcionário confere e registra, ou descarta. O início mostra os rascunhos por conferir e os
+  registros recentes da companhia.
 - Companhias aéreas (HU33): a plataforma cadastra as companhias (com código IATA) em "Companhias aéreas" e
   convida o primeiro administrador; o administrador da companhia cadastra os funcionários, um a um ou em lote,
   em "Funcionários"; o funcionário entra numa área própria, onde chegará o registro de bagagens encontradas.

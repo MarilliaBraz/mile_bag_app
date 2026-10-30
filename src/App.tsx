@@ -8,7 +8,7 @@ import { AdminLayout, ITENS_COMPANHIA, ITENS_PLATAFORMA, ITENS_TENANT } from "./
 import { TelaCompanhias } from "./features/back-office/companhias-aereas";
 import { TelaMotoristas } from "./features/back-office/motoristas";
 import { TelaFuncionarios } from "./features/companhia/funcionarios";
-import { TelaInicioCompanhia } from "./features/companhia/inicio";
+import { TelaInicioCompanhia, TelaRegistrarEtiqueta } from "./features/companhia/bagagens";
 import { TelaPedagios } from "./features/back-office/pedagios";
 import { PlanosLista } from "./features/back-office/planos";
 import { TelaTarifas } from "./features/back-office/tarifas";
@@ -116,6 +116,11 @@ export function App() {
               </RequireAuth>
             }
           />
+          {/* HU34: registro de bagagem encontrada pela foto da etiqueta (captura e conferência). */}
+          <Route element={<RequireAuth papeis={["FUNCIONARIO_COMPANHIA", "ADMINISTRADOR_COMPANHIA"]} />}>
+            <Route path="/companhia/registrar" element={<TelaRegistrarEtiqueta />} />
+            <Route path="/companhia/registrar/:id" element={<TelaRegistrarEtiqueta />} />
+          </Route>
           <Route path="*" element={<Navigate to="/motorista" replace />} />
         </Routes>
       </LimiteDeFalha>
