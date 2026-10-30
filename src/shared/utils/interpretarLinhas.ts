@@ -1,7 +1,7 @@
-import type { LinhaLote } from "../../../../shared/types/motoristas";
+import type { LinhaLote } from "../types/contas";
 
 /**
- * Interpreta o texto colado: uma linha por motorista, `nome;login;senha` (a senha é opcional). Aceita `;`, tabulação
+ * Interpreta o texto colado: uma linha por pessoa, `nome;login;senha` (a senha é opcional). Aceita `;`, tabulação
  * (planilha) ou `,` como separador. Uma primeira linha de cabeçalho ("nome;login") é ignorada.
  */
 export function interpretarLinhas(texto: string): LinhaLote[] {

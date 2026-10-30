@@ -64,6 +64,10 @@ export function rotaInicialDo(papel: Papel | null): string {
       return "/admin";
     case "ADMINISTRADOR_PLATAFORMA":
       return "/plataforma";
+    case "ADMINISTRADOR_COMPANHIA":
+      return "/companhia/funcionarios";
+    case "FUNCIONARIO_COMPANHIA":
+      return "/companhia/inicio";
     default:
       return "/motorista";
   }

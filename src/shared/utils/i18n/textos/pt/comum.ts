@@ -149,5 +149,8 @@ export const comum = {
     identidadeVisual: "Identidade visual",
     empresas: "Empresas",
     planos: "Planos",
+    companhias: "Companhias aéreas",
+    companhiaAerea: "Companhia aérea",
+    funcionarios: "Funcionários",
   },
 };

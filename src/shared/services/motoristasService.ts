@@ -1,5 +1,6 @@
 import { requisitar } from "./httpClient";
 import { obterTextos } from "../utils/i18n/idioma";
+import type { ServicoContas } from "../types/contas";
 import type { LinhaLote, Motorista, ResultadoLote } from "../types/motoristas";
 
 export const listarMotoristas = () => requisitar<Motorista[]>("/api/v1/motoristas");
@@ -26,3 +27,13 @@ export function nomeDoMotorista(motoristas: Motorista[] | null, id: string | nul
   }
   return motoristas?.find((m) => m.id === id)?.nome ?? id.slice(0, 8);
 }
+
+/** Motoristas no cadastro de contas compartilhado (HU23, HU27). */
+export const servicoMotoristas: ServicoContas = {
+  listar: listarMotoristas,
+  criar: criarMotorista,
+  criarEmLote: criarMotoristasEmLote,
+  definirAtivo: definirAtivoMotorista,
+  atualizar: atualizarMotorista,
+  redefinirSenha: redefinirSenhaMotorista,
+};

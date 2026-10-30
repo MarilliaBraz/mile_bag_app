@@ -13,4 +13,8 @@ export const ITENS_TENANT: ItemMenu[] = [
 export const ITENS_PLATAFORMA: ItemMenu[] = [
   { para: "/plataforma/empresas", rotulo: "empresas", icone: "predio" },
   { para: "/plataforma/planos", rotulo: "planos", icone: "lista" },
+  { para: "/plataforma/companhias", rotulo: "companhias", icone: "predio" },
 ];
+
+/** HU33: administrador da companhia aérea. */
+export const ITENS_COMPANHIA: ItemMenu[] = [{ para: "/companhia/funcionarios", rotulo: "funcionarios", icone: "usuarios" }];
