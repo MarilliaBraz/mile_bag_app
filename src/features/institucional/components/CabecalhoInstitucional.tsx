@@ -39,9 +39,11 @@ export function CabecalhoInstitucional() {
       {!reduzido && (
         <div className="inst-viagem" aria-hidden="true">
           <motion.div className="inst-viagem-trilha" style={{ scaleX: progresso }} />
-          <motion.span className="inst-viagem-mala" style={{ left: posicaoMala }}>
-            <Icone nome="mala" />
-          </motion.span>
+          <div className="inst-viagem-percurso">
+            <motion.span className="inst-viagem-mala" style={{ left: posicaoMala }}>
+              <Icone nome="mala" />
+            </motion.span>
+          </div>
         </div>
       )}
     </header>

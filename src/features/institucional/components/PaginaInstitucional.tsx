@@ -2,6 +2,12 @@ import { Navigate } from "react-router-dom";
 import { obterPapel, obterToken, rotaInicialDo, tokenExpirado } from "../../../shared/services/authStorage";
 import "../institucional.css";
 import { CabecalhoInstitucional } from "./CabecalhoInstitucional";
+import { JornadaDaMala } from "./JornadaDaMala";
+import { RodapeInstitucional } from "./RodapeInstitucional";
+import { SecaoComoComecar } from "./SecaoComoComecar";
+import { SecaoDiferenciais } from "./SecaoDiferenciais";
+import { SecaoProblema } from "./SecaoProblema";
+import { SecaoPublicos } from "./SecaoPublicos";
 import { SecaoTopo } from "./SecaoTopo";
 
 /**
@@ -19,7 +25,13 @@ export function PaginaInstitucional() {
       <CabecalhoInstitucional />
       <main>
         <SecaoTopo />
+        <SecaoProblema />
+        <JornadaDaMala />
+        <SecaoPublicos />
+        <SecaoDiferenciais />
+        <SecaoComoComecar />
       </main>
+      <RodapeInstitucional />
     </div>
   );
 }

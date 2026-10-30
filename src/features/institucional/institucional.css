@@ -105,6 +105,11 @@
   background: linear-gradient(90deg, var(--inst-azul), var(--inst-amarelo));
 }
 
+.inst-viagem-percurso {
+  position: absolute;
+  inset: 0 12px;
+}
+
 .inst-viagem-mala {
   position: absolute;
   top: -9px;
@@ -332,6 +337,12 @@
 .inst-jornada-mala svg {
   width: 18px;
   height: 18px;
+}
+
+.inst-jornada-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .inst-parada {
