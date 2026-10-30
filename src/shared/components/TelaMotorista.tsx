@@ -5,6 +5,7 @@ import { Icone, type NomeIcone } from "./Icone";
 import { IndicadorSincronizacao, StatusConexao } from "./IndicadorSincronizacao";
 import { useSincronizacaoAutomatica } from "../hooks/useSincronizacaoAutomatica";
 import { useCompartilharPosicao } from "../hooks/useCompartilharPosicao";
+import { AvisoBdoNovo } from "./AvisoBdoNovo";
 
 type ItemNavegacao = { para: string; rotulo: ChaveMenu; icone: NomeIcone; destaque?: boolean; fim?: boolean };
 
@@ -87,6 +88,8 @@ export function TelaMotorista({
           </Link>
         </header>
         <IndicadorSincronizacao online={online} pendentes={pendentes} />
+        {/* HU32: bagagem nova recebida por e-mail, em qualquer tela. */}
+        <AvisoBdoNovo />
         <div className="tela-conteudo">{children}</div>
       </main>
       {navegacao && <NavegacaoMotorista />}

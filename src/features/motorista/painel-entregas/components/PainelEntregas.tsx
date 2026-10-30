@@ -11,6 +11,7 @@ import { listarPendentesDeConferencia } from "../../../../shared/services/bdoSer
 import type { BdoResponse } from "../../../../shared/types/bdo";
 import { listarMotivos } from "../../../../shared/services/ocorrenciaService";
 import { marcarViagemEmAndamento } from "../../../../shared/utils/viagemEmAndamento";
+import { EVENTO_BDOS_NOVOS, limparAvisoBdoNovo } from "../../../../shared/hooks/useAvisoBdoNovo";
 import { consultarBdosDisponiveis, consultarPainel } from "../services/painelService";
 import type { BdosDisponiveis, ItemPainel, PainelEntregas as PainelEntregasResposta } from "../types";
 import { FotosParaConferir } from "./FotosParaConferir";
@@ -61,6 +62,13 @@ export function PainelEntregas() {
     carregar();
     // Aquece a cópia local dos motivos de ocorrência enquanto há conexão: sem ela o motorista não conseguiria registrar uma ocorrência offline.
     listarMotivos().catch(() => undefined);
+  }, [carregar]);
+
+  // HU32: abrir o painel resolve o aviso de bagagem nova; com o painel aberto, um BDO novo entra na lista na hora.
+  useEffect(() => {
+    limparAvisoBdoNovo();
+    window.addEventListener(EVENTO_BDOS_NOVOS, carregar);
+    return () => window.removeEventListener(EVENTO_BDOS_NOVOS, carregar);
   }, [carregar]);
 
   // O aviso já foi copiado para o estado: limpa o da navegação para não reaparecer ao recarregar a página.

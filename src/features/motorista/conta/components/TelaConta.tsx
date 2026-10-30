@@ -6,6 +6,7 @@ import { PreferenciasAcessibilidade } from "../../../../shared/components/Prefer
 import { SeletorIdioma } from "../../../../shared/components/SeletorIdioma";
 import { TelaMotorista } from "../../../../shared/components/TelaMotorista";
 import { useSincronizacaoAutomatica } from "../../../../shared/hooks/useSincronizacaoAutomatica";
+import { AvisosBdoNovo } from "./AvisosBdoNovo";
 
 /**
  * Conta do motorista: o que não é do dia a dia (registros do aparelho,
@@ -41,6 +42,10 @@ export function TelaConta() {
           </Link>
         </li>
       </ul>
+
+      <div className="mt-5">
+        <AvisosBdoNovo />
+      </div>
 
       <h2>{t.idioma}</h2>
       <SeletorIdioma />

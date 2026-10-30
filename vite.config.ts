@@ -8,6 +8,8 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      // HU32: eventos de push e clique na notificação do aviso de bagagem nova (public/sw-push.js).
+      workbox: { importScripts: ["/sw-push.js"] },
       // Estrategia de cache offline completa (fila IndexedDB via Dexie.js,
       // sincronizacao - HU08) fica para quando essas telas existirem;
       // por ora so o essencial para o app ser instalavel (RI04/plan.md).
