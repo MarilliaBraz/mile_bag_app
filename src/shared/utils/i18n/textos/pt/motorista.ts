@@ -36,6 +36,7 @@ export const motorista = {
     falha: "Não foi possível assumir esta entrega. Tente novamente.",
     novaTentativa: "Nova tentativa",
     porEmail: "Por e-mail",
+    porCompanhia: "Companhia aérea",
     assumirRotulo: (numero: string | null) => `Assumir BDO ${numero ?? "sem número"}`,
     assumindo: "Assumindo…",
     assumir: "Assumir entrega",

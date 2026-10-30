@@ -9,6 +9,7 @@ import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { baixarFicha, buscarBagagem } from "../services/bagagensService";
 import type { BagagemEncontrada } from "../types";
 import { formatarDistancia } from "../utils/formatarDistancia";
+import { BotaoEncaminhar, PainelEntrega } from "./EncaminhamentoEntrega";
 import { FotoBagagem } from "./FotoBagagem";
 
 /** Dado com o rótulo; vazio aparece como "-", para a ficha ter sempre os mesmos campos. */
@@ -66,12 +67,22 @@ export function TelaFichaBagagem() {
   const [bagagem, setBagagem] = useState<BagagemEncontrada | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [baixando, setBaixando] = useState(false);
+  const [aviso, setAviso] = useState<string | null>(null);
 
   useEffect(() => {
     buscarBagagem(id)
       .then(setBagagem)
       .catch((excecao) => setErro(mensagemDeErro(excecao, t.falhaCarregar)));
   }, [id, t.falhaCarregar]);
+
+  async function recarregar(mensagem: string) {
+    setAviso(mensagem);
+    try {
+      setBagagem(await buscarBagagem(id));
+    } catch (excecao) {
+      setErro(mensagemDeErro(excecao, t.falhaCarregar));
+    }
+  }
 
   async function baixar(b: BagagemEncontrada) {
     setBaixando(true);
@@ -104,18 +115,33 @@ export function TelaFichaBagagem() {
                 <Icone nome="impressora" /> {t.etiquetaImprimir}
               </Link>
             )}
-            <button type="button" onClick={() => baixar(b)} disabled={baixando}>
+            <button type="button" className={b.encaminhamento ? undefined : "secundario"} onClick={() => baixar(b)} disabled={baixando}>
               <Icone nome="documento" /> {baixando ? t.baixando : t.baixarPdf}
             </button>
+            {!b.encaminhamento && (
+              <BotaoEncaminhar
+                bagagem={b}
+                aoAtualizar={(atualizada, mensagem) => {
+                  setBagagem(atualizada);
+                  setAviso(mensagem);
+                }}
+              />
+            )}
           </div>
         )
       }
     >
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
+      {aviso && (
+        <Alerta tipo="sucesso" aoFechar={() => setAviso(null)}>
+          {aviso}
+        </Alerta>
+      )}
       {!b && !erro && <Carregando />}
       {b && (
         <>
           {b.situacao === "RASCUNHO" && <Alerta tipo="aviso">{t.rascunho}</Alerta>}
+          <PainelEntrega bagagem={b} aoCancelar={recarregar} />
           <div className="grade-paineis">
             <Painel>
               <FotoBagagem bagagem={b} alt={b.descricao ? textos.semEtiqueta.fotoAlt : textos.bagagens.fotoAlt} />

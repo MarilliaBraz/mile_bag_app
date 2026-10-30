@@ -48,6 +48,32 @@ export type BagagemEncontrada = {
   criadoEm: string;
   fotoUrl: string;
   qrUrl?: string;
+  encaminhamento?: Encaminhamento;
+};
+
+/** HU37: etapa da entrega da bagagem encaminhada; a companhia não vê o motorista (RD23). */
+export type EtapaEntrega = "AGUARDANDO_MOTORISTA" | "MOTORISTA_DESIGNADO" | "A_CAMINHO" | "ENTREGUE" | "NAO_ENTREGUE";
+
+export type Encaminhamento = {
+  empresa: string;
+  numeroProcesso: string;
+  passageiroNome: string;
+  endereco: string;
+  etapa: EtapaEntrega;
+  encaminhadoPor?: string;
+  encaminhadoEm: string;
+  atualizadoEm: string;
+};
+
+export type EmpresaEntrega = { id: string; nome: string };
+
+export type EncaminharBagagem = {
+  empresaId: string;
+  numeroProcesso: string;
+  passageiroNome: string;
+  endereco: string;
+  telefone?: string;
+  email?: string;
 };
 
 export type Aeroporto = { codigo: string; nome: string; cidade: string; uf: string };

@@ -13,6 +13,11 @@ Em validação no ambiente de homologação (`mile_bag_infra/scripts/implantar.s
 
 ### Adicionado
 
+- Encaminhamento da bagagem encontrada para entrega (HU37): na ficha de uma bagagem registrada, a companhia escolhe
+  uma empresa de entrega parceira e informa o processo e o passageiro; a empresa recebe o BDO pronto e os motoristas
+  são avisados. A ficha e a consulta mostram a etapa da entrega (aguardando motorista, motorista designado, a caminho,
+  entregue, não entregue), e o encaminhamento pode ser cancelado até um motorista assumir. A plataforma define as
+  empresas parceiras de cada companhia em "Companhias aéreas". O motorista vê o selo "Companhia aérea" nesses BDOs.
 - Consulta de bagagens encontradas (HU36): o administrador e os funcionários da companhia filtram os registros
   por aeroporto, período, tipo, tipo de volume, cor, situação e texto (etiqueta, código SID ou passageiro),
   exportam a busca em CSV e abrem a ficha de cada bagagem, com foto, dados, mapa e autoria, para baixar em PDF.

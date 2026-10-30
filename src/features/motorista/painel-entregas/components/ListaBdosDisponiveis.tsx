@@ -54,10 +54,14 @@ export function ListaBdosDisponiveis({ bdos, aoAutoatribuir }: { bdos: ItemBdoDi
                 <span className="selo selo-aviso">
                   <Icone nome="sincronizar" /> {t.disponiveis.novaTentativa}
                 </span>
+              ) : bdo.origem === "EMAIL_AUTOMATICO" ? (
+                <span className="selo selo-info">
+                  <Icone nome="email" /> {t.disponiveis.porEmail}
+                </span>
               ) : (
-                bdo.origem === "EMAIL_AUTOMATICO" && (
+                bdo.origem === "COMPANHIA_AEREA" && (
                   <span className="selo selo-info">
-                    <Icone nome="email" /> {t.disponiveis.porEmail}
+                    <Icone nome="mala" /> {t.disponiveis.porCompanhia}
                   </span>
                 )
               )}
