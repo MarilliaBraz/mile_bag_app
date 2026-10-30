@@ -124,6 +124,20 @@
   height: 20px;
 }
 
+/* Seletor de idioma do app sobre o fundo escuro */
+.inst .seletor-idioma {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--inst-borda);
+}
+
+.inst .seletor-idioma button {
+  background: transparent;
+}
+
+.inst .seletor-idioma button[aria-pressed="true"] {
+  background: rgba(255, 255, 255, 0.18);
+}
+
 /* Botões */
 .inst-botao {
   display: inline-flex;
@@ -236,6 +250,10 @@
 }
 
 /* Seções */
+.inst section {
+  scroll-margin-top: 72px;
+}
+
 .inst-secao {
   padding: 64px 0;
 }
@@ -538,6 +556,7 @@
 }
 
 .inst-formulario label {
+  color: var(--inst-texto);
   display: grid;
   gap: 6px;
   font-weight: 600;

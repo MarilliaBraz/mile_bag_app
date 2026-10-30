@@ -123,6 +123,8 @@ export const institucional = {
     enviando: "Sending...",
     sucesso: "Request sent! We'll be in touch soon.",
     sucessoWhatsapp: "If you prefer, chat with us now on WhatsApp.",
+    limite: "We received too many requests from this address. Try again later or chat on WhatsApp.",
+    indisponivel: "Sending is unavailable right now. Please reach us on WhatsApp.",
     falha: "We couldn't send your request right now.",
     ou: "or",
   },

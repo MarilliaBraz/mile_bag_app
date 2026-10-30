@@ -1,10 +1,12 @@
-import { Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 import { obterPapel, obterToken, rotaInicialDo, tokenExpirado } from "../../../shared/services/authStorage";
 import "../institucional.css";
 import { CabecalhoInstitucional } from "./CabecalhoInstitucional";
 import { JornadaDaMala } from "./JornadaDaMala";
 import { RodapeInstitucional } from "./RodapeInstitucional";
 import { SecaoComoComecar } from "./SecaoComoComecar";
+import { SecaoDemonstracao } from "./SecaoDemonstracao";
 import { SecaoDiferenciais } from "./SecaoDiferenciais";
 import { SecaoProblema } from "./SecaoProblema";
 import { SecaoPublicos } from "./SecaoPublicos";
@@ -16,7 +18,17 @@ import { SecaoTopo } from "./SecaoTopo";
  */
 export function PaginaInstitucional() {
   const papel = obterPapel();
-  if (obterToken() && !tokenExpirado() && papel) {
+  const logado = Boolean(obterToken() && !tokenExpirado() && papel);
+  const { hash } = useLocation();
+
+  // A página chega num pedaço carregado depois: um link com âncora (/#demonstracao) só acha a seção agora.
+  useEffect(() => {
+    if (!logado && hash) {
+      document.getElementById(hash.slice(1))?.scrollIntoView();
+    }
+  }, [hash, logado]);
+
+  if (logado) {
     return <Navigate to={rotaInicialDo(papel)} replace />;
   }
 
@@ -30,6 +42,7 @@ export function PaginaInstitucional() {
         <SecaoPublicos />
         <SecaoDiferenciais />
         <SecaoComoComecar />
+        <SecaoDemonstracao />
       </main>
       <RodapeInstitucional />
     </div>

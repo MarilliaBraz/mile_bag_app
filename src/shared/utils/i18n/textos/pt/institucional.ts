@@ -137,6 +137,8 @@ export const institucional = {
     enviando: "Enviando...",
     sucesso: "Pedido enviado! Em breve entramos em contato.",
     sucessoWhatsapp: "Se preferir, fale agora pelo WhatsApp.",
+    limite: "Recebemos muitos pedidos deste endereço. Tente mais tarde ou fale pelo WhatsApp.",
+    indisponivel: "O envio está indisponível no momento. Fale com a gente pelo WhatsApp.",
     falha: "Não foi possível enviar o pedido agora.",
     ou: "ou",
   },
