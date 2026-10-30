@@ -8,11 +8,17 @@ import { useRecurso } from "../../../../shared/hooks/useRecurso";
 import { formatarDataHora } from "../../../../shared/utils/formatar";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { listarRascunhos, listarRecentes } from "../services/bagagensService";
+import type { BagagemEncontrada } from "../types";
 
-/** Início do funcionário da companhia aérea (HU33, HU34): registrar bagagem, rascunhos por conferir e registros recentes. */
+/** Rascunho volta à conferência do seu tipo (HU34, HU35). */
+const conferenciaDo = (b: BagagemEncontrada) =>
+  b.tipo === "SEM_ETIQUETA" ? `/companhia/sem-etiqueta/${b.id}` : `/companhia/registrar/${b.id}`;
+
+/** Início do funcionário da companhia aérea (HU33-HU35): registrar bagagem, rascunhos por conferir e registros recentes. */
 export function TelaInicioCompanhia() {
   const textos = useTextos();
   const t = textos.companhia.inicio;
+  const sem = textos.companhia.semEtiqueta;
   const [aviso, setAviso] = useState<string | null>((useLocation().state as { aviso?: string } | null)?.aviso ?? null);
   const { dados: rascunhos } = useRecurso(listarRascunhos, t.falhaCarregar);
   const { dados: recentes, erro, carregando } = useRecurso(listarRecentes, t.falhaCarregar);
@@ -39,6 +45,14 @@ export function TelaInicioCompanhia() {
           </span>
           <Icone nome="chevron" />
         </Link>
+        <Link to="/companhia/sem-etiqueta" className="cartao-link destaque-acao">
+          <Icone nome="mala" />
+          <span className="cartao-corpo">
+            <strong>{t.registrarSemEtiqueta}</strong>
+            <span className="texto-apoio em-bloco">{t.registrarSemEtiquetaAjuda}</span>
+          </span>
+          <Icone nome="chevron" />
+        </Link>
 
         {rascunhos && rascunhos.length > 0 && (
           <section className="pilha">
@@ -47,10 +61,10 @@ export function TelaInicioCompanhia() {
             <ul className="lista">
               {rascunhos.map((b) => (
                 <li key={b.id}>
-                  <Link to={`/companhia/registrar/${b.id}`} className="cartao-link">
+                  <Link to={conferenciaDo(b)} className="cartao-link">
                     <Icone nome="lapis" />
                     <span className="cartao-corpo">
-                      <strong>{b.lido.numeroEtiqueta ?? t.semNumero}</strong>
+                      <strong>{b.tipo === "SEM_ETIQUETA" ? t.semEtiqueta : (b.lido.numeroEtiqueta ?? t.semNumero)}</strong>
                       <span className="texto-apoio em-bloco">{formatarDataHora(b.criadoEm)}</span>
                     </span>
                     <Icone nome="chevron" />
@@ -68,15 +82,33 @@ export function TelaInicioCompanhia() {
           {recentes && recentes.length === 0 && <Vazio icone="mala" titulo={t.nenhumRecente} />}
           {recentes && recentes.length > 0 && (
             <ul className="lista">
-              {recentes.map((b) => (
-                <li key={b.id} className="cartao cartao-corpo">
-                  <strong className="mono">{b.etiqueta?.numeroEtiqueta}</strong>{" "}
-                  {b.aeroporto && <span className="selo selo-info">{b.aeroporto.codigo}</span>}
+              {recentes.map((b) => {
+                const autoria = (
                   <span className="texto-apoio em-bloco">
                     {textos.companhia.bagagens.registradaPor(b.registradoPor ?? "", formatarDataHora(b.registradaEm ?? b.criadoEm))}
                   </span>
-                </li>
-              ))}
+                );
+                const aeroporto = b.aeroporto && <span className="selo selo-info">{b.aeroporto.codigo}</span>;
+                // Sem etiqueta (HU35): pelo código SID, com tipo e cor, e reabre a etiqueta para imprimir.
+                return b.descricao ? (
+                  <li key={b.id}>
+                    <Link to={`/companhia/bagagens/${b.id}/etiqueta`} className="cartao-link">
+                      <Icone nome="mala" />
+                      <span className="cartao-corpo">
+                        <strong className="mono">{b.descricao.codigoSid}</strong> {aeroporto}
+                        <span className="em-bloco">{sem.resumo(sem.tipos[b.descricao.tipoVolume], sem.cores[b.descricao.cor])}</span>
+                        {autoria}
+                      </span>
+                      <Icone nome="chevron" />
+                    </Link>
+                  </li>
+                ) : (
+                  <li key={b.id} className="cartao cartao-corpo">
+                    <strong className="mono">{b.etiqueta?.numeroEtiqueta}</strong> {aeroporto}
+                    {autoria}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>

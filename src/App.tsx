@@ -8,7 +8,7 @@ import { AdminLayout, ITENS_COMPANHIA, ITENS_PLATAFORMA, ITENS_TENANT } from "./
 import { TelaCompanhias } from "./features/back-office/companhias-aereas";
 import { TelaMotoristas } from "./features/back-office/motoristas";
 import { TelaFuncionarios } from "./features/companhia/funcionarios";
-import { TelaInicioCompanhia, TelaRegistrarEtiqueta } from "./features/companhia/bagagens";
+import { TelaEtiquetaSid, TelaInicioCompanhia, TelaRegistrarEtiqueta, TelaRegistrarSemEtiqueta } from "./features/companhia/bagagens";
 import { TelaPedagios } from "./features/back-office/pedagios";
 import { PlanosLista } from "./features/back-office/planos";
 import { TelaTarifas } from "./features/back-office/tarifas";
@@ -116,10 +116,13 @@ export function App() {
               </RequireAuth>
             }
           />
-          {/* HU34: registro de bagagem encontrada pela foto da etiqueta (captura e conferência). */}
+          {/* HU34 e HU35: registro de bagagem encontrada, com etiqueta (foto da etiqueta) e sem etiqueta (descrição e código SID). */}
           <Route element={<RequireAuth papeis={["FUNCIONARIO_COMPANHIA", "ADMINISTRADOR_COMPANHIA"]} />}>
             <Route path="/companhia/registrar" element={<TelaRegistrarEtiqueta />} />
             <Route path="/companhia/registrar/:id" element={<TelaRegistrarEtiqueta />} />
+            <Route path="/companhia/sem-etiqueta" element={<TelaRegistrarSemEtiqueta />} />
+            <Route path="/companhia/sem-etiqueta/:id" element={<TelaRegistrarSemEtiqueta />} />
+            <Route path="/companhia/bagagens/:id/etiqueta" element={<TelaEtiquetaSid />} />
           </Route>
           <Route path="*" element={<Navigate to="/motorista" replace />} />
         </Routes>
