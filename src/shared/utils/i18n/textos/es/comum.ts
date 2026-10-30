@@ -154,5 +154,8 @@ export const comum: TextosComuns = {
     companhias: "Aerolíneas",
     companhiaAerea: "Aerolínea",
     funcionarios: "Empleados",
+    bagagensEncontradas: "Equipajes encontrados",
+    buscaNacional: "Búsqueda nacional",
+    registrarBagagens: "Registrar equipajes",
   },
 };

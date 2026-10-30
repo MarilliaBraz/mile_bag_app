@@ -1,6 +1,7 @@
 /**
- * Espelha BagagemEncontradaResponse (specs/HU34-bagagem-com-etiqueta/contracts/bagagens-api.md e
- * specs/HU35-bagagem-sem-etiqueta/contracts/bagagens-sem-etiqueta-api.md).
+ * Espelha BagagemEncontradaResponse (specs/HU34-bagagem-com-etiqueta/contracts/bagagens-api.md,
+ * specs/HU35-bagagem-sem-etiqueta/contracts/bagagens-sem-etiqueta-api.md e
+ * specs/HU36-consulta-bagagens/contracts/consulta-bagagens-api.md).
  */
 export type OrigemLeitura = "CODIGO_BARRAS" | "TEXTO" | "NENHUMA";
 export type OrigemLocalizacao = "FOTO" | "APARELHO" | "NENHUMA";
@@ -30,10 +31,13 @@ export type DescricaoBagagem = {
   codigoSid: string;
 };
 
+export type TipoBagagemEncontrada = "COM_ETIQUETA" | "SEM_ETIQUETA";
+export type SituacaoBagagemEncontrada = "RASCUNHO" | "REGISTRADA";
+
 export type BagagemEncontrada = {
   id: string;
-  tipo: "COM_ETIQUETA" | "SEM_ETIQUETA";
-  situacao: "RASCUNHO" | "REGISTRADA";
+  tipo: TipoBagagemEncontrada;
+  situacao: SituacaoBagagemEncontrada;
   lido: DadosEtiqueta & { origemLeitura: OrigemLeitura; cor?: CorBagagem };
   etiqueta?: DadosEtiqueta;
   descricao?: DescricaoBagagem;
@@ -52,3 +56,19 @@ export type ConfirmacaoEtiqueta = Required<Pick<DadosEtiqueta, "numeroEtiqueta">
   Omit<DadosEtiqueta, "numeroEtiqueta"> & { aeroportoCodigo: string };
 
 export type Descrever = Omit<DescricaoBagagem, "codigoSid"> & { aeroportoCodigo: string };
+
+/** HU36: filtros da consulta, como ficam na URL (vazio não filtra). */
+export type FiltrosConsulta = Partial<Record<"aeroporto" | "de" | "ate" | "tipo" | "tipoVolume" | "cor" | "situacao" | "texto", string>>;
+
+export type PaginaBagagens = { itens: BagagemEncontrada[]; total: number; pagina: number; tamanho: number };
+
+/** HU36 (RD22): o que a busca nacional mostra; `id` só nos registros da própria companhia. */
+export type BagagemNacional = {
+  companhia: { nome?: string; codigoIata?: string };
+  aeroporto: Aeroporto;
+  registradaEm: string;
+  latitude?: number;
+  longitude?: number;
+  daMinhaCompanhia: boolean;
+  id?: string;
+};

@@ -16,5 +16,15 @@ export const ITENS_PLATAFORMA: ItemMenu[] = [
   { para: "/plataforma/companhias", rotulo: "companhias", icone: "predio" },
 ];
 
-/** HU33: administrador da companhia aérea. */
-export const ITENS_COMPANHIA: ItemMenu[] = [{ para: "/companhia/funcionarios", rotulo: "funcionarios", icone: "usuarios" }];
+/** HU33: administrador da companhia aérea; HU36: consulta e busca nacional, também para o funcionário. */
+export const ITENS_COMPANHIA: ItemMenu[] = [
+  { para: "/companhia/funcionarios", rotulo: "funcionarios", icone: "usuarios" },
+  { para: "/companhia/bagagens", rotulo: "bagagensEncontradas", icone: "mala" },
+  { para: "/companhia/busca-nacional", rotulo: "buscaNacional", icone: "busca" },
+];
+
+/** O funcionário não cadastra funcionários: no lugar, volta ao registro de bagagens (o seu início). */
+export const ITENS_FUNCIONARIO_COMPANHIA: ItemMenu[] = [
+  { para: "/companhia/inicio", rotulo: "registrarBagagens", icone: "camera" },
+  ...ITENS_COMPANHIA.slice(1),
+];

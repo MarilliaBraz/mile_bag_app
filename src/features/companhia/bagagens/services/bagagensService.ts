@@ -1,6 +1,17 @@
 import { baixarArquivo, enviarFormulario, requisitar } from "../../../../shared/services/httpClient";
+import { hojeIso } from "../../../../shared/utils/formatar";
 import type { Coordenada } from "../../../../shared/components/MapaBase";
-import type { Aeroporto, BagagemEncontrada, ConfirmacaoEtiqueta, Descrever } from "../types";
+import type {
+  Aeroporto,
+  BagagemEncontrada,
+  BagagemNacional,
+  ConfirmacaoEtiqueta,
+  Descrever,
+  FiltrosConsulta,
+  PaginaBagagens,
+} from "../types";
+import { consultaQuery } from "../utils/filtrosConsulta";
+import { salvarArquivo } from "../utils/salvarArquivo";
 
 const BASE = "/api/v1/companhia/bagagens";
 
@@ -35,3 +46,22 @@ export const listarAeroportos = () => requisitar<Aeroporto[]>("/api/v1/aeroporto
 export const baixarFoto = (bagagem: BagagemEncontrada) => baixarArquivo(bagagem.fotoUrl);
 /** QR code do código SID (HU35), também com o cabeçalho de autorização. */
 export const baixarQr = (bagagem: BagagemEncontrada) => baixarArquivo(bagagem.qrUrl ?? "");
+
+/** HU36: consulta da companhia com filtros, 50 por página. */
+export const consultarBagagens = (filtros: FiltrosConsulta, pagina: number) =>
+  requisitar<PaginaBagagens>(`${BASE}/consulta?${consultaQuery(filtros, pagina)}`);
+
+/** A mesma busca em planilha CSV. */
+export async function exportarCsv(filtros: FiltrosConsulta): Promise<void> {
+  salvarArquivo(await baixarArquivo(`${BASE}/consulta.csv?${consultaQuery(filtros)}`), `bagagens-encontradas-${hojeIso()}.csv`);
+}
+
+/** Ficha em PDF da bagagem registrada. */
+export async function baixarFicha(bagagem: BagagemEncontrada): Promise<void> {
+  const identificador = bagagem.descricao?.codigoSid ?? bagagem.etiqueta?.numeroEtiqueta ?? bagagem.id;
+  salvarArquivo(await baixarArquivo(`${BASE}/${bagagem.id}/ficha`), `ficha-${identificador}.pdf`);
+}
+
+/** Busca nacional por etiqueta (RD22): todas as companhias. */
+export const buscarNoPais = (etiqueta: string) =>
+  requisitar<BagagemNacional[]>(`/api/v1/companhia/busca-nacional?etiqueta=${encodeURIComponent(etiqueta)}`);

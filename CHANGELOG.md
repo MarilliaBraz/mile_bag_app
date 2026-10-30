@@ -13,6 +13,11 @@ Em validação no ambiente de homologação (`mile_bag_infra/scripts/implantar.s
 
 ### Adicionado
 
+- Consulta de bagagens encontradas (HU36): o administrador e os funcionários da companhia filtram os registros
+  por aeroporto, período, tipo, tipo de volume, cor, situação e texto (etiqueta, código SID ou passageiro),
+  exportam a busca em CSV e abrem a ficha de cada bagagem, com foto, dados, mapa e autoria, para baixar em PDF.
+  A busca nacional procura um número de etiqueta em todas as companhias e mostra por qual companhia, onde e
+  quando a bagagem foi registrada. O funcionário passa a ter a área da companhia, com o próprio menu.
 - Registro de bagagem encontrada sem etiqueta (HU35): o funcionário fotografa a bagagem; o Milebag sugere a cor
   pela foto e o aeroporto pelo local; o funcionário descreve com toques (tipo, tamanho, cor, sinais particulares,
   marca e observações) e registra. O registro gera o código SID (ex.: `SID-GRU-2026-000123`), único no país, numa
