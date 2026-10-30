@@ -50,7 +50,7 @@ export function JornadaDaMala() {
                     <p>{parada.texto}</p>
                   </Revelar>
                   <Revelar atraso={0.1} className="inst-tela">
-                    <img src={`/institucional/${id}.webp`} alt={parada.alt} width={720} height={1280} loading="lazy" decoding="async" />
+                    <img src={`/institucional/${id}.webp`} alt={parada.alt} width={412} height={732} loading="lazy" decoding="async" />
                   </Revelar>
                 </li>
               );

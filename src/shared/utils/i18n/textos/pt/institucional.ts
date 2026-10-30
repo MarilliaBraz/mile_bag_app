@@ -69,7 +69,7 @@ export const institucional = {
       fechamento: {
         titulo: "Fechamento quinzenal pronto",
         texto: "A empresa fecha a quinzena com quilômetros, pedágios e tarifas calculados, e cada motorista confere o próprio relatório.",
-        alt: "Tela do fechamento quinzenal da empresa",
+        alt: "Relatório quinzenal do motorista, com viagens, quilômetros e valores",
       },
     },
     entregue: "Entregue",

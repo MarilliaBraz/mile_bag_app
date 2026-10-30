@@ -61,7 +61,7 @@ export const institucional = {
       fechamento: {
         titulo: "Fortnightly settlement ready",
         texto: "The company closes the fortnight with kilometres, tolls and rates calculated, and each driver checks their own report.",
-        alt: "Company's fortnightly settlement screen",
+        alt: "Driver's fortnightly report, with trips, kilometres and amounts",
       },
     },
     entregue: "Delivered",

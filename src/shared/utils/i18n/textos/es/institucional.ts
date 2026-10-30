@@ -61,7 +61,7 @@ export const institucional = {
       fechamento: {
         titulo: "Cierre quincenal listo",
         texto: "La empresa cierra la quincena con kilómetros, peajes y tarifas calculados, y cada conductor revisa su propio informe.",
-        alt: "Pantalla del cierre quincenal de la empresa",
+        alt: "Informe quincenal del conductor, con viajes, kilómetros y valores",
       },
     },
     entregue: "Entregado",
