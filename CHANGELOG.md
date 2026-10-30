@@ -13,6 +13,11 @@ Em validação no ambiente de homologação (`mile_bag_infra/scripts/implantar.s
 
 ### Adicionado
 
+- Página institucional na entrada do sistema (HU38): em `/`, quem ainda não é cliente vê o que o Milebag faz para
+  empresas de entrega e companhias aéreas, numa jornada da mala animada pela rolagem com telas reais do app, e pede
+  uma demonstração pelo formulário (enviado por e-mail) ou pelo WhatsApp. "Entrar" fica fixo no topo; quem já está
+  logado vai direto para a sua área. Título, descrição, Open Graph, `robots.txt` e `sitemap.xml` para busca e
+  compartilhamento. Animações desligadas com a preferência de movimento reduzido; textos em pt, es e en.
 - Encaminhamento da bagagem encontrada para entrega (HU37): na ficha de uma bagagem registrada, a companhia escolhe
   uma empresa de entrega parceira e informa o processo e o passageiro; a empresa recebe o BDO pronto e os motoristas
   são avisados. A ficha e a consulta mostram a etapa da entrega (aguardando motorista, motorista designado, a caminho,
