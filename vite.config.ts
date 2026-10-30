@@ -9,7 +9,8 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       // HU32: eventos de push e clique na notificação do aviso de bagagem nova (public/sw-push.js).
-      workbox: { importScripts: ["/sw-push.js"] },
+      // HU38: robots.txt e sitemap.xml são arquivos, não telas - fora do fallback de navegação do app.
+      workbox: { importScripts: ["/sw-push.js"], navigateFallbackDenylist: [/^\/robots\.txt$/, /^\/sitemap\.xml$/] },
       // Estrategia de cache offline completa (fila IndexedDB via Dexie.js,
       // sincronizacao - HU08) fica para quando essas telas existirem;
       // por ora so o essencial para o app ser instalavel (RI04/plan.md).

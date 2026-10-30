@@ -1,0 +1,16 @@
+# HU38: só a página institucional entra na busca; as áreas do sistema ficam de fora.
+User-agent: *
+Allow: /$
+Disallow: /motorista
+Disallow: /admin
+Disallow: /plataforma
+Disallow: /companhia
+Disallow: /acompanhar
+Disallow: /login
+Disallow: /convite
+Disallow: /convites
+Disallow: /esqueci-senha
+Disallow: /redefinir-senha
+Disallow: /conta
+
+Sitemap: https://www.milebag.com.br/sitemap.xml
