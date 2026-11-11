@@ -12,6 +12,8 @@ export const institucional = {
     subtitulo:
       "Milebag conecta a la aerolínea que encuentra el equipaje con la empresa que lo entrega: registro, derivación, ruta, comprobante y cierre, con cada etapa visible para quien la necesita.",
     rolar: "Desplácese para seguir la maleta",
+    origem: "Cinta del aeropuerto",
+    destino: "Puerta del pasajero",
   },
   problema: {
     titulo: "Hoy, la maleta encontrada todavía viaja improvisando",

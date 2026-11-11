@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" fill="#2563eb"/><text x="256" y="350" font-family="Arial, Helvetica, sans-serif" font-size="300" font-weight="700" text-anchor="middle" fill="#ffffff">M</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><title>Milebag</title><defs><clipPath id="k-m"><rect x="0" y="0" width="90" height="100"/></clipPath>
+<clipPath id="k-a"><rect x="0" y="0" width="84" height="100"/></clipPath></defs><rect x="0" y="0" width="120" height="120" fill="#0A1730"/><g transform="translate(60 60) scale(0.78) translate(-60 -61)"><g>
+<g fill="none" stroke="#C9A45C" stroke-width="10" stroke-miterlimit="20"><rect x="15" y="32.5" width="90" height="70" rx="13"/><path d="M44 32.5V17.5H76V32.5"/></g>
+<circle cx="33" cy="82" r="5" fill="none" stroke="#C9A45C" stroke-width="6.5"/>
+<path d="M33 73.75V66H52V48.75" fill="none" stroke="#C9A45C" stroke-width="6.5" stroke-miterlimit="10"/>
+<path d="M55.25 52H77.75" fill="none" stroke="#C9A45C" stroke-width="6.5" stroke-dasharray="4.5 2.25" stroke-dashoffset="4.5"/>
+<circle cx="86" cy="52" r="8.25" fill="#C9A45C"/>
+</g></g></svg>

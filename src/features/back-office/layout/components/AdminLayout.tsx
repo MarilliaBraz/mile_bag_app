@@ -6,6 +6,7 @@ import { Icone } from "../../../../shared/components/Icone";
 import { PreferenciasAcessibilidade } from "../../../../shared/components/PreferenciasAcessibilidade";
 import { SeletorIdioma } from "../../../../shared/components/SeletorIdioma";
 import type { ItemMenu } from "../types";
+import { Marca } from "../../../../shared/components/Marca";
 
 /**
  * Moldura das áreas administrativas: barra lateral com as seções (no
@@ -18,7 +19,7 @@ export function AdminLayout({ titulo, itens, aviso }: { titulo: string; itens: I
     <div className="admin">
       <aside className="admin-lateral">
         <span className="marca">
-          <img src="/icone-app.svg" alt="" /> Milebag
+          <Marca />
         </span>
         <span className="admin-area texto-apoio">{titulo}</span>
 

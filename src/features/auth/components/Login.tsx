@@ -10,6 +10,7 @@ import { mensagemDeErro } from "../../../shared/utils/formatar";
 import { useTextos } from "../../../shared/utils/i18n/idioma";
 import { definirToken, obterPapel, obterToken, rotaInicialDo, tokenExpirado } from "../../../shared/services/authStorage";
 import type { EstadoLogin, Papel } from "../../../shared/types/auth";
+import { Marca } from "../../../shared/components/Marca";
 
 /** Volta para a tela onde a sessão expirou, desde que seja da área do papel que entrou. */
 function destinoDepoisDeEntrar(papel: Papel, voltarPara: string | undefined): string {
@@ -52,7 +53,7 @@ export function Login() {
       {/* Painel da marca: só no computador (no celular o formulário vem primeiro, sem rolagem). */}
       <aside className="entrada-marca" aria-hidden="true">
         <span className="marca">
-          <img src="/icone-app.svg" alt="" /> Milebag
+          <Marca variante="vertical" descritivo decorativa />
         </span>
         <div>
           <h2>{t.slogan}</h2>
@@ -75,7 +76,7 @@ export function Login() {
           <SeletorIdioma />
         </div>
         <div className="marca">
-          <img src="/icone-app.svg" alt="" /> Milebag
+          <Marca />
         </div>
         <h1>{t.titulo}</h1>
         <p className="texto-apoio">{t.instrucao}</p>

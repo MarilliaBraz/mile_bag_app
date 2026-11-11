@@ -12,6 +12,8 @@ export const institucional = {
     subtitulo:
       "Milebag connects the airline that finds the bag to the company that delivers it: registration, handover, route, proof of delivery and settlement, with every step visible to those who need it.",
     rolar: "Scroll to follow the bag",
+    origem: "Airport carousel",
+    destino: "Passenger's door",
   },
   problema: {
     titulo: "Today, a found bag still travels on improvisation",

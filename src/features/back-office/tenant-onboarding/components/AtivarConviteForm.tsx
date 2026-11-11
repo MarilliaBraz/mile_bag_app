@@ -7,6 +7,7 @@ import { obterTextos, useTextos } from "../../../../shared/utils/i18n/idioma";
 import { SeletorIdioma } from "../../../../shared/components/SeletorIdioma";
 import { ativarConvite, consultarConvite } from "../services/tenantsService";
 import { Alerta, Carregando } from "../../../../shared/components/Alerta";
+import { Marca } from "../../../../shared/components/Marca";
 
 const TAMANHO_MINIMO_SENHA = 8;
 
@@ -54,7 +55,7 @@ export function AtivarConviteForm() {
           <SeletorIdioma />
         </div>
         <div className="marca">
-          <img src="/icone-app.svg" alt="" /> Milebag
+          <Marca />
         </div>
         <h1>{t.titulo}</h1>
 

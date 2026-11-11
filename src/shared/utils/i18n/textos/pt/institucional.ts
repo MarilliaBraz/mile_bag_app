@@ -12,6 +12,8 @@ export const institucional = {
     subtitulo:
       "O Milebag liga a companhia aérea que encontra a bagagem à empresa que a entrega: registro, encaminhamento, rota, comprovante e fechamento, com cada etapa visível para quem precisa.",
     rolar: "Role para seguir a mala",
+    origem: "Esteira do aeroporto",
+    destino: "Porta do passageiro",
   },
   problema: {
     titulo: "Hoje, a mala encontrada ainda viaja no improviso",

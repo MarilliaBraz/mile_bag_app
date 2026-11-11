@@ -1,18 +1,24 @@
-/* Página institucional (HU38, RI25): visual "A jornada da mala", escuro com as cores do app.
+/* Página institucional (HU38, RI25): visual "A jornada da mala" com a marca linha de rota.
+   Paleta da marca em cores chapadas (marinho, dourado champanhe, marfim), sem degradê nem brilho.
+   O dourado marca o caminho: trecho percorrido em traço cheio, trecho que falta tracejado, destino em ponto cheio.
    Fica num arquivo próprio para ir no pedaço carregado só na rota "/". */
 
 .inst {
-  --inst-fundo: #0b1530;
-  --inst-fundo-2: #111d3d;
-  --inst-cartao: #16244a;
-  --inst-borda: rgba(255, 255, 255, 0.12);
-  --inst-texto: #e8eefc;
-  --inst-texto-suave: #b7c3dd;
-  --inst-azul: #2563eb;
-  --inst-azul-claro: #6ea0ff;
-  --inst-amarelo: #ffc21a;
-  --inst-amarelo-texto: #2a1d00;
+  --inst-fundo: #0a1730;
+  --inst-fundo-2: #0d1b38;
+  --inst-cartao: #13234a;
+  --inst-borda: rgba(243, 241, 235, 0.12);
+  --inst-texto: #ebeef4;
+  --inst-texto-suave: #aab3c6;
+  --inst-marfim: #f3f1eb;
+  --inst-dourado: #c9a45c;
+  --inst-dourado-claro: #dcbf85;
+  --inst-sobre-dourado: #0a1730;
   --inst-whatsapp: #15803d;
+  /* Marca sobre o fundo marinho: símbolo dourado e nome marfim (componente Marca). */
+  --marca-simbolo: var(--inst-dourado);
+  --marca-destino: var(--inst-dourado);
+  --marca-nome: var(--inst-marfim);
   background: var(--inst-fundo);
   color: var(--inst-texto);
   min-height: 100vh;
@@ -22,7 +28,7 @@
 .inst h1,
 .inst h2,
 .inst h3 {
-  color: #fff;
+  color: var(--inst-marfim);
   letter-spacing: -0.01em;
 }
 
@@ -39,7 +45,7 @@
 .inst input:focus-visible,
 .inst textarea:focus-visible,
 .inst select:focus-visible {
-  outline: 3px solid var(--inst-amarelo);
+  outline: 3px solid var(--inst-dourado);
   outline-offset: 2px;
 }
 
@@ -48,7 +54,7 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(11, 21, 48, 0.88);
+  background: rgba(10, 23, 48, 0.92);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--inst-borda);
 }
@@ -64,22 +70,9 @@
 .inst-marca {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  color: #fff;
-  font-weight: 800;
-  font-size: 1.15rem;
   text-decoration: none;
   flex-shrink: 0;
-}
-
-.inst-marca-simbolo {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--inst-azul);
-  color: #fff;
+  --marca-h: 1rem;
 }
 
 .inst-cabecalho-acoes {
@@ -92,36 +85,68 @@
   display: none;
 }
 
+/* Faixa de progresso = linha de rota: anel de origem, trecho feito em traço cheio, trecho que falta tracejado
+   e ponto de destino. */
 .inst-viagem {
   position: relative;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.06);
+  height: 2px;
+  margin: 0 22px;
+  background: repeating-linear-gradient(90deg, rgba(243, 241, 235, 0.28) 0 6px, transparent 6px 10px);
+}
+
+.inst-viagem::before,
+.inst-viagem::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  box-sizing: border-box;
+}
+
+.inst-viagem::before {
+  left: -12px;
+  border: 2px solid var(--inst-dourado);
+}
+
+.inst-viagem::after {
+  right: -12px;
+  background: var(--inst-dourado);
 }
 
 .inst-viagem-trilha {
   position: absolute;
   inset: 0;
   transform-origin: left center;
-  background: linear-gradient(90deg, var(--inst-azul), var(--inst-amarelo));
+  background: var(--inst-dourado);
 }
 
 .inst-viagem-percurso {
   position: absolute;
-  inset: 0 12px;
+  inset: 0;
 }
 
 .inst-viagem-mala {
   position: absolute;
-  top: -9px;
-  width: 20px;
-  height: 20px;
-  margin-left: -10px;
-  color: var(--inst-amarelo);
+  top: -11px;
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
 }
 
-.inst-viagem-mala svg {
-  width: 20px;
-  height: 20px;
+.inst-viagem-mala svg,
+.inst-jornada-mala svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.inst-mala-circulo {
+  fill: var(--inst-fundo);
+  stroke: var(--inst-dourado);
+  stroke-width: 8;
 }
 
 /* Seletor de idioma do app sobre o fundo escuro */
@@ -163,14 +188,18 @@
 }
 
 .inst-botao-contorno {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--inst-marfim);
+  border-color: rgba(243, 241, 235, 0.45);
   background: transparent;
 }
 
 .inst-botao-destaque {
-  color: var(--inst-amarelo-texto);
-  background: var(--inst-amarelo);
+  color: var(--inst-sobre-dourado);
+  background: var(--inst-dourado);
+}
+
+.inst-botao-destaque:hover {
+  background: var(--inst-dourado-claro);
 }
 
 .inst-botao-whatsapp {
@@ -194,9 +223,6 @@
 .inst-topo {
   position: relative;
   padding: 48px 0 32px;
-  background:
-    radial-gradient(60% 60% at 85% 10%, rgba(37, 99, 235, 0.35), transparent 70%),
-    radial-gradient(40% 50% at 0% 100%, rgba(255, 194, 26, 0.12), transparent 70%);
 }
 
 .inst-topo-grade {
@@ -207,13 +233,15 @@
 
 .inst-selo {
   display: inline-block;
-  margin: 0 0 12px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(255, 194, 26, 0.14);
-  color: var(--inst-amarelo);
-  font-size: 0.85rem;
-  font-weight: 700;
+  margin: 0 0 16px;
+  padding: 5px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(201, 164, 92, 0.55);
+  color: var(--inst-dourado);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .inst-topo h1 {
@@ -240,6 +268,44 @@
   width: 100%;
   max-width: 460px;
   justify-self: center;
+  overflow: visible;
+}
+
+.inst-rota-falta {
+  fill: none;
+  stroke: rgba(243, 241, 235, 0.3);
+  stroke-width: 3;
+  stroke-dasharray: 9 7;
+}
+
+.inst-rota-feita {
+  fill: none;
+  stroke: var(--inst-dourado);
+  stroke-width: 3.5;
+}
+
+.inst-rota-origem {
+  fill: var(--inst-fundo);
+  stroke: var(--inst-dourado);
+  stroke-width: 3.5;
+}
+
+.inst-rota-destino {
+  fill: var(--inst-dourado);
+}
+
+.inst-rota-circulo {
+  fill: var(--inst-fundo);
+  stroke: var(--inst-dourado);
+  stroke-width: 3.5;
+}
+
+.inst-rota-rotulo {
+  fill: var(--inst-texto-suave);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .inst-rolar {
@@ -303,8 +369,8 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(37, 99, 235, 0.22);
-  color: var(--inst-azul-claro);
+  background: rgba(201, 164, 92, 0.12);
+  color: var(--inst-dourado);
 }
 
 .inst-cartao-icone svg {
@@ -330,31 +396,24 @@
 }
 
 .inst-jornada-trilho {
-  background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.18) 0 10px, transparent 10px 18px);
+  background: repeating-linear-gradient(to bottom, rgba(243, 241, 235, 0.28) 0 6px, transparent 6px 11px);
+  width: 2px;
+  left: 15px;
 }
 
 .inst-jornada-preenchido {
-  background: linear-gradient(to bottom, var(--inst-azul), var(--inst-amarelo));
+  background: var(--inst-dourado);
   transform-origin: top center;
+  width: 2px;
+  left: 15px;
 }
 
 .inst-jornada-mala {
   position: absolute;
-  left: 2px;
-  width: 28px;
-  height: 28px;
-  margin-top: -14px;
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  background: var(--inst-amarelo);
-  color: var(--inst-amarelo-texto);
-  box-shadow: 0 0 0 6px rgba(255, 194, 26, 0.18);
-}
-
-.inst-jornada-mala svg {
-  width: 18px;
-  height: 18px;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  margin-top: -16px;
 }
 
 .inst-jornada-lista {
@@ -371,21 +430,32 @@
   padding: 28px 0;
 }
 
+/* Cada parada é um anel, como a origem da marca; a última (fechamento) é o destino, em ponto cheio. */
 .inst-parada-marco {
   position: absolute;
-  left: -33px;
+  left: -32px;
   top: 34px;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: var(--inst-fundo);
-  border: 4px solid var(--inst-azul-claro);
+  box-sizing: border-box;
+  background: var(--inst-fundo-2);
+  border: 3px solid var(--inst-dourado);
+}
+
+.inst-parada:last-child .inst-parada-marco {
+  left: -34px;
+  width: 20px;
+  height: 20px;
+  border: 0;
+  background: var(--inst-dourado);
 }
 
 .inst-parada-numero {
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: var(--inst-amarelo);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--inst-dourado);
 }
 
 .inst-parada h3 {
@@ -404,7 +474,7 @@
   width: min(100%, 300px);
   border-radius: 22px;
   padding: 8px;
-  background: #050b1c;
+  background: #060f22;
   border: 1px solid var(--inst-borda);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
 }
@@ -439,8 +509,8 @@
 }
 
 .inst-abas button[aria-selected="true"] {
-  background: var(--inst-azul);
-  color: #fff;
+  background: var(--inst-dourado);
+  color: var(--inst-sobre-dourado);
 }
 
 .inst-publicos {
@@ -471,7 +541,7 @@
   width: 20px;
   height: 20px;
   margin-top: 2px;
-  color: var(--inst-amarelo);
+  color: var(--inst-dourado);
 }
 
 /* Como começar */
@@ -495,8 +565,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--inst-amarelo);
-  color: var(--inst-amarelo-texto);
+  background: var(--inst-dourado);
+  color: var(--inst-sobre-dourado);
   font-weight: 800;
 }
 
@@ -519,8 +589,8 @@
   width: 120px;
   height: 120px;
   border-radius: 28px;
-  background: rgba(255, 194, 26, 0.16);
-  color: var(--inst-amarelo);
+  background: rgba(201, 164, 92, 0.14);
+  color: var(--inst-dourado);
 }
 
 .inst-porta-casa svg {
@@ -569,8 +639,8 @@
   min-height: 46px;
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: #0d1834;
+  border: 1px solid rgba(243, 241, 235, 0.28);
+  background: #0b1a36;
   color: #fff;
   font: inherit;
   box-sizing: border-box;
@@ -644,7 +714,11 @@
 }
 
 .inst-rodape a {
-  color: #fff;
+  color: var(--inst-marfim);
+}
+
+.inst-rodape-marca {
+  --marca-h: 1.5rem;
 }
 
 .inst-rodape p {
@@ -708,20 +782,17 @@
   }
 
   .inst-rodape-grade {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto 1fr auto;
+    gap: 48px;
     align-items: center;
   }
 }
 
 /* Celulares bem estreitos: o cabeçalho segura "Entrar" e "Pedir demonstração" lado a lado. */
 @media (max-width: 400px) {
-  .inst-marca-nome {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
+  /* Só o ícone da mala-rota: o nome escrito não cabe ao lado dos dois botões. */
+  .inst-marca .marca-nome {
+    display: none;
   }
 
   .inst-cabecalho-barra .inst-botao {
