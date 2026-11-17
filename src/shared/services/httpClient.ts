@@ -3,9 +3,11 @@ import { EVENTO_SESSAO_EXPIRADA, limparToken, obterToken } from "./authStorage";
 import { obterTextos } from "../utils/i18n/idioma";
 
 // Endereço da API vem do arquivo .env do ambiente (modelo em .env.example), nunca fixo no código.
+// Vazio = mesma origem do app: nos ambientes implantados o Caddy serve o app e encaminha /api para a API, então
+// o app funciona em qualquer endereço (localhost, IP da rede, domínio), inclusive no celular.
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-if (!BASE_URL) {
+if (BASE_URL === undefined) {
   throw new Error("VITE_API_BASE_URL não definida. Configure o arquivo .env do ambiente (modelo em .env.example).");
 }
 
