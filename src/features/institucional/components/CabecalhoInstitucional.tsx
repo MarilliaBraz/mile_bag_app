@@ -19,8 +19,11 @@ export function CabecalhoInstitucional() {
   return (
     <header className="inst-cabecalho">
       <nav className="inst-cabecalho-barra inst-largura" aria-label={t.navegacao}>
-        <a href="#topo" className="inst-marca" aria-label={t.marca}>
+        <a href="#topo" className="inst-marca" aria-label={`${t.marca}, ${t.descritivoMarca}`}>
           <Marca decorativa />
+          <span className="inst-marca-descritivo" aria-hidden="true">
+            {t.descritivoMarca}
+          </span>
         </a>
         <div className="inst-cabecalho-acoes">
           <div className="inst-cabecalho-idioma">

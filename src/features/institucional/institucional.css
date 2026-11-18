@@ -75,6 +75,27 @@
   --marca-h: 1rem;
 }
 
+/* "Gestão e logística de bagagens" ao lado da logo: diz o que é o Milebag em toda a rolagem (some no celular). */
+.inst-marca-descritivo {
+  display: none;
+  margin-left: 14px;
+  padding-left: 14px;
+  border-left: 1px solid rgba(201, 164, 92, 0.45);
+  color: var(--inst-texto-suave);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (min-width: 1020px) {
+  .inst-marca-descritivo {
+    display: block;
+  }
+}
+
 .inst-cabecalho-acoes {
   display: flex;
   align-items: center;
@@ -256,6 +277,40 @@
   line-height: 1.6;
   color: var(--inst-texto-suave);
   max-width: 560px;
+}
+
+.inst-produtos {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.inst-produtos li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.98rem;
+  line-height: 1.4;
+}
+
+.inst-produto-icone {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(201, 164, 92, 0.4);
+  fill: none;
+  stroke: var(--inst-dourado);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.inst-produto-destino {
+  fill: var(--inst-dourado);
 }
 
 .inst-topo-acoes {

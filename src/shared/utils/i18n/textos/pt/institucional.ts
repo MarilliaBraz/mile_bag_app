@@ -1,16 +1,23 @@
 /** Página institucional (HU38): apresentação para empresas de entrega e companhias aéreas. Só o que o sistema faz. */
 export const institucional = {
   marca: "Milebag",
+  descritivoMarca: "Gestão e logística de bagagens",
   navegacao: "Navegação da página",
   entrar: "Entrar",
   pedirDemonstracao: "Pedir demonstração",
   whatsapp: "Falar no WhatsApp",
   mensagemWhatsapp: "Olá! Conheci o Milebag pela página e quero saber mais.",
   topo: {
-    selo: "Bagagem extraviada, do achado à entrega",
-    titulo: "Da esteira do aeroporto à porta do passageiro.",
+    selo: "Software de gestão e logística de bagagens",
+    titulo: "Bagagem extraviada da esteira à porta, em um só sistema.",
     subtitulo:
-      "O Milebag liga a companhia aérea que encontra a bagagem à empresa que a entrega: registro, encaminhamento, rota, comprovante e fechamento, com cada etapa visível para quem precisa.",
+      "Painel web e aplicativo que ligam a companhia aérea que encontra a mala à empresa que a entrega: registro, BDO, rota, rastreio em tempo real, comprovante e fechamento.",
+    produtosRotulo: "O que vem no Milebag",
+    produtos: [
+      "Painel web para companhias aéreas e empresas de entrega",
+      "Aplicativo do motorista, que funciona sem internet",
+      "Link de rastreio para o passageiro, sem baixar nada",
+    ],
     rolar: "Role para seguir a mala",
     origem: "Esteira do aeroporto",
     destino: "Porta do passageiro",
@@ -37,8 +44,8 @@ export const institucional = {
     ],
   },
   jornada: {
-    titulo: "A jornada da mala no Milebag",
-    subtitulo: "Cada parada é uma tela real do sistema.",
+    titulo: "Como o Milebag funciona",
+    subtitulo: "Seis etapas, do registro ao fechamento. Cada parada é uma tela real do sistema.",
     paradas: {
       registrar: {
         titulo: "A companhia registra a mala",
@@ -77,7 +84,7 @@ export const institucional = {
     entregue: "Entregue",
   },
   publicos: {
-    titulo: "Feito para os dois lados da entrega",
+    titulo: "Para companhias aéreas e empresas de entrega",
     abas: "Escolha o seu perfil",
     empresa: {
       titulo: "Empresa de entrega",

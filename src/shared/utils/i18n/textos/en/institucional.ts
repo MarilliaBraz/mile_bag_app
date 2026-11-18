@@ -1,16 +1,23 @@
 /** Institutional page (HU38) in English. */
 export const institucional = {
   marca: "Milebag",
+  descritivoMarca: "Baggage management and logistics",
   navegacao: "Page navigation",
   entrar: "Sign in",
   pedirDemonstracao: "Request a demo",
   whatsapp: "Chat on WhatsApp",
   mensagemWhatsapp: "Hi! I found Milebag through the website and would like to know more.",
   topo: {
-    selo: "Mishandled baggage, from found to delivered",
-    titulo: "From the airport carousel to the passenger's door.",
+    selo: "Baggage management and logistics software",
+    titulo: "Mishandled baggage from carousel to door, in one system.",
     subtitulo:
-      "Milebag connects the airline that finds the bag to the company that delivers it: registration, handover, route, proof of delivery and settlement, with every step visible to those who need it.",
+      "A web dashboard and a mobile app that connect the airline that finds the bag to the company that delivers it: registration, delivery order, route, real-time tracking, proof of delivery and settlement.",
+    produtosRotulo: "What Milebag includes",
+    produtos: [
+      "Web dashboard for airlines and delivery companies",
+      "Driver app that works offline",
+      "Tracking link for the passenger, nothing to install",
+    ],
     rolar: "Scroll to follow the bag",
     origem: "Airport carousel",
     destino: "Passenger's door",
@@ -28,8 +35,8 @@ export const institucional = {
     ],
   },
   jornada: {
-    titulo: "The bag's journey in Milebag",
-    subtitulo: "Each stop is a real screen of the system.",
+    titulo: "How Milebag works",
+    subtitulo: "Six steps, from registration to settlement. Each stop is a real screen of the system.",
     paradas: {
       registrar: {
         titulo: "The airline registers the bag",
@@ -69,7 +76,7 @@ export const institucional = {
     entregue: "Delivered",
   },
   publicos: {
-    titulo: "Built for both sides of the delivery",
+    titulo: "For airlines and delivery companies",
     abas: "Choose your profile",
     empresa: {
       titulo: "Delivery company",
