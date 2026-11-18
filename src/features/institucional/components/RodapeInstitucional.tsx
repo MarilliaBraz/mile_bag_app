@@ -3,6 +3,7 @@ import { PreferenciasAcessibilidade } from "../../../shared/components/Preferenc
 import { SeletorIdioma } from "../../../shared/components/SeletorIdioma";
 import { useTextos } from "../../../shared/utils/i18n/idioma";
 import { linkWhatsApp } from "../constantes";
+import { Marca } from "../../../shared/components/Marca";
 
 /** Rodapé (HU38): "Entrar" de novo, idiomas, acessibilidade, contato e o aviso de uso dos dados (LGPD). */
 export function RodapeInstitucional() {
@@ -10,6 +11,9 @@ export function RodapeInstitucional() {
   return (
     <footer className="inst-rodape">
       <div className="inst-largura inst-rodape-grade">
+        <div className="inst-rodape-marca">
+          <Marca variante="vertical" descritivo />
+        </div>
         <div>
           <p>
             <Link to="/login">{t.entrar}</Link> ·{" "}

@@ -1,8 +1,8 @@
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
 import { useRef } from "react";
-import { Icone } from "../../../shared/components/Icone";
 import { useTextos } from "../../../shared/utils/i18n/idioma";
 import { Revelar } from "./Revelar";
+import { MalaNoCirculoPequena } from "./CabecalhoInstitucional";
 
 /** Paradas da jornada, na ordem da entrega; cada uma tem a tela do app em public/institucional/<id>.webp. */
 const PARADAS = ["registrar", "encaminhar", "motorista", "acompanhar", "comprovante", "fechamento"] as const;
@@ -34,7 +34,7 @@ export function JornadaDaMala() {
             <>
               <motion.div className="inst-jornada-preenchido" style={{ scaleY: progresso }} aria-hidden="true" />
               <motion.span className="inst-jornada-mala" style={{ top: topoMala }} aria-hidden="true">
-                <Icone nome="mala" />
+                <MalaNoCirculoPequena />
               </motion.span>
             </>
           )}

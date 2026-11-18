@@ -11,31 +11,40 @@
 
 :root {
   /* Superfícies */
+  /* Paleta da marca (linha de rota, mile_bag_documentacao/marketing/logo/final): marinho #0A1730,
+   * dourado champanhe #C9A45C e marfim #F3F1EB. Cores chapadas: a marca não usa degradê nem brilho. */
   --fundo: #ffffff;
-  --fundo-app: #f4f6fb;
+  --fundo-app: #f3f1eb;
   --superficie: #ffffff;
-  --superficie-2: #edf1f8;
-  --superficie-3: #e2e8f3;
+  --superficie-2: #ecebe5;
+  --superficie-3: #e2e0d8;
 
   /* Texto */
-  --texto: #1e293b;
-  --texto-suave: #4a5871;
-  --texto-titulo: #0b1530;
+  --texto: #1b2540;
+  --texto-suave: #4a5368;
+  --texto-titulo: #0a1730;
   --texto-sobre-acao: #ffffff;
 
   /* Bordas: --borda tem 3:1 contra o fundo (campos e controles, WCAG 1.4.11); --borda-suave só separa superfícies. */
-  --borda: #7b8794;
-  --borda-suave: #dde3ee;
+  --borda: #767d8c;
+  --borda-suave: #dedbd2;
 
-  /* Marca e ação: azul de sinalização aeroportuária. --acao-fundo-forte só aparece em degradês com texto branco (7:1). */
-  --acao: #1d4ed8;
-  --acao-fundo: #2257e6;
-  --acao-fundo-hover: #1b47c4;
-  --acao-fundo-forte: #102d86;
-  --acao-suave: #e7eefe;
-  /* Destaque: amarelo das placas de aeroporto, sempre com texto escuro (contraste 10:1). Só para "Capturar BDO". */
-  --destaque: #ffc21a;
-  --destaque-texto: #2a1d00;
+  /* Ação: marinho da marca nos botões (texto branco 17:1) e um marinho mais aberto para links (10:1). */
+  --acao: #1f3f86;
+  --acao-fundo: #0a1730;
+  --acao-fundo-hover: #1c2d52;
+  --acao-fundo-forte: #050c1c;
+  --acao-suave: #e6e9f1;
+  /* Destaque: dourado da marca, sempre com texto marinho (contraste 7,6:1). Só para "Capturar BDO" e o destino. */
+  --destaque: #c9a45c;
+  --destaque-texto: #0a1730;
+
+  /* Marca: cores do símbolo e do logotipo (componente Marca) e dos painéis de marca (fundo marinho chapado). */
+  --marca-simbolo: #0a1730;
+  --marca-destino: #a8843d;
+  --marca-nome: #0a1730;
+  --painel-marca: #0a1730;
+  --texto-sobre-painel: #f3f1eb;
   --confirmacao: #166534;
   --confirmacao-fundo: #15803d;
   --confirmacao-suave: #e6f6ec;
@@ -44,7 +53,7 @@
   --erro-suave: #fdecec;
   --aviso: #92400e;
   --aviso-suave: #fff3d6;
-  --foco: #1d4ed8;
+  --foco: #1f3f86;
 
   /* Escala de tipografia (razão ~1.2 a partir de 17px, o corpo do texto). */
   --fs-xs: 0.8125rem;
@@ -112,23 +121,29 @@
  * (declarado depois) continuar vencendo. */
 :root:where([data-tema="escuro"]) {
   color-scheme: dark;
-  --fundo: #0b1220;
-  --fundo-app: #0b1220;
-  --superficie: #141d2f;
-  --superficie-2: #1c2740;
-  --superficie-3: #26334f;
-  --texto: #d8e0ec;
-  --texto-suave: #a3b3c9;
-  --texto-titulo: #f8fafc;
-  --borda: #6b7c93;
-  --borda-suave: #26344d;
-  --acao: #7cb1ff;
-  --acao-fundo: #2563eb;
-  --acao-fundo-hover: #3b74f0;
-  --acao-fundo-forte: #14286b;
-  --acao-suave: #172a4d;
-  --destaque: #f5b700;
-  --destaque-texto: #1f1600;
+  --fundo: #0a1730;
+  --fundo-app: #0a1730;
+  --superficie: #12203f;
+  --superficie-2: #1a2b50;
+  --superficie-3: #24375f;
+  --texto: #e3e6ee;
+  --texto-suave: #a9b3c8;
+  --texto-titulo: #f3f1eb;
+  --borda: #71809c;
+  --borda-suave: #26385e;
+  /* Links em dourado (9:1 sobre a superfície); botões num marinho mais aberto, que segura o texto branco (8:1). */
+  --acao: #dcbf85;
+  --acao-fundo: #2d4c8e;
+  --acao-fundo-hover: #3a5ba0;
+  --acao-fundo-forte: #0a1730;
+  --acao-suave: #233256;
+  --destaque: #d6b77a;
+  --destaque-texto: #0a1730;
+  --marca-simbolo: #c9a45c;
+  --marca-destino: #c9a45c;
+  --marca-nome: #f3f1eb;
+  --painel-marca: #12203f;
+  --texto-sobre-painel: #f3f1eb;
   --confirmacao: #5ee08f;
   --confirmacao-fundo: #15803d;
   --confirmacao-suave: #0f2e1f;
@@ -137,7 +152,7 @@
   --erro-suave: #3a1519;
   --aviso: #fcd34d;
   --aviso-suave: #352a0c;
-  --foco: #93c5fd;
+  --foco: #e2c78f;
   --sombra-1: 0 1px 2px rgb(0 0 0 / 0.4);
   --sombra-2: 0 8px 24px -6px rgb(0 0 0 / 0.55);
   --sombra-3: 0 24px 56px -12px rgb(0 0 0 / 0.7);
@@ -430,14 +445,72 @@ button.perigo-contorno {
   align-items: center;
   gap: 0.5rem;
   font-weight: 800;
-  color: var(--acao);
+  color: var(--marca-nome);
   letter-spacing: -0.02em;
+  /* Altura do logotipo MILEBAG; o símbolo e o espaçamento acompanham (componente Marca). */
+  --marca-h: 1.125rem;
 }
 
-.marca img {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+/* ---------- Marca (linha de rota) ---------- */
+/* Proporções da assinatura: ícone = 1,8 × a altura do nome; espaço = 0,54 × a altura do nome. */
+/* --marca-h vem de quem usa (ex.: .marca); padrão 1.125rem. */
+.marca-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--marca-h, 1.125rem) * 0.54);
+  line-height: 1;
+}
+
+.marca-logo svg {
+  display: block;
+  flex: none;
+  overflow: visible;
+}
+
+.marca-logo .marca-nome {
+  height: var(--marca-h, 1.125rem);
+  width: calc(var(--marca-h, 1.125rem) * 6);
+}
+
+.marca-logo .marca-icone {
+  height: calc(var(--marca-h, 1.125rem) * 1.8);
+  width: calc(var(--marca-h, 1.125rem) * 1.8);
+}
+
+.marca-so-icone .marca-icone {
+  height: calc(var(--marca-h, 1.125rem) * 1.6);
+  width: calc(var(--marca-h, 1.125rem) * 1.6);
+}
+
+.marca-texto {
+  display: grid;
+  justify-items: start;
+  gap: calc(var(--marca-h, 1.125rem) * 0.3);
+}
+
+/* Vertical: a linha de rota tem a largura exata do nome. */
+.marca-vertical {
+  flex-direction: column;
+  gap: calc(var(--marca-h, 1.125rem) * 0.6);
+}
+
+.marca-vertical .marca-rota {
+  width: calc(var(--marca-h, 1.125rem) * 6);
+  height: calc(var(--marca-h, 1.125rem) * 1.5);
+}
+
+.marca-descritivo {
+  font-size: calc(var(--marca-h, 1.125rem) * 0.25);
+  font-weight: 600;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--marca-nome);
+  opacity: 0.85;
+}
+
+.marca-vertical .marca-descritivo {
+  padding-left: 0.36em;
 }
 
 /* Entrada da tela: sobe e aparece rapidamente (só transform/opacity). */
@@ -730,10 +803,8 @@ button.perigo-contorno {
   border-radius: var(--raio-g);
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(120% 140% at 100% 0%, rgb(255 255 255 / 0.16), transparent 55%),
-    linear-gradient(135deg, var(--acao-fundo), var(--acao-fundo-forte));
-  color: var(--texto-sobre-acao);
+  background: var(--painel-marca);
+  color: var(--texto-sobre-painel);
   box-shadow: var(--sombra-2);
 }
 
@@ -1609,7 +1680,7 @@ details.ajuda.sem-icone summary::before {
 
   .admin-lateral .marca {
     padding: 0 0.5rem;
-    font-size: 1.25rem;
+    --marca-h: 1rem;
   }
 
   .admin-area {
@@ -2217,7 +2288,7 @@ dialog.gaveta::backdrop {
 }
 
 .tela-entrada .marca {
-  font-size: 1.5rem;
+  --marca-h: 1.375rem;
   margin-bottom: 0.5rem;
 }
 
@@ -2770,15 +2841,17 @@ fieldset.escolhas-grade > .escolhas-ajuda {
     flex-direction: column;
     justify-content: space-between;
     padding: var(--esp-12);
-    background:
-      radial-gradient(90% 70% at 85% 10%, rgb(255 255 255 / 0.14), transparent 60%),
-      linear-gradient(160deg, var(--acao-fundo), var(--acao-fundo-forte));
-    color: var(--texto-sobre-acao);
+    background: var(--painel-marca);
+    color: var(--texto-sobre-painel);
+    /* No painel de marca o símbolo é dourado e o nome é marfim, nos dois temas. */
+    --marca-simbolo: #c9a45c;
+    --marca-destino: #c9a45c;
+    --marca-nome: #f3f1eb;
   }
 
   .entrada-marca .marca {
     color: inherit;
-    font-size: var(--fs-g);
+    --marca-h: 1.75rem;
   }
 
   .entrada-marca h2 {

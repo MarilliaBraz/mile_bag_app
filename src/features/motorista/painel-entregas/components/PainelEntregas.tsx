@@ -17,6 +17,7 @@ import type { BdosDisponiveis, ItemPainel, PainelEntregas as PainelEntregasRespo
 import { FotosParaConferir } from "./FotosParaConferir";
 import { ListaBdosDisponiveis } from "./ListaBdosDisponiveis";
 import { TOM_STATUS_ENTREGA } from "../utils/statusEntrega";
+import { Marca } from "../../../../shared/components/Marca";
 
 const ROTULO_MARCO: Record<NonNullable<ItemPainel["marcoMaisRecente"]>, { icone: NomeIcone; texto: "marcoACaminho" | "marcoChegada" }> = {
   A_CAMINHO: { icone: "carro", texto: "marcoACaminho" },
@@ -99,7 +100,7 @@ export function PainelEntregas() {
       aoSincronizar={carregar}
       acoesTopo={
         <span className="marca" aria-hidden="true">
-          <img src="/icone-app.svg" alt="" />
+          <Marca variante="icone" decorativa />
         </span>
       }
     >
