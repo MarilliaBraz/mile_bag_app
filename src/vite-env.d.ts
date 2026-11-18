@@ -2,7 +2,8 @@
 
 /** Variáveis de ambiente do app (modelo documentado em .env.example). */
 interface ImportMetaEnv {
-  readonly VITE_API_BASE_URL: string;
+  /** Endereço da API sem barra no final; vazio = mesma origem do app (ambientes atrás do Caddy). */
+  readonly VITE_API_BASE_URL?: string;
   /** Nome do ambiente mostrado na faixa do topo (ex.: "Homologação"); vazio em produção. */
   readonly VITE_AMBIENTE?: string;
   /** Versão implantada (branch e commit), mostrada na faixa de ambiente. */
