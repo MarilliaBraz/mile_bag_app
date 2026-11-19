@@ -19,6 +19,17 @@ type ProblemDetail = {
 
 const TIPO_SESSAO_EXPIRADA = "/sessao-expirada";
 
+/**
+ * Arquivo acima do limite (413): a mensagem sai dos textos do app, no idioma escolhido, e não do `detail` da API
+ * (que é sempre em português, e numa versão antiga da API vinha em inglês: "Maximum upload size exceeded").
+ */
+function mensagemDoErro(status: number, problema: ProblemDetail | undefined): string {
+  if (status === 413) {
+    return mensagemPadrao(status);
+  }
+  return problema?.detail ?? mensagemPadrao(status);
+}
+
 /** 401 sessao-expirada: o token não vale mais. Some com ele e avisa o app, que oferece entrar de novo. */
 function avisarSeSessaoExpirou(status: number, tipo: string | undefined): void {
   if (status === 401 && tipo?.endsWith(TIPO_SESSAO_EXPIRADA)) {
@@ -46,6 +57,9 @@ function lerProblema(texto: string): ProblemDetail | undefined {
 /** Mensagem para quando não veio `detail` - nunca o statusText cru ("Bad Gateway"). */
 function mensagemPadrao(status: number): string {
   const t = obterTextos().erroServidor;
+  if (status === 413) {
+    return t.arquivoGrande;
+  }
   if (status === 502 || status === 503 || status === 504) {
     return t.indisponivel;
   }
@@ -62,7 +76,7 @@ async function tratarResposta<T>(resposta: Response): Promise<T> {
   if (!resposta.ok) {
     const problema = lerProblema(texto);
     avisarSeSessaoExpirou(resposta.status, problema?.type);
-    throw new ApiError(resposta.status, problema?.detail ?? mensagemPadrao(resposta.status), problema?.type);
+    throw new ApiError(resposta.status, mensagemDoErro(resposta.status, problema), problema?.type);
   }
 
   return (texto ? JSON.parse(texto) : undefined) as T;
@@ -105,7 +119,7 @@ export async function baixarArquivo(caminho: string): Promise<Blob> {
   if (!resposta.ok) {
     const detalhe = lerProblema(await resposta.text());
     avisarSeSessaoExpirou(resposta.status, detalhe?.type);
-    throw new ApiError(resposta.status, detalhe?.detail ?? mensagemPadrao(resposta.status), detalhe?.type);
+    throw new ApiError(resposta.status, mensagemDoErro(resposta.status, detalhe), detalhe?.type);
   }
   return resposta.blob();
 }

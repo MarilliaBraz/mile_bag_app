@@ -12,6 +12,7 @@ import { Ajuda } from "../../../../shared/components/Ajuda";
 import { Alerta, Carregando } from "../../../../shared/components/Alerta";
 import { ConfirmarAcao } from "../../../../shared/components/ConfirmarAcao";
 import { registrarComprovante } from "../services/comprovanteService";
+import { reduzirFoto } from "../../../../shared/utils/reduzirFoto";
 
 const TIPO_DIVERGENCIA = "divergencia-trajeto-sem-justificativa";
 
@@ -58,9 +59,10 @@ export function RegistrarComprovante() {
     [urlPrevia],
   );
 
-  function escolherFoto(arquivo: File | null) {
-    setFoto(arquivo);
-    setUrlPrevia(arquivo ? URL.createObjectURL(arquivo) : null);
+  async function escolherFoto(arquivo: File | null) {
+    const reduzida = arquivo ? await reduzirFoto(arquivo) : null;
+    setFoto(reduzida);
+    setUrlPrevia(reduzida ? URL.createObjectURL(reduzida) : null);
   }
 
   async function capturarPosicao() {
