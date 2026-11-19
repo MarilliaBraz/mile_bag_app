@@ -105,6 +105,7 @@ export const comum = {
     voltarInicio: "Voltar ao início",
   },
   erroServidor: {
+    arquivoGrande: "A foto ou o arquivo é grande demais para enviar. Tire a foto de novo ou escolha um arquivo menor.",
     indisponivel: "O servidor está indisponível no momento. Tente de novo em instantes.",
     erroInterno: "O servidor encontrou um erro. Tente de novo em instantes.",
     falhaAcao: (status: number) => `Não foi possível concluir a ação (erro ${status}).`,

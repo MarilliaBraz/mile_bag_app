@@ -3,6 +3,7 @@ import { Ajuda } from "../../../../shared/components/Ajuda";
 import { useEffect, useState } from "react";
 import { ApiError } from "../../../../shared/services/ApiError";
 import { arquivoParaBase64, enfileirar } from "../../../../shared/services/fila";
+import { reduzirFoto } from "../../../../shared/utils/reduzirFoto";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Alerta, Carregando } from "../../../../shared/components/Alerta";
 import { AvisoContatoIncompleto } from "../../../../shared/components/AvisoContatoIncompleto";
@@ -53,12 +54,14 @@ export function CapturaBdo() {
   }, [localizacao, navegar]);
 
   async function aoSelecionarFoto(evento: React.ChangeEvent<HTMLInputElement>) {
-    const arquivo = evento.target.files?.[0];
-    if (!arquivo) {
+    const original = evento.target.files?.[0];
+    if (!original) {
       return;
     }
     setErro(null);
     setEtapa("enviando");
+    // Reduzida antes de tudo: vale para o envio e para a fila offline, que guarda a foto no aparelho.
+    const arquivo = await reduzirFoto(original);
     try {
       const resposta = await capturarBdo(arquivo);
       setBdo(resposta);

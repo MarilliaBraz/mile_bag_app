@@ -107,6 +107,7 @@ export const comum: TextosComuns = {
     voltarInicio: "Back to start",
   },
   erroServidor: {
+    arquivoGrande: "The photo or file is too large to send. Take the photo again or choose a smaller file.",
     indisponivel: "The server is unavailable right now. Try again in a moment.",
     erroInterno: "The server ran into an error. Try again in a moment.",
     falhaAcao: (status) => `Could not complete the action (error ${status}).`,
