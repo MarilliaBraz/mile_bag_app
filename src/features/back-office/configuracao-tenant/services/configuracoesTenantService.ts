@@ -1,11 +1,12 @@
 import { requisitar } from "../../../../shared/services/httpClient";
-import type { CampoObrigatorio, CategoriaCodigoNome, CodigoNome, MotivoOcorrencia, PeriodicidadeAtual } from "../types";
+import type { CampoObrigatorio, CategoriaCodigoNome, CodigoNome, FinalidadeMotivo, MotivoOcorrencia, PeriodicidadeAtual } from "../types";
 
 const BASE = "/api/v1/configuracoes";
 
-export const listarMotivos = () => requisitar<MotivoOcorrencia[]>(`${BASE}/motivos-ocorrencia`);
-export const criarMotivo = (descricao: string, reagendamento: boolean) =>
-  requisitar<MotivoOcorrencia>(`${BASE}/motivos-ocorrencia`, { metodo: "POST", corpo: { descricao, reagendamento } });
+export const listarMotivos = (finalidade: FinalidadeMotivo) =>
+  requisitar<MotivoOcorrencia[]>(`${BASE}/motivos-ocorrencia?finalidade=${finalidade}`);
+export const criarMotivo = (descricao: string, reagendamento: boolean, finalidade: FinalidadeMotivo) =>
+  requisitar<MotivoOcorrencia>(`${BASE}/motivos-ocorrencia`, { metodo: "POST", corpo: { descricao, reagendamento, finalidade } });
 export const desativarMotivo = (id: string) =>
   requisitar<MotivoOcorrencia>(`${BASE}/motivos-ocorrencia/${id}`, { metodo: "PATCH", corpo: { ativo: false } });
 

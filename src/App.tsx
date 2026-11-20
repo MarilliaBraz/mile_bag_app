@@ -4,6 +4,7 @@ import { TelaAcompanhamento } from "./features/acompanhamento";
 import { EsqueciSenha, Login, RedefinirSenha, TrocarSenha } from "./features/auth";
 import { IdentidadeVisualForm, TelaConfiguracoes } from "./features/back-office/configuracao-tenant";
 import { AvisoEmergenciasAbertas, TelaEmergencias } from "./features/back-office/emergencias";
+import { TelaEntregas } from "./features/back-office/entregas";
 import { DetalheFechamento, TelaFechamentos } from "./features/back-office/fechamento";
 import { AdminLayout, ITENS_COMPANHIA, ITENS_FUNCIONARIO_COMPANHIA, ITENS_PLATAFORMA, ITENS_TENANT } from "./features/back-office/layout";
 import { TelaCompanhias } from "./features/back-office/companhias-aereas";
@@ -27,6 +28,7 @@ import { RegistrarComprovante } from "./features/motorista/comprovante-entrega";
 import { TelaConta } from "./features/motorista/conta";
 import { TelaEmergencia } from "./features/motorista/emergencia";
 import { RegistrarOcorrencia } from "./features/motorista/ocorrencia";
+import { DispensarEntrega } from "./features/motorista/dispensa";
 import { RegistrosLocais } from "./features/motorista/offline-sync";
 import { DetalheEntrega, PainelEntregas } from "./features/motorista/painel-entregas";
 import { RelatorioQuinzenal } from "./features/motorista/relatorio-quinzenal";
@@ -79,6 +81,7 @@ export function App() {
             <Route path="/motorista/entregas/:entregaId/rota" element={<TelaRota />} />
             <Route path="/motorista/entregas/:entregaId/comprovante" element={<RegistrarComprovante />} />
             <Route path="/motorista/entregas/:entregaId/ocorrencia" element={<RegistrarOcorrencia />} />
+            <Route path="/motorista/entregas/:entregaId/dispensar" element={<DispensarEntrega />} />
             <Route path="/motorista/relatorio" element={<RelatorioQuinzenal />} />
             <Route path="/motorista/registros" element={<RegistrosLocais />} />
             <Route path="/motorista/conta" element={<TelaConta />} />
@@ -95,6 +98,7 @@ export function App() {
           >
             <Route index element={<Navigate to="tarifas" replace />} />
             <Route path="motoristas" element={<TelaMotoristas />} />
+            <Route path="entregas" element={<TelaEntregas />} />
             <Route path="emergencias" element={<TelaEmergencias />} />
             <Route path="tarifas" element={<TelaTarifas />} />
             <Route path="pedagios" element={<TelaPedagios />} />

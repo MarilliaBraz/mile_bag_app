@@ -44,7 +44,7 @@ export function TelaAcompanhamento() {
     }
   }, [codigo]);
 
-  const encerrada = dados?.etapa === "ENTREGUE" || dados?.etapa === "NAO_ENTREGUE";
+  const encerrada = dados?.etapa === "ENTREGUE" || dados?.etapa === "NAO_ENTREGUE" || dados?.etapa === "TRANSFERIDA";
   useIntervaloEmPrimeiroPlano(carregar, INTERVALO_MS, !invalido && !encerrada);
 
   return (
@@ -74,7 +74,7 @@ export function TelaAcompanhamento() {
 function Conteudo({ dados, consultadoEm, falhou }: { dados: Acompanhamento; consultadoEm: number; falhou: boolean }) {
   const t = useTextos().acompanhamento;
   const { empresa, etapa, posicao, destino } = dados;
-  const encerrada = etapa === "ENTREGUE" || etapa === "NAO_ENTREGUE";
+  const encerrada = etapa === "ENTREGUE" || etapa === "NAO_ENTREGUE" || etapa === "TRANSFERIDA";
   const marcadores: MarcadorMapa[] = [
     ...(posicao ? [{ posicao, rotulo: t.motorista, destaque: true }] : []),
     ...(destino ? [{ posicao: destino, rotulo: t.destino }] : []),
@@ -102,6 +102,7 @@ function Conteudo({ dados, consultadoEm, falhou }: { dados: Acompanhamento; cons
         {etapa === "NAO_ENTREGUE" && (
           <p>{dados.janelaReagendamento ? t.reagendada(formatarJanela(dados.janelaReagendamento)) : t.naoEntregueTexto}</p>
         )}
+        {etapa === "TRANSFERIDA" && <p>{t.transferidaTexto}</p>}
         {!encerrada && (
           <>
             <p className="texto-apoio">{t.saiuAs(formatarHora(dados.iniciadaEm))}</p>

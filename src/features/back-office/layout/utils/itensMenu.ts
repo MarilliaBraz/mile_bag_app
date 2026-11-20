@@ -1,6 +1,7 @@
 import type { ItemMenu } from "../types";
 
 export const ITENS_TENANT: ItemMenu[] = [
+  { para: "/admin/entregas", rotulo: "entregas", icone: "mala" },
   { para: "/admin/motoristas", rotulo: "motoristas", icone: "usuarios" },
   { para: "/admin/emergencias", rotulo: "emergencias", icone: "alerta" },
   { para: "/admin/tarifas", rotulo: "tarifas", icone: "moeda" },

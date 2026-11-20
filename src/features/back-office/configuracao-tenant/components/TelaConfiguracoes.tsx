@@ -11,7 +11,8 @@ export function TelaConfiguracoes() {
   return (
     <Pagina titulo={t.titulo} descricao={t.descricao}>
       <div className="grade-paineis">
-        <SecaoMotivos />
+        <SecaoMotivos finalidade="OCORRENCIA" />
+        <SecaoMotivos finalidade="DISPENSA" />
         <SecaoCamposBaixa />
         <SecaoCodigoNome categoria="bases-aeroportuarias" titulo={t.basesAeroportuarias} rotuloCodigo={t.codigoIata} />
         <SecaoCodigoNome categoria="companhias-aereas" titulo={t.companhiasAtendidas} rotuloCodigo={t.codigoIata} />

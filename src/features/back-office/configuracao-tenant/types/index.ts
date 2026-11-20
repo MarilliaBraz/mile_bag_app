@@ -1,5 +1,8 @@
-/** Espelha MotivoOcorrenciaResponse - o GET só devolve os motivos ativos. */
-export type MotivoOcorrencia = { id: string; descricao: string; reagendamento: boolean };
+/** Espelha FinalidadeMotivo: ocorrência (não entrega) ou dispensa da entrega pelo motorista (V46). */
+export type FinalidadeMotivo = "OCORRENCIA" | "DISPENSA";
+
+/** Espelha MotivoOcorrenciaResponse - o GET só devolve os motivos ativos da finalidade pedida. */
+export type MotivoOcorrencia = { id: string; descricao: string; reagendamento: boolean; finalidade: FinalidadeMotivo };
 
 /** Espelha o enum CampoBaixa e CampoObrigatorioResponse. */
 export type CampoBaixa =
