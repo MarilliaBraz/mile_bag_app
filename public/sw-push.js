@@ -1,7 +1,8 @@
 /*
- * Web Push do aviso de bagagem nova (HU32, RF25) - importado pelo service worker gerado pelo vite-plugin-pwa
- * (workbox.importScripts em vite.config.ts). Com o app visível, só avisa a janela, que toca o som e mostra o aviso;
- * senão, mostra a notificação do sistema, com o som e a vibração do aparelho.
+ * Web Push do aviso de bagagem nova (HU32, RF25) e de entrega cancelada pela empresa (V47, tipo "bdo-cancelado") -
+ * importado pelo service worker gerado pelo vite-plugin-pwa (workbox.importScripts em vite.config.ts). Com o app
+ * visível, só avisa a janela, que toca o som e mostra o aviso; senão, mostra a notificação do sistema, com o som e a
+ * vibração do aparelho.
  */
 self.addEventListener("push", (evento) => {
   let dados = {};
@@ -10,10 +11,11 @@ self.addEventListener("push", (evento) => {
   } catch {
     // Conteúdo fora do formato: a notificação sai com o texto padrão.
   }
+  const tipo = dados.tipo || "bdo-novo";
   evento.waitUntil(
     (async () => {
       const janelas = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
-      janelas.forEach((janela) => janela.postMessage({ tipo: "bdo-novo" }));
+      janelas.forEach((janela) => janela.postMessage({ tipo, corpo: dados.corpo || "" }));
       if (janelas.some((janela) => janela.visibilityState === "visible")) {
         return;
       }
@@ -21,7 +23,7 @@ self.addEventListener("push", (evento) => {
         body: dados.corpo || "",
         icon: "/icone-192.png",
         badge: "/icone-192.png",
-        tag: "bdo-novo",
+        tag: tipo,
         renotify: true,
         vibrate: [200, 100, 200],
         data: { url: dados.url || "/motorista" },

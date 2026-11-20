@@ -1,12 +1,13 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { requisitar } from "../services/httpClient";
+import { obterTextos } from "../utils/i18n/idioma";
 import { sincronizarInscricao } from "../services/notificacoesPush";
 import { registrarBdosVistos } from "../utils/bdosAvisados";
 import { prepararSom, tocarAvisoSonoro } from "../utils/som";
 import { useIntervaloEmPrimeiroPlano } from "./useIntervaloEmPrimeiroPlano";
 
 const INTERVALO_MS = 30_000;
-/** Avisa o painel de que chegou BDO novo, para ele recarregar a lista. */
+/** Avisa o painel de que a lista mudou (BDO novo ou entrega cancelada, V47), para ele recarregar. */
 export const EVENTO_BDOS_NOVOS = "milebag:bdos-novos";
 
 export type AvisoBdoNovo = { quantidade: number; numero: string | null };
@@ -17,6 +18,8 @@ type BdosDisponiveis = { bdos: { bdoId: string; origem: string; bdoNumero: strin
 // O aviso fica fora do componente: o layout do motorista é montado de novo a cada tela e o aviso precisa
 // continuar visível até ser fechado.
 let avisoAtual: AvisoBdoNovo | null = null;
+/** V47: texto do aviso de entrega cancelada pela empresa (vem pronto no push). */
+let cancelamentoAtual: string | null = null;
 const ouvintes = new Set<() => void>();
 let ultimaConsulta = 0;
 let consultando = false;
@@ -24,6 +27,11 @@ let inscricaoSincronizada = false;
 
 function definirAviso(aviso: AvisoBdoNovo | null) {
   avisoAtual = aviso;
+  ouvintes.forEach((ouvinte) => ouvinte());
+}
+
+function definirCancelamento(texto: string | null) {
+  cancelamentoAtual = texto;
   ouvintes.forEach((ouvinte) => ouvinte());
 }
 
@@ -64,14 +72,24 @@ async function verificar(imediato = false) {
 }
 
 /** Aviso de bagagem nova (HU32, RI20) com o app aberto: consulta a cada 30 s e, com push, na hora. */
+const assinar = (ouvinte: () => void) => {
+  ouvintes.add(ouvinte);
+  return () => {
+    ouvintes.delete(ouvinte);
+  };
+};
+
+/** V47: a empresa cancelou uma entrega deste motorista - mostra o aviso, toca o som e recarrega o painel. */
+function avisarCancelamento(corpo: string | undefined) {
+  definirCancelamento(corpo || obterTextos().avisoBdo.cancelada);
+  tocarAvisoSonoro();
+  navigator.vibrate?.([200, 100, 200]);
+  window.dispatchEvent(new Event(EVENTO_BDOS_NOVOS));
+}
+
 export function useAvisoBdoNovo() {
-  const aviso = useSyncExternalStore(
-    (ouvinte) => {
-      ouvintes.add(ouvinte);
-      return () => ouvintes.delete(ouvinte);
-    },
-    () => avisoAtual,
-  );
+  const aviso = useSyncExternalStore(assinar, () => avisoAtual);
+  const cancelamento = useSyncExternalStore(assinar, () => cancelamentoAtual);
 
   useIntervaloEmPrimeiroPlano(verificar, INTERVALO_MS);
 
@@ -84,8 +102,11 @@ export function useAvisoBdoNovo() {
     }
     // O service worker repassa o push quando o app está aberto (public/sw-push.js).
     const aoReceberMensagem = (evento: MessageEvent) => {
-      if ((evento.data as { tipo?: string } | null)?.tipo === "bdo-novo") {
+      const mensagem = evento.data as { tipo?: string; corpo?: string } | null;
+      if (mensagem?.tipo === "bdo-novo") {
         void verificar(true);
+      } else if (mensagem?.tipo === "bdo-cancelado") {
+        avisarCancelamento(mensagem.corpo);
       }
     };
     navigator.serviceWorker?.addEventListener("message", aoReceberMensagem);
@@ -95,5 +116,5 @@ export function useAvisoBdoNovo() {
     };
   }, []);
 
-  return { aviso, fechar: limparAvisoBdoNovo };
+  return { aviso, fechar: limparAvisoBdoNovo, cancelamento, fecharCancelamento: () => definirCancelamento(null) };
 }

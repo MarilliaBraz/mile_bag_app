@@ -9,18 +9,24 @@ import type { EntregaStatus } from "../../../motorista/painel-entregas/types";
 import { TOM_STATUS_ENTREGA } from "../../../motorista/painel-entregas/utils/statusEntrega";
 import { consultarHistorico, listarEntregas } from "../services/entregasService";
 import type { EntregaGestao } from "../types";
+import { CancelarBdo } from "./CancelarBdo";
 
-const STATUS: EntregaStatus[] = ["AGUARDANDO_ATRIBUICAO", "ATRIBUIDA", "EM_ANDAMENTO", "REABERTA", "ENCERRADA_COM_SUCESSO"];
+const STATUS: EntregaStatus[] = ["AGUARDANDO_ATRIBUICAO", "ATRIBUIDA", "EM_ANDAMENTO", "REABERTA", "ENCERRADA_COM_SUCESSO", "CANCELADA"];
+
+/** V47: só cabe cancelar o que ainda não foi concluído nem cancelado. */
+const podeCancelar = (linha: EntregaGestao) => linha.status !== "ENCERRADA_COM_SUCESSO" && linha.status !== "CANCELADA";
 
 /**
  * Entregas da empresa e a rastreabilidade de cada mala (V46): quem assumiu, viagens, ocorrências, dispensas e a
  * entrega, em ordem. A lista traz as 200 mais recentemente movimentadas; o filtro de situação age sobre ela.
+ * V47: traz também os BDOs que ninguém assumiu, e a gaveta permite cancelar o BDO (com motivo e confirmação).
  */
 export function TelaEntregas() {
   const textos = useTextos();
   const t = textos.backOffice.entregas;
   const rotuloStatus = textos.motorista.status;
-  const { dados, erro } = useRecurso(() => listarEntregas(null), t.falhaCarregar);
+  const { dados, erro, recarregar } = useRecurso(() => listarEntregas(null), t.falhaCarregar);
+  const [sucesso, setSucesso] = useState<string | null>(null);
   const [filtro, setFiltro] = useState<EntregaStatus | "">("");
   const [aberta, setAberta] = useState<EntregaGestao | null>(null);
   const visiveis = dados?.filter((entrega) => !filtro || entrega.status === filtro) ?? [];
@@ -28,6 +34,7 @@ export function TelaEntregas() {
   return (
     <Pagina titulo={t.titulo} descricao={t.descricao}>
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
+      {sucesso && <Alerta tipo="sucesso">{sucesso}</Alerta>}
       {!dados && !erro && <Carregando texto={t.carregando} />}
 
       {dados && (
@@ -62,16 +69,20 @@ export function TelaEntregas() {
                 </thead>
                 <tbody>
                   {visiveis.map((entrega) => (
-                    <tr key={entrega.entregaId}>
+                    <tr key={entrega.bdoId}>
                       <td>
                         <button
                           type="button"
                           className="fantasma compacto"
                           aria-label={t.verHistorico(entrega.bdoNumero ?? t.semNumero)}
-                          onClick={() => setAberta(entrega)}
+                          onClick={() => {
+                            setSucesso(null);
+                            setAberta(entrega);
+                          }}
                         >
                           <Icone nome="historico" /> <span className="codigo">{entrega.bdoNumero ?? t.semNumero}</span>
                         </button>
+                        {entrega.bagagemCarona && <span className="selo selo-info">{t.carona}</span>}
                       </td>
                       <td>{entrega.passageiroNome ?? "—"}</td>
                       <td>{entrega.motoristaNome ?? <span className="texto-apoio">{t.semMotorista}</span>}</td>
@@ -95,7 +106,22 @@ export function TelaEntregas() {
         descricao={aberta?.endereco ?? undefined}
         aoFechar={() => setAberta(null)}
       >
-        {aberta && <HistoricoMala key={aberta.entregaId} entregaId={aberta.entregaId} />}
+        {aberta && (
+          <div className="pilha" key={aberta.bdoId}>
+            {aberta.entregaId ? <HistoricoMala entregaId={aberta.entregaId} /> : <p className="texto-apoio">{t.semEntregaTexto}</p>}
+            {podeCancelar(aberta) && (
+              <CancelarBdo
+                linha={aberta}
+                aoCancelar={() => {
+                  setSucesso(t.cancelado(aberta.bdoNumero ?? t.semNumero));
+                  setAberta(null);
+                  void recarregar();
+                }}
+                aoFalhar={() => void recarregar()}
+              />
+            )}
+          </div>
+        )}
       </Gaveta>
     </Pagina>
   );

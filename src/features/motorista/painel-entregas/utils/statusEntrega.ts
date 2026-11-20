@@ -7,4 +7,5 @@ export const TOM_STATUS_ENTREGA: Record<EntregaStatus, "info" | "sucesso" | "avi
   EM_ANDAMENTO: "info",
   ENCERRADA_COM_SUCESSO: "sucesso",
   REABERTA: "aviso",
+  CANCELADA: "erro",
 };
