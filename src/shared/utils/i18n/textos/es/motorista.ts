@@ -437,8 +437,7 @@ export const motorista: Textos["motorista"] = {
   dispensa: {
     titulo: "Liberar entrega",
     explicacao: "La entrega vuelve a la lista de disponibles para que otro conductor la asuma. Todo queda en el historial del equipaje.",
-    explicacaoComBagagem:
-      "Ya saliste con el equipaje o es un nuevo intento: indica el motivo. Si el viaje estaba en curso, termina ahora.",
+    explicacaoComBagagem: "Ya saliste con el equipaje o es un nuevo intento: indica el motivo. Si el viaje estaba en curso, termina ahora.",
     falhaCarregar: "No fue posible cargar la entrega.",
     falhaMotivos: "No fue posible cargar los motivos de liberación.",
     carregando: "Cargando…",
