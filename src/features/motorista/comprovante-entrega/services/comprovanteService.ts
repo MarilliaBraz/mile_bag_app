@@ -1,5 +1,6 @@
 import { enviarFormulario } from "../../../../shared/services/httpClient";
 import type { ComprovanteEntregaResponse, DadosComprovante } from "../types";
+import { caminhoApi } from "../../../../shared/services/caminhoApi";
 
 /** POST /api/v1/entregas/{entregaId}/comprovante (HU06) - multipart, porque carrega a foto do documento assinado. */
 export function registrarComprovante(entregaId: string, dados: DadosComprovante): Promise<ComprovanteEntregaResponse> {
@@ -15,5 +16,5 @@ export function registrarComprovante(entregaId: string, dados: DadosComprovante)
   if (dados.justificativaDivergencia) {
     formulario.append("justificativaDivergencia", dados.justificativaDivergencia);
   }
-  return enviarFormulario<ComprovanteEntregaResponse>(`/api/v1/entregas/${entregaId}/comprovante`, formulario);
+  return enviarFormulario<ComprovanteEntregaResponse>(caminhoApi`/api/v1/entregas/${entregaId}/comprovante`, formulario);
 }

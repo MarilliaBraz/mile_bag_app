@@ -1,5 +1,6 @@
 import { requisitar } from "./httpClient";
 import type { AlertaEmergencia, StatusAlertaEmergencia } from "../types/emergencia";
+import { caminhoApi } from "./caminhoApi";
 
 // Em shared/ porque duas aplicações usam: o motorista aciona e cancela, o
 // back-office lista e atende (HU30, contracts/emergencia-api.md).
@@ -15,13 +16,13 @@ export const acionarAlerta = (posicao: { latitude: number; longitude: number } |
 /** `undefined` (204) quando o motorista não tem alerta aberto. */
 export const consultarMeuAlertaAberto = () => requisitar<AlertaEmergencia | undefined>(`${BASE}/minha`);
 
-export const cancelarAlerta = (id: string) => requisitar<AlertaEmergencia>(`${BASE}/${id}/cancelar`, { metodo: "POST" });
+export const cancelarAlerta = (id: string) => requisitar<AlertaEmergencia>(BASE + caminhoApi`/${id}/cancelar`, { metodo: "POST" });
 
 export const listarAlertas = (status?: StatusAlertaEmergencia) =>
-  requisitar<AlertaEmergencia[]>(status ? `${BASE}?status=${status}` : BASE);
+  requisitar<AlertaEmergencia[]>(status ? BASE + caminhoApi`?status=${status}` : BASE);
 
 export async function atenderAlerta(id: string, observacao: string): Promise<AlertaEmergencia> {
-  const alerta = await requisitar<AlertaEmergencia>(`${BASE}/${id}/atender`, { metodo: "POST", corpo: { observacao } });
+  const alerta = await requisitar<AlertaEmergencia>(BASE + caminhoApi`/${id}/atender`, { metodo: "POST", corpo: { observacao } });
   window.dispatchEvent(new Event(EVENTO_ALERTAS_ALTERADOS));
   return alerta;
 }

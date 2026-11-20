@@ -1,24 +1,25 @@
 import { requisitar } from "../../../../shared/services/httpClient";
 import type { CampoObrigatorio, CategoriaCodigoNome, CodigoNome, FinalidadeMotivo, MotivoOcorrencia, PeriodicidadeAtual } from "../types";
+import { caminhoApi } from "../../../../shared/services/caminhoApi";
 
 const BASE = "/api/v1/configuracoes";
 
 export const listarMotivos = (finalidade: FinalidadeMotivo) =>
-  requisitar<MotivoOcorrencia[]>(`${BASE}/motivos-ocorrencia?finalidade=${finalidade}`);
+  requisitar<MotivoOcorrencia[]>(BASE + caminhoApi`/motivos-ocorrencia?finalidade=${finalidade}`);
 export const criarMotivo = (descricao: string, reagendamento: boolean, finalidade: FinalidadeMotivo) =>
   requisitar<MotivoOcorrencia>(`${BASE}/motivos-ocorrencia`, { metodo: "POST", corpo: { descricao, reagendamento, finalidade } });
 export const desativarMotivo = (id: string) =>
-  requisitar<MotivoOcorrencia>(`${BASE}/motivos-ocorrencia/${id}`, { metodo: "PATCH", corpo: { ativo: false } });
+  requisitar<MotivoOcorrencia>(BASE + caminhoApi`/motivos-ocorrencia/${id}`, { metodo: "PATCH", corpo: { ativo: false } });
 
 export const listarCamposBaixa = () => requisitar<CampoObrigatorio[]>(`${BASE}/campos-baixa`);
 export const salvarCamposBaixa = (campos: CampoObrigatorio[]) =>
   requisitar<CampoObrigatorio[]>(`${BASE}/campos-baixa`, { metodo: "PUT", corpo: campos });
 
-export const listarCodigoNome = (categoria: CategoriaCodigoNome) => requisitar<CodigoNome[]>(`${BASE}/${categoria}`);
+export const listarCodigoNome = (categoria: CategoriaCodigoNome) => requisitar<CodigoNome[]>(BASE + caminhoApi`/${categoria}`);
 export const criarCodigoNome = (categoria: CategoriaCodigoNome, corpo: { codigoIata: string; nome: string }) =>
-  requisitar<CodigoNome>(`${BASE}/${categoria}`, { metodo: "POST", corpo });
+  requisitar<CodigoNome>(BASE + caminhoApi`/${categoria}`, { metodo: "POST", corpo });
 export const removerCodigoNome = (categoria: CategoriaCodigoNome, id: string) =>
-  requisitar<void>(`${BASE}/${categoria}/${id}`, { metodo: "DELETE" });
+  requisitar<void>(BASE + caminhoApi`/${categoria}/${id}`, { metodo: "DELETE" });
 
 export const consultarPeriodicidade = () => requisitar<PeriodicidadeAtual>(`${BASE}/periodicidade-fechamento`);
 export const agendarPeriodicidade = (corpo: { periodicidade: string; vigenteDesde: string }) =>

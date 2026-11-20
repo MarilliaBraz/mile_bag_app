@@ -1,5 +1,6 @@
 import { requisitar } from "../../../../shared/services/httpClient";
 import type { CalculoRotas, Coordenada, RotaSelecionada, TipoSelecao } from "../types";
+import { caminhoApi } from "../../../../shared/services/caminhoApi";
 
 /** POST /api/v1/entregas/{entregaId}/rotas/calcular (HU03, FR-001/FR-002). */
 export function calcularRotas(
@@ -7,7 +8,7 @@ export function calcularRotas(
   origemAtual: Coordenada | null,
   destinoManual: Coordenada | null = null,
 ): Promise<CalculoRotas> {
-  return requisitar<CalculoRotas>(`/api/v1/entregas/${entregaId}/rotas/calcular`, {
+  return requisitar<CalculoRotas>(caminhoApi`/api/v1/entregas/${entregaId}/rotas/calcular`, {
     metodo: "POST",
     corpo: { origemAtual, destinoManual },
   });
@@ -18,7 +19,7 @@ export function selecionarRota(
   entregaId: string,
   selecao: { tipoSelecao: TipoSelecao; alternativaId?: string; tracadoManual?: Coordenada[]; justificativa?: string },
 ): Promise<RotaSelecionada> {
-  return requisitar<RotaSelecionada>(`/api/v1/entregas/${entregaId}/rotas/selecionar`, {
+  return requisitar<RotaSelecionada>(caminhoApi`/api/v1/entregas/${entregaId}/rotas/selecionar`, {
     metodo: "POST",
     corpo: {
       tipoSelecao: selecao.tipoSelecao,

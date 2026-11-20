@@ -14,6 +14,7 @@ import type {
 } from "../types";
 import { consultaQuery } from "../utils/filtrosConsulta";
 import { salvarArquivo } from "../utils/salvarArquivo";
+import { caminhoApi } from "../../../../shared/services/caminhoApi";
 
 const BASE = "/api/v1/companhia/bagagens";
 
@@ -35,12 +36,12 @@ export const lerEtiqueta = (foto: File, posicao: Coordenada | null) =>
 export const lerSemEtiqueta = (foto: File, posicao: Coordenada | null) =>
   enviarFormulario<BagagemEncontrada>(`${BASE}/sem-etiqueta`, formularioDaFoto(foto, posicao));
 
-export const buscarBagagem = (id: string) => requisitar<BagagemEncontrada>(`${BASE}/${id}`);
+export const buscarBagagem = (id: string) => requisitar<BagagemEncontrada>(BASE + caminhoApi`/${id}`);
 export const confirmarEtiqueta = (id: string, corpo: ConfirmacaoEtiqueta) =>
-  requisitar<BagagemEncontrada>(`${BASE}/${id}/confirmacao`, { metodo: "PUT", corpo });
+  requisitar<BagagemEncontrada>(BASE + caminhoApi`/${id}/confirmacao`, { metodo: "PUT", corpo });
 export const descreverBagagem = (id: string, corpo: Descrever) =>
-  requisitar<BagagemEncontrada>(`${BASE}/${id}/descricao`, { metodo: "PUT", corpo });
-export const descartarBagagem = (id: string) => requisitar<void>(`${BASE}/${id}`, { metodo: "DELETE" });
+  requisitar<BagagemEncontrada>(BASE + caminhoApi`/${id}/descricao`, { metodo: "PUT", corpo });
+export const descartarBagagem = (id: string) => requisitar<void>(BASE + caminhoApi`/${id}`, { metodo: "DELETE" });
 export const listarRascunhos = () => requisitar<BagagemEncontrada[]>(`${BASE}?situacao=RASCUNHO`);
 export const listarRecentes = () => requisitar<BagagemEncontrada[]>(`${BASE}?situacao=REGISTRADA`);
 export const listarAeroportos = () => requisitar<Aeroporto[]>("/api/v1/aeroportos");
@@ -61,15 +62,15 @@ export async function exportarCsv(filtros: FiltrosConsulta): Promise<void> {
 /** Ficha em PDF da bagagem registrada. */
 export async function baixarFicha(bagagem: BagagemEncontrada): Promise<void> {
   const identificador = bagagem.descricao?.codigoSid ?? bagagem.etiqueta?.numeroEtiqueta ?? bagagem.id;
-  salvarArquivo(await baixarArquivo(`${BASE}/${bagagem.id}/ficha`), `ficha-${identificador}.pdf`);
+  salvarArquivo(await baixarArquivo(BASE + caminhoApi`/${bagagem.id}/ficha`), `ficha-${identificador}.pdf`);
 }
 
 /** Busca nacional por etiqueta (RD22): todas as companhias. */
 export const buscarNoPais = (etiqueta: string) =>
-  requisitar<BagagemNacional[]>(`/api/v1/companhia/busca-nacional?etiqueta=${encodeURIComponent(etiqueta)}`);
+  requisitar<BagagemNacional[]>(caminhoApi`/api/v1/companhia/busca-nacional?etiqueta=${etiqueta}`);
 
 /** HU37: empresas de entrega parceiras da companhia, para o encaminhamento. */
 export const listarEmpresasEntrega = () => requisitar<EmpresaEntrega[]>("/api/v1/companhia/empresas-entrega");
 export const encaminharBagagem = (id: string, corpo: EncaminharBagagem) =>
-  requisitar<BagagemEncontrada>(`${BASE}/${id}/encaminhamento`, { metodo: "POST", corpo });
-export const cancelarEncaminhamento = (id: string) => requisitar<void>(`${BASE}/${id}/encaminhamento`, { metodo: "DELETE" });
+  requisitar<BagagemEncontrada>(BASE + caminhoApi`/${id}/encaminhamento`, { metodo: "POST", corpo });
+export const cancelarEncaminhamento = (id: string) => requisitar<void>(BASE + caminhoApi`/${id}/encaminhamento`, { metodo: "DELETE" });

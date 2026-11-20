@@ -1,5 +1,6 @@
 import { requisitar } from "../../../../shared/services/httpClient";
 import type { Conta, LinhaLote, ResultadoLote, ServicoContas } from "../../../../shared/types/contas";
+import { caminhoApi } from "../../../../shared/services/caminhoApi";
 
 const BASE = "/api/v1/companhia/funcionarios";
 
@@ -12,7 +13,7 @@ export const servicoFuncionarios: ServicoContas = {
       metodo: "POST",
       corpo: { funcionarios: linhas.map((l) => ({ nome: l.nome, login: l.login, senha: l.senha || null })) },
     }),
-  definirAtivo: (id, ativo) => requisitar<Conta>(`${BASE}/${id}`, { metodo: "PATCH", corpo: { ativo } }),
-  atualizar: (id, corpo) => requisitar<Conta>(`${BASE}/${id}`, { metodo: "PATCH", corpo }),
-  redefinirSenha: (id, senha) => requisitar<void>(`${BASE}/${id}/senha`, { metodo: "PUT", corpo: { senha } }),
+  definirAtivo: (id, ativo) => requisitar<Conta>(BASE + caminhoApi`/${id}`, { metodo: "PATCH", corpo: { ativo } }),
+  atualizar: (id, corpo) => requisitar<Conta>(BASE + caminhoApi`/${id}`, { metodo: "PATCH", corpo }),
+  redefinirSenha: (id, senha) => requisitar<void>(BASE + caminhoApi`/${id}/senha`, { metodo: "PUT", corpo: { senha } }),
 };
