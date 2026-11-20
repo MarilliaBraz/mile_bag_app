@@ -1,14 +1,30 @@
+import { useEffect, useState } from "react";
+import { lerRotuloDoServidor, rotuloDoBuild } from "../utils/ambiente";
 import { useTextos } from "../utils/i18n/idioma";
 
 /**
- * Faixa no topo de todas as telas quando o app NÃO é o de produção
- * (VITE_AMBIENTE preenchida no build, ex.: "Homologação"). Quem valida uma
- * mudança sabe em qual ambiente está e qual versão está vendo; em produção a
- * variável fica vazia e nada aparece.
+ * Faixa no topo de todas as telas quando o app NÃO é o de produção (ex.:
+ * "Homologação"). Quem valida uma mudança sabe em qual ambiente está e qual
+ * versão está vendo; em produção o rótulo fica vazio e nada aparece. O rótulo
+ * vem do build ou, se ele não definiu, do servidor (ver utils/ambiente.ts).
  */
 export function FaixaAmbiente() {
   const t = useTextos().ambiente;
-  const ambiente = import.meta.env.VITE_AMBIENTE?.trim();
+  const [ambiente, setAmbiente] = useState(rotuloDoBuild);
+
+  useEffect(() => {
+    if (rotuloDoBuild()) {
+      return;
+    }
+    const controle = new AbortController();
+    void lerRotuloDoServidor(controle.signal).then((rotulo) => {
+      if (!controle.signal.aborted) {
+        setAmbiente(rotulo);
+      }
+    });
+    return () => controle.abort();
+  }, []);
+
   if (!ambiente) {
     return null;
   }
