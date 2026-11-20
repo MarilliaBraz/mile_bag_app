@@ -7,7 +7,7 @@ export const listarMotivosDispensa = () => requisitar<MotivoOcorrencia[]>("/api/
 
 /** POST /api/v1/entregas/{id}/dispensas - devolve a entrega aos outros motoristas. Exige conexão (só o servidor libera). */
 export const dispensarEntrega = (entregaId: string, motivoId: string | null, complemento: string | null) =>
-  requisitar<Dispensa>(`/api/v1/entregas/${entregaId}/dispensas`, { metodo: "POST", corpo: { motivoId, complemento } });
+  requisitar<Dispensa>(`/api/v1/entregas/${encodeURIComponent(entregaId)}/dispensas`, { metodo: "POST", corpo: { motivoId, complemento } });
 
 /** GET /api/v1/entregas/{id}/dispensas - histórico de dispensas da entrega, da mais antiga para a mais recente. */
-export const listarDispensas = (entregaId: string) => requisitar<Dispensa[]>(`/api/v1/entregas/${entregaId}/dispensas`);
+export const listarDispensas = (entregaId: string) => requisitar<Dispensa[]>(`/api/v1/entregas/${encodeURIComponent(entregaId)}/dispensas`);

@@ -8,4 +8,4 @@ const BASE = "/api/v1/gestao/entregas";
 export const listarEntregas = (status: EntregaStatus | null) => requisitar<EntregaGestao[]>(status ? `${BASE}?status=${status}` : BASE);
 
 /** GET /api/v1/gestao/entregas/{id}/historico - a linha do tempo da mala. */
-export const consultarHistorico = (entregaId: string) => requisitar<HistoricoEntrega>(`${BASE}/${entregaId}/historico`);
+export const consultarHistorico = (entregaId: string) => requisitar<HistoricoEntrega>(`${BASE}/${encodeURIComponent(entregaId)}/historico`);
