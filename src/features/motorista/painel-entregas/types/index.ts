@@ -40,6 +40,8 @@ export type ItemPainelDetalhe = ItemPainel & {
   companhiaAerea: string | null;
   telefone: string | null;
   pendenciasContato: PendenciaContatoBdo[];
+  /** V46: a dispensa exige motivo (a bagagem já saiu com um motorista). Ausente em respostas antigas (= falso). */
+  motivoDispensaObrigatorio?: boolean;
 };
 
 /** Espelha com.marillia.milebag.business.entrega.model.ItemBdoDisponivelResponse. */

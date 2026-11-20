@@ -12,9 +12,11 @@ export const acompanhamento = {
     CHEGADA: "O motorista chegou ao endereço",
     ENTREGUE: "Entregue",
     NAO_ENTREGUE: "Não foi possível entregar nesta tentativa",
+    TRANSFERIDA: "Passada para outro motorista",
   },
   entregueTexto: "Sua bagagem foi entregue. Obrigado!",
   naoEntregueTexto: "Uma nova tentativa será combinada com você.",
+  transferidaTexto: "Sua bagagem foi passada para outro motorista. Você vai receber um novo link quando ele sair para a entrega.",
   reagendada: (janela: string) => `Nova tentativa: ${janela}.`,
   atualizadoAs: (hora: string) => `Posição atualizada às ${hora}`,
   semAtualizacao: (minutos: number) =>

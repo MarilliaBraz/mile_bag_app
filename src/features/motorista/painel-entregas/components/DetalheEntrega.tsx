@@ -10,6 +10,7 @@ import { VincularBagagemCarona } from "../bagagem-carona/components/VincularBaga
 import { TelaMotorista } from "../../../../shared/components/TelaMotorista";
 import { BotaoLigar } from "../mensageria/components/BotaoLigar";
 import { Conversa } from "../mensageria/components/Conversa";
+import { HistoricoDispensas } from "./HistoricoDispensas";
 import { HistoricoOcorrencias } from "./HistoricoOcorrencias";
 import { consultarDetalhe } from "../services/painelService";
 import type { ItemPainelDetalhe } from "../types";
@@ -101,6 +102,9 @@ export function DetalheEntrega() {
                 <Link to={`/motorista/entregas/${entrega.entregaId}/ocorrencia`} viewTransition className="botao secundario largo">
                   <Icone nome="alerta" /> {t.detalhe.naoConsegui}
                 </Link>
+                <Link to={`/motorista/entregas/${entrega.entregaId}/dispensar`} viewTransition className="botao fantasma largo">
+                  <Icone nome="voltar" /> {t.detalhe.dispensar}
+                </Link>
               </>
             )}
           </div>
@@ -133,6 +137,7 @@ export function DetalheEntrega() {
           />
 
           <HistoricoOcorrencias entregaId={entrega.entregaId} />
+          <HistoricoDispensas entregaId={entrega.entregaId} />
 
           {/* HU18: conversa com o passageiro (a ligação, HU21, fica nas ações do topo). */}
           <section>
