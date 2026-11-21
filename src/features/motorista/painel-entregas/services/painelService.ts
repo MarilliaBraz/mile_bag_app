@@ -1,5 +1,6 @@
 import { requisitar } from "../../../../shared/services/httpClient";
 import type { BdosDisponiveis, ItemPainelDetalhe, PainelEntregas } from "../types";
+import { caminhoApi } from "../../../../shared/services/caminhoApi";
 
 /** GET /api/v1/motorista/painel-entregas (HU19, FR-002). */
 export function consultarPainel(): Promise<PainelEntregas> {
@@ -8,7 +9,7 @@ export function consultarPainel(): Promise<PainelEntregas> {
 
 /** GET /api/v1/entregas/{entregaId}/detalhe (HU19, FR-003). */
 export function consultarDetalhe(entregaId: string): Promise<ItemPainelDetalhe> {
-  return requisitar<ItemPainelDetalhe>(`/api/v1/entregas/${entregaId}/detalhe`);
+  return requisitar<ItemPainelDetalhe>(caminhoApi`/api/v1/entregas/${entregaId}/detalhe`);
 }
 
 /** GET /api/v1/motorista/bdos-disponiveis (HU19, FR-007). */
@@ -18,5 +19,5 @@ export function consultarBdosDisponiveis(): Promise<BdosDisponiveis> {
 
 /** POST /api/v1/entregas/{bdoId}/autoatribuir (HU02, FR-009 desta HU). */
 export function autoatribuir(bdoId: string): Promise<void> {
-  return requisitar<void>(`/api/v1/entregas/${bdoId}/autoatribuir`, { metodo: "POST" });
+  return requisitar<void>(caminhoApi`/api/v1/entregas/${bdoId}/autoatribuir`, { metodo: "POST" });
 }

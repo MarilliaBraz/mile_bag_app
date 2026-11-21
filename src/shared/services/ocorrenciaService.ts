@@ -2,6 +2,7 @@ import { ApiError } from "./ApiError";
 import { requisitar } from "./httpClient";
 import { obterTenantId } from "./authStorage";
 import type { MotivoOcorrencia, OcorrenciaResponse } from "../types/ocorrencia";
+import { caminhoApi } from "./caminhoApi";
 
 const chaveCacheMotivos = () => `milebag.motivosOcorrencia.${obterTenantId() ?? "sem-empresa"}`;
 
@@ -56,10 +57,10 @@ export function registrarOcorrencia(
     janelaFim: string | null;
   },
 ): Promise<OcorrenciaResponse> {
-  return requisitar<OcorrenciaResponse>(`/api/v1/entregas/${entregaId}/ocorrencias`, { metodo: "POST", corpo: dados });
+  return requisitar<OcorrenciaResponse>(caminhoApi`/api/v1/entregas/${entregaId}/ocorrencias`, { metodo: "POST", corpo: dados });
 }
 
 /** GET /api/v1/entregas/{entregaId}/ocorrencias (HU07) - histórico de tentativas da entrega. */
 export function listarOcorrencias(entregaId: string): Promise<OcorrenciaResponse[]> {
-  return requisitar<OcorrenciaResponse[]>(`/api/v1/entregas/${entregaId}/ocorrencias`);
+  return requisitar<OcorrenciaResponse[]>(caminhoApi`/api/v1/entregas/${entregaId}/ocorrencias`);
 }
