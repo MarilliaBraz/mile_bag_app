@@ -15,6 +15,8 @@ export type EntregaGestao = {
   endereco: string | null;
   motoristaNome: string | null;
   atualizadoEm: string;
+  /** V51: o motorista corrigiu alguma etapa (selo "Corrigida"; o detalhe está no histórico). */
+  corrigida: boolean;
 };
 
 export type TipoEventoRastreabilidade =
@@ -27,7 +29,9 @@ export type TipoEventoRastreabilidade =
   | "ENTREGUE"
   | "CANCELADO"
   /** V50: segunda via enviada por e-mail; `descricao` é o endereço de destino. */
-  | "SEGUNDA_VIA_ENVIADA";
+  | "SEGUNDA_VIA_ENVIADA"
+  /** V51: etapa corrigida pelo motorista; `descricao` é a etapa (FOTO_PORTA...), `detalhe` o motivo, antes e depois. */
+  | "CORRECAO";
 
 /** Espelha EventoRastreabilidade: um fato da vida da mala, na ordem em que aconteceu. */
 export type EventoRastreabilidade = {
@@ -49,4 +53,6 @@ export type FotoEntrega = {
   id: string;
   tipo: "RETIRADA" | "AVARIA_RETIRADA" | "PORTA" | "AVARIA_ENTREGA" | "BDO_ASSINADO";
   dataHora: string;
+  /** V51: trocada por uma correção - continua guardada para auditoria. */
+  substituida: boolean;
 };

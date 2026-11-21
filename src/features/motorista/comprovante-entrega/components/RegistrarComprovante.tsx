@@ -14,7 +14,16 @@ import { Alerta, Carregando } from "../../../../shared/components/Alerta";
 import { ConfirmarAcao } from "../../../../shared/components/ConfirmarAcao";
 import { CampoFoto } from "../../../../shared/components/CampoFoto";
 import { FotosAvaria } from "../../../../shared/components/FotosAvaria";
+import { PedirMotivoCorrecao } from "../../../../shared/components/PedirMotivoCorrecao";
 import { registrarComprovante } from "../services/comprovanteService";
+import type { CorrecaoNoFluxo } from "../types";
+
+type EtapaNoFluxo = CorrecaoNoFluxo["etapa"];
+/**
+ * O que fica guardado ao liberar uma etapa concluída; o "depois" é lido ao finalizar. `valorAntes` (a foto ou o
+ * texto de quem assinou) diz se algo mudou de fato: liberar e desistir não vira correção.
+ */
+type CorrecaoAberta = Omit<CorrecaoNoFluxo, "depois"> & { valorAntes: File | string | null };
 
 const TIPO_DIVERGENCIA = "divergencia-trajeto-sem-justificativa";
 const TAMANHO_MAXIMO_NOME = 200;
@@ -49,6 +58,10 @@ export function RegistrarComprovante() {
   const [divergencia, setDivergencia] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
+  // V51: voltar a uma etapa concluída pede motivo; cada correção vai junto com a entrega (inclusive sem internet).
+  const [correcoes, setCorrecoes] = useState<CorrecaoAberta[]>([]);
+  const [liberadas, setLiberadas] = useState<ReadonlySet<EtapaNoFluxo>>(new Set());
+  const [pedindoMotivo, setPedindoMotivo] = useState<EtapaNoFluxo | null>(null);
 
   useEffect(() => {
     listarMotivosComOrigem("RECEBEDOR")
@@ -66,6 +79,38 @@ export function RegistrarComprovante() {
   const podeRecebedor = podeFotoBdo && !!foto;
   const recebedorPronto = podeRecebedor && !!tipoEscolhido && nome.length > 0;
   const podeEnviar = recebedorPronto && !!posicao && !enviando;
+  const textoRecebedor = `${tipoEscolhido?.descricao ?? "?"} - ${nome}`;
+  // Uma etapa está concluída quando a seguinte já começou: dali em diante, alterar pede motivo.
+  const portaConcluida = !!fotoPorta && !!foto && !liberadas.has("FOTO_PORTA");
+  const bdoConcluido = !!foto && (!!tipoRecebedorId || nome.length > 0) && !liberadas.has("FOTO_BDO_ASSINADO");
+  const recebedorConcluido = recebedorPronto && avarias.length > 0 && !liberadas.has("RECEBEDOR");
+  const nomeDaEtapa: Record<EtapaNoFluxo, string> = { FOTO_PORTA: t.fotoPorta, FOTO_BDO_ASSINADO: t.foto, RECEBEDOR: t.quemRecebeu };
+
+  function liberarEtapa(motivoId: string, complemento: string | null) {
+    const etapa = pedindoMotivo;
+    if (!etapa) {
+      return;
+    }
+    const antes = etapa === "RECEBEDOR" ? textoRecebedor : t.fotoAnterior;
+    const valorAntes = etapa === "RECEBEDOR" ? textoRecebedor : etapa === "FOTO_PORTA" ? fotoPorta : foto;
+    setCorrecoes((atuais) => [...atuais, { etapa, motivoId, complemento, antes, valorAntes, dataHora: new Date().toISOString() }]);
+    setLiberadas((atuais) => new Set(atuais).add(etapa));
+    setPedindoMotivo(null);
+  }
+
+  /** Foto nova de uma etapa liberada: a etapa volta a ficar travada. */
+  function trocarFoto(etapa: EtapaNoFluxo, aplicar: (foto: File | null) => void) {
+    return (nova: File | null) => {
+      aplicar(nova);
+      if (nova) {
+        setLiberadas((atuais) => {
+          const resto = new Set(atuais);
+          resto.delete(etapa);
+          return resto;
+        });
+      }
+    };
+  }
   const pendencias = [
     !fotoPorta && t.pendenciaPorta,
     !foto && t.pendenciaFoto,
@@ -82,6 +127,18 @@ export function RegistrarComprovante() {
     const dataHora = new Date().toISOString();
     const identificacaoRecebedor = `${tipoEscolhido.descricao} - ${nome}`;
     const observacaoAvaria = avarias.length > 0 && observacao.trim() ? observacao.trim() : null;
+    const valorAtual: Record<EtapaNoFluxo, File | string | null> = {
+      FOTO_PORTA: fotoPorta,
+      FOTO_BDO_ASSINADO: foto,
+      RECEBEDOR: identificacaoRecebedor,
+    };
+    // Só vai o que mudou de verdade (liberar e desistir não é correção).
+    const correcoesFeitas: CorrecaoNoFluxo[] = correcoes
+      .filter((correcao) => valorAtual[correcao.etapa] !== correcao.valorAntes)
+      .map(({ valorAntes: _valorAntes, ...correcao }) => ({
+        ...correcao,
+        depois: correcao.etapa === "RECEBEDOR" ? identificacaoRecebedor : t.fotoNova,
+      }));
     try {
       // Offline (HU08, FR-001): as fotos vão para a fila em base64, o formato que o lote de sincronização aceita.
       const { enfileirado } = await executarOuEnfileirar(
@@ -98,6 +155,7 @@ export function RegistrarComprovante() {
             posicao,
             idLocal,
             justificativaDivergencia,
+            correcoes: correcoesFeitas,
           }),
         {
           tipoEvento: "COMPROVANTE_REGISTRADO",
@@ -115,6 +173,7 @@ export function RegistrarComprovante() {
             nomeRecebedor: nome,
             avarias: await fotosParaFila(avarias),
             observacaoAvaria,
+            correcoes: correcoesFeitas,
           },
         },
       );
@@ -144,7 +203,10 @@ export function RegistrarComprovante() {
           dica={t.dicaPorta}
           previa={t.previaPorta}
           foto={fotoPorta}
-          aoEscolher={setFotoPorta}
+          aoEscolher={trocarFoto("FOTO_PORTA", setFotoPorta)}
+          bloqueado={portaConcluida}
+          aoCorrigir={() => setPedindoMotivo("FOTO_PORTA")}
+          rotuloCorrigir={textos.correcao.corrigir}
         />
 
         <CampoFoto
@@ -155,11 +217,17 @@ export function RegistrarComprovante() {
           dica={t.dicaFoto}
           previa={t.previa}
           foto={foto}
-          aoEscolher={setFoto}
+          aoEscolher={trocarFoto("FOTO_BDO_ASSINADO", setFoto)}
           desabilitado={!podeFotoBdo}
+          bloqueado={bdoConcluido}
+          aoCorrigir={() => setPedindoMotivo("FOTO_BDO_ASSINADO")}
+          rotuloCorrigir={textos.correcao.corrigir}
         />
 
-        <fieldset className={`pilha${podeRecebedor ? "" : " campo-bloqueado"}`} disabled={!podeRecebedor}>
+        <fieldset
+          className={`pilha${podeRecebedor && !recebedorConcluido ? "" : " campo-bloqueado"}`}
+          disabled={!podeRecebedor || recebedorConcluido}
+        >
           <legend className="destaque">
             {t.quemRecebeu}{" "}
             <span className="campo-obrigatorio" aria-hidden="true">
@@ -203,6 +271,18 @@ export function RegistrarComprovante() {
             </>
           )}
         </fieldset>
+        {recebedorConcluido && (
+          <div>
+            <button
+              type="button"
+              className="secundario"
+              aria-label={`${textos.correcao.corrigir}: ${t.quemRecebeu}`}
+              onClick={() => setPedindoMotivo("RECEBEDOR")}
+            >
+              <Icone nome="ferramenta" /> {textos.correcao.corrigir}
+            </button>
+          </div>
+        )}
 
         <div className={recebedorPronto ? undefined : "campo-bloqueado"}>
           <FotosAvaria
@@ -258,6 +338,13 @@ export function RegistrarComprovante() {
           />
         </>
       )}
+
+      <PedirMotivoCorrecao
+        aberto={pedindoMotivo !== null}
+        etapa={pedindoMotivo ? nomeDaEtapa[pedindoMotivo] : ""}
+        aoConfirmar={liberarEtapa}
+        aoCancelar={() => setPedindoMotivo(null)}
+      />
 
       <Ajuda>
         <p>{t.ajuda}</p>

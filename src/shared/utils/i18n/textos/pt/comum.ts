@@ -31,6 +31,16 @@ export const comum = {
     falhaEnviar: "Não foi possível enviar o e-mail.",
     privacidade: "O PDF tem dados pessoais do passageiro: envie só para quem vai imprimir.",
   },
+  correcao: {
+    titulo: (etapa: string) => `Corrigir: ${etapa}`,
+    explicacao: "A etapa já foi concluída. Para alterar, informe o motivo: a correção fica registrada para auditoria.",
+    motivo: "Motivo da correção",
+    escolhaMotivo: "Escolha o motivo",
+    complemento: "Detalhe (opcional)",
+    liberar: "Liberar para corrigir",
+    semMotivos: "Não foi possível carregar os motivos de correção. Conecte-se à internet e tente de novo.",
+    corrigir: "Corrigir (pede motivo)",
+  },
   formato: {
     janelaMesmoDia: (dia: string, inicio: string, fim: string) => `${dia}, ${inicio} às ${fim}`,
     janelaDiasDiferentes: (diaInicio: string, inicio: string, diaFim: string, fim: string) => `${diaInicio} ${inicio} até ${diaFim} ${fim}`,

@@ -15,6 +15,7 @@ export function TelaConfiguracoes() {
         <SecaoMotivos finalidade="DISPENSA" />
         <SecaoMotivos finalidade="CANCELAMENTO" />
         <SecaoMotivos finalidade="RECEBEDOR" />
+        <SecaoMotivos finalidade="CORRECAO" />
         <SecaoCamposBaixa />
         <SecaoCodigoNome categoria="bases-aeroportuarias" titulo={t.basesAeroportuarias} rotuloCodigo={t.codigoIata} />
         <SecaoCodigoNome categoria="companhias-aereas" titulo={t.companhiasAtendidas} rotuloCodigo={t.codigoIata} />

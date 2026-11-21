@@ -24,4 +24,16 @@ export type DadosComprovante = {
   /** Idempotência: o mesmo `idLocal` reenviado devolve o comprovante já criado, em vez de duplicar (HU06/HU08). */
   idLocal: string;
   justificativaDivergencia?: string | null;
+  /** V51: etapas que o motorista voltou e corrigiu antes de finalizar, com motivo. */
+  correcoes?: CorrecaoNoFluxo[];
+};
+
+/** Espelha com.marillia.milebag.business.correcao.model.CorrecaoInformada (V51). */
+export type CorrecaoNoFluxo = {
+  etapa: "FOTO_PORTA" | "FOTO_BDO_ASSINADO" | "RECEBEDOR";
+  motivoId: string;
+  complemento: string | null;
+  antes: string;
+  depois: string;
+  dataHora: string;
 };

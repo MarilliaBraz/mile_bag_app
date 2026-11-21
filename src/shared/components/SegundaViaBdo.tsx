@@ -104,7 +104,7 @@ export function SegundaViaBdo({
       <p className="texto-apoio m-0">{t.explicacao}</p>
       <div>
         <button type="button" className="secundario" disabled={preparando} onClick={() => void imprimir()}>
-          <Icone nome="documento" /> {preparando ? t.preparando : t.imprimir}
+          <Icone nome="impressora" /> {preparando ? t.preparando : t.imprimir}
         </button>
       </div>
 

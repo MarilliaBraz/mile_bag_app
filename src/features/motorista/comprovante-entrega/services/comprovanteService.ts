@@ -20,6 +20,9 @@ export function registrarComprovante(entregaId: string, dados: DadosComprovante)
     formulario.append("latitude", String(dados.posicao.latitude));
     formulario.append("longitude", String(dados.posicao.longitude));
   }
+  if (dados.correcoes && dados.correcoes.length > 0) {
+    formulario.append("correcoes", JSON.stringify(dados.correcoes));
+  }
   if (dados.justificativaDivergencia) {
     formulario.append("justificativaDivergencia", dados.justificativaDivergencia);
   }

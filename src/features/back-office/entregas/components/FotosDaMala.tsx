@@ -21,7 +21,12 @@ export function FotosDaMala({ entregaId }: { entregaId: string }) {
       {dados && dados.length > 0 && (
         <ul className="fotos-avaria">
           {dados.map((foto) => (
-            <Miniatura key={foto.id} entregaId={entregaId} foto={foto} rotulo={t.tiposFoto[foto.tipo] ?? foto.tipo} />
+            <Miniatura
+              key={foto.id}
+              entregaId={entregaId}
+              foto={foto}
+              rotulo={`${t.tiposFoto[foto.tipo] ?? foto.tipo}${foto.substituida ? ` (${t.substituida})` : ""}`}
+            />
           ))}
         </ul>
       )}
