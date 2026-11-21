@@ -34,3 +34,10 @@ export const buscarBdosPorNumero = (numero: string) => requisitar<BdoResponse[]>
 /** POST /api/v1/gestao/bdos (V49) - a empresa inclui o BDO; ele entra nos disponíveis e os motoristas são avisados. */
 export const incluirBdo = (campos: CamposBdo, textoOriginal: string | null) =>
   requisitar<BdoResponse>(BDOS, { metodo: "POST", corpo: { campos, textoOriginal } });
+
+/** GET /api/v1/gestao/bdos/{bdoId}/segunda-via (V50) - o PDF da segunda via, gerado na hora. */
+export const baixarSegundaVia = (bdoId: string) => baixarArquivo(caminhoApi`/api/v1/gestao/bdos/${bdoId}/segunda-via`);
+
+/** POST /api/v1/gestao/bdos/{bdoId}/segunda-via/email (V50) - envia o PDF para imprimir; fica no histórico da mala. */
+export const enviarSegundaVia = (bdoId: string, email: string) =>
+  requisitar<void>(caminhoApi`/api/v1/gestao/bdos/${bdoId}/segunda-via/email`, { metodo: "POST", corpo: { email } });

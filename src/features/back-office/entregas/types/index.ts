@@ -25,7 +25,9 @@ export type TipoEventoRastreabilidade =
   | "DISPENSA_SEM_BAGAGEM"
   | "DISPENSA_COM_BAGAGEM"
   | "ENTREGUE"
-  | "CANCELADO";
+  | "CANCELADO"
+  /** V50: segunda via enviada por e-mail; `descricao` é o endereço de destino. */
+  | "SEGUNDA_VIA_ENVIADA";
 
 /** Espelha EventoRastreabilidade: um fato da vida da mala, na ordem em que aconteceu. */
 export type EventoRastreabilidade = {

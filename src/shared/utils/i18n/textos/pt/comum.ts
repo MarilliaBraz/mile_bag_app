@@ -16,6 +16,21 @@ export const comum = {
     pularConteudo: "Pular para o conteúdo",
     mapa: "Mapa",
   },
+  segundaVia: {
+    titulo: "Segunda via do BDO",
+    explicacao:
+      "Se o papel do BDO se perder, imprima a segunda via: ela traz o texto do BDO, o código de barras de cada mala e o espaço para quem recebe assinar.",
+    imprimir: "Imprimir BDO",
+    preparando: "Gerando o PDF…",
+    falhaImprimir: "Não foi possível gerar o PDF do BDO.",
+    enviarTitulo: "Enviar por e-mail para imprimir",
+    enviarDica: "Mande o PDF para o e-mail de quem vai imprimir (uma gráfica, um posto, você mesmo).",
+    email: "E-mail de destino",
+    enviar: "Enviar PDF",
+    enviado: (email: string) => `PDF enviado para ${email}.`,
+    falhaEnviar: "Não foi possível enviar o e-mail.",
+    privacidade: "O PDF tem dados pessoais do passageiro: envie só para quem vai imprimir.",
+  },
   formato: {
     janelaMesmoDia: (dia: string, inicio: string, fim: string) => `${dia}, ${inicio} às ${fim}`,
     janelaDiasDiferentes: (diaInicio: string, inicio: string, diaFim: string, fim: string) => `${diaInicio} ${inicio} até ${diaFim} ${fim}`,

@@ -18,6 +18,21 @@ export const comum: TextosComuns = {
     pularConteudo: "Skip to content",
     mapa: "Map",
   },
+  segundaVia: {
+    titulo: "BDO copy",
+    explicacao:
+      "If the BDO paper gets lost, print a copy: it has the BDO text, a barcode for each bag and space for the recipient to sign.",
+    imprimir: "Print BDO",
+    preparando: "Creating the PDF…",
+    falhaImprimir: "Could not create the BDO PDF.",
+    enviarTitulo: "Send by e-mail to print",
+    enviarDica: "Send the PDF to whoever will print it (a print shop, a gas station, yourself).",
+    email: "Destination e-mail",
+    enviar: "Send PDF",
+    enviado: (email: string) => `PDF sent to ${email}.`,
+    falhaEnviar: "Could not send the e-mail.",
+    privacidade: "The PDF contains the passenger's personal data: send it only to whoever will print it.",
+  },
   formato: {
     janelaMesmoDia: (dia, inicio, fim) => `${dia}, ${inicio} to ${fim}`,
     janelaDiasDiferentes: (diaInicio, inicio, diaFim, fim) => `${diaInicio} ${inicio} until ${diaFim} ${fim}`,
