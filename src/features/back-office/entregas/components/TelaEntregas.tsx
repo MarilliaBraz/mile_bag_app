@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { formatarDataHora } from "../../../../shared/utils/formatar";
 import { useRecurso } from "../../../../shared/hooks/useRecurso";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { Alerta, Carregando, Vazio } from "../../../../shared/components/Alerta";
 import { Icone } from "../../../../shared/components/Icone";
+import { ConfirmarAcao } from "../../../../shared/components/ConfirmarAcao";
 import { Gaveta, Pagina, Painel } from "../../../../shared/components/Pagina";
 import type { EntregaStatus } from "../../../motorista/painel-entregas/types";
 import { TOM_STATUS_ENTREGA } from "../../../motorista/painel-entregas/utils/statusEntrega";
@@ -11,6 +12,7 @@ import { consultarHistorico, listarEntregas } from "../services/entregasService"
 import type { EntregaGestao } from "../types";
 import { CancelarBdo } from "./CancelarBdo";
 import { FotosDaMala } from "./FotosDaMala";
+import { IncluirBdo } from "./IncluirBdo";
 
 const STATUS: EntregaStatus[] = ["AGUARDANDO_ATRIBUICAO", "ATRIBUIDA", "EM_ANDAMENTO", "REABERTA", "ENCERRADA_COM_SUCESSO", "CANCELADA"];
 
@@ -21,6 +23,7 @@ const podeCancelar = (linha: EntregaGestao) => linha.status !== "ENCERRADA_COM_S
  * Entregas da empresa e a rastreabilidade de cada mala (V46): quem assumiu, viagens, ocorrências, dispensas e a
  * entrega, em ordem. A lista traz as 200 mais recentemente movimentadas; o filtro de situação age sobre ela.
  * V47: traz também os BDOs que ninguém assumiu, e a gaveta permite cancelar o BDO (com motivo e confirmação).
+ * V49: "Incluir BDO" abre a inclusão pela empresa (colar o telex ou digitar os campos).
  */
 export function TelaEntregas() {
   const textos = useTextos();
@@ -30,10 +33,40 @@ export function TelaEntregas() {
   const [sucesso, setSucesso] = useState<string | null>(null);
   const [filtro, setFiltro] = useState<EntregaStatus | "">("");
   const [aberta, setAberta] = useState<EntregaGestao | null>(null);
+  const [incluindo, setIncluindo] = useState(false);
+  const [estadoInclusao, setEstadoInclusao] = useState({ preenchido: false, ocupado: false });
+  const [descartando, setDescartando] = useState(false);
+  const aoMudarEstadoInclusao = useCallback((estado: { preenchido: boolean; ocupado: boolean }) => setEstadoInclusao(estado), []);
+
+  /** Fechar a inclusão: nunca no meio do envio; com dados preenchidos, pergunta antes de descartar. */
+  function fecharInclusao() {
+    if (estadoInclusao.ocupado) {
+      return;
+    }
+    if (estadoInclusao.preenchido) {
+      setDescartando(true);
+      return;
+    }
+    setIncluindo(false);
+  }
   const visiveis = dados?.filter((entrega) => !filtro || entrega.status === filtro) ?? [];
 
   return (
-    <Pagina titulo={t.titulo} descricao={t.descricao}>
+    <Pagina
+      titulo={t.titulo}
+      descricao={t.descricao}
+      acoes={
+        <button
+          type="button"
+          onClick={() => {
+            setSucesso(null);
+            setIncluindo(true);
+          }}
+        >
+          <Icone nome="mais" /> {t.incluir.botao}
+        </button>
+      }
+    >
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
       {sucesso && <Alerta tipo="sucesso">{sucesso}</Alerta>}
       {!dados && !erro && <Carregando texto={t.carregando} />}
@@ -131,6 +164,33 @@ export function TelaEntregas() {
           </div>
         )}
       </Gaveta>
+
+      <Gaveta aberta={incluindo} largura="larga" titulo={t.incluir.titulo} descricao={t.incluir.descricao} aoFechar={fecharInclusao}>
+        {incluindo && (
+          <IncluirBdo
+            aoMudarEstado={aoMudarEstadoInclusao}
+            aoIncluir={(numero) => {
+              setSucesso(t.incluir.incluido(numero));
+              setIncluindo(false);
+              void recarregar();
+            }}
+          />
+        )}
+      </Gaveta>
+
+      <ConfirmarAcao
+        aberto={descartando}
+        titulo={t.incluir.descartarTitulo}
+        descricao={t.incluir.descartarDescricao}
+        rotuloConfirmar={t.incluir.descartarConfirmar}
+        rotuloDesistir={textos.comum.voltar}
+        perigo
+        aoConfirmar={() => {
+          setDescartando(false);
+          setIncluindo(false);
+        }}
+        aoCancelar={() => setDescartando(false)}
+      />
     </Pagina>
   );
 }

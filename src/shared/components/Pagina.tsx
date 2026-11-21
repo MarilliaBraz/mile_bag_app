@@ -116,6 +116,8 @@ export function Gaveta({
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  // Selecionar texto dentro do painel e soltar fora dispara "click" no fundo: só fecha se o toque começou no fundo.
+  const comecouNoFundo = useRef(false);
   const id = useId();
   const t = useTextos();
 
@@ -141,10 +143,14 @@ export function Gaveta({
         aoFechar();
       }}
       // Toque fora do painel (no fundo escurecido) fecha, como nos apps de referência.
+      onPointerDown={(evento) => {
+        comecouNoFundo.current = evento.target === evento.currentTarget;
+      }}
       onClick={(evento) => {
-        if (evento.target === evento.currentTarget) {
+        if (evento.target === evento.currentTarget && comecouNoFundo.current) {
           aoFechar();
         }
+        comecouNoFundo.current = false;
       }}
     >
       <div className="gaveta-corpo">

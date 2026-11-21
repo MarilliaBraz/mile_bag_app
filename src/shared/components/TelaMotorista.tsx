@@ -7,17 +7,16 @@ import { useSincronizacaoAutomatica } from "../hooks/useSincronizacaoAutomatica"
 import { useCompartilharPosicao } from "../hooks/useCompartilharPosicao";
 import { AvisoBdoNovo } from "./AvisoBdoNovo";
 
-type ItemNavegacao = { para: string; rotulo: ChaveMenu; icone: NomeIcone; destaque?: boolean; fim?: boolean };
+type ItemNavegacao = { para: string; rotulo: ChaveMenu; icone: NomeIcone; fim?: boolean };
 
 const ITENS: ItemNavegacao[] = [
   { para: "/motorista", rotulo: "entregas", icone: "casa", fim: true },
-  { para: "/motorista/captura-bdo", rotulo: "capturar", icone: "camera", destaque: true },
   { para: "/motorista/relatorio", rotulo: "relatorio", icone: "documento" },
   { para: "/motorista/conta", rotulo: "conta", icone: "usuario" },
 ];
 
 /**
- * Barra de navegação inferior do motorista: as quatro áreas principais ao
+ * Barra de navegação inferior do motorista: as áreas principais ao
  * alcance do polegar, como nos apps de corrida que ele já usa.
  */
 function NavegacaoMotorista() {
@@ -25,7 +24,7 @@ function NavegacaoMotorista() {
   return (
     <nav className="nav-inferior nao-imprimir" aria-label={t.menuMotorista}>
       {ITENS.map((item) => (
-        <NavLink key={item.para} to={item.para} end={item.fim} viewTransition className={item.destaque ? "nav-destaque" : undefined}>
+        <NavLink key={item.para} to={item.para} end={item.fim} viewTransition>
           <span className="nav-icone">
             <Icone nome={item.icone} />
           </span>

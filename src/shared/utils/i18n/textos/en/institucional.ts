@@ -81,7 +81,7 @@ export const institucional = {
     empresa: {
       titulo: "Delivery company",
       itens: [
-        "BDO captured by photo or received from the airline, no typing",
+        "BDO received by e-mail or from the airline, or pasted by the company",
         "Routes with alternatives, tolls and the real trip recorded",
         "Daily dashboard, new bag alert and emergency alert",
         "Proof of delivery, issues and rescheduling with the passenger",

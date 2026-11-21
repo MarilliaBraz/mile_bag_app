@@ -5,8 +5,8 @@ import type { PendenciaContatoBdo } from "../../../../shared/components/AvisoCon
 /** CANCELADA (V47): a empresa cancelou o BDO - definitiva. */
 export type EntregaStatus = "AGUARDANDO_ATRIBUICAO" | "ATRIBUIDA" | "EM_ANDAMENTO" | "ENCERRADA_COM_SUCESSO" | "REABERTA" | "CANCELADA";
 
-/** Espelha com.marillia.milebag.business.bdo.model.BdoOrigem. */
-export type BdoOrigem = "FOTO_MANUAL" | "EMAIL_AUTOMATICO" | "COMPANHIA_AEREA";
+/** Espelha com.marillia.milebag.business.bdo.model.BdoOrigem. EMPRESA (V49): incluído pela empresa no painel; FOTO_MANUAL só nos BDOs antigos. */
+export type BdoOrigem = "FOTO_MANUAL" | "EMAIL_AUTOMATICO" | "COMPANHIA_AEREA" | "EMPRESA";
 
 /** Espelha com.marillia.milebag.business.entrega.model.BagagemCaronaResumo. */
 export type BagagemCaronaResumo = {
