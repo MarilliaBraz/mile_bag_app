@@ -63,6 +63,8 @@ export function PainelEntregas() {
     carregar();
     // Aquece a cópia local dos motivos de ocorrência enquanto há conexão: sem ela o motorista não conseguiria registrar uma ocorrência offline.
     listarMotivos().catch(() => undefined);
+    // V48: a lista de quem pode assinar também fica no aparelho, para o comprovante sem internet.
+    listarMotivos("RECEBEDOR").catch(() => undefined);
   }, [carregar]);
 
   // HU32: abrir o painel resolve o aviso de bagagem nova; com o painel aberto, um BDO novo entra na lista na hora.

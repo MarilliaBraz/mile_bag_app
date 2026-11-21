@@ -18,7 +18,14 @@ export type EntregaGestao = {
 };
 
 export type TipoEventoRastreabilidade =
-  "BDO_RECEBIDO" | "VIAGEM_INICIADA" | "OCORRENCIA" | "DISPENSA_SEM_BAGAGEM" | "DISPENSA_COM_BAGAGEM" | "ENTREGUE" | "CANCELADO";
+  | "BDO_RECEBIDO"
+  | "BAGAGEM_RETIRADA"
+  | "VIAGEM_INICIADA"
+  | "OCORRENCIA"
+  | "DISPENSA_SEM_BAGAGEM"
+  | "DISPENSA_COM_BAGAGEM"
+  | "ENTREGUE"
+  | "CANCELADO";
 
 /** Espelha EventoRastreabilidade: um fato da vida da mala, na ordem em que aconteceu. */
 export type EventoRastreabilidade = {
@@ -33,4 +40,11 @@ export type EventoRastreabilidade = {
 export type HistoricoEntrega = {
   entrega: EntregaGestao;
   eventos: EventoRastreabilidade[];
+};
+
+/** Espelha FotoGestaoResponse (V48): o arquivo vem de .../fotos/{id}. */
+export type FotoEntrega = {
+  id: string;
+  tipo: "RETIRADA" | "AVARIA_RETIRADA" | "PORTA" | "AVARIA_ENTREGA" | "BDO_ASSINADO";
+  dataHora: string;
 };

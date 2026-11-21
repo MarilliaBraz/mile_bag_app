@@ -28,6 +28,8 @@ export type ItemPainel = {
   marcoMaisRecente: "A_CAMINHO" | "CHEGADA" | null;
   /** HU29: ausente em respostas guardadas antes do campo existir. */
   janelaReagendamento?: JanelaReagendamento | null;
+  /** V48: a retirada da bagagem desta tentativa já foi registrada (próxima etapa: iniciar a viagem). */
+  retiradaRegistrada?: boolean;
 };
 
 /** Espelha com.marillia.milebag.business.entrega.model.PainelEntregasResponse. */

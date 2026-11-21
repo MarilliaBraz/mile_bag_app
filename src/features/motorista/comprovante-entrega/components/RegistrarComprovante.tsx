@@ -2,93 +2,98 @@ import { Icone } from "../../../../shared/components/Icone";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "../../../../shared/services/ApiError";
-import { obterPosicaoDetalhada, type MotivoFalhaPosicao } from "../../../../shared/utils/posicaoAtual";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
-import type { Coordenada } from "../../../../shared/components/MapaBase";
-import { arquivoParaBase64, executarOuEnfileirar } from "../../../../shared/services/fila";
+import { arquivoParaBase64, executarOuEnfileirar, fotoParaFila, fotosParaFila } from "../../../../shared/services/fila";
+import { listarMotivosComOrigem } from "../../../../shared/services/ocorrenciaService";
+import type { MotivoOcorrencia } from "../../../../shared/types/ocorrencia";
+import { usePosicaoAtual } from "../../../../shared/hooks/usePosicaoAtual";
 import { TelaMotorista } from "../../../../shared/components/TelaMotorista";
 import { JustificativaDivergencia } from "../../../../shared/components/JustificativaDivergencia";
 import { Ajuda } from "../../../../shared/components/Ajuda";
 import { Alerta, Carregando } from "../../../../shared/components/Alerta";
 import { ConfirmarAcao } from "../../../../shared/components/ConfirmarAcao";
+import { CampoFoto } from "../../../../shared/components/CampoFoto";
+import { FotosAvaria } from "../../../../shared/components/FotosAvaria";
 import { registrarComprovante } from "../services/comprovanteService";
-import { reduzirFoto } from "../../../../shared/utils/reduzirFoto";
 
 const TIPO_DIVERGENCIA = "divergencia-trajeto-sem-justificativa";
+const TAMANHO_MAXIMO_NOME = 200;
 
 /**
- * Registro do comprovante de entrega (HU06) - foto do documento assinado,
- * identificação de quem recebeu, e data/hora e coordenadas capturadas
- * automaticamente. Registrar o comprovante encerra a entrega e consolida o
- * trajeto (HU04) na mesma transação do back-end.
+ * Registro da entrega (HU06; V48, itens 4 e 5) - passo a passo, cada campo abre quando o anterior estiver pronto: foto
+ * da bagagem na porta, foto do BDO assinado, quem assinou (lista da empresa) e o nome, e fotos de avaria opcionais.
+ * Data/hora e coordenadas são capturadas automaticamente. Registrar encerra a entrega e consolida o trajeto (HU04) na
+ * mesma transação do back-end.
  *
- * <p>Por isso este formulário também trata a recusa por divergência de
- * quilometragem (RN14): o back-end responde `422` com o tipo {@code
- * divergencia-trajeto-sem-justificativa}, e o reenvio acontece com a
- * justificativa preenchida, sem perder foto nem campos já preenchidos.</p>
+ * <p>Por isso este formulário também trata a recusa por divergência de quilometragem (RN14): o back-end responde `422`
+ * com o tipo {@code divergencia-trajeto-sem-justificativa}, e o reenvio acontece com a justificativa preenchida, sem
+ * perder fotos nem campos já preenchidos.</p>
  */
 export function RegistrarComprovante() {
   const { entregaId } = useParams<{ entregaId: string }>();
   const navegar = useNavigate();
+  const textos = useTextos();
+  const t = textos.motorista.comprovante;
+  const { posicao, capturando: capturandoPosicao, motivoFalha: motivoFalhaPosicao, capturar: capturarPosicao } = usePosicaoAtual();
 
+  const [fotoPorta, setFotoPorta] = useState<File | null>(null);
   const [foto, setFoto] = useState<File | null>(null);
-  const [identificacaoRecebedor, setIdentificacaoRecebedor] = useState("");
-  const [posicao, setPosicao] = useState<Coordenada | null>(null);
-  const [capturandoPosicao, setCapturandoPosicao] = useState(true);
-  const [motivoFalhaPosicao, setMotivoFalhaPosicao] = useState<MotivoFalhaPosicao | null>(null);
+  const [tipos, setTipos] = useState<MotivoOcorrencia[] | null>(null);
+  const [tiposDoCache, setTiposDoCache] = useState(false);
+  const [tipoRecebedorId, setTipoRecebedorId] = useState("");
+  const [nomeRecebedor, setNomeRecebedor] = useState("");
+  const [avarias, setAvarias] = useState<File[]>([]);
+  const [observacao, setObservacao] = useState("");
   const [idLocal] = useState(() => crypto.randomUUID());
   const [erro, setErro] = useState<string | null>(null);
   const [divergencia, setDivergencia] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
-  const textos = useTextos();
-  const t = textos.motorista.comprovante;
 
   useEffect(() => {
-    capturarPosicao();
+    listarMotivosComOrigem("RECEBEDOR")
+      .then((resposta) => {
+        setTipos(resposta.motivos);
+        setTiposDoCache(resposta.doCache);
+      })
+      .catch(() => setTipos([]));
   }, []);
 
-  // Prévia da foto escolhida: o motorista confere se o documento saiu legível antes de encerrar.
-  const [urlPrevia, setUrlPrevia] = useState<string | null>(null);
-  useEffect(
-    () => () => {
-      if (urlPrevia) {
-        URL.revokeObjectURL(urlPrevia);
-      }
-    },
-    [urlPrevia],
-  );
-
-  async function escolherFoto(arquivo: File | null) {
-    const reduzida = arquivo ? await reduzirFoto(arquivo) : null;
-    setFoto(reduzida);
-    setUrlPrevia(reduzida ? URL.createObjectURL(reduzida) : null);
-  }
-
-  async function capturarPosicao() {
-    setCapturandoPosicao(true);
-    setMotivoFalhaPosicao(null);
-    const resultado = await obterPosicaoDetalhada();
-    setPosicao(resultado.posicao);
-    setMotivoFalhaPosicao(resultado.motivo);
-    setCapturandoPosicao(false);
-  }
+  const tipoEscolhido = tipos?.find((tipo) => tipo.id === tipoRecebedorId) ?? null;
+  const nome = nomeRecebedor.trim();
+  // Passo a passo: cada etapa abre quando a anterior estiver pronta.
+  const podeFotoBdo = !!fotoPorta;
+  const podeRecebedor = podeFotoBdo && !!foto;
+  const recebedorPronto = podeRecebedor && !!tipoEscolhido && nome.length > 0;
+  const podeEnviar = recebedorPronto && !!posicao && !enviando;
+  const pendencias = [
+    !fotoPorta && t.pendenciaPorta,
+    !foto && t.pendenciaFoto,
+    !recebedorPronto && t.pendenciaRecebedor,
+    !posicao && (capturandoPosicao ? t.pendenciaAguardeLocal : t.pendenciaLibereLocal),
+  ].filter(Boolean);
 
   async function enviar(justificativaDivergencia: string | null = null) {
-    if (!entregaId || !foto) {
+    if (!entregaId || !foto || !fotoPorta || !tipoEscolhido) {
       return;
     }
     setErro(null);
     setEnviando(true);
     const dataHora = new Date().toISOString();
+    const identificacaoRecebedor = `${tipoEscolhido.descricao} - ${nome}`;
+    const observacaoAvaria = avarias.length > 0 && observacao.trim() ? observacao.trim() : null;
     try {
-      // Offline (HU08, FR-001): a foto vai para a fila em base64, que é o
-      // formato que o lote de sincronização aceita (PayloadComprovanteRegistrado).
+      // Offline (HU08, FR-001): as fotos vão para a fila em base64, o formato que o lote de sincronização aceita.
       const { enfileirado } = await executarOuEnfileirar(
         () =>
           registrarComprovante(entregaId, {
             foto,
-            identificacaoRecebedor: identificacaoRecebedor.trim(),
+            fotoPorta,
+            tipoRecebedorId: tipoEscolhido.id,
+            nomeRecebedor: nome,
+            avarias,
+            observacaoAvaria,
+            identificacaoRecebedor,
             dataHora,
             posicao,
             idLocal,
@@ -100,19 +105,20 @@ export function RegistrarComprovante() {
             entregaId,
             fotoBase64: await arquivoParaBase64(foto),
             nomeArquivo: foto.name,
-            identificacaoRecebedor: identificacaoRecebedor.trim(),
+            identificacaoRecebedor,
             dataHora,
             latitude: posicao?.latitude ?? null,
             longitude: posicao?.longitude ?? null,
             justificativaDivergencia,
+            fotoPorta: await fotoParaFila(fotoPorta),
+            tipoRecebedorId: tipoEscolhido.id,
+            nomeRecebedor: nome,
+            avarias: await fotosParaFila(avarias),
+            observacaoAvaria,
           },
         },
       );
-      navegar("/motorista", {
-        state: {
-          aviso: enfileirado ? t.naFila : t.enviado,
-        },
-      });
+      navegar("/motorista", { state: { aviso: enfileirado ? t.naFila : t.enviado } });
     } catch (excecao) {
       setConfirmando(false);
       if (excecao instanceof ApiError && excecao.status === 422 && excecao.tipo?.includes(TIPO_DIVERGENCIA)) {
@@ -125,67 +131,92 @@ export function RegistrarComprovante() {
     }
   }
 
-  const podeEnviar = !!foto && identificacaoRecebedor.trim().length > 0 && !!posicao && !enviando;
-  const pendencias = [
-    !foto && t.pendenciaFoto,
-    !identificacaoRecebedor.trim() && t.pendenciaRecebedor,
-    !posicao && (capturandoPosicao ? t.pendenciaAguardeLocal : t.pendenciaLibereLocal),
-  ].filter(Boolean);
-
   return (
     <TelaMotorista titulo={t.titulo} voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar={textos.motorista.geral.voltarEntrega}>
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
 
       <div className="formulario">
-        <div>
-          <span id="rotulo-foto" className="destaque" style={{ display: "block", marginBottom: "0.375rem", fontSize: "1rem" }}>
-            {t.foto}{" "}
-            <span className="campo-obrigatorio" aria-hidden="true">
-              *
-            </span>
-          </span>
-          {urlPrevia && <img src={urlPrevia} alt={t.previa} className="previa-foto mb-2" />}
-          <label className={`seletor-foto${foto ? " preenchido" : ""}`}>
-            <Icone nome={foto ? "checkCirculo" : "camera"} />
-            <strong>{foto ? t.fotoPronta : t.tirarFoto}</strong>
-            {!foto && <span>{t.dicaFoto}</span>}
-            <input
-              id="foto-comprovante"
-              className="visualmente-oculto"
-              required
-              aria-required="true"
-              aria-labelledby="rotulo-foto"
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={(evento) => escolherFoto(evento.target.files?.[0] ?? null)}
-            />
-          </label>
-        </div>
+        <CampoFoto
+          id="foto-porta"
+          rotulo={t.fotoPorta}
+          tirarFoto={t.tirarFotoPorta}
+          fotoPronta={t.fotoPronta}
+          dica={t.dicaPorta}
+          previa={t.previaPorta}
+          foto={fotoPorta}
+          aoEscolher={setFotoPorta}
+        />
 
-        <div>
-          <label htmlFor="recebedor">
+        <CampoFoto
+          id="foto-comprovante"
+          rotulo={t.foto}
+          tirarFoto={t.tirarFoto}
+          fotoPronta={t.fotoPronta}
+          dica={t.dicaFoto}
+          previa={t.previa}
+          foto={foto}
+          aoEscolher={setFoto}
+          desabilitado={!podeFotoBdo}
+        />
+
+        <fieldset className={`pilha${podeRecebedor ? "" : " campo-bloqueado"}`} disabled={!podeRecebedor}>
+          <legend className="destaque">
             {t.quemRecebeu}{" "}
             <span className="campo-obrigatorio" aria-hidden="true">
               *
             </span>
-          </label>
-          <input
-            id="recebedor"
-            required
-            aria-required="true"
-            type="text"
-            autoComplete="off"
-            autoCapitalize="words"
-            value={identificacaoRecebedor}
-            onChange={(evento) => setIdentificacaoRecebedor(evento.target.value)}
-            placeholder={t.quemRecebeuDica}
+          </legend>
+          {tipos === null ? (
+            <Carregando />
+          ) : tipos.length === 0 ? (
+            <Alerta tipo="aviso">{t.semTiposRecebedor}</Alerta>
+          ) : (
+            <>
+              {tiposDoCache && <p className="texto-apoio m-0">{t.tiposDoCache}</p>}
+              <div>
+                <label htmlFor="tipo-recebedor">{t.tipoRecebedor}</label>
+                <select id="tipo-recebedor" required value={tipoRecebedorId} onChange={(evento) => setTipoRecebedorId(evento.target.value)}>
+                  <option value="" disabled>
+                    {t.escolhaTipo}
+                  </option>
+                  {tipos.map((tipo) => (
+                    <option key={tipo.id} value={tipo.id}>
+                      {tipo.descricao}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="nome-recebedor">{t.nomeRecebedor}</label>
+                <input
+                  id="nome-recebedor"
+                  required
+                  aria-required="true"
+                  type="text"
+                  autoComplete="off"
+                  autoCapitalize="words"
+                  maxLength={TAMANHO_MAXIMO_NOME}
+                  value={nomeRecebedor}
+                  onChange={(evento) => setNomeRecebedor(evento.target.value)}
+                />
+              </div>
+            </>
+          )}
+        </fieldset>
+
+        <div className={recebedorPronto ? undefined : "campo-bloqueado"}>
+          <FotosAvaria
+            id="avarias-entrega"
+            fotos={avarias}
+            aoMudarFotos={setAvarias}
+            observacao={observacao}
+            aoMudarObservacao={setObservacao}
+            desabilitado={!recebedorPronto}
           />
         </div>
 
-        {/* Edge case do spec: falha de GPS não pode custar os campos já
-            preenchidos - o formulário continua montado e só a captura é
-            refeita. */}
+        {/* Edge case do spec: falha de GPS não pode custar os campos já preenchidos - o formulário continua montado e
+            só a captura é refeita. */}
         {capturandoPosicao ? (
           <Carregando texto={t.capturandoLocal} />
         ) : posicao ? (
@@ -199,7 +230,7 @@ export function RegistrarComprovante() {
               {t.localObrigatorio}
             </p>
             {motivoFalhaPosicao && <p>{textos.posicao[motivoFalhaPosicao]}</p>}
-            <button type="button" className="secundario" onClick={capturarPosicao}>
+            <button type="button" className="secundario" onClick={() => void capturarPosicao()}>
               <Icone nome="pino" /> {t.tentarNovamente}
             </button>
           </Alerta>

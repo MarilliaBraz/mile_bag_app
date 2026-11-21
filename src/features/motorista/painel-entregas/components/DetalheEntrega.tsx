@@ -15,6 +15,7 @@ import { HistoricoOcorrencias } from "./HistoricoOcorrencias";
 import { consultarDetalhe } from "../services/painelService";
 import type { ItemPainelDetalhe } from "../types";
 import { EtapasEntrega } from "./EtapasEntrega";
+import { temRetiradaLocal } from "../../../../shared/utils/retiradaLocal";
 import { TOM_STATUS_ENTREGA } from "../utils/statusEntrega";
 
 /**
@@ -51,6 +52,13 @@ export function DetalheEntrega() {
   }, [carregar]);
 
   const encerrada = entrega?.status === "ENCERRADA_COM_SUCESSO";
+  // V48: assumida e ainda sem retirada (foto da bagagem no aeroporto), a próxima ação é retirar - antes da viagem.
+  const precisaRetirar =
+    !!entrega &&
+    entrega.status === "ATRIBUIDA" &&
+    !entrega.retiradaRegistrada &&
+    !entrega.temTrajetoIniciado &&
+    !temRetiradaLocal(entrega.entregaId);
   const status = entrega ? { texto: t.status[entrega.status], tom: TOM_STATUS_ENTREGA[entrega.status] } : null;
 
   return (
@@ -86,10 +94,15 @@ export function DetalheEntrega() {
           </section>
 
           <div className="grade-acoes mt-4">
+            {precisaRetirar && (
+              <Link to={`/motorista/entregas/${entrega.entregaId}/retirada`} viewTransition className="botao grande sucesso largo">
+                <Icone nome="camera" /> {t.detalhe.retirarBagagem}
+              </Link>
+            )}
             <Link
               to={`/motorista/entregas/${entrega.entregaId}/rota`}
               viewTransition
-              className={`botao grande${entrega.telefone ? "" : " largo"}`}
+              className={`botao grande${precisaRetirar ? " secundario" : ""}${entrega.telefone ? "" : " largo"}`}
             >
               <Icone nome="rota" /> {entrega.temTrajetoIniciado ? t.detalhe.verViagem : t.detalhe.rota}
             </Link>

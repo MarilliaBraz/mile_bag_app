@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useUrlDoArquivo } from "../hooks/useUrlDoArquivo";
+import { useUrlDoArquivo } from "../../../../shared/hooks/useUrlDoArquivo";
 import { baixarFoto } from "../services/bagagensService";
 import type { BagagemEncontrada } from "../types";
 

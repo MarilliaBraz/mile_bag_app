@@ -6,7 +6,8 @@ export type TipoEventoSincronizacao =
   | "VIAGEM_INICIADA"
   | "BAGAGEM_CARONA_VINCULADA"
   | "COMPROVANTE_REGISTRADO"
-  | "OCORRENCIA_REGISTRADA";
+  | "OCORRENCIA_REGISTRADA"
+  | "RETIRADA_REGISTRADA";
 
 export type StatusRegistro = "PENDENTE" | "ERRO" | "SINCRONIZADO";
 

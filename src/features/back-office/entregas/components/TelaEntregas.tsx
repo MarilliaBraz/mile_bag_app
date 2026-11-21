@@ -10,6 +10,7 @@ import { TOM_STATUS_ENTREGA } from "../../../motorista/painel-entregas/utils/sta
 import { consultarHistorico, listarEntregas } from "../services/entregasService";
 import type { EntregaGestao } from "../types";
 import { CancelarBdo } from "./CancelarBdo";
+import { FotosDaMala } from "./FotosDaMala";
 
 const STATUS: EntregaStatus[] = ["AGUARDANDO_ATRIBUICAO", "ATRIBUIDA", "EM_ANDAMENTO", "REABERTA", "ENCERRADA_COM_SUCESSO", "CANCELADA"];
 
@@ -108,7 +109,14 @@ export function TelaEntregas() {
       >
         {aberta && (
           <div className="pilha" key={aberta.bdoId}>
-            {aberta.entregaId ? <HistoricoMala entregaId={aberta.entregaId} /> : <p className="texto-apoio">{t.semEntregaTexto}</p>}
+            {aberta.entregaId ? (
+              <>
+                <HistoricoMala entregaId={aberta.entregaId} />
+                <FotosDaMala entregaId={aberta.entregaId} />
+              </>
+            ) : (
+              <p className="texto-apoio">{t.semEntregaTexto}</p>
+            )}
             {podeCancelar(aberta) && (
               <CancelarBdo
                 linha={aberta}

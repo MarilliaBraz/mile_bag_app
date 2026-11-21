@@ -81,3 +81,15 @@ export function arquivoParaBase64(arquivo: File): Promise<string> {
     leitor.readAsDataURL(arquivo);
   });
 }
+
+/** Uma foto do lote offline (espelha FotoOffline da API, V48). */
+export type FotoNaFila = { fotoBase64: string; nomeArquivo: string };
+
+/** Foto para o payload da fila (retirada, porta e avarias). */
+export async function fotoParaFila(arquivo: File): Promise<FotoNaFila> {
+  return { fotoBase64: await arquivoParaBase64(arquivo), nomeArquivo: arquivo.name };
+}
+
+export function fotosParaFila(arquivos: File[]): Promise<FotoNaFila[]> {
+  return Promise.all(arquivos.map(fotoParaFila));
+}

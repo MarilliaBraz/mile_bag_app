@@ -22,6 +22,7 @@ export function SecaoMotivos({ finalidade }: { finalidade: FinalidadeMotivo }) {
     OCORRENCIA: { titulo: t.motivosTitulo, descricao: t.motivosDescricao, nenhum: t.nenhumMotivo },
     DISPENSA: { titulo: t.motivosDispensaTitulo, descricao: t.motivosDispensaDescricao, nenhum: t.nenhumMotivoDispensa },
     CANCELAMENTO: { titulo: t.motivosCancelamentoTitulo, descricao: t.motivosCancelamentoDescricao, nenhum: t.nenhumMotivoCancelamento },
+    RECEBEDOR: { titulo: t.motivosRecebedorTitulo, descricao: t.motivosRecebedorDescricao, nenhum: t.nenhumMotivoRecebedor },
   }[finalidade];
   const { dados, erro, recarregar } = useRecurso(() => listarMotivos(finalidade), t.falhaMotivos);
   const [descricao, setDescricao] = useState("");

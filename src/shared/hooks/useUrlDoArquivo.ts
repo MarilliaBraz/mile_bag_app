@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 /**
- * Arquivo protegido (foto da bagagem, QR do código SID) baixado com o token e mostrado por uma URL local, liberada ao
+ * Arquivo protegido (foto da bagagem, QR do código SID, fotos da entrega) baixado com o token e mostrado por uma URL local, liberada ao
  * sair da tela: a URL da API não serve direto no <img>, que não manda o cabeçalho de autorização.
  */
 export function useUrlDoArquivo(baixar: () => Promise<Blob>): string | null {
