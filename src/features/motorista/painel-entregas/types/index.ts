@@ -67,4 +67,6 @@ export type ItemBdoDisponivel = {
 /** Espelha com.marillia.milebag.business.entrega.model.BdosDisponiveisResponse. */
 export type BdosDisponiveis = {
   bdos: ItemBdoDisponivel[];
+  /** V52: o motorista ainda não tem base - não vê BDOs até a empresa definir. Ausente em respostas antigas. */
+  semBase?: boolean;
 };

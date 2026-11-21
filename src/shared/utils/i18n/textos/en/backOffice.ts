@@ -525,7 +525,30 @@ export const backOffice: Textos["backOffice"] = {
     ativando: "Activating…",
     ativar: "Activate access",
   },
+  contasBase: {
+    falhaBases: "Could not load the bases.",
+    tentarDeNovo: "Try again",
+    base: "Base",
+    escolhaBase: "Choose the base",
+    semBases: "Register the bases your company serves before adding drivers.",
+    irConfiguracoes: "Go to Settings",
+    baseDaConta: (codigo: string) => `Base ${codigo}`,
+    semBaseDefinida: "No base: sees no BDOs",
+  },
   entregas: {
+    trocarBase: {
+      titulo: "Change the BDO base",
+      descricao: (atual: string) =>
+        `Current base: ${atual}. Drivers of the new base are notified, and the change is kept in the bag history.`,
+      baseNova: "New base",
+      escolhaBase: "Choose the base",
+      motivo: "Reason for the change",
+      trocar: "Change base",
+      trocando: "Changing…",
+      falha: "Could not change the base.",
+      falhaBases: "Could not load the bases.",
+      trocada: (bdo: string, base: string) => `BDO ${bdo} moved to base ${base}.`,
+    },
     incluir: {
       botao: "Add BDO",
       titulo: "Add BDO",
@@ -591,6 +614,7 @@ export const backOffice: Textos["backOffice"] = {
     carregandoHistorico: "Loading history…",
     eventos: {
       BDO_RECEBIDO: "BDO received",
+      BASE_ALTERADA: "BDO base changed",
       CORRECAO: "Step corrected",
       SEGUNDA_VIA_ENVIADA: "BDO copy sent by e-mail",
       BAGAGEM_RETIRADA: "Baggage picked up at the airport",

@@ -17,6 +17,8 @@ export type EntregaGestao = {
   atualizadoEm: string;
   /** V51: o motorista corrigiu alguma etapa (selo "Corrigida"; o detalhe está no histórico). */
   corrigida: boolean;
+  /** V52: código IATA da base do BDO (quem pode assumir). */
+  baseCodigo: string | null;
 };
 
 export type TipoEventoRastreabilidade =
@@ -31,7 +33,9 @@ export type TipoEventoRastreabilidade =
   /** V50: segunda via enviada por e-mail; `descricao` é o endereço de destino. */
   | "SEGUNDA_VIA_ENVIADA"
   /** V51: etapa corrigida pelo motorista; `descricao` é a etapa (FOTO_PORTA...), `detalhe` o motivo, antes e depois. */
-  | "CORRECAO";
+  | "CORRECAO"
+  /** V52: a empresa trocou a base do BDO; `descricao` "GYN -> BSB", `detalhe` o motivo. */
+  | "BASE_ALTERADA";
 
 /** Espelha EventoRastreabilidade: um fato da vida da mala, na ordem em que aconteceu. */
 export type EventoRastreabilidade = {

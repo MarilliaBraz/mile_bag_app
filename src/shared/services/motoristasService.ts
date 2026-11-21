@@ -1,22 +1,23 @@
 import { requisitar } from "./httpClient";
 import { obterTextos } from "../utils/i18n/idioma";
-import type { ServicoContas } from "../types/contas";
+import type { BaseOpcao, ServicoContas } from "../types/contas";
 import type { LinhaLote, Motorista, ResultadoLote } from "../types/motoristas";
 import { caminhoApi } from "./caminhoApi";
 
 export const listarMotoristas = () => requisitar<Motorista[]>("/api/v1/motoristas");
-export const criarMotorista = (corpo: { nome: string; login: string; senha: string }) =>
+export const criarMotorista = (corpo: { nome: string; login: string; senha: string; baseId?: string }) =>
   requisitar<Motorista>("/api/v1/motoristas", { metodo: "POST", corpo });
 
-export const criarMotoristasEmLote = (linhas: LinhaLote[]) =>
+/** V52: o lote vai inteiro para a base escolhida. */
+export const criarMotoristasEmLote = (linhas: LinhaLote[], baseId?: string) =>
   requisitar<{ criados: number; comErro: number; resultados: ResultadoLote[] }>("/api/v1/motoristas/lote", {
     metodo: "POST",
-    corpo: { motoristas: linhas.map((l) => ({ nome: l.nome, login: l.login, senha: l.senha || null })) },
+    corpo: { motoristas: linhas.map((l) => ({ nome: l.nome, login: l.login, senha: l.senha || null })), baseId: baseId ?? null },
   });
 export const definirAtivoMotorista = (id: string, ativo: boolean) =>
   requisitar<Motorista>(caminhoApi`/api/v1/motoristas/${id}`, { metodo: "PATCH", corpo: { ativo } });
 /** PATCH parcial (HU23/HU26): só os campos informados mudam; trocar o login cancela pedidos de redefinição de senha pendentes. */
-export const atualizarMotorista = (id: string, corpo: { nome?: string; login?: string }) =>
+export const atualizarMotorista = (id: string, corpo: { nome?: string; login?: string; baseId?: string }) =>
   requisitar<Motorista>(caminhoApi`/api/v1/motoristas/${id}`, { metodo: "PATCH", corpo });
 export const redefinirSenhaMotorista = (id: string, senha: string) =>
   requisitar<void>(caminhoApi`/api/v1/motoristas/${id}/senha`, { metodo: "PUT", corpo: { senha } });
@@ -37,4 +38,5 @@ export const servicoMotoristas: ServicoContas = {
   definirAtivo: definirAtivoMotorista,
   atualizar: atualizarMotorista,
   redefinirSenha: redefinirSenhaMotorista,
+  listarBases: () => requisitar<BaseOpcao[]>("/api/v1/configuracoes/bases-aeroportuarias"),
 };

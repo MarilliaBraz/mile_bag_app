@@ -3,6 +3,7 @@ import { mensagemDeErro } from "../../utils/formatar";
 import { interpretarLinhas } from "../../utils/interpretarLinhas";
 import type { ResultadoLote } from "../../types/contas";
 import { useContas } from "./contexto";
+import { SeletorBase } from "./SeletorBase";
 import { Alerta } from "../Alerta";
 import { Icone } from "../Icone";
 
@@ -31,7 +32,9 @@ export function LoteContas({ aoConcluir }: { aoConcluir: () => Promise<void> }) 
   const [resultados, setResultados] = useState<ResultadoLote[] | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
-  const { t, servico } = useContas();
+  const { t, servico, bases } = useContas();
+  const [baseId, setBaseId] = useState("");
+  const faltaBase = bases !== undefined && !baseId;
 
   const linhas = interpretarLinhas(texto);
   const excedeu = linhas.length > MAXIMO_POR_LOTE;
@@ -41,7 +44,7 @@ export function LoteContas({ aoConcluir }: { aoConcluir: () => Promise<void> }) 
     setErro(null);
     setEnviando(true);
     try {
-      const resposta = await servico.criarEmLote(linhas);
+      const resposta = await servico.criarEmLote(linhas, baseId || undefined);
       setResultados(resposta.resultados);
       if (resposta.criados > 0) {
         await aoConcluir();
@@ -78,7 +81,8 @@ export function LoteContas({ aoConcluir }: { aoConcluir: () => Promise<void> }) 
           </span>
         </div>
         {excedeu && <Alerta tipo="erro">{t.loteMaximo(MAXIMO_POR_LOTE)}</Alerta>}
-        <button type="submit" className="bloco" disabled={linhas.length === 0 || excedeu || enviando}>
+        <SeletorBase valor={baseId} aoMudar={setBaseId} />
+        <button type="submit" className="bloco" disabled={linhas.length === 0 || excedeu || faltaBase || enviando}>
           {enviando ? t.cadastrando : t.cadastrarQuantos(linhas.length)}
         </button>
       </form>

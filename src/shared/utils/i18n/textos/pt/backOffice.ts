@@ -522,7 +522,29 @@ export const backOffice = {
     ativando: "Ativando…",
     ativar: "Ativar acesso",
   },
+  contasBase: {
+    falhaBases: "Não foi possível carregar as bases.",
+    tentarDeNovo: "Tentar de novo",
+    base: "Base",
+    escolhaBase: "Escolha a base",
+    semBases: "Cadastre as bases que sua empresa atende antes de cadastrar motoristas.",
+    irConfiguracoes: "Ir para Configurações",
+    baseDaConta: (codigo: string) => `Base ${codigo}`,
+    semBaseDefinida: "Sem base: não vê BDOs",
+  },
   entregas: {
+    trocarBase: {
+      titulo: "Trocar a base do BDO",
+      descricao: (atual: string) => `Base atual: ${atual}. Os motoristas da base nova são avisados, e a troca fica no histórico da mala.`,
+      baseNova: "Base nova",
+      escolhaBase: "Escolha a base",
+      motivo: "Motivo da troca",
+      trocar: "Trocar base",
+      trocando: "Trocando…",
+      falha: "Não foi possível trocar a base.",
+      falhaBases: "Não foi possível carregar as bases.",
+      trocada: (bdo: string, base: string) => `BDO ${bdo} passou para a base ${base}.`,
+    },
     incluir: {
       botao: "Incluir BDO",
       titulo: "Incluir BDO",
@@ -588,6 +610,7 @@ export const backOffice = {
     carregandoHistorico: "Carregando histórico…",
     eventos: {
       BDO_RECEBIDO: "BDO recebido",
+      BASE_ALTERADA: "Base do BDO alterada",
       CORRECAO: "Etapa corrigida",
       SEGUNDA_VIA_ENVIADA: "Segunda via do BDO enviada por e-mail",
       BAGAGEM_RETIRADA: "Bagagem retirada no aeroporto",
