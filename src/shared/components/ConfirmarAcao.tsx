@@ -6,6 +6,8 @@ type Props = {
   titulo: string;
   descricao: string;
   rotuloConfirmar: string;
+  /** Rótulo do botão de desistir (padrão: "Cancelar") - troque quando a própria ação é um cancelamento. */
+  rotuloDesistir?: string;
   perigo?: boolean;
   ocupado?: boolean;
   aoConfirmar: () => void;
@@ -13,7 +15,17 @@ type Props = {
 };
 
 /** Confirmação antes de uma ação difícil de desfazer. Usa <dialog> nativo: prende o foco, fecha com Esc e devolve o foco ao botão de origem. */
-export function ConfirmarAcao({ aberto, titulo, descricao, rotuloConfirmar, perigo, ocupado, aoConfirmar, aoCancelar }: Props) {
+export function ConfirmarAcao({
+  aberto,
+  titulo,
+  descricao,
+  rotuloConfirmar,
+  rotuloDesistir,
+  perigo,
+  ocupado,
+  aoConfirmar,
+  aoCancelar,
+}: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const uid = useId();
   const t = useTextos().comum;
@@ -38,7 +50,7 @@ export function ConfirmarAcao({ aberto, titulo, descricao, rotuloConfirmar, peri
       <p id={`${uid}-descricao`}>{descricao}</p>
       <div className="acoes">
         <button type="button" className="secundario" onClick={aoCancelar} autoFocus>
-          {t.cancelar}
+          {rotuloDesistir ?? t.cancelar}
         </button>
         <button type="button" className={perigo ? "perigo" : undefined} onClick={aoConfirmar} disabled={ocupado}>
           {ocupado ? t.aguarde : rotuloConfirmar}

@@ -24,7 +24,8 @@ export function CancelarBdo({
   /** A entrega pode ter mudado (concluída, cancelada, assumida): quem chama atualiza a lista. */
   aoFalhar: () => void;
 }) {
-  const t = useTextos().backOffice.entregas;
+  const textos = useTextos();
+  const t = textos.backOffice.entregas;
   const { dados: motivos, erro } = useRecurso(() => listarMotivos("CANCELAMENTO"), t.falhaMotivosCancelamento);
   const [motivoId, setMotivoId] = useState("");
   const [complemento, setComplemento] = useState("");
@@ -97,6 +98,8 @@ export function CancelarBdo({
         titulo={t.confirmarTitulo(linha.bdoNumero ?? t.semNumero)}
         descricao={t.confirmarDescricao}
         rotuloConfirmar={t.confirmarCancelar}
+        // "Cancelar" ao lado de "Sim, cancelar" confundiria: aqui desistir é "Voltar".
+        rotuloDesistir={textos.comum.voltar}
         perigo
         ocupado={enviando}
         aoConfirmar={cancelar}
