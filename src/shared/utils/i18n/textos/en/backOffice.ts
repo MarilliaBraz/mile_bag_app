@@ -503,8 +503,7 @@ export const backOffice: Textos["backOffice"] = {
     pecaNovo: "Ask whoever registered the company for a new invitation.",
     expirou: "This invitation has expired.",
     jaUsado: "This invitation has already been used or replaced by another one.",
-    senhaDefinida: (email) =>
-      `Password set for ${email}. Sign in with this email and the password you just created.`,
+    senhaDefinida: (email) => `Password set for ${email}. Sign in with this email and the password you just created.`,
     convidado: "You were invited to manage",
     comEmail: "with the email",
     campoSenha: "Password",

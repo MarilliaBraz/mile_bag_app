@@ -504,8 +504,7 @@ export const backOffice: Textos["backOffice"] = {
     pecaNovo: "Pida una nueva invitación a quien registró la empresa.",
     expirou: "Esta invitación expiró.",
     jaUsado: "Esta invitación ya se usó o fue reemplazada por otra.",
-    senhaDefinida: (email) =>
-      `Contraseña definida para ${email}. Inicia sesión con este correo y la contraseña que acabas de crear.`,
+    senhaDefinida: (email) => `Contraseña definida para ${email}. Inicia sesión con este correo y la contraseña que acabas de crear.`,
     convidado: "Lo invitaron a administrar",
     comEmail: "con el correo",
     campoSenha: "Contraseña",
