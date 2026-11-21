@@ -505,7 +505,7 @@ export const backOffice: Textos["backOffice"] = {
     expirou: "Esta invitación expiró.",
     jaUsado: "Esta invitación ya se usó o fue reemplazada por otra.",
     senhaDefinida: (email) =>
-      `Contraseña definida para ${email}. El acceso por inicio de sesión todavía está en construcción: la cuenta ya existe, pero no hay pantalla de entrada con correo y contraseña en esta versión.`,
+      `Contraseña definida para ${email}. Inicia sesión con este correo y la contraseña que acabas de crear.`,
     convidado: "Lo invitaron a administrar",
     comEmail: "con el correo",
     campoSenha: "Contraseña",

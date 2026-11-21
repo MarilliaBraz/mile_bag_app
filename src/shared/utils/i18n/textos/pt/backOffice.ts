@@ -501,7 +501,7 @@ export const backOffice = {
     expirou: "Este convite expirou.",
     jaUsado: "Este convite já foi usado ou substituído por outro.",
     senhaDefinida: (email: string) =>
-      `Senha definida para ${email}. O acesso por login ainda está em construção: a conta já existe, mas não há tela de entrada com e-mail e senha nesta versão.`,
+      `Senha definida para ${email}. Entre com este e-mail e a senha que você acabou de criar.`,
     convidado: "Você foi convidado a administrar",
     comEmail: "com o e-mail",
     campoSenha: "Senha",

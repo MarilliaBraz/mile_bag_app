@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ApiError } from "../../../../shared/services/ApiError";
 import { mensagemDeErro } from "../../../../shared/utils/formatar";
 import { useRecurso } from "../../../../shared/hooks/useRecurso";
@@ -14,8 +14,8 @@ const TAMANHO_MINIMO_SENHA = 8;
 /**
  * Ativação do convite do primeiro administrador (HU15). Rota pública: o
  * token vem no link do e-mail e é validado antes de mostrar o formulário, para
- * o administrador não digitar uma senha que seria recusada. A API ainda não
- * tem login, então depois de ativar não há para onde entrar - a tela diz isso.
+ * o administrador não digitar uma senha que seria recusada. Depois de ativar,
+ * ele entra pela tela de login com o próprio e-mail como login.
  */
 export function AtivarConviteForm() {
   const { token } = useParams<{ token: string }>();
@@ -72,7 +72,14 @@ export function AtivarConviteForm() {
           </Alerta>
         )}
 
-        {ativado && <Alerta tipo="sucesso">{t.senhaDefinida(convite?.emailDestinatario ?? "")}</Alerta>}
+        {ativado && (
+          <>
+            <Alerta tipo="sucesso">{t.senhaDefinida(convite?.emailDestinatario ?? "")}</Alerta>
+            <Link to="/login" className="botao">
+              {textos.login.entrar}
+            </Link>
+          </>
+        )}
 
         {convite && convite.status === "PENDENTE" && !ativado && (
           <form onSubmit={ativar} className="cartao formulario">

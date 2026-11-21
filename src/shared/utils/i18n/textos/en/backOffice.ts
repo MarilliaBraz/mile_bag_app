@@ -504,7 +504,7 @@ export const backOffice: Textos["backOffice"] = {
     expirou: "This invitation has expired.",
     jaUsado: "This invitation has already been used or replaced by another one.",
     senhaDefinida: (email) =>
-      `Password set for ${email}. Sign-in access is still under construction: the account already exists, but this version has no email and password sign-in screen.`,
+      `Password set for ${email}. Sign in with this email and the password you just created.`,
     convidado: "You were invited to manage",
     comEmail: "with the email",
     campoSenha: "Password",
