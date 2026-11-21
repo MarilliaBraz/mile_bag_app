@@ -7,14 +7,11 @@ import { AvisoJanelaReagendamento } from "../../../../shared/components/AvisoJan
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { Icone, type NomeIcone } from "../../../../shared/components/Icone";
 import { TelaMotorista } from "../../../../shared/components/TelaMotorista";
-import { listarPendentesDeConferencia } from "../../../../shared/services/bdoService";
-import type { BdoResponse } from "../../../../shared/types/bdo";
 import { listarMotivos } from "../../../../shared/services/ocorrenciaService";
 import { marcarViagemEmAndamento } from "../../../../shared/utils/viagemEmAndamento";
 import { EVENTO_BDOS_NOVOS, limparAvisoBdoNovo } from "../../../../shared/hooks/useAvisoBdoNovo";
 import { consultarBdosDisponiveis, consultarPainel } from "../services/painelService";
 import type { BdosDisponiveis, ItemPainel, PainelEntregas as PainelEntregasResposta } from "../types";
-import { FotosParaConferir } from "./FotosParaConferir";
 import { ListaBdosDisponiveis } from "./ListaBdosDisponiveis";
 import { TOM_STATUS_ENTREGA } from "../utils/statusEntrega";
 import { Marca } from "../../../../shared/components/Marca";
@@ -26,13 +23,12 @@ const ROTULO_MARCO: Record<NonNullable<ItemPainel["marcoMaisRecente"]>, { icone:
 
 /**
  * Tela inicial do motorista (HU19, US1) - painel de entregas pendentes +
- * BDOs disponíveis para assumir. Precede a navegação para captura de BDO
- * (HU01) e para o detalhe de cada entrega.
+ * BDOs disponíveis para assumir (os BDOs entram pelo e-mail, pela companhia
+ * aérea ou pela empresa). Precede a navegação para o detalhe de cada entrega.
  */
 export function PainelEntregas() {
   const [painel, setPainel] = useState<PainelEntregasResposta | null>(null);
   const [bdosDisponiveis, setBdosDisponiveis] = useState<BdosDisponiveis | null>(null);
-  const [fotosParaConferir, setFotosParaConferir] = useState<BdoResponse[]>([]);
   const [erro, setErro] = useState<string | null>(null);
   const t = useTextos().motorista;
   const localizacao = useLocation();
@@ -49,10 +45,6 @@ export function PainelEntregas() {
       if (painelResposta.entregas.some((item) => item.status === "EM_ANDAMENTO")) {
         marcarViagemEmAndamento(true);
       }
-      // Complemento do painel: uma falha aqui não esconde as entregas.
-      listarPendentesDeConferencia()
-        .then(setFotosParaConferir)
-        .catch(() => undefined);
     } catch (excecao) {
       setErro(excecao instanceof ApiError ? excecao.message : t.painel.falhaAoCarregar);
     }
@@ -138,8 +130,6 @@ export function PainelEntregas() {
               <small>{t.painel.toqueParaVer}</small>
             </span>
           </div>
-
-          <FotosParaConferir bdos={fotosParaConferir} />
 
           <h2>{t.painel.paraEntregar}</h2>
           {painel.entregas.length === 0 ? (

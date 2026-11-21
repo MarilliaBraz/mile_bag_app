@@ -23,7 +23,6 @@ import { TelaPedagios } from "./features/back-office/pedagios";
 import { PlanosLista } from "./features/back-office/planos";
 import { TelaTarifas } from "./features/back-office/tarifas";
 import { AtivarConviteForm, TelaEmpresas, TenantCadastradoConfirmacao } from "./features/back-office/tenant-onboarding";
-import { CapturaBdo } from "./features/motorista/captura-bdo";
 import { RegistrarComprovante } from "./features/motorista/comprovante-entrega";
 import { TelaConta } from "./features/motorista/conta";
 import { TelaEmergencia } from "./features/motorista/emergencia";
@@ -87,7 +86,6 @@ export function App() {
             <Route path="/motorista/relatorio" element={<RelatorioQuinzenal />} />
             <Route path="/motorista/registros" element={<RegistrosLocais />} />
             <Route path="/motorista/conta" element={<TelaConta />} />
-            <Route path="/motorista/captura-bdo" element={<CapturaBdo />} />
             <Route path="/conta/senha" element={<TrocarSenha />} />
           </Route>
           <Route

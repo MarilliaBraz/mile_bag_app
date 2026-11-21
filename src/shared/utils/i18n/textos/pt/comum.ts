@@ -41,7 +41,7 @@ export const comum = {
   },
   login: {
     slogan: "A bagagem certa, na porta certa, com comprovante.",
-    destaqueBdo: "BDO pela câmera ou pelo e-mail",
+    destaqueBdo: "BDO pelo e-mail ou colado pela empresa",
     destaqueRota: "Rota e pedágios calculados",
     destaqueComprovante: "Comprovante mesmo sem internet",
     subtitulo: "Gestão de última milha de bagagens",
@@ -132,7 +132,6 @@ export const comum = {
   menu: {
     menuMotorista: "Menu do motorista",
     entregas: "Entregas",
-    capturar: "Capturar",
     relatorio: "Relatório",
     conta: "Conta",
     emergencia: "Emergência",

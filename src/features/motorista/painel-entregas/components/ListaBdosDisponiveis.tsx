@@ -58,10 +58,14 @@ export function ListaBdosDisponiveis({ bdos, aoAutoatribuir }: { bdos: ItemBdoDi
                 <span className="selo selo-info">
                   <Icone nome="email" /> {t.disponiveis.porEmail}
                 </span>
+              ) : bdo.origem === "COMPANHIA_AEREA" ? (
+                <span className="selo selo-info">
+                  <Icone nome="mala" /> {t.disponiveis.porCompanhia}
+                </span>
               ) : (
-                bdo.origem === "COMPANHIA_AEREA" && (
+                bdo.origem === "EMPRESA" && (
                   <span className="selo selo-info">
-                    <Icone nome="mala" /> {t.disponiveis.porCompanhia}
+                    <Icone nome="documento" /> {t.disponiveis.porEmpresa}
                   </span>
                 )
               )}

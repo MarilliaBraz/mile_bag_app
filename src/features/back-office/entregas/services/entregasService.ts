@@ -2,6 +2,7 @@ import { baixarArquivo, requisitar } from "../../../../shared/services/httpClien
 import type { EntregaStatus } from "../../../motorista/painel-entregas/types";
 import type { EntregaGestao, FotoEntrega, HistoricoEntrega } from "../types";
 import { caminhoApi } from "../../../../shared/services/caminhoApi";
+import type { BdoResponse, CamposBdo } from "../../../../shared/types/bdo";
 
 const BASE = "/api/v1/gestao/entregas";
 
@@ -21,3 +22,15 @@ export const listarFotos = (entregaId: string) => requisitar<FotoEntrega[]>(BASE
 
 /** O arquivo de uma foto, baixado com o token (o <img> não manda o cabeçalho de autorização). */
 export const baixarFoto = (entregaId: string, fotoId: string) => baixarArquivo(BASE + caminhoApi`/${entregaId}/fotos/${fotoId}`);
+
+const BDOS = "/api/v1/gestao/bdos";
+
+/** POST /api/v1/gestao/bdos/leitura (V49) - lê o telex colado e devolve os campos para conferir; não grava. */
+export const lerTextoBdo = (texto: string) => requisitar<CamposBdo>(BDOS + "/leitura", { metodo: "POST", corpo: { texto } });
+
+/** GET /api/v1/gestao/bdos?numero= (V49) - BDOs já registrados com o número, para avisar antes de repetir. */
+export const buscarBdosPorNumero = (numero: string) => requisitar<BdoResponse[]>(BDOS + caminhoApi`?numero=${numero}`);
+
+/** POST /api/v1/gestao/bdos (V49) - a empresa inclui o BDO; ele entra nos disponíveis e os motoristas são avisados. */
+export const incluirBdo = (campos: CamposBdo, textoOriginal: string | null) =>
+  requisitar<BdoResponse>(BDOS, { metodo: "POST", corpo: { campos, textoOriginal } });

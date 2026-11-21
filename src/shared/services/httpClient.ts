@@ -100,7 +100,7 @@ export async function requisitar<T>(caminho: string, opcoes: { metodo?: string; 
   return tratarResposta<T>(resposta);
 }
 
-/** multipart/form-data - usado por captura de BDO (HU01), comprovante de entrega (HU06) e identidade visual (HU13, PUT). */
+/** multipart/form-data - usado pela retirada (V48), comprovante de entrega (HU06) e identidade visual (HU13, PUT). */
 export async function enviarFormulario<T>(caminho: string, dados: FormData, metodo = "POST"): Promise<T> {
   const resposta = await fetch(`${BASE_URL}${caminho}`, {
     method: metodo,

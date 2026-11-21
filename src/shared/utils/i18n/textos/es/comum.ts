@@ -43,7 +43,7 @@ export const comum: TextosComuns = {
   },
   login: {
     slogan: "El equipaje correcto, en la puerta correcta, con comprobante.",
-    destaqueBdo: "BDO por la cámara o por correo electrónico",
+    destaqueBdo: "BDO por correo o pegado por la empresa",
     destaqueRota: "Ruta y peajes calculados",
     destaqueComprovante: "Comprobante incluso sin internet",
     subtitulo: "Gestión de última milla de equipajes",
@@ -134,7 +134,6 @@ export const comum: TextosComuns = {
   menu: {
     menuMotorista: "Menú del conductor",
     entregas: "Entregas",
-    capturar: "Capturar",
     relatorio: "Informe",
     conta: "Cuenta",
     emergencia: "Emergencia",

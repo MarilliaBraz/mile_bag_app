@@ -43,7 +43,7 @@ export const comum: TextosComuns = {
   },
   login: {
     slogan: "The right bag, at the right door, with proof of delivery.",
-    destaqueBdo: "BDO by camera or by email",
+    destaqueBdo: "BDO by email or pasted by the company",
     destaqueRota: "Route and tolls calculated",
     destaqueComprovante: "Proof of delivery even offline",
     subtitulo: "Last-mile baggage delivery management",
@@ -134,7 +134,6 @@ export const comum: TextosComuns = {
   menu: {
     menuMotorista: "Driver menu",
     entregas: "Deliveries",
-    capturar: "Capture",
     relatorio: "Report",
     conta: "Account",
     emergencia: "Emergency",
