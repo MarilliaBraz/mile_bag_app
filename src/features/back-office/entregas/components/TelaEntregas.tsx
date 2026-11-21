@@ -118,6 +118,7 @@ export function TelaEntregas() {
                           <Icone nome="historico" /> <span className="codigo">{entrega.bdoNumero ?? t.semNumero}</span>
                         </button>
                         {entrega.bagagemCarona && <span className="selo selo-info">{t.carona}</span>}
+                        {entrega.corrigida && <span className="selo selo-aviso">{t.corrigida}</span>}
                       </td>
                       <td>{entrega.passageiroNome ?? "—"}</td>
                       <td>{entrega.motoristaNome ?? <span className="texto-apoio">{t.semMotorista}</span>}</td>
@@ -234,13 +235,21 @@ function HistoricoMala({ entregaId }: { entregaId: string }) {
 function descricaoDoEvento(
   tipo: string,
   descricao: string,
-  t: { origens: Record<string, string>; recebidoPor: (quem: string) => string; enviadaPara: (email: string) => string },
+  t: {
+    origens: Record<string, string>;
+    recebidoPor: (quem: string) => string;
+    enviadaPara: (email: string) => string;
+    etapasCorrecao: Record<string, string>;
+  },
 ): string {
   if (tipo === "BDO_RECEBIDO") {
     return t.origens[descricao] ?? descricao;
   }
   if (tipo === "ENTREGUE") {
     return t.recebidoPor(descricao);
+  }
+  if (tipo === "CORRECAO") {
+    return t.etapasCorrecao[descricao] ?? descricao;
   }
   if (tipo === "SEGUNDA_VIA_ENVIADA") {
     return t.enviadaPara(descricao);

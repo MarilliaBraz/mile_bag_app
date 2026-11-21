@@ -5,7 +5,7 @@ import type { MotivoOcorrencia, OcorrenciaResponse } from "../types/ocorrencia";
 import { caminhoApi } from "./caminhoApi";
 
 /** Listas do cadastro de motivos que o motorista lê no campo, inclusive sem conexão. */
-export type FinalidadeLidaPeloMotorista = "OCORRENCIA" | "RECEBEDOR";
+export type FinalidadeLidaPeloMotorista = "OCORRENCIA" | "RECEBEDOR" | "CORRECAO";
 
 // A chave da ocorrência continua a de antes, para não perder a cópia já guardada nos aparelhos.
 const chaveCacheMotivos = (finalidade: FinalidadeLidaPeloMotorista) =>

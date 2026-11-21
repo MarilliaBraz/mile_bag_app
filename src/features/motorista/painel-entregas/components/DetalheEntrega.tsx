@@ -1,3 +1,4 @@
+import { formatarHora } from "../../../../shared/utils/formatar";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ApiError } from "../../../../shared/services/ApiError";
@@ -61,6 +62,8 @@ export function DetalheEntrega() {
     !entrega.temTrajetoIniciado &&
     !temRetiradaLocal(entrega.entregaId);
   const status = entrega ? { texto: t.status[entrega.status], tom: TOM_STATUS_ENTREGA[entrega.status] } : null;
+  // V51: retirada registrada e viagem ainda não iniciada - dá para corrigir a retirada (com motivo).
+  const podeCorrigirRetirada = !!entrega && entrega.status === "ATRIBUIDA" && !!entrega.retiradaRegistrada && !entrega.temTrajetoIniciado;
 
   return (
     <TelaMotorista titulo={entrega?.bdoNumero ?? t.detalhe.titulo} voltarPara="/motorista" rotuloVoltar={t.geral.voltarPainel}>
@@ -108,6 +111,16 @@ export function DetalheEntrega() {
               <Icone nome="rota" /> {entrega.temTrajetoIniciado ? t.detalhe.verViagem : t.detalhe.rota}
             </Link>
             <BotaoLigar telefone={entrega.telefone} />
+            {podeCorrigirRetirada && (
+              <Link to={`/motorista/entregas/${entrega.entregaId}/retirada/corrigir`} viewTransition className="botao fantasma largo">
+                <Icone nome="ferramenta" /> {t.detalhe.corrigirRetirada}
+              </Link>
+            )}
+            {entrega.corrigivelAte && (
+              <Link to={`/motorista/entregas/${entrega.entregaId}/corrigir`} viewTransition className="botao secundario largo">
+                <Icone nome="ferramenta" /> {t.detalhe.corrigirEntrega(formatarHora(entrega.corrigivelAte))}
+              </Link>
+            )}
             {!encerrada && (
               <>
                 <Link to={`/motorista/entregas/${entrega.entregaId}/comprovante`} viewTransition className="botao grande sucesso largo">

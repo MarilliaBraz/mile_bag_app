@@ -1,3 +1,4 @@
+import { CorrigirEntrega, CorrigirRetirada } from "./features/motorista/correcao";
 import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { TelaAcompanhamento } from "./features/acompanhamento";
@@ -83,6 +84,8 @@ export function App() {
             <Route path="/motorista/entregas/:entregaId/ocorrencia" element={<RegistrarOcorrencia />} />
             <Route path="/motorista/entregas/:entregaId/dispensar" element={<DispensarEntrega />} />
             <Route path="/motorista/entregas/:entregaId/retirada" element={<RetirarBagagem />} />
+            <Route path="/motorista/entregas/:entregaId/retirada/corrigir" element={<CorrigirRetirada />} />
+            <Route path="/motorista/entregas/:entregaId/corrigir" element={<CorrigirEntrega />} />
             <Route path="/motorista/relatorio" element={<RelatorioQuinzenal />} />
             <Route path="/motorista/registros" element={<RegistrosLocais />} />
             <Route path="/motorista/conta" element={<TelaConta />} />

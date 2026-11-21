@@ -33,6 +33,16 @@ export const comum: TextosComuns = {
     falhaEnviar: "No fue posible enviar el correo.",
     privacidade: "El PDF tiene datos personales del pasajero: envíelo solo a quien lo va a imprimir.",
   },
+  correcao: {
+    titulo: (etapa: string) => `Corregir: ${etapa}`,
+    explicacao: "La etapa ya fue concluida. Para cambiarla, indique el motivo: la corrección queda registrada para auditoría.",
+    motivo: "Motivo de la corrección",
+    escolhaMotivo: "Elija el motivo",
+    complemento: "Detalle (opcional)",
+    liberar: "Liberar para corregir",
+    semMotivos: "No fue posible cargar los motivos de corrección. Conéctese a internet e intente de nuevo.",
+    corrigir: "Corregir (pide motivo)",
+  },
   formato: {
     janelaMesmoDia: (dia, inicio, fim) => `${dia}, de ${inicio} a ${fim}`,
     janelaDiasDiferentes: (diaInicio, inicio, diaFim, fim) => `${diaInicio} ${inicio} hasta ${diaFim} ${fim}`,

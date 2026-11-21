@@ -13,6 +13,7 @@ import { EVENTO_BDOS_NOVOS, limparAvisoBdoNovo } from "../../../../shared/hooks/
 import { consultarBdosDisponiveis, consultarPainel } from "../services/painelService";
 import type { BdosDisponiveis, ItemPainel, PainelEntregas as PainelEntregasResposta } from "../types";
 import { ListaBdosDisponiveis } from "./ListaBdosDisponiveis";
+import { EntregasCorrigiveis } from "../../correcao";
 import { TOM_STATUS_ENTREGA } from "../utils/statusEntrega";
 import { Marca } from "../../../../shared/components/Marca";
 
@@ -57,6 +58,8 @@ export function PainelEntregas() {
     listarMotivos().catch(() => undefined);
     // V48: a lista de quem pode assinar também fica no aparelho, para o comprovante sem internet.
     listarMotivos("RECEBEDOR").catch(() => undefined);
+    // V51: e os motivos de correção, para voltar a uma etapa mesmo sem internet.
+    listarMotivos("CORRECAO").catch(() => undefined);
   }, [carregar]);
 
   // HU32: abrir o painel resolve o aviso de bagagem nova; com o painel aberto, um BDO novo entra na lista na hora.
@@ -130,6 +133,8 @@ export function PainelEntregas() {
               <small>{t.painel.toqueParaVer}</small>
             </span>
           </div>
+
+          <EntregasCorrigiveis />
 
           <h2>{t.painel.paraEntregar}</h2>
           {painel.entregas.length === 0 ? (
