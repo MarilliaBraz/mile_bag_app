@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { mensagemDeErro } from "../../../../shared/utils/formatar";
+import { formatarDataHora, mensagemDeErro } from "../../../../shared/utils/formatar";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { Alerta } from "../../../../shared/components/Alerta";
 import { ConfirmarAcao } from "../../../../shared/components/ConfirmarAcao";
-import type { CamposBdo } from "../../../../shared/types/bdo";
+import type { BdoResponse, CamposBdo } from "../../../../shared/types/bdo";
 import { buscarBdosPorNumero, incluirBdo, lerTextoBdo } from "../services/entregasService";
 
 const TAMANHO_MAXIMO_TEXTO = 20000;
@@ -30,6 +30,9 @@ const VAZIO: CamposBdo = {
 };
 
 type CampoTexto = Exclude<keyof CamposBdo, "quantidadeMalas">;
+
+/** Como o servidor compara o número: sem diferenciar maiúsculas nem espaços. */
+const normalizarNumero = (numero: string | null) => (numero ?? "").replace(/\s+/g, "").toUpperCase();
 
 /**
  * Inclusão do BDO pela empresa (V49). O caminho mais curto é colar o texto do telex (o mesmo que chega por e-mail):
@@ -66,12 +69,30 @@ export function IncluirBdo({
   const [repetido, setRepetido] = useState(false);
   // O estado "enviando" só chega no próximo render: a ref segura um Enter repetido no meio.
   const emVoo = useRef(false);
+  // Número repetido: conferido assim que o número é conhecido (texto lido ou campo deixado), não só ao incluir.
+  const [repetidos, setRepetidos] = useState<{ numero: string; bdos: BdoResponse[] } | null>(null);
+  const numeroAtual = normalizarNumero(campos.numero);
+  const repetidosDoNumero = repetidos && repetidos.numero === numeroAtual && repetidos.bdos.length > 0 ? repetidos.bdos : null;
   const preenchido = texto.trim() !== "" || Object.values(campos).some((valor) => valor !== null && valor !== "");
   const ocupado = lendo || enviando;
 
   useEffect(() => {
     aoMudarEstado({ preenchido, ocupado });
   }, [preenchido, ocupado, aoMudarEstado]);
+
+  async function verificarNumero(numero: string | null) {
+    const normalizado = normalizarNumero(numero);
+    if (!normalizado) {
+      setRepetidos(null);
+      return;
+    }
+    try {
+      setRepetidos({ numero: normalizado, bdos: await buscarBdosPorNumero(normalizado) });
+    } catch {
+      // O alerta é uma ajuda: sem ele, a inclusão ainda confere o número antes de gravar.
+      setRepetidos(null);
+    }
+  }
 
   async function ler() {
     setLendo(true);
@@ -81,6 +102,9 @@ export function IncluirBdo({
       const lidos = await lerTextoBdo(texto);
       setCampos((atuais) => mesclar(atuais, lidos));
       setAviso(lidos.numero || lidos.passageiroNome || lidos.enderecoEntrega ? t.lidoConfira : t.nadaLido);
+      if (lidos.numero) {
+        void verificarNumero(lidos.numero);
+      }
     } catch (excecao) {
       setErro(mensagemDeErro(excecao, t.falhaLer));
     } finally {
@@ -103,6 +127,7 @@ export function IncluirBdo({
     setEnviando(true);
     try {
       const existentes = await buscarBdosPorNumero(numero);
+      setRepetidos({ numero: normalizarNumero(numero), bdos: existentes });
       if (existentes.length > 0) {
         setRepetido(true);
         return;
@@ -139,7 +164,11 @@ export function IncluirBdo({
 
   const alterar = (id: CampoTexto, valor: string) => setCampos((atual) => ({ ...atual, [id]: valor || null }));
 
-  function campo(id: CampoTexto, rotulo: string, extra: { obrigatorio?: boolean; maximo?: number; tipo?: string } = {}) {
+  function campo(
+    id: CampoTexto,
+    rotulo: string,
+    extra: { obrigatorio?: boolean; maximo?: number; tipo?: string; aoSair?: () => void } = {},
+  ) {
     return (
       <div>
         <label htmlFor={`bdo-${id}`}>
@@ -153,6 +182,7 @@ export function IncluirBdo({
           maxLength={extra.maximo}
           value={campos[id] ?? ""}
           onChange={(evento) => alterar(id, evento.target.value)}
+          onBlur={extra.aoSair}
         />
       </div>
     );
@@ -190,9 +220,25 @@ export function IncluirBdo({
         {/* Enquanto o texto é lido, os campos ficam travados: a resposta chegaria por cima do que fosse digitado. */}
         <fieldset className="pilha sem-moldura" disabled={lendo}>
           <div className="form-linha">
-            {campo("numero", t.numero, { obrigatorio: true, maximo: 30 })}
+            {campo("numero", t.numero, { obrigatorio: true, maximo: 30, aoSair: () => void verificarNumero(campos.numero) })}
             {campo("companhiaAerea", t.companhia, { maximo: 100 })}
           </div>
+          {repetidosDoNumero && (
+            <Alerta tipo="aviso">
+              <strong>{t.repetidoAlerta(campos.numero?.trim() ?? "", repetidosDoNumero.length)}</strong>
+              <ul className="m-0">
+                {repetidosDoNumero.map((bdo) => (
+                  <li key={bdo.id}>
+                    {t.repetidoItem(
+                      bdo.campos.passageiroNome ?? "—",
+                      formatarDataHora(bdo.dataCaptura),
+                      textos.backOffice.entregas.origens[bdo.origem] ?? bdo.origem,
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </Alerta>
+          )}
           <div className="form-linha">{campo("passageiroNome", t.passageiro, { obrigatorio: true, maximo: 200 })}</div>
           <div className="form-linha">{campo("enderecoEntrega", t.endereco, { obrigatorio: true, maximo: 300 })}</div>
           <div className="form-linha">

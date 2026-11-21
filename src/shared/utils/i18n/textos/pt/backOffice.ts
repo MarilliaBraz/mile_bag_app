@@ -546,6 +546,11 @@ export const backOffice = {
       incluindo: "Incluindo…",
       falhaIncluir: "Não foi possível incluir o BDO.",
       incluido: (numero: string) => `BDO ${numero} incluído. Ele já está disponível para os motoristas.`,
+      repetidoAlerta: (numero: string, quantos: number) =>
+        quantos === 1
+          ? `Já existe um BDO cadastrado com o número ${numero}.`
+          : `Já existem ${quantos} BDOs cadastrados com o número ${numero}.`,
+      repetidoItem: (passageiro: string, recebidoEm: string, origem: string) => `${passageiro} · recebido em ${recebidoEm} ${origem}`,
       repetidoTitulo: (numero: string) => `Já existe um BDO com o número ${numero}`,
       repetidoDescricao: "Confira se não é o mesmo BDO. Incluir de novo cria uma segunda entrega para a mesma bagagem.",
       numeroObrigatorio: "Informe o número do BDO.",
