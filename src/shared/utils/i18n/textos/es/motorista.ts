@@ -16,6 +16,7 @@ export const motorista: Textos["motorista"] = {
     EM_ANDAMENTO: "En curso",
     ENCERRADA_COM_SUCESSO: "Entregada",
     REABERTA: "Nuevo intento",
+    CANCELADA: "Cancelada",
   },
   painel: {
     titulo: "Mis entregas",

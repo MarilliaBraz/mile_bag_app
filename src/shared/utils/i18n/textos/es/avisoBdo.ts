@@ -7,6 +7,8 @@ export const avisoBdo: Textos["avisoBdo"] = {
   bdo: (numero) => `BDO ${numero}`,
   ver: "Ver",
   fechar: "Cerrar",
+  /** V47: a empresa cancelou uma entrega que estava com o motorista. */
+  cancelada: "Entrega cancelada por la empresa",
   notificacoes: {
     titulo: "Avisos de equipaje nuevo con la app cerrada",
     explicacao: "Con la app abierta, el aviso sonoro ya funciona. Actívelo para recibir el aviso también con la app cerrada.",

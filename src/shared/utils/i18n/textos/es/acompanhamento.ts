@@ -15,10 +15,12 @@ export const acompanhamento: Textos["acompanhamento"] = {
     ENTREGUE: "Entregado",
     NAO_ENTREGUE: "No fue posible entregar en este intento",
     TRANSFERIDA: "Pasada a otro conductor",
+    ENCERRADO: "Seguimiento finalizado",
   },
   entregueTexto: "Su equipaje fue entregado. ¡Gracias!",
   naoEntregueTexto: "Se acordará con usted un nuevo intento.",
   transferidaTexto: "Tu equipaje fue pasado a otro conductor. Recibirás un nuevo enlace cuando salga a entregarlo.",
+  encerradoTexto: "Para información sobre tu equipaje, comunícate con la empresa responsable de la entrega.",
   reagendada: (janela) => `Nuevo intento: ${janela}.`,
   atualizadoAs: (hora) => `Posición actualizada a las ${hora}`,
   semAtualizacao: (minutos) =>

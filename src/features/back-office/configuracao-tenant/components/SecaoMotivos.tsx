@@ -9,15 +9,20 @@ import { Icone } from "../../../../shared/components/Icone";
 import { Painel } from "../../../../shared/components/Pagina";
 
 /**
- * Motivos de uma finalidade (HU11, FR-009): de não entrega (ocorrência) ou de
- * dispensa da entrega pelo motorista (V46). Nunca se apaga, só se desativa - os
+ * Motivos de uma finalidade (HU11, FR-009): de não entrega (ocorrência), de
+ * dispensa da entrega pelo motorista (V46) ou de cancelamento do BDO pela empresa (V47). Nunca se apaga, só se desativa - os
  * registros antigos continuam apontando para o motivo. A API só lista os
  * ativos, então um motivo desativado some daqui e não há como reativá-lo.
  * Reagendamento só existe em motivo de ocorrência.
  */
 export function SecaoMotivos({ finalidade }: { finalidade: FinalidadeMotivo }) {
   const t = useTextos().backOffice.configuracoes;
-  const deDispensa = finalidade === "DISPENSA";
+  const deOcorrencia = finalidade === "OCORRENCIA";
+  const textos = {
+    OCORRENCIA: { titulo: t.motivosTitulo, descricao: t.motivosDescricao, nenhum: t.nenhumMotivo },
+    DISPENSA: { titulo: t.motivosDispensaTitulo, descricao: t.motivosDispensaDescricao, nenhum: t.nenhumMotivoDispensa },
+    CANCELAMENTO: { titulo: t.motivosCancelamentoTitulo, descricao: t.motivosCancelamentoDescricao, nenhum: t.nenhumMotivoCancelamento },
+  }[finalidade];
   const { dados, erro, recarregar } = useRecurso(() => listarMotivos(finalidade), t.falhaMotivos);
   const [descricao, setDescricao] = useState("");
   const [reagendamento, setReagendamento] = useState(false);
@@ -34,12 +39,9 @@ export function SecaoMotivos({ finalidade }: { finalidade: FinalidadeMotivo }) {
   }
 
   return (
-    <Painel
-      titulo={deDispensa ? t.motivosDispensaTitulo : t.motivosTitulo}
-      descricao={deDispensa ? t.motivosDispensaDescricao : t.motivosDescricao}
-    >
+    <Painel titulo={textos.titulo} descricao={textos.descricao}>
       {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
-      {dados && dados.length === 0 && <p className="texto-apoio">{deDispensa ? t.nenhumMotivoDispensa : t.nenhumMotivo}</p>}
+      {dados && dados.length === 0 && <p className="texto-apoio">{textos.nenhum}</p>}
       <ul className="lista-simples">
         {dados?.map((motivo) => (
           <li key={motivo.id}>
@@ -67,7 +69,7 @@ export function SecaoMotivos({ finalidade }: { finalidade: FinalidadeMotivo }) {
         onSubmit={(evento) => {
           evento.preventDefault();
           executar(async () => {
-            await criarMotivo(descricao.trim(), !deDispensa && reagendamento, finalidade);
+            await criarMotivo(descricao.trim(), deOcorrencia && reagendamento, finalidade);
             setDescricao("");
             setReagendamento(false);
           }, t.falhaCriarMotivo);
@@ -84,7 +86,7 @@ export function SecaoMotivos({ finalidade }: { finalidade: FinalidadeMotivo }) {
             onChange={(e) => setDescricao(e.target.value)}
           />
         </div>
-        {!deDispensa && (
+        {deOcorrencia && (
           <label className="interruptor">
             <input type="checkbox" checked={reagendamento} onChange={(e) => setReagendamento(e.target.checked)} />
             <span>{t.reagendamentoExplicacao}</span>

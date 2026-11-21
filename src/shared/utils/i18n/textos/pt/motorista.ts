@@ -14,6 +14,7 @@ export const motorista = {
     EM_ANDAMENTO: "Em andamento",
     ENCERRADA_COM_SUCESSO: "Entregue",
     REABERTA: "Nova tentativa",
+    CANCELADA: "Cancelada",
   },
   painel: {
     titulo: "Minhas entregas",

@@ -9,7 +9,7 @@ import { ApiError } from "../../../shared/services/ApiError";
 import { formatarHora, formatarJanela } from "../../../shared/utils/formatar";
 import { useTextos } from "../../../shared/utils/i18n/idioma";
 import { consultarAcompanhamento } from "../services/acompanhamentoService";
-import type { Acompanhamento } from "../types";
+import { ETAPAS_ENCERRADAS, type Acompanhamento } from "../types";
 import { EnquadrarPontos } from "./EnquadrarPontos";
 
 const INTERVALO_MS = 15_000;
@@ -44,7 +44,7 @@ export function TelaAcompanhamento() {
     }
   }, [codigo]);
 
-  const encerrada = dados?.etapa === "ENTREGUE" || dados?.etapa === "NAO_ENTREGUE" || dados?.etapa === "TRANSFERIDA";
+  const encerrada = dados !== null && ETAPAS_ENCERRADAS.includes(dados.etapa);
   useIntervaloEmPrimeiroPlano(carregar, INTERVALO_MS, !invalido && !encerrada);
 
   return (
@@ -74,7 +74,7 @@ export function TelaAcompanhamento() {
 function Conteudo({ dados, consultadoEm, falhou }: { dados: Acompanhamento; consultadoEm: number; falhou: boolean }) {
   const t = useTextos().acompanhamento;
   const { empresa, etapa, posicao, destino } = dados;
-  const encerrada = etapa === "ENTREGUE" || etapa === "NAO_ENTREGUE" || etapa === "TRANSFERIDA";
+  const encerrada = ETAPAS_ENCERRADAS.includes(etapa);
   const marcadores: MarcadorMapa[] = [
     ...(posicao ? [{ posicao, rotulo: t.motorista, destaque: true }] : []),
     ...(destino ? [{ posicao: destino, rotulo: t.destino }] : []),
@@ -103,6 +103,7 @@ function Conteudo({ dados, consultadoEm, falhou }: { dados: Acompanhamento; cons
           <p>{dados.janelaReagendamento ? t.reagendada(formatarJanela(dados.janelaReagendamento)) : t.naoEntregueTexto}</p>
         )}
         {etapa === "TRANSFERIDA" && <p>{t.transferidaTexto}</p>}
+        {etapa === "ENCERRADO" && <p>{t.encerradoTexto}</p>}
         {!encerrada && (
           <>
             <p className="texto-apoio">{t.saiuAs(formatarHora(dados.iniciadaEm))}</p>

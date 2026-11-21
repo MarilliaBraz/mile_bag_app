@@ -2,7 +2,8 @@ import type { JanelaReagendamento } from "../../../../shared/utils/formatar";
 import type { PendenciaContatoBdo } from "../../../../shared/components/AvisoContatoIncompleto";
 
 /** Espelha com.marillia.milebag.business.entrega.model.EntregaStatus (mile_bag_api). */
-export type EntregaStatus = "AGUARDANDO_ATRIBUICAO" | "ATRIBUIDA" | "EM_ANDAMENTO" | "ENCERRADA_COM_SUCESSO" | "REABERTA";
+/** CANCELADA (V47): a empresa cancelou o BDO - definitiva. */
+export type EntregaStatus = "AGUARDANDO_ATRIBUICAO" | "ATRIBUIDA" | "EM_ANDAMENTO" | "ENCERRADA_COM_SUCESSO" | "REABERTA" | "CANCELADA";
 
 /** Espelha com.marillia.milebag.business.bdo.model.BdoOrigem. */
 export type BdoOrigem = "FOTO_MANUAL" | "EMAIL_AUTOMATICO" | "COMPANHIA_AEREA";
