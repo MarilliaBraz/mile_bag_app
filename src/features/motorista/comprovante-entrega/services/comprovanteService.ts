@@ -2,11 +2,18 @@ import { enviarFormulario } from "../../../../shared/services/httpClient";
 import type { ComprovanteEntregaResponse, DadosComprovante } from "../types";
 import { caminhoApi } from "../../../../shared/services/caminhoApi";
 
-/** POST /api/v1/entregas/{entregaId}/comprovante (HU06) - multipart, porque carrega a foto do documento assinado. */
+/** POST /api/v1/entregas/{entregaId}/comprovante (HU06; V48: foto na porta, quem assinou e avarias) - multipart, por causa das fotos. */
 export function registrarComprovante(entregaId: string, dados: DadosComprovante): Promise<ComprovanteEntregaResponse> {
   const formulario = new FormData();
   formulario.append("foto", dados.foto);
   formulario.append("identificacaoRecebedor", dados.identificacaoRecebedor);
+  formulario.append("fotoPorta", dados.fotoPorta);
+  formulario.append("tipoRecebedorId", dados.tipoRecebedorId);
+  formulario.append("nomeRecebedor", dados.nomeRecebedor);
+  dados.avarias.forEach((avaria) => formulario.append("avarias", avaria));
+  if (dados.observacaoAvaria) {
+    formulario.append("observacaoAvaria", dados.observacaoAvaria);
+  }
   formulario.append("dataHora", dados.dataHora);
   formulario.append("idLocal", dados.idLocal);
   if (dados.posicao) {

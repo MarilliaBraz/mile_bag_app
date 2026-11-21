@@ -4,6 +4,7 @@ import { ApiError } from "../../../../shared/services/ApiError";
 import { TelaMotorista } from "../../../../shared/components/TelaMotorista";
 import { Alerta, Carregando } from "../../../../shared/components/Alerta";
 import { ConfirmarAcao } from "../../../../shared/components/ConfirmarAcao";
+import { limparRetiradaLocal } from "../../../../shared/utils/retiradaLocal";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { dispensarEntrega, listarMotivosDispensa } from "../../../../shared/services/dispensaService";
 import type { MotivoOcorrencia } from "../../../../shared/types/ocorrencia";
@@ -55,6 +56,8 @@ export function DispensarEntrega() {
     setErro(null);
     try {
       await dispensarEntrega(entregaId, motivoId || null, complemento.trim() || null);
+      // V48: a retirada desta tentativa deixa de valer; se a entrega voltar, retira-se de novo.
+      limparRetiradaLocal(entregaId);
       navegar("/motorista", { replace: true });
     } catch (excecao) {
       setErro(excecao instanceof ApiError ? excecao.message : t.falhaDispensar);

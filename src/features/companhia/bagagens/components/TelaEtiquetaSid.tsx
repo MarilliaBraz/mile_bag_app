@@ -4,7 +4,7 @@ import { Alerta, Carregando } from "../../../../shared/components/Alerta";
 import { Icone } from "../../../../shared/components/Icone";
 import { formatarDataHora, mensagemDeErro } from "../../../../shared/utils/formatar";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
-import { useUrlDoArquivo } from "../hooks/useUrlDoArquivo";
+import { useUrlDoArquivo } from "../../../../shared/hooks/useUrlDoArquivo";
 import { baixarQr, buscarBagagem } from "../services/bagagensService";
 import type { BagagemEncontrada, DescricaoBagagem } from "../types";
 

@@ -1,5 +1,5 @@
-/** Espelha FinalidadeMotivo: ocorrência (não entrega), dispensa pelo motorista (V46) ou cancelamento do BDO pela empresa (V47). */
-export type FinalidadeMotivo = "OCORRENCIA" | "DISPENSA" | "CANCELAMENTO";
+/** Espelha FinalidadeMotivo: ocorrência (não entrega), dispensa pelo motorista (V46) ou cancelamento do BDO pela empresa (V47) ou quem pode assinar o recebimento (V48). */
+export type FinalidadeMotivo = "OCORRENCIA" | "DISPENSA" | "CANCELAMENTO" | "RECEBEDOR";
 
 /** Espelha MotivoOcorrenciaResponse - o GET só devolve os motivos ativos da finalidade pedida. */
 export type MotivoOcorrencia = { id: string; descricao: string; reagendamento: boolean; finalidade: FinalidadeMotivo };

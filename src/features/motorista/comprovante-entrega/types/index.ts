@@ -9,7 +9,15 @@ export type ComprovanteEntregaResponse = {
 };
 
 export type DadosComprovante = {
+  /** Foto do BDO assinado. */
   foto: File;
+  /** V48: foto da bagagem na porta, quem assinou (lista da empresa) e o nome, fotos de avaria. */
+  fotoPorta: File;
+  tipoRecebedorId: string;
+  nomeRecebedor: string;
+  avarias: File[];
+  observacaoAvaria: string | null;
+  /** Texto antigo ("Tipo - Nome"), ainda enviado para versões da API anteriores aos campos novos. */
   identificacaoRecebedor: string;
   dataHora: string;
   posicao: Coordenada | null;

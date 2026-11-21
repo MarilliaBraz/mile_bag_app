@@ -29,6 +29,7 @@ import { TelaConta } from "./features/motorista/conta";
 import { TelaEmergencia } from "./features/motorista/emergencia";
 import { RegistrarOcorrencia } from "./features/motorista/ocorrencia";
 import { DispensarEntrega } from "./features/motorista/dispensa";
+import { RetirarBagagem } from "./features/motorista/retirada";
 import { RegistrosLocais } from "./features/motorista/offline-sync";
 import { DetalheEntrega, PainelEntregas } from "./features/motorista/painel-entregas";
 import { RelatorioQuinzenal } from "./features/motorista/relatorio-quinzenal";
@@ -82,6 +83,7 @@ export function App() {
             <Route path="/motorista/entregas/:entregaId/comprovante" element={<RegistrarComprovante />} />
             <Route path="/motorista/entregas/:entregaId/ocorrencia" element={<RegistrarOcorrencia />} />
             <Route path="/motorista/entregas/:entregaId/dispensar" element={<DispensarEntrega />} />
+            <Route path="/motorista/entregas/:entregaId/retirada" element={<RetirarBagagem />} />
             <Route path="/motorista/relatorio" element={<RelatorioQuinzenal />} />
             <Route path="/motorista/registros" element={<RegistrosLocais />} />
             <Route path="/motorista/conta" element={<TelaConta />} />

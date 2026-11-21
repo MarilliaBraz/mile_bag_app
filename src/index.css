@@ -1030,6 +1030,47 @@ button.perigo-contorno {
   border: 1px solid var(--borda-suave);
 }
 
+/* Itens 4 e 5: miniaturas das fotos (avarias no app, fotos da entrega no back-office). */
+.fotos-avaria {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fotos-avaria li {
+  position: relative;
+}
+
+.fotos-avaria img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--raio);
+  border: 1px solid var(--borda-suave);
+}
+
+.fotos-avaria .botao-icone {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background: var(--superficie);
+}
+
+.fotos-avaria figcaption {
+  font-size: 0.8125rem;
+  color: var(--texto-suave);
+  margin-top: 0.25rem;
+}
+
+/* Etapa que só abre depois da anterior (passo a passo da entrega). */
+.campo-bloqueado {
+  opacity: 0.55;
+}
+
 .visualmente-oculto {
   position: absolute !important;
   width: 1px !important;

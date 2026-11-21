@@ -1,7 +1,7 @@
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { Ajuda } from "../../../../shared/components/Ajuda";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import { Alerta, Carregando } from "../../../../shared/components/Alerta";
 import { ConfirmarAcao } from "../../../../shared/components/ConfirmarAcao";
 import { Icone } from "../../../../shared/components/Icone";
@@ -9,6 +9,8 @@ import { TelaMotorista } from "../../../../shared/components/TelaMotorista";
 import { useRota } from "../hooks/useRota";
 import { AjusteDestinoManual } from "./AjusteDestinoManual";
 import { IniciarViagem } from "./IniciarViagem";
+import { useRetiradaFeita } from "../hooks/useRetiradaFeita";
+import { limparRetiradaLocal } from "../../../../shared/utils/retiradaLocal";
 import { JustificativaDivergencia } from "../../../../shared/components/JustificativaDivergencia";
 import { MapaRotas } from "./MapaRotas";
 import { MarcosProgresso } from "./MarcosProgresso";
@@ -40,6 +42,15 @@ export function TelaRota() {
   // Muda a cada rota própria registrada: recria o formulário vazio.
   const [versaoRotaPropria, setVersaoRotaPropria] = useState(0);
   const [avisoRota, setAvisoRota] = useState<string | null>(null);
+  const retiradaFeita = useRetiradaFeita(entregaId ?? "");
+  // Aviso de quem trouxe até aqui (ex.: retirada registrada ou salva na fila).
+  const avisoChegada = (useLocation().state as { aviso?: string } | null)?.aviso;
+  const viagemIniciada = !!rota.trajeto;
+  useEffect(() => {
+    if (viagemIniciada && entregaId) {
+      limparRetiradaLocal(entregaId);
+    }
+  }, [viagemIniciada, entregaId]);
   const t = useTextos().motorista;
   const aguarde = useTextos().comum.aguarde;
 
@@ -77,6 +88,7 @@ export function TelaRota() {
     >
       {rota.erro && <Alerta tipo="erro">{rota.erro}</Alerta>}
 
+      {avisoChegada && <Alerta tipo="sucesso">{avisoChegada}</Alerta>}
       {rota.pendenteDeSincronizacao && <Alerta tipo="aviso">{t.rota.pendenteSincronizacao}</Alerta>}
 
       {/* Durante a viagem, o que importa primeiro são os marcos e o encerramento - a escolha de rota desce. */}
@@ -152,7 +164,15 @@ export function TelaRota() {
                 aoCancelar={() => setAlternativaParaTrocar(null)}
               />
 
-              {!rota.trajeto && rota.selecao && <IniciarViagem selecao={rota.selecao} aoIniciar={rota.iniciar} ocupado={rota.ocupado} />}
+              {!rota.trajeto && rota.selecao && (
+                <IniciarViagem
+                  entregaId={entregaId}
+                  selecao={rota.selecao}
+                  aoIniciar={rota.iniciar}
+                  ocupado={rota.ocupado}
+                  retiradaFeita={retiradaFeita}
+                />
+              )}
 
               <button type="button" className="secundario bloco mt-3" onClick={() => rota.recalcular()} disabled={rota.ocupado}>
                 <Icone nome="sincronizar" /> {rota.ocupado ? t.rota.recalculando : t.rota.recalcular}
