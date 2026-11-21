@@ -2,7 +2,7 @@ import { useState } from "react";
 import { mensagemDeErro } from "../../../../shared/utils/formatar";
 import { useRecurso } from "../../../../shared/hooks/useRecurso";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
-import { criarCodigoNome, listarCodigoNome, removerCodigoNome } from "../services/configuracoesTenantService";
+import { criarCodigoNome, listarCodigoNome, removerCodigoNome, tornarBasePrincipal } from "../services/configuracoesTenantService";
 import type { CategoriaCodigoNome } from "../types";
 import { Alerta } from "../../../../shared/components/Alerta";
 import { Icone } from "../../../../shared/components/Icone";
@@ -19,6 +19,7 @@ export function SecaoCodigoNome({
   rotuloCodigo: string;
 }) {
   const t = useTextos().backOffice.configuracoes;
+  const deBases = categoria === "bases-aeroportuarias";
   const { dados, erro, recarregar } = useRecurso(() => listarCodigoNome(categoria), t.falhaLista);
   const [codigo, setCodigo] = useState("");
   const [nome, setNome] = useState("");
@@ -35,7 +36,7 @@ export function SecaoCodigoNome({
   }
 
   return (
-    <Painel titulo={titulo}>
+    <Painel titulo={titulo} descricao={deBases ? t.basesDescricao : undefined}>
       {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
       {dados && dados.length === 0 && <p className="texto-apoio">{t.nenhumaCadastrada}</p>}
       <ul className="lista-simples">
@@ -43,7 +44,19 @@ export function SecaoCodigoNome({
           <li key={item.id}>
             <span>
               <span className="selo selo-info codigo">{item.codigoIata}</span> {item.nome}
+              {deBases && item.cidade && <span className="texto-apoio"> · {t.cidadeDaBase(item.cidade)}</span>}
+              {deBases && item.principal && <span className="selo selo-sucesso"> {t.basePrincipal}</span>}
             </span>
+            {deBases && !item.principal && (
+              <button
+                type="button"
+                className="fantasma compacto"
+                aria-label={t.tornarPrincipalRotulo(item.codigoIata)}
+                onClick={() => executar(() => tornarBasePrincipal(item.id), t.falhaTornarPrincipal)}
+              >
+                {t.tornarPrincipal}
+              </button>
+            )}
             <button
               type="button"
               className="fantasma compacto"

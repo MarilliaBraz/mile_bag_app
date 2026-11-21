@@ -352,6 +352,13 @@ export const backOffice: Textos["backOffice"] = {
     titulo: "Configuración",
     descricao: "Cómo opera su empresa. Cada bloque se guarda por separado y los cambios valen para los próximos registros.",
     basesAeroportuarias: "Bases aeroportuarias",
+    basesDescricao:
+      "Los aeropuertos de donde salen las maletas. El viaje se calcula desde el aeropuerto del BDO (o la base principal): la entrega en la ciudad de la base paga el valor fijo; fuera de ella, km de ida y vuelta × valor por km.",
+    basePrincipal: "Principal",
+    tornarPrincipal: "Hacer principal",
+    tornarPrincipalRotulo: (codigo: string) => `Hacer de ${codigo} la base principal`,
+    falhaTornarPrincipal: "No fue posible definir la base principal.",
+    cidadeDaBase: (cidade: string) => `ciudad de la base: ${cidade}`,
     companhiasAtendidas: "Aerolíneas atendidas",
     codigoIata: "Código IATA",
     motivosTitulo: "Motivos de no entrega",
