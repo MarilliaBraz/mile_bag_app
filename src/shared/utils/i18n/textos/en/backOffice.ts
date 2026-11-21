@@ -580,6 +580,7 @@ export const backOffice: Textos["backOffice"] = {
     carregandoHistorico: "Loading history…",
     eventos: {
       BDO_RECEBIDO: "BDO received",
+      SEGUNDA_VIA_ENVIADA: "BDO copy sent by e-mail",
       BAGAGEM_RETIRADA: "Baggage picked up at the airport",
       VIAGEM_INICIADA: "Trip started",
       OCORRENCIA: "Incident (not delivered)",
@@ -594,6 +595,7 @@ export const backOffice: Textos["backOffice"] = {
       COMPANHIA_AEREA: "by the airline",
       EMPRESA: "by the company",
     } as Record<string, string>,
+    enviadaPara: (email: string) => `Sent to ${email}`,
     recebidoPor: (quem: string) => `Received by ${quem}`,
     carona: "Ride-along baggage",
     fotos: "Photos",

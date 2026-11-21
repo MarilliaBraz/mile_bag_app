@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { ApiError } from "../../../../shared/services/ApiError";
 import { Alerta, Carregando } from "../../../../shared/components/Alerta";
 import { AvisoContatoIncompleto } from "../../../../shared/components/AvisoContatoIncompleto";
+import { SegundaViaBdo } from "../../../../shared/components/SegundaViaBdo";
 import { AvisoJanelaReagendamento } from "../../../../shared/components/AvisoJanelaReagendamento";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { Icone } from "../../../../shared/components/Icone";
@@ -12,7 +13,7 @@ import { BotaoLigar } from "../mensageria/components/BotaoLigar";
 import { Conversa } from "../mensageria/components/Conversa";
 import { HistoricoDispensas } from "./HistoricoDispensas";
 import { HistoricoOcorrencias } from "./HistoricoOcorrencias";
-import { consultarDetalhe } from "../services/painelService";
+import { consultarDetalhe, baixarSegundaViaDaEntrega, enviarSegundaViaDaEntrega } from "../services/painelService";
 import type { ItemPainelDetalhe } from "../types";
 import { EtapasEntrega } from "./EtapasEntrega";
 import { temRetiradaLocal } from "../../../../shared/utils/retiradaLocal";
@@ -148,6 +149,15 @@ export function DetalheEntrega() {
             encerrada={encerrada}
             aoAlterar={carregar}
           />
+
+          {/* V50: o papel do BDO pode se perder no caminho - só enquanto a entrega está com o motorista. */}
+          {(entrega.status === "ATRIBUIDA" || entrega.status === "EM_ANDAMENTO") && (
+            <SegundaViaBdo
+              nomeArquivo={`BDO-${entrega.bdoNumero ?? entrega.entregaId.slice(0, 8)}.pdf`}
+              baixar={() => baixarSegundaViaDaEntrega(entrega.entregaId)}
+              enviar={(email) => enviarSegundaViaDaEntrega(entrega.entregaId, email)}
+            />
+          )}
 
           <HistoricoOcorrencias entregaId={entrega.entregaId} />
           <HistoricoDispensas entregaId={entrega.entregaId} />
