@@ -8,11 +8,12 @@ import { ConfirmarAcao } from "../../../../shared/components/ConfirmarAcao";
 import { Gaveta, Pagina, Painel } from "../../../../shared/components/Pagina";
 import type { EntregaStatus } from "../../../motorista/painel-entregas/types";
 import { TOM_STATUS_ENTREGA } from "../../../motorista/painel-entregas/utils/statusEntrega";
-import { consultarHistorico, listarEntregas } from "../services/entregasService";
+import { baixarSegundaVia, consultarHistorico, enviarSegundaVia, listarEntregas } from "../services/entregasService";
 import type { EntregaGestao } from "../types";
 import { CancelarBdo } from "./CancelarBdo";
 import { FotosDaMala } from "./FotosDaMala";
 import { IncluirBdo } from "./IncluirBdo";
+import { SegundaViaBdo } from "../../../../shared/components/SegundaViaBdo";
 
 const STATUS: EntregaStatus[] = ["AGUARDANDO_ATRIBUICAO", "ATRIBUIDA", "EM_ANDAMENTO", "REABERTA", "ENCERRADA_COM_SUCESSO", "CANCELADA"];
 
@@ -150,6 +151,12 @@ export function TelaEntregas() {
             ) : (
               <p className="texto-apoio">{t.semEntregaTexto}</p>
             )}
+            {/* V50: imprimir ou enviar por e-mail a segunda via, a qualquer momento. */}
+            <SegundaViaBdo
+              nomeArquivo={`BDO-${aberta.bdoNumero ?? aberta.bdoId.slice(0, 8)}.pdf`}
+              baixar={() => baixarSegundaVia(aberta.bdoId)}
+              enviar={(email) => enviarSegundaVia(aberta.bdoId, email)}
+            />
             {podeCancelar(aberta) && (
               <CancelarBdo
                 linha={aberta}
@@ -227,13 +234,16 @@ function HistoricoMala({ entregaId }: { entregaId: string }) {
 function descricaoDoEvento(
   tipo: string,
   descricao: string,
-  t: { origens: Record<string, string>; recebidoPor: (quem: string) => string },
+  t: { origens: Record<string, string>; recebidoPor: (quem: string) => string; enviadaPara: (email: string) => string },
 ): string {
   if (tipo === "BDO_RECEBIDO") {
     return t.origens[descricao] ?? descricao;
   }
   if (tipo === "ENTREGUE") {
     return t.recebidoPor(descricao);
+  }
+  if (tipo === "SEGUNDA_VIA_ENVIADA") {
+    return t.enviadaPara(descricao);
   }
   return descricao;
 }
