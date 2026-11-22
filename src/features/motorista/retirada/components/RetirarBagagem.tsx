@@ -117,7 +117,12 @@ export function RetirarBagagem() {
       {entregaId && <ConferenciaMalas entregaId={entregaId} momento="retirada" aoMudar={setMalasLiberadas} />}
 
       <div className="acao-fixa">
-        <button type="button" className="sucesso grande bloco" onClick={registrar} disabled={!foto || !malasLiberadas || enviando || capturando}>
+        <button
+          type="button"
+          className="sucesso grande bloco"
+          onClick={registrar}
+          disabled={!foto || !malasLiberadas || enviando || capturando}
+        >
           <Icone nome="mala" /> {enviando ? t.registrando : t.registrar}
         </button>
         {!foto && <p className="texto-apoio centro mb-0">{t.paraContinuar}</p>}

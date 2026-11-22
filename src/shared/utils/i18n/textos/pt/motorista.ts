@@ -249,8 +249,7 @@ export const motorista = {
   },
   malas: {
     rotulo: "Malas",
-    quantidade: (n: number | null | undefined) =>
-      n == null ? "quantidade de malas não informada" : n === 1 ? "1 mala" : `${n} malas`,
+    quantidade: (n: number | null | undefined) => (n == null ? "quantidade de malas não informada" : n === 1 ? "1 mala" : `${n} malas`),
     tituloRetirada: (total: number) => (total === 1 ? "Retire 1 mala" : `Retire ${total} malas`),
     tituloEntrega: (total: number) => (total === 1 ? "Entregue 1 mala" : `Entregue ${total} malas`),
     tituloSemTotal: "Confira as malas de cada BDO",
@@ -263,8 +262,7 @@ export const motorista = {
     pendencia: "confira as malas",
   },
   sugestaoCarona: {
-    titulo: (n: number) =>
-      n === 1 ? "Há mais 1 bagagem para este endereço" : `Há mais ${n} bagagens para este endereço`,
+    titulo: (n: number) => (n === 1 ? "Há mais 1 bagagem para este endereço" : `Há mais ${n} bagagens para este endereço`),
     explicacao: "Leve junto como bagagem carona: é o mesmo endereço desta entrega.",
     levar: "Levar como carona",
     mesmoEndereco: "Mesmo endereço",
