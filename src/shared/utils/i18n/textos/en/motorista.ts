@@ -255,6 +255,28 @@ export const motorista: Textos["motorista"] = {
     enderecoNaoInformado: "address not provided",
     cancelar: "Cancel",
   },
+  malas: {
+    rotulo: "Bags",
+    quantidade: (n: number | null | undefined) =>
+      n == null ? "number of bags not provided" : n === 1 ? "1 bag" : `${n} bags`,
+    tituloRetirada: (total: number) => (total === 1 ? "Pick up 1 bag" : `Pick up ${total} bags`),
+    tituloEntrega: (total: number) => (total === 1 ? "Deliver 1 bag" : `Deliver ${total} bags`),
+    tituloSemTotal: "Check the bags of each BDO",
+    carona: "extra",
+    semQuantidade: "A BDO does not state the number of bags: check by the tag.",
+    conferiRetirada: (total: number | null) =>
+      total == null ? "I checked all the bags of these BDOs" : total === 1 ? "I checked the bag" : `I checked the ${total} bags`,
+    conferiEntrega: (total: number | null) =>
+      total == null ? "I delivered all the bags of these BDOs" : total === 1 ? "I delivered the bag" : `I delivered the ${total} bags`,
+    pendencia: "check the bags",
+  },
+  sugestaoCarona: {
+    titulo: (n: number) =>
+      n === 1 ? "There is 1 more bag for this address" : `There are ${n} more bags for this address`,
+    explicacao: "Take it along as an extra bag: it is the same address as this delivery.",
+    levar: "Take as extra",
+    mesmoEndereco: "Same address",
+  },
   corrigirRetirada: {
     titulo: "Correct the pickup",
     explicacao:

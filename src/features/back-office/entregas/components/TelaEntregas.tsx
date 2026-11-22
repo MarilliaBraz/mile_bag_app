@@ -51,7 +51,8 @@ export function TelaEntregas() {
     }
     setIncluindo(false);
   }
-  const visiveis = dados?.filter((entrega) => !filtro || entrega.status === filtro) ?? [];
+  // Item 8: os BDOs do mesmo endereço ficam juntos, logo depois do primeiro do grupo.
+  const visiveis = agruparMesmoEndereco(dados?.filter((entrega) => !filtro || entrega.status === filtro) ?? []);
 
   return (
     <Pagina
@@ -121,6 +122,9 @@ export function TelaEntregas() {
                         {entrega.bagagemCarona && <span className="selo selo-info">{t.carona}</span>}
                         {entrega.corrigida && <span className="selo selo-aviso">{t.corrigida}</span>}
                         {entrega.baseCodigo && <span className="selo selo-info codigo">{entrega.baseCodigo}</span>}
+                        {entrega.mesmoEnderecoQue && entrega.mesmoEnderecoQue.length > 0 && (
+                          <span className="selo selo-sucesso">{t.mesmoEndereco(entrega.mesmoEnderecoQue.join(", "))}</span>
+                        )}
                       </td>
                       <td>{entrega.passageiroNome ?? "—"}</td>
                       <td>{entrega.motoristaNome ?? <span className="texto-apoio">{t.semMotorista}</span>}</td>
@@ -270,4 +274,26 @@ function descricaoDoEvento(
     return t.enviadaPara(descricao);
   }
   return descricao;
+}
+
+/** Item 8: mantém a ordem da lista, mas puxa os BDOs do mesmo endereço para logo depois do primeiro do grupo. */
+function agruparMesmoEndereco(linhas: EntregaGestao[]): EntregaGestao[] {
+  const porNumero = new Map(linhas.filter((linha) => linha.bdoNumero).map((linha) => [linha.bdoNumero as string, linha]));
+  const colocadas = new Set<EntregaGestao>();
+  const resultado: EntregaGestao[] = [];
+  for (const linha of linhas) {
+    if (colocadas.has(linha)) {
+      continue;
+    }
+    resultado.push(linha);
+    colocadas.add(linha);
+    for (const numero of linha.mesmoEnderecoQue ?? []) {
+      const outra = porNumero.get(numero);
+      if (outra && !colocadas.has(outra)) {
+        resultado.push(outra);
+        colocadas.add(outra);
+      }
+    }
+  }
+  return resultado;
 }

@@ -19,6 +19,8 @@ export type EntregaGestao = {
   corrigida: boolean;
   /** V52: código IATA da base do BDO (quem pode assumir). */
   baseCodigo: string | null;
+  /** Item 8: números dos outros BDOs em aberto que vão para o mesmo endereço. Ausente em respostas antigas. */
+  mesmoEnderecoQue?: string[];
 };
 
 export type TipoEventoRastreabilidade =

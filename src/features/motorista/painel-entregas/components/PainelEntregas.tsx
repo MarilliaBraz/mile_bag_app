@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ApiError } from "../../../../shared/services/ApiError";
 import { Ajuda } from "../../../../shared/components/Ajuda";
@@ -11,6 +11,7 @@ import { listarMotivos } from "../../../../shared/services/ocorrenciaService";
 import { marcarViagemEmAndamento } from "../../../../shared/utils/viagemEmAndamento";
 import { EVENTO_BDOS_NOVOS, limparAvisoBdoNovo } from "../../../../shared/hooks/useAvisoBdoNovo";
 import { consultarBdosDisponiveis, consultarPainel } from "../services/painelService";
+import { consultarSugestoesCarona } from "../bagagem-carona/services/bagagemCaronaService";
 import type { BdosDisponiveis, ItemPainel, PainelEntregas as PainelEntregasResposta } from "../types";
 import { ListaBdosDisponiveis } from "./ListaBdosDisponiveis";
 import { EntregasCorrigiveis } from "../../correcao";
@@ -35,6 +36,10 @@ export function PainelEntregas() {
   const localizacao = useLocation();
   const navegar = useNavigate();
   const [aviso, setAviso] = useState<string | null>((localizacao.state as { aviso?: string } | null)?.aviso ?? null);
+  // Item 8: ao assumir, avisa se há outros BDOs para o mesmo endereço (sugestão de carona).
+  const [caronaSugerida, setCaronaSugerida] = useState<{ entregaId: string; quantidade: number } | null>(null);
+  // Só a resposta da última entrega assumida vale: uma resposta atrasada de antes não volta a aparecer.
+  const ultimoAssumido = useRef<string | null>(null);
 
   const carregar = useCallback(async () => {
     setErro(null);
@@ -81,9 +86,26 @@ export function PainelEntregas() {
   // painel inteiro em vez de tentar montar o item localmente.
   function aoAutoatribuir(bdoId: string) {
     setAviso(t.painel.entregaAssumida);
+    setCaronaSugerida(null);
+    ultimoAssumido.current = bdoId;
+    const numeroAssumido = bdosDisponiveis?.bdos.find((bdo) => bdo.bdoId === bdoId)?.bdoNumero ?? null;
     setBdosDisponiveis((atual) => (atual ? { bdos: atual.bdos.filter((bdo) => bdo.bdoId !== bdoId) } : atual));
     consultarPainel()
-      .then(setPainel)
+      .then((novo) => {
+        setPainel(novo);
+        const assumida = numeroAssumido ? novo.entregas.find((item) => item.bdoNumero === numeroAssumido) : undefined;
+        if (assumida) {
+          consultarSugestoesCarona(assumida.entregaId)
+            .then((sugestoes) => {
+              if (ultimoAssumido.current === bdoId && sugestoes.length > 0) {
+                setCaronaSugerida({ entregaId: assumida.entregaId, quantidade: sugestoes.length });
+              }
+            })
+            .catch(() => {
+              // Sem internet, só não sugere: a sugestão também aparece no detalhe da entrega.
+            });
+        }
+      })
       .catch(() => {
         // FR-006 (offline): a lista de pendentes ja mostrada continua valida;
         // uma falha aqui nao deve travar a tela.
@@ -104,6 +126,18 @@ export function PainelEntregas() {
       {aviso && (
         <Alerta tipo="sucesso" aoFechar={() => setAviso(null)}>
           {aviso}
+        </Alerta>
+      )}
+
+      {caronaSugerida && (
+        <Alerta tipo="aviso" aoFechar={() => setCaronaSugerida(null)}>
+          <p>
+            <strong>{t.sugestaoCarona.titulo(caronaSugerida.quantidade)}</strong>
+          </p>
+          <p>{t.sugestaoCarona.explicacao}</p>
+          <Link to={`/motorista/entregas/${caronaSugerida.entregaId}`} viewTransition className="botao secundario">
+            <Icone nome="mala" /> {t.sugestaoCarona.levar}
+          </Link>
         </Alerta>
       )}
 
@@ -164,6 +198,10 @@ export function PainelEntregas() {
                         <div className="linha-icone texto-apoio">
                           <Icone nome="pino" />
                           <span>{item.endereco ?? t.geral.enderecoNaoInformado}</span>
+                        </div>
+                        <div className="linha-icone texto-apoio">
+                          <Icone nome="mala" />
+                          <span>{t.malas.quantidade(item.quantidadeMalas)}</span>
                         </div>
                         <AvisoJanelaReagendamento janela={item.janelaReagendamento} />
                         {item.bagagensCarona.length > 0 && (

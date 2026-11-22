@@ -154,6 +154,10 @@ export function DetalheEntrega() {
               <dt>{t.detalhe.numeroBdo}</dt>
               <dd className="codigo">{entrega.bdoNumero ?? t.detalhe.semNumero}</dd>
             </div>
+            <div>
+              <dt>{t.malas.rotulo}</dt>
+              <dd>{t.malas.quantidade(entrega.quantidadeMalas)}</dd>
+            </div>
           </dl>
 
           <VincularBagagemCarona
