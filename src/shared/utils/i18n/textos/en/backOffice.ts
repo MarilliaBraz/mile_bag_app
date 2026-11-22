@@ -348,6 +348,12 @@ export const backOffice: Textos["backOffice"] = {
     valorSalvo: "Amount saved.",
   },
   configuracoes: {
+    falhaBusca: "Could not load the search list.",
+    buscarBase: "Search by city, airport or code (e.g. Goiânia)",
+    buscarCompanhia: "Search by name or code (e.g. Gol, Latam, Azul)",
+    semAeroporto: "No airport found.",
+    semCompanhia: "No airline found. Contact support to add it.",
+    trocarEscolha: "Change",
     titulo: "Settings",
     descricao: "How your company operates. Each block is saved separately, and changes apply to future records.",
     basesAeroportuarias: "Airport bases",

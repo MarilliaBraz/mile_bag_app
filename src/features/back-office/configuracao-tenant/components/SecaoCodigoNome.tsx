@@ -1,8 +1,15 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { mensagemDeErro } from "../../../../shared/utils/formatar";
 import { useRecurso } from "../../../../shared/hooks/useRecurso";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
-import { criarCodigoNome, listarCodigoNome, removerCodigoNome, tornarBasePrincipal } from "../services/configuracoesTenantService";
+import {
+  criarCodigoNome,
+  listarCodigoNome,
+  listarOpcoesBusca,
+  removerCodigoNome,
+  tornarBasePrincipal,
+} from "../services/configuracoesTenantService";
+import { BuscaOpcoes, type OpcaoBusca } from "../../../../shared/components/BuscaOpcoes";
 import type { CategoriaCodigoNome } from "../types";
 import { Alerta } from "../../../../shared/components/Alerta";
 import { Icone } from "../../../../shared/components/Icone";
@@ -21,8 +28,21 @@ export function SecaoCodigoNome({
   const t = useTextos().backOffice.configuracoes;
   const deBases = categoria === "bases-aeroportuarias";
   const { dados, erro, recarregar } = useRecurso(() => listarCodigoNome(categoria), t.falhaLista);
-  const [codigo, setCodigo] = useState("");
+  // V53: escolhe na busca (nome, cidade ou código); o nome vem preenchido e pode ser ajustado.
+  const { dados: opcoes, erro: erroOpcoes } = useRecurso(() => listarOpcoesBusca(categoria), t.falhaBusca);
+  const [escolhida, setEscolhida] = useState<OpcaoBusca | null>(null);
   const [nome, setNome] = useState("");
+  const [trocou, setTrocou] = useState(false);
+  const campoNome = useRef<HTMLInputElement>(null);
+  // Depois de escolher, o foco vai para o nome (a busca some da tela).
+  useEffect(() => {
+    if (escolhida) {
+      campoNome.current?.focus();
+    }
+  }, [escolhida]);
+  // Já cadastrados não aparecem nas sugestões.
+  const jaCadastrados = new Set(dados?.map((item) => item.codigoIata));
+  const opcoesLivres = opcoes?.filter((o) => !jaCadastrados.has(o.codigo));
   const [erroAcao, setErroAcao] = useState<string | null>(null);
 
   async function executar(acao: () => Promise<unknown>, mensagem: string) {
@@ -37,7 +57,7 @@ export function SecaoCodigoNome({
 
   return (
     <Painel titulo={titulo} descricao={deBases ? t.basesDescricao : undefined}>
-      {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
+      {(erro || erroAcao || erroOpcoes) && <Alerta tipo="erro">{erro ?? erroAcao ?? erroOpcoes}</Alerta>}
       {dados && dados.length === 0 && <p className="texto-apoio">{t.nenhumaCadastrada}</p>}
       <ul className="lista-simples">
         {dados?.map((item) => (
@@ -72,33 +92,55 @@ export function SecaoCodigoNome({
         className="form-linha"
         onSubmit={(evento) => {
           evento.preventDefault();
+          if (!escolhida) {
+            return;
+          }
           executar(async () => {
-            await criarCodigoNome(categoria, { codigoIata: codigo.trim().toUpperCase(), nome: nome.trim() });
-            setCodigo("");
+            await criarCodigoNome(categoria, { codigoIata: escolhida.codigo, nome: nome.trim() });
+            setEscolhida(null);
             setNome("");
           }, t.falhaCadastrar);
         }}
       >
-        <div style={{ flex: "0 0 7rem" }}>
-          <label htmlFor={`${categoria}-codigo`} className="visualmente-oculto">
-            {rotuloCodigo}
-          </label>
-          <input
-            className="maiusculas"
-            id={`${categoria}-codigo`}
-            placeholder={t.iata}
-            value={codigo}
-            maxLength={10}
-            onChange={(e) => setCodigo(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor={`${categoria}-nome`} className="visualmente-oculto">
-            {t.nome}
-          </label>
-          <input id={`${categoria}-nome`} placeholder={t.nome} value={nome} onChange={(e) => setNome(e.target.value)} />
-        </div>
-        <button type="submit" disabled={!codigo.trim() || !nome.trim()}>
+        {escolhida ? (
+          <div className="escolhida">
+            <span className="selo selo-info codigo">{escolhida.codigo}</span> {escolhida.rotulo}{" "}
+            <button
+              type="button"
+              className="fantasma compacto"
+              onClick={() => {
+                setEscolhida(null);
+                setTrocou(true);
+              }}
+            >
+              {t.trocarEscolha}
+            </button>
+          </div>
+        ) : (
+          <div>
+            <BuscaOpcoes
+              id={`${categoria}-busca`}
+              rotulo={rotuloCodigo}
+              placeholder={deBases ? t.buscarBase : t.buscarCompanhia}
+              semResultado={deBases ? t.semAeroporto : t.semCompanhia}
+              opcoes={opcoesLivres}
+              focar={trocou}
+              aoEscolher={(opcao) => {
+                setEscolhida(opcao);
+                setNome(deBases ? (opcao.detalhe ?? opcao.rotulo) : opcao.rotulo);
+              }}
+            />
+          </div>
+        )}
+        {escolhida && (
+          <div>
+            <label htmlFor={`${categoria}-nome`} className="visualmente-oculto">
+              {t.nome}
+            </label>
+            <input ref={campoNome} id={`${categoria}-nome`} placeholder={t.nome} value={nome} onChange={(e) => setNome(e.target.value)} />
+          </div>
+        )}
+        <button type="submit" disabled={!escolhida}>
           <Icone nome="mais" /> {t.adicionar}
         </button>
       </form>
