@@ -2168,6 +2168,41 @@ button.compacto.botao-icone {
   flex: none;
 }
 
+.form-linha > .escolhida {
+  align-self: center;
+}
+
+/* Busca com sugestões (V53: companhia aérea pelo nome, base pela cidade). */
+.busca-opcoes {
+  position: relative;
+}
+
+.busca-opcoes-lista {
+  position: absolute;
+  z-index: 20;
+  inset-inline: 0;
+  margin: 0.25rem 0 0;
+  padding: 0.25rem;
+  list-style: none;
+  max-height: 18rem;
+  overflow-y: auto;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+}
+
+.busca-opcoes-lista > li {
+  padding: 0.5rem;
+  border-radius: var(--raio-p);
+  cursor: pointer;
+}
+
+.busca-opcoes-lista > li[aria-selected="true"],
+.busca-opcoes-lista > li[role="option"]:hover {
+  background: var(--fundo-app);
+}
+
 .interruptor {
   display: flex;
   align-items: center;
