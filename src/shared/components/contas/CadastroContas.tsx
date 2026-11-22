@@ -1,11 +1,13 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
+import { Link } from "react-router-dom";
 import { formatarData, mensagemDeErro } from "../../utils/formatar";
 import { useRecurso } from "../../hooks/useRecurso";
 import { useTextos } from "../../utils/i18n/idioma";
 import { ConfirmarAcao } from "../ConfirmarAcao";
 import { LoteContas } from "./LoteContas";
+import { SeletorBase } from "./SeletorBase";
 import { ContextoContas, useContas, type TextosContas } from "./contexto";
-import type { Conta, ServicoContas } from "../../types/contas";
+import type { BaseOpcao, Conta, ServicoContas } from "../../types/contas";
 import { Alerta, Carregando, Vazio } from "../Alerta";
 import { Icone } from "../Icone";
 import { Avatar, Gaveta, Pagina, Painel } from "../Pagina";
@@ -19,14 +21,16 @@ function NovaContaForm({ aoCriar }: { aoCriar: (nome: string) => Promise<void> }
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
-  const { t, servico } = useContas();
+  const [baseId, setBaseId] = useState("");
+  const { t, servico, bases } = useContas();
+  const faltaBase = bases !== undefined && !baseId;
 
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
     setErro(null);
     setSalvando(true);
     try {
-      await servico.criar({ nome: nome.trim(), login: login.trim(), senha });
+      await servico.criar({ nome: nome.trim(), login: login.trim(), senha, ...(baseId ? { baseId } : {}) });
       await aoCriar(nome.trim());
     } catch (excecao) {
       setErro(mensagemDeErro(excecao, t.falhaCadastrar));
@@ -71,7 +75,12 @@ function NovaContaForm({ aoCriar }: { aoCriar: (nome: string) => Promise<void> }
           {t.senhaInicialAjuda(TAMANHO_MINIMO_SENHA)}
         </span>
       </div>
-      <button type="submit" className="bloco" disabled={!nome.trim() || !login.trim() || senha.length < TAMANHO_MINIMO_SENHA || salvando}>
+      <SeletorBase valor={baseId} aoMudar={setBaseId} />
+      <button
+        type="submit"
+        className="bloco"
+        disabled={!nome.trim() || !login.trim() || senha.length < TAMANHO_MINIMO_SENHA || faltaBase || salvando}
+      >
         {salvando ? t.cadastrando : t.cadastrar}
       </button>
     </form>
@@ -82,12 +91,14 @@ function EditarForm({ conta, aoConcluir }: { conta: Conta; aoConcluir: () => Pro
   const uid = useId();
   const [nome, setNome] = useState(conta.nome);
   const [login, setLogin] = useState(conta.login);
+  const [baseId, setBaseId] = useState(conta.baseId ?? "");
   const [erro, setErro] = useState<string | null>(null);
   const textos = useTextos().backOffice;
   const { t, servico } = useContas();
 
   const nomeMudou = nome.trim() !== "" && nome.trim() !== conta.nome;
   const loginMudou = login.trim() !== "" && login.trim() !== conta.login;
+  const baseMudou = baseId !== "" && baseId !== (conta.baseId ?? "");
 
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
@@ -96,6 +107,7 @@ function EditarForm({ conta, aoConcluir }: { conta: Conta; aoConcluir: () => Pro
       await servico.atualizar(conta.id, {
         ...(nomeMudou ? { nome: nome.trim() } : {}),
         ...(loginMudou ? { login: login.trim() } : {}),
+        ...(baseMudou ? { baseId } : {}),
       });
       await aoConcluir();
     } catch (excecao) {
@@ -114,8 +126,9 @@ function EditarForm({ conta, aoConcluir }: { conta: Conta; aoConcluir: () => Pro
         <label htmlFor={`${uid}-login`}>{t.login}</label>
         <input id={`${uid}-login`} autoCapitalize="none" value={login} onChange={(e) => setLogin(e.target.value)} />
       </div>
+      <SeletorBase valor={baseId} aoMudar={setBaseId} />
       {loginMudou && <Alerta tipo="aviso">{t.loginNovoAviso}</Alerta>}
-      <button type="submit" className="bloco" disabled={!nomeMudou && !loginMudou}>
+      <button type="submit" className="bloco" disabled={!nomeMudou && !loginMudou && !baseMudou}>
         {textos.geral.salvarAlteracoes}
       </button>
     </form>
@@ -194,6 +207,10 @@ function TelaContas() {
   const textos = useTextos().backOffice;
   const { t, servico } = useContas();
   const { dados: contas, erro, carregando, recarregar } = useRecurso(servico.listar, t.falhaCarregar);
+  const { bases } = useContas();
+  const tb = textos.contasBase;
+  const codigoDaBase = (id: string | null | undefined) => bases?.find((base) => base.id === id)?.codigoIata ?? null;
+  const semBases = bases !== undefined && bases !== null && bases.length === 0;
   const [erroAcao, setErroAcao] = useState<string | null>(null);
   const [criando, setCriando] = useState(false);
   const [emLote, setEmLote] = useState(false);
@@ -240,16 +257,21 @@ function TelaContas() {
       descricao={t.descricao}
       acoes={
         <>
-          <button type="button" className="secundario" onClick={() => setEmLote(true)}>
+          <button type="button" className="secundario" onClick={() => setEmLote(true)} disabled={semBases}>
             <Icone nome="usuarios" /> {t.cadastrarEmLote}
           </button>
-          <button type="button" onClick={() => setCriando(true)}>
+          <button type="button" onClick={() => setCriando(true)} disabled={semBases}>
             <Icone nome="mais" /> {t.novo}
           </button>
         </>
       }
     >
       {(erro || erroAcao) && <Alerta tipo="erro">{erro ?? erroAcao}</Alerta>}
+      {semBases && (
+        <Alerta tipo="aviso">
+          {tb.semBases} <Link to="/admin/configuracoes">{tb.irConfiguracoes}</Link>
+        </Alerta>
+      )}
       {resultado && (
         <Alerta tipo="sucesso" aoFechar={() => setResultado(null)}>
           {resultado}
@@ -319,6 +341,11 @@ function TelaContas() {
                         <span>
                           <strong>{conta.nome}</strong>
                           <span className="texto-apoio">{conta.login}</span>
+                          {bases !== undefined && (
+                            <span className="texto-apoio">
+                              {codigoDaBase(conta.baseId) ? tb.baseDaConta(codigoDaBase(conta.baseId) ?? "") : tb.semBaseDefinida}
+                            </span>
+                          )}
                         </span>
                       </div>
                     </td>
@@ -416,8 +443,31 @@ function TelaContas() {
  * que a pessoa registrou continua apontando para ela.
  */
 export function CadastroContas({ servico, textos }: { servico: ServicoContas; textos: TextosContas }) {
+  // V52: cadastro com base (motoristas) - as bases da empresa, carregadas uma vez.
+  const [bases, setBases] = useState<BaseOpcao[] | null | undefined>(servico.listarBases ? null : undefined);
+  const [falhaBases, setFalhaBases] = useState(false);
+  const [tentativa, setTentativa] = useState(0);
+  const tb = useTextos().backOffice.contasBase;
+  useEffect(() => {
+    // Falha de rede não é "empresa sem bases": continua carregando, com o aviso e o "tentar de novo".
+    servico
+      .listarBases?.()
+      .then((lidas) => {
+        setFalhaBases(false);
+        setBases(lidas);
+      })
+      .catch(() => setFalhaBases(true));
+  }, [servico, tentativa]);
   return (
-    <ContextoContas.Provider value={{ servico, t: textos }}>
+    <ContextoContas.Provider value={{ servico, t: textos, bases }}>
+      {falhaBases && (
+        <Alerta tipo="erro">
+          {tb.falhaBases}{" "}
+          <button type="button" className="fantasma compacto" onClick={() => setTentativa((n) => n + 1)}>
+            {tb.tentarDeNovo}
+          </button>
+        </Alerta>
+      )}
       <TelaContas />
     </ContextoContas.Provider>
   );

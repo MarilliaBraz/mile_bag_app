@@ -181,7 +181,10 @@ export function PainelEntregas() {
             </ul>
           )}
 
-          {bdosDisponiveis && <ListaBdosDisponiveis bdos={bdosDisponiveis.bdos} aoAutoatribuir={aoAutoatribuir} />}
+          {bdosDisponiveis?.semBase && <Alerta tipo="aviso">{t.disponiveis.semBase}</Alerta>}
+          {bdosDisponiveis && !bdosDisponiveis.semBase && (
+            <ListaBdosDisponiveis bdos={bdosDisponiveis.bdos} aoAutoatribuir={aoAutoatribuir} />
+          )}
 
           <Ajuda>
             <p>{t.painel.ajuda}</p>

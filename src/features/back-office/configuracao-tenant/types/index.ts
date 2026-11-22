@@ -11,7 +11,15 @@ export type CampoBaixa =
 export type CampoObrigatorio = { campo: CampoBaixa; obrigatorio: boolean };
 
 /** Espelha CodigoNomeResponse (base aeroportuária e companhia aérea têm o mesmo formato). */
-export type CodigoNome = { id: string; codigoIata: string; nome: string };
+export type CodigoNome = {
+  id: string;
+  codigoIata: string;
+  nome: string;
+  /** V52, só bases: a que vale quando o BDO não traz o aeroporto de retirada. */
+  principal?: boolean;
+  /** V52, só bases: a cidade do aeroporto - entregas nela pagam o valor fixo. */
+  cidade?: string | null;
+};
 
 export type CategoriaCodigoNome = "bases-aeroportuarias" | "companhias-aereas";
 

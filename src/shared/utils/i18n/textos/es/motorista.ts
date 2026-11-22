@@ -35,6 +35,7 @@ export const motorista: Textos["motorista"] = {
       "Toque una entrega para ver los detalles, calcular la ruta y registrar el comprobante. En “Disponibles para asumir”, toque “Asumir” para incluir una entrega en su lista. Sin internet, lo que registre queda guardado en el dispositivo y se envía después.",
   },
   disponiveis: {
+    semBase: "Su empresa aún no definió su base (aeropuerto). Pídale que la defina: solo entonces verá los BDO disponibles.",
     titulo: (quantidade) => `Disponibles para asumir (${quantidade})`,
     falha: "No fue posible asumir esta entrega. Inténtelo de nuevo.",
     novaTentativa: "Nuevo intento",

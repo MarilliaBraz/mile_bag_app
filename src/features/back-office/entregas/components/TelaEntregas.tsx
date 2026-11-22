@@ -14,6 +14,7 @@ import { CancelarBdo } from "./CancelarBdo";
 import { FotosDaMala } from "./FotosDaMala";
 import { IncluirBdo } from "./IncluirBdo";
 import { SegundaViaBdo } from "../../../../shared/components/SegundaViaBdo";
+import { TrocarBaseBdo } from "./TrocarBaseBdo";
 
 const STATUS: EntregaStatus[] = ["AGUARDANDO_ATRIBUICAO", "ATRIBUIDA", "EM_ANDAMENTO", "REABERTA", "ENCERRADA_COM_SUCESSO", "CANCELADA"];
 
@@ -119,6 +120,7 @@ export function TelaEntregas() {
                         </button>
                         {entrega.bagagemCarona && <span className="selo selo-info">{t.carona}</span>}
                         {entrega.corrigida && <span className="selo selo-aviso">{t.corrigida}</span>}
+                        {entrega.baseCodigo && <span className="selo selo-info codigo">{entrega.baseCodigo}</span>}
                       </td>
                       <td>{entrega.passageiroNome ?? "—"}</td>
                       <td>{entrega.motoristaNome ?? <span className="texto-apoio">{t.semMotorista}</span>}</td>
@@ -158,6 +160,19 @@ export function TelaEntregas() {
               baixar={() => baixarSegundaVia(aberta.bdoId)}
               enviar={(email) => enviarSegundaVia(aberta.bdoId, email)}
             />
+            {/* V52: só antes de alguém assumir (sem motorista e disponível), e nunca a carona (vai com a principal). */}
+            {!aberta.motoristaNome &&
+              !aberta.bagagemCarona &&
+              (aberta.status === "AGUARDANDO_ATRIBUICAO" || aberta.status === "REABERTA") && (
+                <TrocarBaseBdo
+                  linha={aberta}
+                  aoTrocar={(codigo) => {
+                    setSucesso(t.trocarBase.trocada(aberta.bdoNumero ?? t.semNumero, codigo));
+                    setAberta(null);
+                    void recarregar();
+                  }}
+                />
+              )}
             {podeCancelar(aberta) && (
               <CancelarBdo
                 linha={aberta}

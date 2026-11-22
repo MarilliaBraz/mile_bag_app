@@ -352,6 +352,13 @@ export const backOffice: Textos["backOffice"] = {
     titulo: "Configuración",
     descricao: "Cómo opera su empresa. Cada bloque se guarda por separado y los cambios valen para los próximos registros.",
     basesAeroportuarias: "Bases aeroportuarias",
+    basesDescricao:
+      "Los aeropuertos de donde salen las maletas. El viaje se calcula desde el aeropuerto del BDO (o la base principal): la entrega en la ciudad de la base paga el valor fijo; fuera de ella, km de ida y vuelta × valor por km.",
+    basePrincipal: "Principal",
+    tornarPrincipal: "Hacer principal",
+    tornarPrincipalRotulo: (codigo: string) => `Hacer de ${codigo} la base principal`,
+    falhaTornarPrincipal: "No fue posible definir la base principal.",
+    cidadeDaBase: (cidade: string) => `ciudad de la base: ${cidade}`,
     companhiasAtendidas: "Aerolíneas atendidas",
     codigoIata: "Código IATA",
     motivosTitulo: "Motivos de no entrega",
@@ -519,7 +526,30 @@ export const backOffice: Textos["backOffice"] = {
     ativando: "Activando…",
     ativar: "Activar acceso",
   },
+  contasBase: {
+    falhaBases: "No fue posible cargar las bases.",
+    tentarDeNovo: "Intentar de nuevo",
+    base: "Base",
+    escolhaBase: "Elija la base",
+    semBases: "Registre las bases que atiende su empresa antes de registrar conductores.",
+    irConfiguracoes: "Ir a Configuración",
+    baseDaConta: (codigo: string) => `Base ${codigo}`,
+    semBaseDefinida: "Sin base: no ve BDO",
+  },
   entregas: {
+    trocarBase: {
+      titulo: "Cambiar la base del BDO",
+      descricao: (atual: string) =>
+        `Base actual: ${atual}. Los conductores de la base nueva son avisados, y el cambio queda en el historial de la maleta.`,
+      baseNova: "Base nueva",
+      escolhaBase: "Elija la base",
+      motivo: "Motivo del cambio",
+      trocar: "Cambiar base",
+      trocando: "Cambiando…",
+      falha: "No fue posible cambiar la base.",
+      falhaBases: "No fue posible cargar las bases.",
+      trocada: (bdo: string, base: string) => `BDO ${bdo} pasó a la base ${base}.`,
+    },
     incluir: {
       botao: "Agregar BDO",
       titulo: "Agregar BDO",
@@ -586,6 +616,7 @@ export const backOffice: Textos["backOffice"] = {
     carregandoHistorico: "Cargando historial…",
     eventos: {
       BDO_RECEBIDO: "BDO recibido",
+      BASE_ALTERADA: "Base del BDO cambiada",
       CORRECAO: "Etapa corregida",
       SEGUNDA_VIA_ENVIADA: "Copia del BDO enviada por correo",
       BAGAGEM_RETIRADA: "Equipaje retirado en el aeropuerto",

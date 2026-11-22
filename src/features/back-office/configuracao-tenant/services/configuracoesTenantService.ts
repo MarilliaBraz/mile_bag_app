@@ -24,3 +24,7 @@ export const removerCodigoNome = (categoria: CategoriaCodigoNome, id: string) =>
 export const consultarPeriodicidade = () => requisitar<PeriodicidadeAtual>(`${BASE}/periodicidade-fechamento`);
 export const agendarPeriodicidade = (corpo: { periodicidade: string; vigenteDesde: string }) =>
   requisitar<PeriodicidadeAtual>(`${BASE}/periodicidade-fechamento`, { metodo: "POST", corpo });
+
+/** POST /api/v1/configuracoes/bases-aeroportuarias/{id}/principal (V52) - a base que vale quando o BDO não traz o aeroporto. */
+export const tornarBasePrincipal = (id: string) =>
+  requisitar<void>(BASE + caminhoApi`/bases-aeroportuarias/${id}/principal`, { metodo: "POST" });

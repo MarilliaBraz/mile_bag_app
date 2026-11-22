@@ -41,3 +41,7 @@ export const baixarSegundaVia = (bdoId: string) => baixarArquivo(caminhoApi`/api
 /** POST /api/v1/gestao/bdos/{bdoId}/segunda-via/email (V50) - envia o PDF para imprimir; fica no histórico da mala. */
 export const enviarSegundaVia = (bdoId: string, email: string) =>
   requisitar<void>(caminhoApi`/api/v1/gestao/bdos/${bdoId}/segunda-via/email`, { metodo: "POST", corpo: { email } });
+
+/** POST /api/v1/gestao/bdos/{bdoId}/base (V52) - troca a base de um BDO que ninguém assumiu; motivo obrigatório. */
+export const trocarBaseBdo = (bdoId: string, baseId: string, motivo: string) =>
+  requisitar<void>(caminhoApi`/api/v1/gestao/bdos/${bdoId}/base`, { metodo: "POST", corpo: { baseId, motivo } });

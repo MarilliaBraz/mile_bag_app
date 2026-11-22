@@ -35,6 +35,7 @@ export const motorista: Textos["motorista"] = {
       "Tap a delivery to see the details, calculate the route and record the proof of delivery. Under “Available to take”, tap “Take” to add a delivery to your list. Without internet, what you record is saved on the device and sent later.",
   },
   disponiveis: {
+    semBase: "Your company has not set your base (airport) yet. Ask them to set it: only then will you see the available BDOs.",
     titulo: (quantidade) => `Available to take (${quantidade})`,
     falha: "Could not take this delivery. Try again.",
     novaTentativa: "New attempt",
