@@ -9,6 +9,8 @@ import { ConfirmarAcao } from "../../../../shared/components/ConfirmarAcao";
 import { formatarJanela } from "../../../../shared/utils/formatar";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { listarMotivosComOrigem, registrarOcorrencia } from "../../../../shared/services/ocorrenciaService";
+import { encerrarViagemNoAparelho } from "../../../../shared/utils/viagemEmAndamento";
+import { enviarCaminhoPendente } from "../../../../shared/services/caminhoViagem";
 import type { MotivoOcorrencia } from "../../../../shared/types/ocorrencia";
 
 /** Junta data e hora digitadas (fuso do aparelho) num instante ISO; nulo enquanto falta algum dos dois. */
@@ -93,6 +95,9 @@ export function RegistrarOcorrencia() {
           payload: { entregaId, motivoOcorrenciaId, descricaoAdicional: descricaoAdicional.trim() || null, janelaInicio, janelaFim },
         },
       );
+      // Item 9: a viagem terminou neste aparelho - para de gravar o caminho e manda o que ficou guardado.
+      encerrarViagemNoAparelho(entregaId);
+      void enviarCaminhoPendente(true);
       navegar("/motorista", {
         state: {
           aviso: enfileirado ? t.naFila : exigeJanela ? t.reagendamentoRegistrado : t.registrada,

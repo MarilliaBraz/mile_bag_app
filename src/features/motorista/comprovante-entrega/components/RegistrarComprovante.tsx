@@ -17,6 +17,8 @@ import { FotosAvaria } from "../../../../shared/components/FotosAvaria";
 import { PedirMotivoCorrecao } from "../../../../shared/components/PedirMotivoCorrecao";
 import { registrarComprovante } from "../services/comprovanteService";
 import { ConferenciaMalas } from "../../painel-entregas/components/ConferenciaMalas";
+import { encerrarViagemNoAparelho } from "../../../../shared/utils/viagemEmAndamento";
+import { enviarCaminhoPendente } from "../../../../shared/services/caminhoViagem";
 import type { CorrecaoNoFluxo } from "../types";
 
 type EtapaNoFluxo = CorrecaoNoFluxo["etapa"];
@@ -181,6 +183,9 @@ export function RegistrarComprovante() {
           },
         },
       );
+      // Item 9: a viagem terminou neste aparelho - para de gravar o caminho e manda o que ficou guardado.
+      encerrarViagemNoAparelho(entregaId);
+      void enviarCaminhoPendente(true);
       navegar("/motorista", { state: { aviso: enfileirado ? t.naFila : t.enviado } });
     } catch (excecao) {
       setConfirmando(false);

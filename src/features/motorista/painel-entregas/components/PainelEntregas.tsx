@@ -48,8 +48,9 @@ export function PainelEntregas() {
       setPainel(painelResposta);
       setBdosDisponiveis(bdosResposta);
       // HU31: viagem iniciada em outro momento (ou outro aparelho) também envia a posição ao link de acompanhamento.
-      if (painelResposta.entregas.some((item) => item.status === "EM_ANDAMENTO")) {
-        marcarViagemEmAndamento(true);
+      const emViagem = painelResposta.entregas.find((item) => item.status === "EM_ANDAMENTO");
+      if (emViagem) {
+        marcarViagemEmAndamento(true, emViagem.entregaId);
       }
     } catch (excecao) {
       setErro(excecao instanceof ApiError ? excecao.message : t.painel.falhaAoCarregar);
