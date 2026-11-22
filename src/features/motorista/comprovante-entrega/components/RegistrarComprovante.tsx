@@ -16,6 +16,7 @@ import { CampoFoto } from "../../../../shared/components/CampoFoto";
 import { FotosAvaria } from "../../../../shared/components/FotosAvaria";
 import { PedirMotivoCorrecao } from "../../../../shared/components/PedirMotivoCorrecao";
 import { registrarComprovante } from "../services/comprovanteService";
+import { ConferenciaMalas } from "../../painel-entregas/components/ConferenciaMalas";
 import type { CorrecaoNoFluxo } from "../types";
 
 type EtapaNoFluxo = CorrecaoNoFluxo["etapa"];
@@ -58,6 +59,8 @@ export function RegistrarComprovante() {
   const [divergencia, setDivergencia] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
+  // Item 8: o motorista confere as malas antes de finalizar (sem internet, não bloqueia).
+  const [malasLiberadas, setMalasLiberadas] = useState(false);
   // V51: voltar a uma etapa concluída pede motivo; cada correção vai junto com a entrega (inclusive sem internet).
   const [correcoes, setCorrecoes] = useState<CorrecaoAberta[]>([]);
   const [liberadas, setLiberadas] = useState<ReadonlySet<EtapaNoFluxo>>(new Set());
@@ -78,7 +81,7 @@ export function RegistrarComprovante() {
   const podeFotoBdo = !!fotoPorta;
   const podeRecebedor = podeFotoBdo && !!foto;
   const recebedorPronto = podeRecebedor && !!tipoEscolhido && nome.length > 0;
-  const podeEnviar = recebedorPronto && !!posicao && !enviando;
+  const podeEnviar = recebedorPronto && !!posicao && malasLiberadas && !enviando;
   const textoRecebedor = `${tipoEscolhido?.descricao ?? "?"} - ${nome}`;
   // Uma etapa está concluída quando a seguinte já começou: dali em diante, alterar pede motivo.
   const portaConcluida = !!fotoPorta && !!foto && !liberadas.has("FOTO_PORTA");
@@ -116,6 +119,7 @@ export function RegistrarComprovante() {
     !foto && t.pendenciaFoto,
     !recebedorPronto && t.pendenciaRecebedor,
     !posicao && (capturandoPosicao ? t.pendenciaAguardeLocal : t.pendenciaLibereLocal),
+    !malasLiberadas && textos.motorista.malas.pendencia,
   ].filter(Boolean);
 
   async function enviar(justificativaDivergencia: string | null = null) {
@@ -316,6 +320,8 @@ export function RegistrarComprovante() {
           </Alerta>
         )}
       </div>
+
+      {entregaId && <ConferenciaMalas entregaId={entregaId} momento="entrega" aoMudar={setMalasLiberadas} />}
 
       {divergencia ? (
         <JustificativaDivergencia mensagem={divergencia} aoReenviar={(justificativa) => enviar(justificativa)} ocupado={enviando} />

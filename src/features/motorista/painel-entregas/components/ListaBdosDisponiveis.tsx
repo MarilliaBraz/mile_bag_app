@@ -75,6 +75,10 @@ export function ListaBdosDisponiveis({ bdos, aoAutoatribuir }: { bdos: ItemBdoDi
               <Icone nome="pino" />
               <span>{bdo.endereco ?? t.geral.enderecoNaoInformado}</span>
             </div>
+            <div className="linha-icone texto-apoio">
+              <Icone nome="mala" />
+              <span>{t.malas.quantidade(bdo.quantidadeMalas)}</span>
+            </div>
             <AvisoJanelaReagendamento janela={bdo.janelaReagendamento} />
             <AvisoContatoIncompleto pendencias={bdo.pendenciasContato} compacto />
             <button

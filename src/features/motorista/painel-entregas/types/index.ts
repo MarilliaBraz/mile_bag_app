@@ -12,6 +12,9 @@ export type BdoOrigem = "FOTO_MANUAL" | "EMAIL_AUTOMATICO" | "COMPANHIA_AEREA" |
 export type BagagemCaronaResumo = {
   id: string;
   etiquetaBagagem: string | null;
+  /** Item 8: número do BDO e quantidade de malas da carona. Ausentes em respostas antigas. */
+  bdoNumero?: string | null;
+  quantidadeMalas?: number | null;
 };
 
 /** Espelha com.marillia.milebag.business.entrega.model.ItemPainelResponse. */
@@ -30,6 +33,8 @@ export type ItemPainel = {
   janelaReagendamento?: JanelaReagendamento | null;
   /** V48: a retirada da bagagem desta tentativa já foi registrada (próxima etapa: iniciar a viagem). */
   retiradaRegistrada?: boolean;
+  /** Item 8: quantas malas o BDO tem (nulo se o BDO não informa; ausente em respostas antigas). */
+  quantidadeMalas?: number | null;
 };
 
 /** Espelha com.marillia.milebag.business.entrega.model.PainelEntregasResponse. */
@@ -62,6 +67,8 @@ export type ItemBdoDisponivel = {
   /** HU29: já houve tentativa e ocorrência (RN05); a janela só vem se foi reagendada. */
   reaberta?: boolean;
   janelaReagendamento?: JanelaReagendamento | null;
+  /** Item 8: quantas malas o BDO tem (nulo se o BDO não informa; ausente em respostas antigas). */
+  quantidadeMalas?: number | null;
 };
 
 /** Espelha com.marillia.milebag.business.entrega.model.BdosDisponiveisResponse. */

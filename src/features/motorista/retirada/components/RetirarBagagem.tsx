@@ -12,6 +12,7 @@ import { CampoFoto } from "../../../../shared/components/CampoFoto";
 import { FotosAvaria } from "../../../../shared/components/FotosAvaria";
 import { Icone } from "../../../../shared/components/Icone";
 import { registrarRetirada } from "../services/retiradaService";
+import { ConferenciaMalas } from "../../painel-entregas/components/ConferenciaMalas";
 
 /**
  * Retirada da bagagem no aeroporto (V48, itens 4 e 5) - a etapa entre assumir e iniciar a viagem: foto obrigatória da
@@ -30,6 +31,8 @@ export function RetirarBagagem() {
   const [idLocal] = useState(() => crypto.randomUUID());
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+  // Item 8: o motorista confere as malas antes de registrar a retirada (sem internet, não bloqueia).
+  const [malasLiberadas, setMalasLiberadas] = useState(false);
 
   async function registrar() {
     if (!entregaId || !foto) {
@@ -111,11 +114,21 @@ export function RetirarBagagem() {
         )}
       </div>
 
+      {entregaId && <ConferenciaMalas entregaId={entregaId} momento="retirada" aoMudar={setMalasLiberadas} />}
+
       <div className="acao-fixa">
-        <button type="button" className="sucesso grande bloco" onClick={registrar} disabled={!foto || enviando || capturando}>
+        <button
+          type="button"
+          className="sucesso grande bloco"
+          onClick={registrar}
+          disabled={!foto || !malasLiberadas || enviando || capturando}
+        >
           <Icone nome="mala" /> {enviando ? t.registrando : t.registrar}
         </button>
         {!foto && <p className="texto-apoio centro mb-0">{t.paraContinuar}</p>}
+        {foto && !malasLiberadas && (
+          <p className="texto-apoio centro mb-0">{textos.motorista.comprovante.paraContinuar(textos.motorista.malas.pendencia)}</p>
+        )}
       </div>
 
       <Ajuda>

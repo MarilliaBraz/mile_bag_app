@@ -251,6 +251,26 @@ export const motorista: Textos["motorista"] = {
     enderecoNaoInformado: "dirección no informada",
     cancelar: "Cancelar",
   },
+  malas: {
+    rotulo: "Maletas",
+    quantidade: (n: number | null | undefined) => (n == null ? "cantidad de maletas no informada" : n === 1 ? "1 maleta" : `${n} maletas`),
+    tituloRetirada: (total: number) => (total === 1 ? "Retire 1 maleta" : `Retire ${total} maletas`),
+    tituloEntrega: (total: number) => (total === 1 ? "Entregue 1 maleta" : `Entregue ${total} maletas`),
+    tituloSemTotal: "Verifique las maletas de cada BDO",
+    carona: "adicional",
+    semQuantidade: "Algún BDO no informa la cantidad: verifique por la etiqueta.",
+    conferiRetirada: (total: number | null) =>
+      total == null ? "Verifiqué todas las maletas de estos BDO" : total === 1 ? "Verifiqué la maleta" : `Verifiqué las ${total} maletas`,
+    conferiEntrega: (total: number | null) =>
+      total == null ? "Entregué todas las maletas de estos BDO" : total === 1 ? "Entregué la maleta" : `Entregué las ${total} maletas`,
+    pendencia: "verifique las maletas",
+  },
+  sugestaoCarona: {
+    titulo: (n: number) => (n === 1 ? "Hay 1 equipaje más para esta dirección" : `Hay ${n} equipajes más para esta dirección`),
+    explicacao: "Llévelo junto como equipaje adicional: es la misma dirección de esta entrega.",
+    levar: "Llevar como adicional",
+    mesmoEndereco: "Misma dirección",
+  },
   corrigirRetirada: {
     titulo: "Corregir el retiro",
     explicacao:
