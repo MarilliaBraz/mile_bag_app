@@ -52,6 +52,21 @@ export type EventoRastreabilidade = {
 export type HistoricoEntrega = {
   entrega: EntregaGestao;
   eventos: EventoRastreabilidade[];
+  /** Item 9: km de cada viagem encerrada. Ausente em respostas antigas. */
+  quilometragem?: KmViagem[];
+};
+
+/** Espelha KmViagemResponse (item 9): calculado x percorrido (GPS, só a ida) x pago. */
+export type KmViagem = {
+  dataInicio: string;
+  motoristaNome: string | null;
+  kmIdaCalculado: number | null;
+  kmVoltaCalculado: number | null;
+  kmPercorrido: number | null;
+  kmIdaPago: number | null;
+  kmVoltaPago: number | null;
+  usouPercorrido: boolean;
+  valorFixo: boolean;
 };
 
 /** Espelha FotoGestaoResponse (V48): o arquivo vem de .../fotos/{id}. */

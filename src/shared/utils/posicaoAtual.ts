@@ -2,7 +2,10 @@ import type { Coordenada } from "../components/MapaBase";
 
 export type MotivoFalhaPosicao = "NAO_SUPORTADA" | "CONTEXTO_INSEGURO" | "NEGADA" | "INDISPONIVEL" | "TEMPO_ESGOTADO";
 
-export type ResultadoPosicao = { posicao: Coordenada; motivo: null } | { posicao: null; motivo: MotivoFalhaPosicao };
+/** Item 9: a precisão informada pelo GPS (metros) acompanha a posição lida. */
+export type PosicaoLida = Coordenada & { precisaoMetros?: number };
+
+export type ResultadoPosicao = { posicao: PosicaoLida; motivo: null } | { posicao: null; motivo: MotivoFalhaPosicao };
 
 function pedirPosicao(opcoes: PositionOptions, tempoLimiteMs: number): Promise<ResultadoPosicao> {
   return new Promise((resolver) => {
@@ -13,7 +16,10 @@ function pedirPosicao(opcoes: PositionOptions, tempoLimiteMs: number): Promise<R
     navigator.geolocation.getCurrentPosition(
       (posicao) => {
         clearTimeout(limite);
-        resolver({ posicao: { latitude: posicao.coords.latitude, longitude: posicao.coords.longitude }, motivo: null });
+        resolver({
+          posicao: { latitude: posicao.coords.latitude, longitude: posicao.coords.longitude, precisaoMetros: posicao.coords.accuracy },
+          motivo: null,
+        });
       },
       (erro) => {
         clearTimeout(limite);
@@ -84,5 +90,7 @@ export async function obterPosicaoDetalhada(tempoLimiteMs = 10_000, idadeMaximaM
  * explicar o motivo.
  */
 export async function obterPosicaoAtual(tempoLimiteMs = 10_000): Promise<Coordenada | null> {
-  return (await obterPosicaoDetalhada(tempoLimiteMs)).posicao;
+  const { posicao } = await obterPosicaoDetalhada(tempoLimiteMs);
+  // Só as coordenadas: quem usa envia este objeto à API como está.
+  return posicao ? { latitude: posicao.latitude, longitude: posicao.longitude } : null;
 }

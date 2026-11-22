@@ -131,7 +131,7 @@ export function useRota(entregaId: string) {
       });
 
       // HU31: a partir daqui a posição é enviada para o link de acompanhamento (mesmo antes de sincronizar).
-      marcarViagemEmAndamento(true);
+      marcarViagemEmAndamento(true, entregaId);
       if (enfileirado) {
         setPendenteDeSincronizacao(true);
         return;

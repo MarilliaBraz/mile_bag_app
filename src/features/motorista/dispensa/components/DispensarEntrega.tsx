@@ -8,6 +8,8 @@ import { limparRetiradaLocal } from "../../../../shared/utils/retiradaLocal";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { dispensarEntrega, listarMotivosDispensa } from "../../../../shared/services/dispensaService";
 import type { MotivoOcorrencia } from "../../../../shared/types/ocorrencia";
+import { encerrarViagemNoAparelho } from "../../../../shared/utils/viagemEmAndamento";
+import { enviarCaminhoPendente } from "../../../../shared/services/caminhoViagem";
 import { consultarDetalhe } from "../../painel-entregas/services/painelService";
 
 const TAMANHO_MAXIMO_COMPLEMENTO = 500;
@@ -58,6 +60,9 @@ export function DispensarEntrega() {
       await dispensarEntrega(entregaId, motivoId || null, complemento.trim() || null);
       // V48: a retirada desta tentativa deixa de valer; se a entrega voltar, retira-se de novo.
       limparRetiradaLocal(entregaId);
+      // Item 9: a viagem terminou neste aparelho - para de gravar o caminho e manda o que ficou guardado.
+      encerrarViagemNoAparelho(entregaId);
+      void enviarCaminhoPendente(true);
       navegar("/motorista", { replace: true });
     } catch (excecao) {
       setErro(excecao instanceof ApiError ? excecao.message : t.falhaDispensar);

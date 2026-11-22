@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { formatarDataHora } from "../../../../shared/utils/formatar";
+import { KmDaViagem } from "./KmDaViagem";
 import { useRecurso } from "../../../../shared/hooks/useRecurso";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { Alerta, Carregando, Vazio } from "../../../../shared/components/Alerta";
@@ -234,19 +235,22 @@ function HistoricoMala({ entregaId }: { entregaId: string }) {
     return <Carregando texto={t.carregandoHistorico} />;
   }
   return (
-    <ul className="linha-tempo">
-      {dados.eventos.map((evento, indice) => (
-        <li key={`${evento.tipo}-${indice}`}>
-          <strong>{t.eventos[evento.tipo]}</strong>
-          <div className="texto-apoio">
-            {evento.dataHora ? formatarDataHora(evento.dataHora) : "—"}
-            {evento.motoristaNome && ` · ${evento.motoristaNome}`}
-          </div>
-          {evento.descricao && <div>{descricaoDoEvento(evento.tipo, evento.descricao, t)}</div>}
-          {evento.detalhe && <div className="texto-apoio">{evento.detalhe}</div>}
-        </li>
-      ))}
-    </ul>
+    <>
+      <KmDaViagem viagens={dados.quilometragem ?? []} />
+      <ul className="linha-tempo">
+        {dados.eventos.map((evento, indice) => (
+          <li key={`${evento.tipo}-${indice}`}>
+            <strong>{t.eventos[evento.tipo]}</strong>
+            <div className="texto-apoio">
+              {evento.dataHora ? formatarDataHora(evento.dataHora) : "—"}
+              {evento.motoristaNome && ` · ${evento.motoristaNome}`}
+            </div>
+            {evento.descricao && <div>{descricaoDoEvento(evento.tipo, evento.descricao, t)}</div>}
+            {evento.detalhe && <div className="texto-apoio">{evento.detalhe}</div>}
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
 
