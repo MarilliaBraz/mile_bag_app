@@ -661,7 +661,7 @@ export const backOffice: Textos["backOffice"] = {
     enviadaPara: (email: string) => `Enviada a ${email}`,
     recebidoPor: (quem: string) => `Recibido por ${quem}`,
     carona: "Equipaje acompañante",
-    mesmoEndereco: (outros: string) => `Misma dirección: ${outros}`,
+    mesmoEndereco: (outros: string, mais: number) => `Misma dirección: ${outros}${mais > 0 ? ` y ${mais} más` : ""}`,
     fotos: "Fotos",
     semFotos: "Todavía no hay fotos registradas.",
     falhaFotos: "No fue posible cargar las fotos.",

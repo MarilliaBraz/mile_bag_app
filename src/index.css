@@ -745,6 +745,11 @@ button.perigo-contorno {
   background: var(--erro-suave);
   color: var(--erro);
 }
+/* Selo de texto longo (lista de números): quebra a linha em vez de alargar a coluna da tabela. */
+.selo-quebra {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 
 /* ---------- Ações agrupadas ---------- */
 

@@ -659,7 +659,7 @@ export const backOffice: Textos["backOffice"] = {
     enviadaPara: (email: string) => `Sent to ${email}`,
     recebidoPor: (quem: string) => `Received by ${quem}`,
     carona: "Ride-along baggage",
-    mesmoEndereco: (outros: string) => `Same address: ${outros}`,
+    mesmoEndereco: (outros: string, mais: number) => `Same address: ${outros}${mais > 0 ? ` and ${mais} more` : ""}`,
     fotos: "Photos",
     semFotos: "No photos recorded yet.",
     falhaFotos: "Could not load the photos.",
