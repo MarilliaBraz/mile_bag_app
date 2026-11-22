@@ -156,6 +156,8 @@ export const motorista: Textos["motorista"] = {
     ajuda:
       "Calcule las rutas, compare distancia y tiempo y elija una. También puede trazar una ruta propia. Al recalcular, el cálculo anterior queda guardado en el historial del viaje.",
     escolhaRota: "Elija la ruta",
+    escolhaParaIniciar: "Toque una de las rutas de abajo para elegirla. El botón Iniciar viaje solo aparece después de elegir.",
+    navegarComWaze: "Navegar con Waze",
     mapaPosicaoEndereco: "Mapa con su posición y la dirección de entrega",
     suaPosicao: "Su posición",
     enderecoEntrega: "Dirección de entrega",

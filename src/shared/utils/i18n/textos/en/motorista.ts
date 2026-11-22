@@ -156,6 +156,8 @@ export const motorista: Textos["motorista"] = {
     ajuda:
       "Calculate the routes, compare distance and time and pick one. You can also draw a custom route. When you recalculate, the previous calculation stays in the trip history.",
     escolhaRota: "Choose the route",
+    escolhaParaIniciar: "Tap one of the routes below to choose it. The Start trip button only appears after you choose.",
+    navegarComWaze: "Navigate with Waze",
     mapaPosicaoEndereco: "Map with your position and the delivery address",
     suaPosicao: "Your position",
     enderecoEntrega: "Delivery address",

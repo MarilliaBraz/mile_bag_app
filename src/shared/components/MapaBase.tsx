@@ -38,9 +38,9 @@ const ICONE_DESTAQUE = new DivIcon({ className: "marcador-destaque", iconSize: [
 /**
  * Mapa base (Leaflet sobre OpenStreetMap) reutilizado pelas telas de rota
  * e viagem - atribuição do OSM sempre visível (RI08), exigida pela licença
- * dos dados. Não há nenhum link ou botão que abra um app de mapas externo
- * (HU03, FR-008): toda a navegação exibida ao motorista vem dos cálculos
- * do próprio sistema.
+ * dos dados. O mapa e as rotas exibidos vêm dos cálculos do próprio
+ * sistema (HU03, FR-008); só a navegação durante a viagem pode ir para o
+ * Waze (NavegarComWaze), sem trocar a rota registrada.
  */
 export function MapaBase({
   centro,
