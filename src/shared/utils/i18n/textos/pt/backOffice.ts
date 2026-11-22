@@ -655,7 +655,7 @@ export const backOffice = {
     enviadaPara: (email: string) => `Enviada para ${email}`,
     recebidoPor: (quem: string) => `Recebido por ${quem}`,
     carona: "Bagagem carona",
-    mesmoEndereco: (outros: string) => `Mesmo endereço: ${outros}`,
+    mesmoEndereco: (outros: string, mais: number) => `Mesmo endereço: ${outros}${mais > 0 ? ` e mais ${mais}` : ""}`,
     fotos: "Fotos",
     semFotos: "Nenhuma foto registrada ainda.",
     falhaFotos: "Não foi possível carregar as fotos.",

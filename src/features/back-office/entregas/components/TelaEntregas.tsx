@@ -19,6 +19,9 @@ import { TrocarBaseBdo } from "./TrocarBaseBdo";
 
 const STATUS: EntregaStatus[] = ["AGUARDANDO_ATRIBUICAO", "ATRIBUIDA", "EM_ANDAMENTO", "REABERTA", "ENCERRADA_COM_SUCESSO", "CANCELADA"];
 
+/** Item 8: o selo "Mesmo endereço" mostra até estes números; o resto vira "e mais N" (a lista toda fica no title). */
+const NUMEROS_NO_SELO = 3;
+
 /** V47: só cabe cancelar o que ainda não foi concluído nem cancelado. */
 const podeCancelar = (linha: EntregaGestao) => linha.status !== "ENCERRADA_COM_SUCESSO" && linha.status !== "CANCELADA";
 
@@ -124,7 +127,12 @@ export function TelaEntregas() {
                         {entrega.corrigida && <span className="selo selo-aviso">{t.corrigida}</span>}
                         {entrega.baseCodigo && <span className="selo selo-info codigo">{entrega.baseCodigo}</span>}
                         {entrega.mesmoEnderecoQue && entrega.mesmoEnderecoQue.length > 0 && (
-                          <span className="selo selo-sucesso">{t.mesmoEndereco(entrega.mesmoEnderecoQue.join(", "))}</span>
+                          <span className="selo selo-sucesso selo-quebra" title={entrega.mesmoEnderecoQue.join(", ")}>
+                            {t.mesmoEndereco(
+                              entrega.mesmoEnderecoQue.slice(0, NUMEROS_NO_SELO).join(", "),
+                              Math.max(0, entrega.mesmoEnderecoQue.length - NUMEROS_NO_SELO),
+                            )}
+                          </span>
                         )}
                       </td>
                       <td>{entrega.passageiroNome ?? "—"}</td>
