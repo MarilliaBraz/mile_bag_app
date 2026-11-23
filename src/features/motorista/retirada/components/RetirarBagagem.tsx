@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "../../../../shared/services/ApiError";
 import { arquivoParaBase64, executarOuEnfileirar, fotosParaFila } from "../../../../shared/services/fila";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { usePosicaoAtual } from "../../../../shared/hooks/usePosicaoAtual";
-import { marcarRetiradaLocal } from "../../../../shared/utils/retiradaLocal";
+import { marcarRetiradaAguardandoViagem, marcarRetiradaLocal } from "../../../../shared/utils/retiradaLocal";
+import { useRetiradaFeita } from "../../rota/hooks/useRetiradaFeita";
 import { TelaMotorista } from "../../../../shared/components/TelaMotorista";
 import { Alerta, Carregando } from "../../../../shared/components/Alerta";
 import { Ajuda } from "../../../../shared/components/Ajuda";
@@ -33,6 +34,8 @@ export function RetirarBagagem() {
   const [enviando, setEnviando] = useState(false);
   // Item 8: o motorista confere as malas antes de registrar a retirada (sem internet, não bloqueia).
   const [malasLiberadas, setMalasLiberadas] = useState(false);
+  // Retirada já registrada (ou viagem já iniciada): não deixa refazer tudo para só no fim recusar - leva para a rota.
+  const retiradaFeita = useRetiradaFeita(entregaId ?? "");
 
   async function registrar() {
     if (!entregaId || !foto) {
@@ -63,6 +66,8 @@ export function RetirarBagagem() {
       if (enfileirado) {
         marcarRetiradaLocal(entregaId);
       }
+      // Até a viagem começar: se o motorista se afastar daqui sem iniciá-la, o app avisa (AvisoViagemNaoIniciada).
+      marcarRetiradaAguardandoViagem({ entregaId, posicao, registradaEm: Date.now() });
       navegar(`/motorista/entregas/${entregaId}/rota`, { state: { aviso: enfileirado ? t.naFila : t.registrada } });
     } catch (excecao) {
       setErro(excecao instanceof ApiError ? excecao.message : t.falha);
@@ -74,62 +79,73 @@ export function RetirarBagagem() {
   return (
     <TelaMotorista titulo={t.titulo} voltarPara={`/motorista/entregas/${entregaId}`} rotuloVoltar={textos.motorista.geral.voltarEntrega}>
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
-      <p className="texto-apoio">{t.explicacao}</p>
+      {retiradaFeita === true ? (
+        <>
+          <Alerta tipo="sucesso">{t.jaRegistrada}</Alerta>
+          <Link to={`/motorista/entregas/${entregaId}/rota`} viewTransition className="botao grande bloco">
+            <Icone nome="rota" /> {t.irParaRota}
+          </Link>
+        </>
+      ) : (
+        <>
+          <p className="texto-apoio">{t.explicacao}</p>
 
-      <div className="formulario">
-        <CampoFoto
-          id="foto-retirada"
-          rotulo={t.foto}
-          tirarFoto={t.tirarFoto}
-          fotoPronta={t.fotoPronta}
-          dica={t.dicaFoto}
-          previa={t.previa}
-          foto={foto}
-          aoEscolher={setFoto}
-        />
+          <div className="formulario">
+            <CampoFoto
+              id="foto-retirada"
+              rotulo={t.foto}
+              tirarFoto={t.tirarFoto}
+              fotoPronta={t.fotoPronta}
+              dica={t.dicaFoto}
+              previa={t.previa}
+              foto={foto}
+              aoEscolher={setFoto}
+            />
 
-        <FotosAvaria
-          id="avarias-retirada"
-          fotos={avarias}
-          aoMudarFotos={setAvarias}
-          observacao={observacao}
-          aoMudarObservacao={setObservacao}
-        />
+            <FotosAvaria
+              id="avarias-retirada"
+              fotos={avarias}
+              aoMudarFotos={setAvarias}
+              observacao={observacao}
+              aoMudarObservacao={setObservacao}
+            />
 
-        {/* H: a localização só é registrada - sem ela a retirada vale do mesmo jeito. */}
-        {capturando ? (
-          <Carregando texto={t.capturandoLocal} />
-        ) : posicao ? (
-          <Alerta tipo="sucesso">{t.localCapturado}</Alerta>
-        ) : (
-          <Alerta tipo="aviso">
-            <p>
-              <strong>{t.semLocal}</strong>
-            </p>
-            {motivoFalha && <p>{textos.posicao[motivoFalha]}</p>}
-            <button type="button" className="secundario" onClick={() => void capturar()}>
-              <Icone nome="pino" /> {t.tentarNovamente}
+            {/* H: a localização só é registrada - sem ela a retirada vale do mesmo jeito. */}
+            {capturando ? (
+              <Carregando texto={t.capturandoLocal} />
+            ) : posicao ? (
+              <Alerta tipo="sucesso">{t.localCapturado}</Alerta>
+            ) : (
+              <Alerta tipo="aviso">
+                <p>
+                  <strong>{t.semLocal}</strong>
+                </p>
+                {motivoFalha && <p>{textos.posicao[motivoFalha]}</p>}
+                <button type="button" className="secundario" onClick={() => void capturar()}>
+                  <Icone nome="pino" /> {t.tentarNovamente}
+                </button>
+              </Alerta>
+            )}
+          </div>
+
+          {entregaId && <ConferenciaMalas entregaId={entregaId} momento="retirada" aoMudar={setMalasLiberadas} />}
+
+          <div className="acao-fixa">
+            <button
+              type="button"
+              className="sucesso grande bloco"
+              onClick={registrar}
+              disabled={!foto || !malasLiberadas || enviando || capturando}
+            >
+              <Icone nome="mala" /> {enviando ? t.registrando : t.registrar}
             </button>
-          </Alerta>
-        )}
-      </div>
-
-      {entregaId && <ConferenciaMalas entregaId={entregaId} momento="retirada" aoMudar={setMalasLiberadas} />}
-
-      <div className="acao-fixa">
-        <button
-          type="button"
-          className="sucesso grande bloco"
-          onClick={registrar}
-          disabled={!foto || !malasLiberadas || enviando || capturando}
-        >
-          <Icone nome="mala" /> {enviando ? t.registrando : t.registrar}
-        </button>
-        {!foto && <p className="texto-apoio centro mb-0">{t.paraContinuar}</p>}
-        {foto && !malasLiberadas && (
-          <p className="texto-apoio centro mb-0">{textos.motorista.comprovante.paraContinuar(textos.motorista.malas.pendencia)}</p>
-        )}
-      </div>
+            {!foto && <p className="texto-apoio centro mb-0">{t.paraContinuar}</p>}
+            {foto && !malasLiberadas && (
+              <p className="texto-apoio centro mb-0">{textos.motorista.comprovante.paraContinuar(textos.motorista.malas.pendencia)}</p>
+            )}
+          </div>
+        </>
+      )}
 
       <Ajuda>
         <p>{t.ajuda}</p>
