@@ -1,13 +1,5 @@
 import { requisitar } from "../../../../shared/services/httpClient";
-import type {
-  CampoObrigatorio,
-  CategoriaCodigoNome,
-  CodigoNome,
-  ExibicaoTarifaMotorista,
-  FinalidadeMotivo,
-  MotivoOcorrencia,
-  PeriodicidadeAtual,
-} from "../types";
+import type { CampoObrigatorio, CategoriaCodigoNome, CodigoNome, FinalidadeMotivo, MotivoOcorrencia, PeriodicidadeAtual } from "../types";
 import { caminhoApi } from "../../../../shared/services/caminhoApi";
 import type { OpcaoBusca } from "../../../../shared/components/BuscaOpcoes";
 
@@ -33,11 +25,6 @@ export const removerCodigoNome = (categoria: CategoriaCodigoNome, id: string) =>
 export const consultarPeriodicidade = () => requisitar<PeriodicidadeAtual>(`${BASE}/periodicidade-fechamento`);
 export const agendarPeriodicidade = (corpo: { periodicidade: string; vigenteDesde: string }) =>
   requisitar<PeriodicidadeAtual>(`${BASE}/periodicidade-fechamento`, { metodo: "POST", corpo });
-
-/** V56: a empresa oculta (ou mostra) ao motorista a tarifa paga por viagem. */
-export const consultarExibicaoTarifa = () => requisitar<ExibicaoTarifaMotorista>(`${BASE}/exibicao-tarifa-motorista`);
-export const salvarExibicaoTarifa = (ocultarTarifa: boolean) =>
-  requisitar<ExibicaoTarifaMotorista>(`${BASE}/exibicao-tarifa-motorista`, { metodo: "PUT", corpo: { ocultarTarifa } });
 
 /** POST /api/v1/configuracoes/bases-aeroportuarias/{id}/principal (V52) - a base que vale quando o BDO não traz o aeroporto. */
 export const tornarBasePrincipal = (id: string) =>

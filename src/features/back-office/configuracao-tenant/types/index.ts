@@ -25,6 +25,3 @@ export type CategoriaCodigoNome = "bases-aeroportuarias" | "companhias-aereas";
 
 /** Espelha PeriodicidadeAtualResponse. */
 export type PeriodicidadeAtual = { vigente: string; proxima: string | null; proximaVigenteDesde: string | null };
-
-/** Espelha ExibicaoTarifaMotoristaResponse (V56): se a tarifa por viagem fica oculta no relatório do motorista. */
-export type ExibicaoTarifaMotorista = { ocultarTarifa: boolean };

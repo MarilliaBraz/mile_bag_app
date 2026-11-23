@@ -10,6 +10,8 @@ export type Conta = {
   criadoEm: string;
   /** V52, só motoristas: a base aeroportuária (ele vê e é avisado só dos BDOs dela). */
   baseId?: string | null;
+  /** V58, só motoristas: a empresa oculta dele a tarifa paga por viagem (o relatório mostra km e pedágio). */
+  ocultarTarifa?: boolean;
 };
 
 /** V52: uma base aeroportuária para escolher no cadastro do motorista. */
@@ -32,10 +34,12 @@ export type ResultadoLote = {
 /** O que o cadastro de contas precisa da API de cada tipo de conta. */
 export type ServicoContas = {
   listar: () => Promise<Conta[]>;
-  criar: (corpo: { nome: string; login: string; senha: string; baseId?: string }) => Promise<Conta>;
+  criar: (corpo: { nome: string; login: string; senha: string; baseId?: string; ocultarTarifa?: boolean }) => Promise<Conta>;
   criarEmLote: (linhas: LinhaLote[], baseId?: string) => Promise<{ criados: number; comErro: number; resultados: ResultadoLote[] }>;
   definirAtivo: (id: string, ativo: boolean) => Promise<Conta>;
-  atualizar: (id: string, corpo: { nome?: string; login?: string; baseId?: string }) => Promise<Conta>;
+  atualizar: (id: string, corpo: { nome?: string; login?: string; baseId?: string; ocultarTarifa?: boolean }) => Promise<Conta>;
+  /** V58: quando true, a empresa escolhe por conta se ela vê a tarifa paga por viagem (motoristas). */
+  tarifaPorConta?: boolean;
   /** V52: quando existe, a conta tem base obrigatória (motoristas). */
   listarBases?: () => Promise<BaseOpcao[]>;
   redefinirSenha: (id: string, senha: string) => Promise<void>;
