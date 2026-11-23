@@ -131,6 +131,17 @@ export const comum: TextosComuns = {
     tentarDeNovo: "Try again",
     voltarInicio: "Back to start",
   },
+  mensagensServidor: {
+    semViagem: "You have not started the trip for this delivery yet. Open Route and tap Start trip.",
+    viagemEncerrada: "The trip for this delivery has already ended. To finish, tap Record delivery.",
+    trocaComViagemEncerrada: "The trip for this delivery has already ended; the route can no longer be changed.",
+    semRotaEscolhida: "Choose a route before starting the trip.",
+    viagemJaIniciada: "The trip for this delivery has already started. Open Route to continue.",
+    retiradaJaRegistrada: "The pickup of this baggage has already been recorded. Go to Route and start the trip.",
+    retiradaAntesDaViagem: "Record the baggage pickup (with the photo) before starting the trip.",
+    retiradaDepoisDaViagem: "The trip has already started: the pickup can no longer be recorded.",
+    entregaJaRegistrada: "This delivery has already been recorded.",
+  },
   erroServidor: {
     arquivoGrande: "The photo or file is too large to send. Take the photo again or choose a smaller file.",
     indisponivel: "The server is unavailable right now. Try again in a moment.",

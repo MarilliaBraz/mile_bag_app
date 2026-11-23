@@ -1,6 +1,7 @@
 import { ApiError } from "./ApiError";
 import { EVENTO_SESSAO_EXPIRADA, limparToken, obterToken } from "./authStorage";
 import { obterTextos } from "../utils/i18n/idioma";
+import { traduzirMensagemServidor } from "./mensagensServidor";
 
 // Endereço da API vem do arquivo .env do ambiente (modelo em .env.example), nunca fixo no código.
 // Vazio = mesma origem do app: nos ambientes implantados o Caddy serve o app e encaminha /api para a API, então
@@ -27,7 +28,7 @@ function mensagemDoErro(status: number, problema: ProblemDetail | undefined): st
   if (status === 413) {
     return mensagemPadrao(status);
   }
-  return problema?.detail ?? mensagemPadrao(status);
+  return traduzirMensagemServidor(problema?.detail) ?? mensagemPadrao(status);
 }
 
 /** 401 sessao-expirada: o token não vale mais. Some com ele e avisa o app, que oferece entrar de novo. */

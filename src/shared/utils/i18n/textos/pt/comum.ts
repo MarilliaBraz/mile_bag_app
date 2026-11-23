@@ -129,6 +129,17 @@ export const comum = {
     tentarDeNovo: "Tentar de novo",
     voltarInicio: "Voltar ao início",
   },
+  mensagensServidor: {
+    semViagem: "Você ainda não iniciou a viagem desta entrega. Abra a Rota e toque em Iniciar viagem.",
+    viagemEncerrada: "A viagem desta entrega já foi encerrada. Para finalizar, toque em Registrar entrega.",
+    trocaComViagemEncerrada: "A viagem desta entrega já foi encerrada; não dá mais para trocar a rota.",
+    semRotaEscolhida: "Escolha uma rota antes de iniciar a viagem.",
+    viagemJaIniciada: "A viagem desta entrega já foi iniciada. Abra a Rota para continuar.",
+    retiradaJaRegistrada: "A retirada desta bagagem já foi registrada. Siga para a Rota e inicie a viagem.",
+    retiradaAntesDaViagem: "Registre a retirada da bagagem (com a foto) antes de iniciar a viagem.",
+    retiradaDepoisDaViagem: "A viagem já começou: a retirada não pode mais ser registrada.",
+    entregaJaRegistrada: "Esta entrega já foi registrada.",
+  },
   erroServidor: {
     arquivoGrande: "A foto ou o arquivo é grande demais para enviar. Tire a foto de novo ou escolha um arquivo menor.",
     indisponivel: "O servidor está indisponível no momento. Tente de novo em instantes.",

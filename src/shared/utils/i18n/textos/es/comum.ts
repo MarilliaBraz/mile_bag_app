@@ -131,6 +131,17 @@ export const comum: TextosComuns = {
     tentarDeNovo: "Intentar de nuevo",
     voltarInicio: "Volver al inicio",
   },
+  mensagensServidor: {
+    semViagem: "Aún no iniciaste el viaje de esta entrega. Abre la Ruta y toca Iniciar viaje.",
+    viagemEncerrada: "El viaje de esta entrega ya terminó. Para finalizar, toca Registrar entrega.",
+    trocaComViagemEncerrada: "El viaje de esta entrega ya terminó; ya no se puede cambiar la ruta.",
+    semRotaEscolhida: "Elige una ruta antes de iniciar el viaje.",
+    viagemJaIniciada: "El viaje de esta entrega ya se inició. Abre la Ruta para continuar.",
+    retiradaJaRegistrada: "El retiro de este equipaje ya fue registrado. Ve a la Ruta e inicia el viaje.",
+    retiradaAntesDaViagem: "Registra el retiro del equipaje (con la foto) antes de iniciar el viaje.",
+    retiradaDepoisDaViagem: "El viaje ya comenzó: el retiro ya no se puede registrar.",
+    entregaJaRegistrada: "Esta entrega ya fue registrada.",
+  },
   erroServidor: {
     arquivoGrande: "La foto o el archivo es demasiado grande para enviar. Tome la foto de nuevo o elija un archivo más pequeño.",
     indisponivel: "El servidor no está disponible en este momento. Inténtelo de nuevo en unos instantes.",

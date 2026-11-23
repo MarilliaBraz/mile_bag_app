@@ -7,7 +7,7 @@ import { AvisoContatoIncompleto } from "../../../../shared/components/AvisoConta
 import { SegundaViaBdo } from "../../../../shared/components/SegundaViaBdo";
 import { AvisoJanelaReagendamento } from "../../../../shared/components/AvisoJanelaReagendamento";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
-import { Icone } from "../../../../shared/components/Icone";
+import { Icone, type NomeIcone } from "../../../../shared/components/Icone";
 import { VincularBagagemCarona } from "../bagagem-carona/components/VincularBagagemCarona";
 import { TelaMotorista } from "../../../../shared/components/TelaMotorista";
 import { BotaoLigar } from "../mensageria/components/BotaoLigar";
@@ -68,6 +68,28 @@ export function DetalheEntrega() {
   const viagemIniciada = !!entrega && (entrega.temTrajetoIniciado || entregaEmViagem() === entrega.entregaId);
   // V51: retirada registrada e viagem ainda não iniciada - dá para corrigir a retirada (com motivo).
   const podeCorrigirRetirada = !!entrega && entrega.status === "ATRIBUIDA" && !!entrega.retiradaRegistrada && !entrega.temTrajetoIniciado;
+  const chegou = entrega?.marcoMaisRecente === "CHEGADA";
+  const rotaDaEntrega = `/motorista/entregas/${entregaId}/rota`;
+  const proximoPasso: { para: string; icone: NomeIcone; rotulo: string; explicacao: string } | null =
+    !entrega || encerrada
+      ? null
+      : precisaRetirar
+        ? {
+            para: `/motorista/entregas/${entrega.entregaId}/retirada`,
+            icone: "camera",
+            rotulo: t.detalhe.retirarBagagem,
+            explicacao: t.detalhe.passoRetirar,
+          }
+        : !viagemIniciada
+          ? { para: rotaDaEntrega, icone: "carro", rotulo: t.rota.iniciarViagem, explicacao: t.detalhe.passoIniciar }
+          : !chegou
+            ? { para: rotaDaEntrega, icone: "rota", rotulo: t.detalhe.continuarViagem, explicacao: t.detalhe.passoViagem }
+            : {
+                para: `/motorista/entregas/${entrega.entregaId}/comprovante`,
+                icone: "checkCirculo",
+                rotulo: t.detalhe.registrarEntrega,
+                explicacao: t.detalhe.passoRegistrar,
+              };
 
   return (
     <TelaMotorista titulo={entrega?.bdoNumero ?? t.detalhe.titulo} voltarPara="/motorista" rotuloVoltar={t.geral.voltarPainel}>
@@ -101,19 +123,22 @@ export function DetalheEntrega() {
             </div>
           </section>
 
+          {/* "Um passo de cada vez" (2026-11-22): só o próximo passo em destaque; o resto fica menor, abaixo. */}
+          {proximoPasso && (
+            <div className="mt-4">
+              <Link to={proximoPasso.para} viewTransition className="botao grande sucesso bloco">
+                <Icone nome={proximoPasso.icone} /> {proximoPasso.rotulo}
+              </Link>
+              <p className="texto-apoio centro mb-0">{proximoPasso.explicacao}</p>
+            </div>
+          )}
+
           <div className="grade-acoes mt-4">
-            {precisaRetirar && (
-              <Link to={`/motorista/entregas/${entrega.entregaId}/retirada`} viewTransition className="botao grande sucesso largo">
-                <Icone nome="camera" /> {t.detalhe.retirarBagagem}
+            {proximoPasso?.para !== rotaDaEntrega && !precisaRetirar && (
+              <Link to={rotaDaEntrega} viewTransition className={`botao secundario${entrega.telefone ? "" : " largo"}`}>
+                <Icone nome="rota" /> {entrega.temTrajetoIniciado ? t.detalhe.verViagem : t.detalhe.rota}
               </Link>
             )}
-            <Link
-              to={`/motorista/entregas/${entrega.entregaId}/rota`}
-              viewTransition
-              className={`botao grande${precisaRetirar ? " secundario" : ""}${entrega.telefone ? "" : " largo"}`}
-            >
-              <Icone nome="rota" /> {entrega.temTrajetoIniciado ? t.detalhe.verViagem : t.detalhe.rota}
-            </Link>
             <BotaoLigar telefone={entrega.telefone} />
             {podeCorrigirRetirada && (
               <Link to={`/motorista/entregas/${entrega.entregaId}/retirada/corrigir`} viewTransition className="botao fantasma largo">
@@ -125,24 +150,21 @@ export function DetalheEntrega() {
                 <Icone nome="ferramenta" /> {t.detalhe.corrigirEntrega(formatarHora(entrega.corrigivelAte))}
               </Link>
             )}
-            {!encerrada && (
-              <>
-                {viagemIniciada ? (
-                  <Link to={`/motorista/entregas/${entrega.entregaId}/comprovante`} viewTransition className="botao grande sucesso largo">
-                    <Icone nome="checkCirculo" /> {t.detalhe.registrarEntrega}
-                  </Link>
-                ) : (
-                  <p className="texto-apoio largo mb-0">{t.detalhe.iniciarAntesDeRegistrar}</p>
-                )}
+          </div>
+
+          {!encerrada && (
+            <details className="ajuda sem-icone mt-4">
+              <summary>{t.detalhe.tiveUmProblema}</summary>
+              <div className="grade-acoes">
                 <Link to={`/motorista/entregas/${entrega.entregaId}/ocorrencia`} viewTransition className="botao secundario largo">
                   <Icone nome="alerta" /> {t.detalhe.naoConsegui}
                 </Link>
                 <Link to={`/motorista/entregas/${entrega.entregaId}/dispensar`} viewTransition className="botao fantasma largo">
                   <Icone nome="voltar" /> {t.detalhe.dispensar}
                 </Link>
-              </>
-            )}
-          </div>
+              </div>
+            </details>
+          )}
 
           <h2>{t.detalhe.dadosBdo}</h2>
           <dl className="cartao dados-grade">
