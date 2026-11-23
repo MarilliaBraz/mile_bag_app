@@ -7,6 +7,8 @@ export type PracaPedagio = {
   /** Localização (HU24): sem ela a praça não é detectada nas rotas. */
   latitude: number | null;
   longitude: number | null;
+  /** V57: "Cidade/UF" descoberta pela localização (só informativa); nula sem localização ou se o mapa não achar. */
+  cidade?: string | null;
 };
 
 /** Espelha ValorPedagioResponse. */

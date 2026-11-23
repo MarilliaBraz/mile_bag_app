@@ -2,7 +2,14 @@ import { Fragment, useId, useState } from "react";
 import { formatarData, formatarMoeda, mensagemDeErro } from "../../../../shared/utils/formatar";
 import { useRecurso } from "../../../../shared/hooks/useRecurso";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
-import { adicionarValor, criarPraca, definirLocalizacaoDaPraca, historicoDaPraca, listarPracas } from "../services/pedagiosService";
+import {
+  adicionarValor,
+  criarPraca,
+  definirLocalizacaoDaPraca,
+  historicoDaPraca,
+  listarPracas,
+  renomearPraca,
+} from "../services/pedagiosService";
 import type { PracaPedagio } from "../types";
 import { ValorPedagioForm } from "./ValorPedagioForm";
 import { Alerta, Carregando, Vazio } from "../../../../shared/components/Alerta";
@@ -76,6 +83,44 @@ function LocalizacaoForm({ praca, aoConcluir }: { praca: PracaPedagio; aoConclui
   );
 }
 
+function RenomearForm({ praca, aoConcluir }: { praca: PracaPedagio; aoConcluir: (nome: string) => Promise<void> }) {
+  const uid = useId();
+  const [nome, setNome] = useState(praca.nome);
+  const [erro, setErro] = useState<string | null>(null);
+  const [salvando, setSalvando] = useState(false);
+  const t = useTextos().backOffice.pedagios;
+  const nomeLimpo = nome.trim();
+
+  async function salvar(evento: React.FormEvent) {
+    evento.preventDefault();
+    setErro(null);
+    setSalvando(true);
+    try {
+      const atualizada = await renomearPraca(praca.id, nomeLimpo);
+      await aoConcluir(atualizada.nome);
+    } catch (excecao) {
+      setErro(mensagemDeErro(excecao, t.falhaRenomear));
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  return (
+    <form onSubmit={salvar} className="formulario">
+      {erro && <Alerta tipo="erro">{erro}</Alerta>}
+      <div>
+        <label htmlFor={`${uid}-nome`}>{t.nomePraca}</label>
+        <input id={`${uid}-nome`} value={nome} maxLength={200} onChange={(e) => setNome(e.target.value)} />
+      </div>
+      <div className="linha-acoes">
+        <button type="submit" disabled={nomeLimpo === "" || nomeLimpo === praca.nome || salvando}>
+          {t.salvarNome}
+        </button>
+      </div>
+    </form>
+  );
+}
+
 function HistoricoValores({ praca }: { praca: PracaPedagio }) {
   const t = useTextos().backOffice.pedagios;
   const { dados, erro, carregando } = useRecurso(() => historicoDaPraca(praca.id), t.falhaHistorico);
@@ -105,6 +150,7 @@ export function TelaPedagios() {
   const [aberta, setAberta] = useState<string | null>(null);
   const [novoValorEm, setNovoValorEm] = useState<PracaPedagio | null>(null);
   const [localizandoEm, setLocalizandoEm] = useState<PracaPedagio | null>(null);
+  const [renomeandoEm, setRenomeandoEm] = useState<PracaPedagio | null>(null);
   const [resultado, setResultado] = useState<string | null>(null);
   // Vira a `key` do histórico aberto para ele recarregar depois de um valor novo.
   const [versao, setVersao] = useState(0);
@@ -164,6 +210,7 @@ export function TelaPedagios() {
                       <tr>
                         <td>
                           <strong>{praca.nome}</strong>
+                          {praca.cidade && <span className="texto-apoio"> {t.cidadeDaPraca(praca.cidade)}</span>}
                         </td>
                         <td className="numero">
                           {praca.valorVigente === null ? (
@@ -194,6 +241,14 @@ export function TelaPedagios() {
                               aria-label={t.historicoRotulo(praca.nome)}
                             >
                               <Icone nome="historico" /> {t.historico}
+                            </button>
+                            <button
+                              type="button"
+                              className="fantasma compacto"
+                              onClick={() => setRenomeandoEm(praca)}
+                              aria-label={t.renomearRotulo(praca.nome)}
+                            >
+                              <Icone nome="lapis" /> {t.renomear}
                             </button>
                             <button
                               type="button"
@@ -277,6 +332,24 @@ export function TelaPedagios() {
             aoConcluir={async () => {
               setResultado(t.localizacaoAtualizada(localizandoEm.nome));
               setLocalizandoEm(null);
+              await recarregar();
+            }}
+          />
+        )}
+      </Gaveta>
+
+      <Gaveta
+        aberta={renomeandoEm !== null}
+        titulo={t.renomearTitulo(renomeandoEm?.nome ?? "")}
+        descricao={t.renomearDescricao}
+        aoFechar={() => setRenomeandoEm(null)}
+      >
+        {renomeandoEm && (
+          <RenomearForm
+            praca={renomeandoEm}
+            aoConcluir={async (nome) => {
+              setResultado(t.pracaRenomeada(nome));
+              setRenomeandoEm(null);
               await recarregar();
             }}
           />
