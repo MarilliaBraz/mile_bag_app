@@ -399,6 +399,14 @@ export const backOffice: Textos["backOffice"] = {
     falhaSalvarCampos: "No fue posible guardar los campos.",
     camposSalvos: "Campos guardados.",
     salvarCampos: "Guardar campos",
+    tarifaTitulo: "Tarifa en el informe del conductor",
+    tarifaDescricao:
+      "Oculta, el conductor solo ve los km de cada viaje (o “Entrega en la ciudad base”) y el peaje. El cierre de la empresa mantiene todos los valores.",
+    ocultarTarifa: "Ocultar al conductor la tarifa pagada por viaje",
+    falhaTarifa: "No fue posible cargar esta configuración.",
+    falhaSalvarTarifa: "No fue posible guardar esta configuración.",
+    tarifaSalva: "Configuración guardada.",
+    salvarTarifa: "Guardar",
     campos: {
       POD_FOTO_DOCUMENTO: "Comprobante: foto del documento",
       POD_IDENTIFICACAO_RECEBEDOR: "Comprobante: identificación de quien recibió",

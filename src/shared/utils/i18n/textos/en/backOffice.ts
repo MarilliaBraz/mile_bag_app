@@ -398,6 +398,14 @@ export const backOffice: Textos["backOffice"] = {
     falhaSalvarCampos: "Could not save the fields.",
     camposSalvos: "Fields saved.",
     salvarCampos: "Save fields",
+    tarifaTitulo: "Rate on the driver's report",
+    tarifaDescricao:
+      "When hidden, the driver only sees the km of each trip (or “Delivery in the base city”) and the tolls. The company's closing keeps every value.",
+    ocultarTarifa: "Hide the rate paid per trip from the driver",
+    falhaTarifa: "Could not load this setting.",
+    falhaSalvarTarifa: "Could not save this setting.",
+    tarifaSalva: "Setting saved.",
+    salvarTarifa: "Save",
     campos: {
       POD_FOTO_DOCUMENTO: "Proof of delivery: document photo",
       POD_IDENTIFICACAO_RECEBEDOR: "Proof of delivery: recipient identification",

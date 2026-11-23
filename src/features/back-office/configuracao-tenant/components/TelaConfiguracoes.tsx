@@ -2,10 +2,11 @@ import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { Pagina } from "../../../../shared/components/Pagina";
 import { SecaoCamposBaixa } from "./SecaoCamposBaixa";
 import { SecaoCodigoNome } from "./SecaoCodigoNome";
+import { SecaoExibicaoTarifa } from "./SecaoExibicaoTarifa";
 import { SecaoMotivos } from "./SecaoMotivos";
 import { SecaoPeriodicidade } from "./SecaoPeriodicidade";
 
-/** Configurações da empresa (HU11): cinco categorias independentes, cada uma salva por conta própria. */
+/** Configurações da empresa (HU11): categorias independentes, cada uma salva por conta própria. */
 export function TelaConfiguracoes() {
   const t = useTextos().backOffice.configuracoes;
   return (
@@ -20,6 +21,7 @@ export function TelaConfiguracoes() {
         <SecaoCodigoNome categoria="bases-aeroportuarias" titulo={t.basesAeroportuarias} rotuloCodigo={t.codigoIata} />
         <SecaoCodigoNome categoria="companhias-aereas" titulo={t.companhiasAtendidas} rotuloCodigo={t.codigoIata} />
         <SecaoPeriodicidade />
+        <SecaoExibicaoTarifa />
       </div>
     </Pagina>
   );

@@ -66,10 +66,13 @@ export function RelatorioQuinzenal() {
     (acc, item) => ({
       km: acc.km + (item.kmIda ?? 0) + (item.kmVolta ?? 0),
       valor: acc.valor + (item.tarifaAplicada ?? 0) + (item.valorPedagio ?? 0),
+      pedagio: acc.pedagio + (item.valorPedagio ?? 0),
       semValor: acc.semValor + (item.tarifaAplicada === null ? 1 : 0),
     }),
-    { km: 0, valor: 0, semValor: 0 },
+    { km: 0, valor: 0, pedagio: 0, semValor: 0 },
   );
+  // V56: a empresa pode ocultar a tarifa - aí o motorista vê só km (ou "cidade base") e pedágio.
+  const tarifaOculta = relatorio?.tarifaOculta === true;
 
   return (
     <TelaMotorista titulo={t.titulo} navegacao>
@@ -100,17 +103,17 @@ export function RelatorioQuinzenal() {
             <>
               <div className="resumo" style={{ justifyContent: "space-between", flexWrap: "wrap" }}>
                 <span className="resumo-texto">
-                  <small>{t.totalPeriodo}</small>
+                  <small>{tarifaOculta ? t.kmPeriodo : t.totalPeriodo}</small>
                   <span className="resumo-numero" style={{ fontSize: "2rem" }}>
-                    {formatarMoeda(totais.valor)}
+                    {tarifaOculta ? km(totais.km) : formatarMoeda(totais.valor)}
                   </span>
                 </span>
                 <span className="resumo-texto direita">
                   {t.viagens(relatorio.entregas.length)}
-                  <small>{t.rodados(km(totais.km))}</small>
+                  <small>{tarifaOculta ? t.totalPedagio(formatarMoeda(totais.pedagio)) : t.rodados(km(totais.km))}</small>
                 </span>
               </div>
-              {totais.semValor > 0 && <Alerta tipo="aviso">{t.semTarifa(totais.semValor)}</Alerta>}
+              {!tarifaOculta && totais.semValor > 0 && <Alerta tipo="aviso">{t.semTarifa(totais.semValor)}</Alerta>}
 
               <ul className="lista mt-4">
                 {relatorio.entregas.map((item) => (
@@ -119,21 +122,28 @@ export function RelatorioQuinzenal() {
                     <div className="cartao-cabecalho">
                       <span className="codigo">{item.bdoNumero ?? textos.motorista.geral.bdoSemNumero}</span>
                       {item.tentativaSemSucesso && <span className="selo">{t.tentativaSemSucesso}</span>}
+                      {tarifaOculta && item.cidadeBase && <span className="selo">{t.entregaCidadeBase}</span>}
                       {item.temAjuste && <span className="selo selo-aviso">{t.corrigido}</span>}
                     </div>
                     <dl className="dados-grade">
-                      <div>
-                        <dt>{t.ida}</dt>
-                        <dd>{km(item.kmIda)}</dd>
-                      </div>
-                      <div>
-                        <dt>{t.volta}</dt>
-                        <dd>{km(item.kmVolta)}</dd>
-                      </div>
-                      <div>
-                        <dt>{t.tarifa}</dt>
-                        <dd>{formatarMoeda(item.tarifaAplicada)}</dd>
-                      </div>
+                      {tarifaOculta && item.cidadeBase ? null : (
+                        <>
+                          <div>
+                            <dt>{t.ida}</dt>
+                            <dd>{km(item.kmIda)}</dd>
+                          </div>
+                          <div>
+                            <dt>{t.volta}</dt>
+                            <dd>{km(item.kmVolta)}</dd>
+                          </div>
+                        </>
+                      )}
+                      {!tarifaOculta && (
+                        <div>
+                          <dt>{t.tarifa}</dt>
+                          <dd>{formatarMoeda(item.tarifaAplicada)}</dd>
+                        </div>
+                      )}
                       <div>
                         <dt>{t.pedagio}</dt>
                         <dd>{formatarMoeda(item.valorPedagio)}</dd>
@@ -162,6 +172,7 @@ export function RelatorioQuinzenal() {
                     {corrigindo === item.viagemId && (
                       <AjusteForm
                         viagemId={item.viagemId}
+                        tarifaOculta={tarifaOculta}
                         aoCancelar={() => setCorrigindo(null)}
                         aoSalvar={() => {
                           setCorrigindo(null);
@@ -185,7 +196,7 @@ export function RelatorioQuinzenal() {
       )}
 
       <Ajuda>
-        <p>{t.ajuda}</p>
+        <p>{tarifaOculta ? t.ajudaSemTarifa : t.ajuda}</p>
       </Ajuda>
     </TelaMotorista>
   );
