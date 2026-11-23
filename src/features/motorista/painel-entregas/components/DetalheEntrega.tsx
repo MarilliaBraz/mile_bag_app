@@ -18,6 +18,7 @@ import { consultarDetalhe, baixarSegundaViaDaEntrega, enviarSegundaViaDaEntrega 
 import type { ItemPainelDetalhe } from "../types";
 import { EtapasEntrega } from "./EtapasEntrega";
 import { temRetiradaLocal } from "../../../../shared/utils/retiradaLocal";
+import { entregaEmViagem } from "../../../../shared/utils/viagemEmAndamento";
 import { TOM_STATUS_ENTREGA } from "../utils/statusEntrega";
 
 /**
@@ -62,6 +63,9 @@ export function DetalheEntrega() {
     !entrega.temTrajetoIniciado &&
     !temRetiradaLocal(entrega.entregaId);
   const status = entrega ? { texto: t.status[entrega.status], tom: TOM_STATUS_ENTREGA[entrega.status] } : null;
+  // Sem viagem iniciada o servidor recusa o comprovante: o motorista tirava todas as fotos e só no fim descobria
+  // (GYNLA25237). Viagem iniciada sem internet (ainda na fila deste aparelho) também vale.
+  const viagemIniciada = !!entrega && (entrega.temTrajetoIniciado || entregaEmViagem() === entrega.entregaId);
   // V51: retirada registrada e viagem ainda não iniciada - dá para corrigir a retirada (com motivo).
   const podeCorrigirRetirada = !!entrega && entrega.status === "ATRIBUIDA" && !!entrega.retiradaRegistrada && !entrega.temTrajetoIniciado;
 
@@ -123,9 +127,13 @@ export function DetalheEntrega() {
             )}
             {!encerrada && (
               <>
-                <Link to={`/motorista/entregas/${entrega.entregaId}/comprovante`} viewTransition className="botao grande sucesso largo">
-                  <Icone nome="checkCirculo" /> {t.detalhe.registrarEntrega}
-                </Link>
+                {viagemIniciada ? (
+                  <Link to={`/motorista/entregas/${entrega.entregaId}/comprovante`} viewTransition className="botao grande sucesso largo">
+                    <Icone nome="checkCirculo" /> {t.detalhe.registrarEntrega}
+                  </Link>
+                ) : (
+                  <p className="texto-apoio largo mb-0">{t.detalhe.iniciarAntesDeRegistrar}</p>
+                )}
                 <Link to={`/motorista/entregas/${entrega.entregaId}/ocorrencia`} viewTransition className="botao secundario largo">
                   <Icone nome="alerta" /> {t.detalhe.naoConsegui}
                 </Link>

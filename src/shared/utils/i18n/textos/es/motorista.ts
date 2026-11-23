@@ -70,6 +70,7 @@ export const motorista: Textos["motorista"] = {
     verViagem: "Ver viaje",
     rota: "Ruta",
     registrarEntrega: "Registrar entrega",
+    iniciarAntesDeRegistrar: "Inicia el viaje en la pantalla de Ruta para poder registrar la entrega.",
     naoConsegui: "No pude entregar",
     dispensar: "Liberar entrega",
     dadosBdo: "Datos del BDO",
@@ -357,11 +358,19 @@ export const motorista: Textos["motorista"] = {
     registrar: "Registrar retiro",
     registrando: "Registrando…",
     registrada: "Retiro registrado. Ya puedes iniciar el viaje.",
+    jaRegistrada: "El retiro de este equipaje ya fue registrado. Ahora solo elige la ruta e inicia el viaje.",
+    irParaRota: "Ir a la ruta",
     naFila: "Retiro guardado en este dispositivo. Se enviará en cuanto haya conexión; ya puedes iniciar el viaje.",
     falha: "No fue posible registrar el retiro.",
     paraContinuar: "Para continuar: toma la foto del equipaje.",
     ajuda:
       "La foto del equipaje es obligatoria y habilita el inicio del viaje. La ubicación se registra automáticamente cuando está disponible. Sin internet, el retiro queda guardado en el dispositivo y se envía después.",
+  },
+  avisoViagemNaoIniciada: {
+    titulo: "Viaje no iniciado.",
+    texto: "Ya saliste del lugar del retiro. Inicia el viaje para que el trayecto quede registrado.",
+    iniciar: "Iniciar ahora",
+    fechar: "Cerrar aviso",
   },
   avarias: {
     titulo: "Fotos de averías (opcional)",

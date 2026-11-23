@@ -70,6 +70,7 @@ export const motorista: Textos["motorista"] = {
     verViagem: "View trip",
     rota: "Route",
     registrarEntrega: "Record delivery",
+    iniciarAntesDeRegistrar: "Start the trip on the Route screen to record the delivery.",
     naoConsegui: "I couldn't deliver",
     dispensar: "Release delivery",
     dadosBdo: "BDO details",
@@ -361,11 +362,19 @@ export const motorista: Textos["motorista"] = {
     registrar: "Record pickup",
     registrando: "Recording…",
     registrada: "Pickup recorded. You can now start the trip.",
+    jaRegistrada: "The pickup of this baggage has already been recorded. Now just choose the route and start the trip.",
+    irParaRota: "Go to route",
     naFila: "Pickup saved on this device. It will be sent as soon as there is a connection; you can already start the trip.",
     falha: "Could not record the pickup.",
     paraContinuar: "To continue: take the photo of the baggage.",
     ajuda:
       "The baggage photo is required and unlocks the start of the trip. The location is recorded automatically when available. Without internet, the pickup is saved on the device and sent later.",
+  },
+  avisoViagemNaoIniciada: {
+    titulo: "Trip not started.",
+    texto: "You have already left the pickup location. Start the trip so the ride is recorded.",
+    iniciar: "Start now",
+    fechar: "Close notice",
   },
   avarias: {
     titulo: "Damage photos (optional)",

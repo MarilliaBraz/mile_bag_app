@@ -6,6 +6,7 @@ import { IndicadorSincronizacao, StatusConexao } from "./IndicadorSincronizacao"
 import { useSincronizacaoAutomatica } from "../hooks/useSincronizacaoAutomatica";
 import { useCompartilharPosicao } from "../hooks/useCompartilharPosicao";
 import { AvisoBdoNovo } from "./AvisoBdoNovo";
+import { AvisoViagemNaoIniciada } from "./AvisoViagemNaoIniciada";
 
 type ItemNavegacao = { para: string; rotulo: ChaveMenu; icone: NomeIcone; fim?: boolean };
 
@@ -89,6 +90,8 @@ export function TelaMotorista({
         <IndicadorSincronizacao online={online} pendentes={pendentes} />
         {/* HU32: bagagem nova recebida por e-mail, em qualquer tela. */}
         <AvisoBdoNovo />
+        {/* Retirada feita e viagem não iniciada, já longe do local: avisa para iniciar (a corrida senão não é registrada). */}
+        <AvisoViagemNaoIniciada />
         <div className="tela-conteudo">{children}</div>
       </main>
       {navegacao && <NavegacaoMotorista />}

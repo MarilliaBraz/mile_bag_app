@@ -1,7 +1,7 @@
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { Ajuda } from "../../../../shared/components/Ajuda";
 import { useState, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { Alerta, Carregando } from "../../../../shared/components/Alerta";
 import { ConfirmarAcao } from "../../../../shared/components/ConfirmarAcao";
 import { Icone } from "../../../../shared/components/Icone";
@@ -11,7 +11,6 @@ import { AjusteDestinoManual } from "./AjusteDestinoManual";
 import { IniciarViagem } from "./IniciarViagem";
 import { useRetiradaFeita } from "../hooks/useRetiradaFeita";
 import { limparRetiradaLocal } from "../../../../shared/utils/retiradaLocal";
-import { JustificativaDivergencia } from "../../../../shared/components/JustificativaDivergencia";
 import { MapaRotas } from "./MapaRotas";
 import { MarcosProgresso } from "./MarcosProgresso";
 import { NavegarComWaze } from "./NavegarComWaze";
@@ -36,7 +35,6 @@ const CENTRO_PADRAO = { latitude: -16.6869, longitude: -49.2648 };
 export function TelaRota() {
   const { entregaId } = useParams<{ entregaId: string }>();
   const rota = useRota(entregaId ?? "");
-  const [confirmandoEncerrar, setConfirmandoEncerrar] = useState(false);
   const [alternativaParaTrocar, setAlternativaParaTrocar] = useState<RotaAlternativa | null>(null);
   const [rotaPropriaParaTrocar, setRotaPropriaParaTrocar] = useState<RotaPropriaPendente | null>(null);
   const [rotaPropriaAberta, setRotaPropriaAberta] = useState(false);
@@ -53,7 +51,6 @@ export function TelaRota() {
     }
   }, [viagemIniciada, entregaId]);
   const t = useTextos().motorista;
-  const aguarde = useTextos().comum.aguarde;
 
   if (!entregaId) {
     return null;
@@ -95,30 +92,12 @@ export function TelaRota() {
       {/* Durante a viagem, o que importa primeiro são os marcos e o encerramento - a escolha de rota desce. */}
       {emExecucao && <MarcosProgresso entregaId={entregaId} checkpoints={rota.trajeto?.checkpoints} aoRegistrar={rota.recarregarTrajeto} />}
 
-      {emExecucao && !rota.divergenciaPendente && (
-        <button type="button" className="sucesso grande bloco mt-4" onClick={() => setConfirmandoEncerrar(true)} disabled={rota.ocupado}>
-          <Icone nome="checkCirculo" /> {rota.ocupado ? aguarde : t.rota.encerrarViagem}
-        </button>
-      )}
-      <ConfirmarAcao
-        aberto={confirmandoEncerrar}
-        titulo={t.rota.encerrarTitulo}
-        descricao={t.rota.encerrarDescricao}
-        rotuloConfirmar={t.rota.encerrarViagem}
-        ocupado={rota.ocupado}
-        aoConfirmar={() => {
-          setConfirmandoEncerrar(false);
-          rota.encerrar();
-        }}
-        aoCancelar={() => setConfirmandoEncerrar(false)}
-      />
-
-      {rota.divergenciaPendente && (
-        <JustificativaDivergencia
-          mensagem={rota.divergenciaPendente}
-          aoReenviar={(justificativa) => rota.encerrar(justificativa)}
-          ocupado={rota.ocupado}
-        />
+      {/* A viagem termina ao registrar a entrega (o comprovante encerra a viagem): um "Encerrar viagem" separado
+          fechava a viagem antes e a entrega não conseguia mais ser finalizada (GYNLA25237). */}
+      {emExecucao && (
+        <Link to={`/motorista/entregas/${entregaId}/comprovante`} viewTransition className="botao sucesso grande bloco mt-4">
+          <Icone nome="checkCirculo" /> {t.detalhe.registrarEntrega}
+        </Link>
       )}
 
       {avisoRota && (
