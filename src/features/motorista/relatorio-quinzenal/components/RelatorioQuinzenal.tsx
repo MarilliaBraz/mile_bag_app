@@ -122,7 +122,7 @@ export function RelatorioQuinzenal() {
                     <div className="cartao-cabecalho">
                       <span className="codigo">{item.bdoNumero ?? textos.motorista.geral.bdoSemNumero}</span>
                       {item.tentativaSemSucesso && <span className="selo">{t.tentativaSemSucesso}</span>}
-                      {tarifaOculta && item.cidadeBase && <span className="selo">{t.entregaCidadeBase}</span>}
+                      {tarifaOculta && item.cidadeBase && <span className="selo">{t.entregaLocal}</span>}
                       {item.temAjuste && <span className="selo selo-aviso">{t.corrigido}</span>}
                     </div>
                     <dl className="dados-grade">

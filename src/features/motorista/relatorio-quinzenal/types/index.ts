@@ -14,7 +14,7 @@ export type ItemRelatorio = {
   temAjuste: boolean;
   /** Viagem de uma tentativa sem sucesso (ocorrência): paga a quem dirigiu, mesmo sem a entrega concluída. */
   tentativaSemSucesso?: boolean;
-  /** V52: entrega na cidade da base (valor fixo). Com a tarifa oculta, aparece no lugar dos km. */
+  /** V52: entrega na cidade da base (valor fixo). Com a tarifa oculta, aparece como "Entrega local" no lugar dos km. */
   cidadeBase?: boolean;
 };
 

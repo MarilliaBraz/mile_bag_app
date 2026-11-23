@@ -397,7 +397,7 @@ export const backOffice = {
     salvarCampos: "Salvar campos",
     tarifaTitulo: "Tarifa no relatório do motorista",
     tarifaDescricao:
-      "Oculta, o motorista vê só os km de cada viagem (ou “Entrega na cidade base”) e o pedágio. O fechamento da empresa continua com todos os valores.",
+      "Oculta, o motorista vê só os km de cada viagem (ou “Entrega local”, nas entregas na cidade da base) e o pedágio. O fechamento da empresa continua com todos os valores.",
     ocultarTarifa: "Ocultar do motorista a tarifa paga por viagem",
     falhaTarifa: "Não foi possível carregar esta configuração.",
     falhaSalvarTarifa: "Não foi possível salvar esta configuração.",

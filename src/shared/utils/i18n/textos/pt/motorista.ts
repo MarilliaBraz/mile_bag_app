@@ -480,9 +480,9 @@ export const motorista = {
     rodados: (km: string) => `${km} rodados`,
     kmPeriodo: "Km do período",
     totalPedagio: (valor: string) => `Pedágio: ${valor}`,
-    entregaCidadeBase: "Entrega na cidade base",
+    entregaLocal: "Entrega local",
     ajudaSemTarifa:
-      "Confira as quilometragens e os pedágios do período. Entregas na cidade da base aparecem como “Entrega na cidade base”. Para corrigir um valor, use “Corrigir valor” e explique o motivo: o valor original continua visível no histórico. “Imprimir” gera uma versão limpa para papel ou PDF.",
+      "Confira as quilometragens e os pedágios do período. Entregas na cidade da base aparecem como “Entrega local”. Para corrigir um valor, use “Corrigir valor” e explique o motivo: o valor original continua visível no histórico. “Imprimir” gera uma versão limpa para papel ou PDF.",
     semTarifa: (quantidade: number) =>
       quantidade === 1
         ? "1 entrega ainda sem tarifa calculada (aparece como “Sem valor”). Ela não entra no total até a tarifa ser definida."

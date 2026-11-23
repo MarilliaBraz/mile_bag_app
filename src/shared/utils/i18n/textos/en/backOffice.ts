@@ -400,7 +400,7 @@ export const backOffice: Textos["backOffice"] = {
     salvarCampos: "Save fields",
     tarifaTitulo: "Rate on the driver's report",
     tarifaDescricao:
-      "When hidden, the driver only sees the km of each trip (or “Delivery in the base city”) and the tolls. The company's closing keeps every value.",
+      "When hidden, the driver only sees the km of each trip (or “Local delivery”, for deliveries in the base city) and the tolls. The company's closing keeps every value.",
     ocultarTarifa: "Hide the rate paid per trip from the driver",
     falhaTarifa: "Could not load this setting.",
     falhaSalvarTarifa: "Could not save this setting.",
