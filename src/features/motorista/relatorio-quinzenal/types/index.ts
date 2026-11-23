@@ -14,6 +14,8 @@ export type ItemRelatorio = {
   temAjuste: boolean;
   /** Viagem de uma tentativa sem sucesso (ocorrência): paga a quem dirigiu, mesmo sem a entrega concluída. */
   tentativaSemSucesso?: boolean;
+  /** V52: entrega na cidade da base (valor fixo). Com a tarifa oculta, aparece como "Entrega local" no lugar dos km. */
+  cidadeBase?: boolean;
 };
 
 /** Espelha com.marillia.milebag.business.viagem.model.RelatorioQuinzenalResponse. */
@@ -21,6 +23,8 @@ export type RelatorioQuinzenal = {
   periodoInicio: string;
   periodoFim: string;
   entregas: ItemRelatorio[];
+  /** V56: a empresa ocultou a tarifa por viagem - o relatório traz só km, cidade base e pedágio. */
+  tarifaOculta?: boolean;
 };
 
 /** Espelha com.marillia.milebag.business.viagem.model.AjusteViagemResponse. */

@@ -484,6 +484,11 @@ export const motorista: Textos["motorista"] = {
     totalPeriodo: "Period total",
     viagens: (quantidade) => (quantidade === 1 ? "1 trip" : `${quantidade} trips`),
     rodados: (km) => `${km} driven`,
+    kmPeriodo: "Km in the period",
+    totalPedagio: (valor) => `Tolls: ${valor}`,
+    entregaLocal: "Local delivery",
+    ajudaSemTarifa:
+      "Check the mileage and tolls for the period. Deliveries in the base city show as “Local delivery”. To correct a value, use “Correct value” and explain why: the original value stays visible in the history. “Print” creates a clean version for paper or PDF.",
     semTarifa: (quantidade) =>
       quantidade === 1
         ? "1 delivery still has no rate calculated (shown as “No value”). It is not added to the total until the rate is set."

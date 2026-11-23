@@ -395,6 +395,14 @@ export const backOffice = {
     falhaSalvarCampos: "Não foi possível salvar os campos.",
     camposSalvos: "Campos salvos.",
     salvarCampos: "Salvar campos",
+    tarifaTitulo: "Tarifa no relatório do motorista",
+    tarifaDescricao:
+      "Oculta, o motorista vê só os km de cada viagem (ou “Entrega local”, nas entregas na cidade da base) e o pedágio. O fechamento da empresa continua com todos os valores.",
+    ocultarTarifa: "Ocultar do motorista a tarifa paga por viagem",
+    falhaTarifa: "Não foi possível carregar esta configuração.",
+    falhaSalvarTarifa: "Não foi possível salvar esta configuração.",
+    tarifaSalva: "Configuração salva.",
+    salvarTarifa: "Salvar",
     campos: {
       POD_FOTO_DOCUMENTO: "Comprovante: foto do documento",
       POD_IDENTIFICACAO_RECEBEDOR: "Comprovante: identificação de quem recebeu",

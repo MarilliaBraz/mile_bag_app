@@ -6,6 +6,8 @@ import { registrarAjuste } from "../services/relatorioService";
 import type { CampoAjuste } from "../types";
 
 const CAMPOS: CampoAjuste[] = ["KM_IDA", "KM_VOLTA", "TARIFA_APLICADA", "VALOR_PEDAGIO"];
+/** V56: com a tarifa oculta pela empresa, o motorista não corrige a tarifa (o back-end também recusa). */
+const CAMPOS_SEM_TARIFA = CAMPOS.filter((campo) => campo !== "TARIFA_APLICADA");
 
 /**
  * Correção de um valor calculado (HU17, FR-003/FR-004). O botão de salvar
@@ -14,7 +16,17 @@ const CAMPOS: CampoAjuste[] = ["KM_IDA", "KM_VOLTA", "TARIFA_APLICADA", "VALOR_P
  * descobrir. A correção nunca apaga o valor original: vira um novo
  * registro no histórico (RD13), inclusive uma reversão.
  */
-export function AjusteForm({ viagemId, aoSalvar, aoCancelar }: { viagemId: string; aoSalvar: () => void; aoCancelar: () => void }) {
+export function AjusteForm({
+  viagemId,
+  tarifaOculta = false,
+  aoSalvar,
+  aoCancelar,
+}: {
+  viagemId: string;
+  tarifaOculta?: boolean;
+  aoSalvar: () => void;
+  aoCancelar: () => void;
+}) {
   const [campo, setCampo] = useState<CampoAjuste>("KM_IDA");
   const [valorNovo, setValorNovo] = useState("");
   const [justificativa, setJustificativa] = useState("");
@@ -47,7 +59,7 @@ export function AjusteForm({ viagemId, aoSalvar, aoCancelar }: { viagemId: strin
       {erro && <Alerta tipo="erro">{erro}</Alerta>}
       <label htmlFor={`campo-${viagemId}`}>{t.oQueCorrigir}</label>
       <select id={`campo-${viagemId}`} value={campo} onChange={(e) => setCampo(e.target.value as CampoAjuste)}>
-        {CAMPOS.map((valor) => (
+        {(tarifaOculta ? CAMPOS_SEM_TARIFA : CAMPOS).map((valor) => (
           <option key={valor} value={valor}>
             {t.campos[valor]}
           </option>
