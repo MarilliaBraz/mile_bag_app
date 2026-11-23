@@ -2,7 +2,7 @@ import { baixarArquivo, requisitar } from "../../../../shared/services/httpClien
 import type { EntregaStatus } from "../../../motorista/painel-entregas/types";
 import type { EntregaGestao, FotoEntrega, HistoricoEntrega } from "../types";
 import { caminhoApi } from "../../../../shared/services/caminhoApi";
-import type { BdoResponse, CamposBdo } from "../../../../shared/types/bdo";
+import type { BdoResponse, CamposBdo, DadosPassageiroBdo } from "../../../../shared/types/bdo";
 
 const BASE = "/api/v1/gestao/entregas";
 
@@ -45,3 +45,11 @@ export const enviarSegundaVia = (bdoId: string, email: string) =>
 /** POST /api/v1/gestao/bdos/{bdoId}/base (V52) - troca a base de um BDO que ninguém assumiu; motivo obrigatório. */
 export const trocarBaseBdo = (bdoId: string, baseId: string, motivo: string) =>
   requisitar<void>(caminhoApi`/api/v1/gestao/bdos/${bdoId}/base`, { metodo: "POST", corpo: { baseId, motivo } });
+
+/** GET /api/v1/gestao/bdos/{bdoId}/dados-passageiro (V59) - os dados atuais, com o logradouro separado de cidade, UF e CEP. */
+export const consultarDadosPassageiro = (bdoId: string) =>
+  requisitar<DadosPassageiroBdo>(caminhoApi`/api/v1/gestao/bdos/${bdoId}/dados-passageiro`);
+
+/** PUT /api/v1/gestao/bdos/{bdoId}/dados-passageiro (V59) - corrige até a entrega ser concluída; motivo obrigatório. */
+export const alterarDadosPassageiro = (bdoId: string, dados: DadosPassageiroBdo, motivo: string) =>
+  requisitar<void>(caminhoApi`/api/v1/gestao/bdos/${bdoId}/dados-passageiro`, { metodo: "PUT", corpo: { dados, motivo } });

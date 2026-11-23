@@ -11,6 +11,7 @@ import type { EntregaStatus } from "../../../motorista/painel-entregas/types";
 import { TOM_STATUS_ENTREGA } from "../../../motorista/painel-entregas/utils/statusEntrega";
 import { baixarSegundaVia, consultarHistorico, enviarSegundaVia, listarEntregas } from "../services/entregasService";
 import type { EntregaGestao } from "../types";
+import { AlterarDadosBdo } from "./AlterarDadosBdo";
 import { CancelarBdo } from "./CancelarBdo";
 import { FotosDaMala } from "./FotosDaMala";
 import { IncluirBdo } from "./IncluirBdo";
@@ -22,8 +23,8 @@ const STATUS: EntregaStatus[] = ["AGUARDANDO_ATRIBUICAO", "ATRIBUIDA", "EM_ANDAM
 /** Item 8: o selo "Mesmo endereço" mostra até estes números; o resto vira "e mais N" (a lista toda fica no title). */
 const NUMEROS_NO_SELO = 3;
 
-/** V47: só cabe cancelar o que ainda não foi concluído nem cancelado. */
-const podeCancelar = (linha: EntregaGestao) => linha.status !== "ENCERRADA_COM_SUCESSO" && linha.status !== "CANCELADA";
+/** V47/V59: só cabe cancelar ou corrigir os dados do passageiro do que ainda não foi concluído nem cancelado. */
+const emAberto = (linha: EntregaGestao) => linha.status !== "ENCERRADA_COM_SUCESSO" && linha.status !== "CANCELADA";
 
 /**
  * Entregas da empresa e a rastreabilidade de cada mala (V46): quem assumiu, viagens, ocorrências, dispensas e a
@@ -186,7 +187,17 @@ export function TelaEntregas() {
                   }}
                 />
               )}
-            {podeCancelar(aberta) && (
+            {emAberto(aberta) && (
+              <AlterarDadosBdo
+                linha={aberta}
+                aoAlterar={() => {
+                  setSucesso(t.alterarDados.alterados(aberta.bdoNumero ?? t.semNumero));
+                  setAberta(null);
+                  void recarregar();
+                }}
+              />
+            )}
+            {emAberto(aberta) && (
               <CancelarBdo
                 linha={aberta}
                 aoCancelar={() => {

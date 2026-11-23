@@ -3,30 +3,33 @@ import { useAvisoBdoNovo, type AvisoBdoNovo as AvisoBdoNovoTipo } from "../hooks
 import { useTextos } from "../utils/i18n/idioma";
 import { Icone } from "./Icone";
 
-/** Aviso destacado de bagagem nova (HU32, RI20) e de entrega cancelada pela empresa (V47), em todas as telas do motorista. */
+/**
+ * Aviso destacado de bagagem nova (HU32, RI20) e de entrega cancelada (V47) ou corrigida (V59) pela empresa, em todas as
+ * telas do motorista.
+ */
 export function AvisoBdoNovo() {
   const t = useTextos().avisoBdo;
   const navigate = useNavigate();
-  const { aviso, fechar, cancelamento, fecharCancelamento } = useAvisoBdoNovo();
+  const { aviso, fechar, avisoEmpresa, fecharAvisoEmpresa } = useAvisoBdoNovo();
   return (
     <>
-      {cancelamento && (
+      {avisoEmpresa && (
         <div className="aviso-bdo-novo nao-imprimir" role="alert">
           <Icone nome="alerta" />
           <p>
-            <strong>{t.cancelada}</strong> <span>{cancelamento}</span>
+            <strong>{t[avisoEmpresa.tipo]}</strong> <span>{avisoEmpresa.corpo}</span>
           </p>
           <button
             type="button"
             className="secundario"
             onClick={() => {
-              fecharCancelamento();
+              fecharAvisoEmpresa();
               navigate("/motorista", { viewTransition: true });
             }}
           >
             {t.ver}
           </button>
-          <button type="button" className="botao-icone" onClick={fecharCancelamento} aria-label={t.fechar} title={t.fechar}>
+          <button type="button" className="botao-icone" onClick={fecharAvisoEmpresa} aria-label={t.fechar} title={t.fechar}>
             <Icone nome="fechar" />
           </button>
         </div>

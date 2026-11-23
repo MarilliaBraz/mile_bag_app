@@ -1,5 +1,6 @@
 /*
- * Web Push do aviso de bagagem nova (HU32, RF25) e de entrega cancelada pela empresa (V47, tipo "bdo-cancelado") -
+ * Web Push do aviso de bagagem nova (HU32, RF25), de entrega cancelada pela empresa (V47, tipo "bdo-cancelado") e de
+ * dados do passageiro corrigidos pela empresa (V59, tipo "bdo-dados-alterados") -
  * importado pelo service worker gerado pelo vite-plugin-pwa (workbox.importScripts em vite.config.ts). Com o app
  * visível, só avisa a janela, que toca o som e mostra o aviso; senão, mostra a notificação do sistema, com o som e a
  * vibração do aparelho.
