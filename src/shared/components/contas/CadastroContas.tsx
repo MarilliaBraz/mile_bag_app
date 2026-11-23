@@ -5,6 +5,7 @@ import { useRecurso } from "../../hooks/useRecurso";
 import { useTextos } from "../../utils/i18n/idioma";
 import { ConfirmarAcao } from "../ConfirmarAcao";
 import { LoteContas } from "./LoteContas";
+import { OpcaoTarifaOculta } from "./OpcaoTarifaOculta";
 import { SeletorBase } from "./SeletorBase";
 import { ContextoContas, useContas, type TextosContas } from "./contexto";
 import type { BaseOpcao, Conta, ServicoContas } from "../../types/contas";
@@ -22,6 +23,7 @@ function NovaContaForm({ aoCriar }: { aoCriar: (nome: string) => Promise<void> }
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
   const [baseId, setBaseId] = useState("");
+  const [ocultarTarifa, setOcultarTarifa] = useState(false);
   const { t, servico, bases } = useContas();
   const faltaBase = bases !== undefined && !baseId;
 
@@ -30,7 +32,13 @@ function NovaContaForm({ aoCriar }: { aoCriar: (nome: string) => Promise<void> }
     setErro(null);
     setSalvando(true);
     try {
-      await servico.criar({ nome: nome.trim(), login: login.trim(), senha, ...(baseId ? { baseId } : {}) });
+      await servico.criar({
+        nome: nome.trim(),
+        login: login.trim(),
+        senha,
+        ...(baseId ? { baseId } : {}),
+        ...(servico.tarifaPorConta ? { ocultarTarifa } : {}),
+      });
       await aoCriar(nome.trim());
     } catch (excecao) {
       setErro(mensagemDeErro(excecao, t.falhaCadastrar));
@@ -76,6 +84,7 @@ function NovaContaForm({ aoCriar }: { aoCriar: (nome: string) => Promise<void> }
         </span>
       </div>
       <SeletorBase valor={baseId} aoMudar={setBaseId} />
+      <OpcaoTarifaOculta valor={ocultarTarifa} aoMudar={setOcultarTarifa} />
       <button
         type="submit"
         className="bloco"
@@ -92,6 +101,7 @@ function EditarForm({ conta, aoConcluir }: { conta: Conta; aoConcluir: () => Pro
   const [nome, setNome] = useState(conta.nome);
   const [login, setLogin] = useState(conta.login);
   const [baseId, setBaseId] = useState(conta.baseId ?? "");
+  const [ocultarTarifa, setOcultarTarifa] = useState(conta.ocultarTarifa === true);
   const [erro, setErro] = useState<string | null>(null);
   const textos = useTextos().backOffice;
   const { t, servico } = useContas();
@@ -99,6 +109,7 @@ function EditarForm({ conta, aoConcluir }: { conta: Conta; aoConcluir: () => Pro
   const nomeMudou = nome.trim() !== "" && nome.trim() !== conta.nome;
   const loginMudou = login.trim() !== "" && login.trim() !== conta.login;
   const baseMudou = baseId !== "" && baseId !== (conta.baseId ?? "");
+  const tarifaMudou = ocultarTarifa !== (conta.ocultarTarifa === true);
 
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
@@ -108,6 +119,7 @@ function EditarForm({ conta, aoConcluir }: { conta: Conta; aoConcluir: () => Pro
         ...(nomeMudou ? { nome: nome.trim() } : {}),
         ...(loginMudou ? { login: login.trim() } : {}),
         ...(baseMudou ? { baseId } : {}),
+        ...(tarifaMudou ? { ocultarTarifa } : {}),
       });
       await aoConcluir();
     } catch (excecao) {
@@ -127,8 +139,9 @@ function EditarForm({ conta, aoConcluir }: { conta: Conta; aoConcluir: () => Pro
         <input id={`${uid}-login`} autoCapitalize="none" value={login} onChange={(e) => setLogin(e.target.value)} />
       </div>
       <SeletorBase valor={baseId} aoMudar={setBaseId} />
+      <OpcaoTarifaOculta valor={ocultarTarifa} aoMudar={setOcultarTarifa} />
       {loginMudou && <Alerta tipo="aviso">{t.loginNovoAviso}</Alerta>}
-      <button type="submit" className="bloco" disabled={!nomeMudou && !loginMudou && !baseMudou}>
+      <button type="submit" className="bloco" disabled={!nomeMudou && !loginMudou && !baseMudou && !tarifaMudou}>
         {textos.geral.salvarAlteracoes}
       </button>
     </form>
@@ -351,6 +364,7 @@ function TelaContas() {
                     </td>
                     <td>
                       <span className={`selo ${conta.ativo ? "selo-sucesso" : ""}`}>{conta.ativo ? t.ativo : t.desativado}</span>
+                      {servico.tarifaPorConta && conta.ocultarTarifa && <span className="selo">{tb.seloTarifaOculta}</span>}
                     </td>
                     <td>{formatarData(conta.criadoEm)}</td>
                     <td className="coluna-acoes">

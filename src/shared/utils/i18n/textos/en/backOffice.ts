@@ -406,14 +406,6 @@ export const backOffice: Textos["backOffice"] = {
     falhaSalvarCampos: "Could not save the fields.",
     camposSalvos: "Fields saved.",
     salvarCampos: "Save fields",
-    tarifaTitulo: "Rate on the driver's report",
-    tarifaDescricao:
-      "When hidden, the driver only sees the km of each trip (or “Local delivery”, for deliveries in the base city) and the tolls. The company's closing keeps every value.",
-    ocultarTarifa: "Hide the rate paid per trip from the driver",
-    falhaTarifa: "Could not load this setting.",
-    falhaSalvarTarifa: "Could not save this setting.",
-    tarifaSalva: "Setting saved.",
-    salvarTarifa: "Save",
     campos: {
       POD_FOTO_DOCUMENTO: "Proof of delivery: document photo",
       POD_IDENTIFICACAO_RECEBEDOR: "Proof of delivery: recipient identification",
@@ -556,6 +548,10 @@ export const backOffice: Textos["backOffice"] = {
     irConfiguracoes: "Go to Settings",
     baseDaConta: (codigo: string) => `Base ${codigo}`,
     semBaseDefinida: "No base: sees no BDOs",
+    ocultarTarifa: "Hide the rate paid per trip",
+    ocultarTarifaAjuda:
+      "On the report, this driver only sees the km (or “Local delivery”) and the tolls. The company's closing does not change.",
+    seloTarifaOculta: "Rate hidden",
   },
   entregas: {
     trocarBase: {

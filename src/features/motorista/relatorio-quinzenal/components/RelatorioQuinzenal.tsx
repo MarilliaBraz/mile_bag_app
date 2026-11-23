@@ -71,7 +71,7 @@ export function RelatorioQuinzenal() {
     }),
     { km: 0, valor: 0, pedagio: 0, semValor: 0 },
   );
-  // V56: a empresa pode ocultar a tarifa - aí o motorista vê só km (ou "cidade base") e pedágio.
+  // V58: a empresa pode ocultar a tarifa deste motorista - aí o motorista vê só km (ou "cidade base") e pedágio.
   const tarifaOculta = relatorio?.tarifaOculta === true;
 
   return (

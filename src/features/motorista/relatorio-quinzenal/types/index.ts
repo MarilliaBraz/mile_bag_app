@@ -23,7 +23,7 @@ export type RelatorioQuinzenal = {
   periodoInicio: string;
   periodoFim: string;
   entregas: ItemRelatorio[];
-  /** V56: a empresa ocultou a tarifa por viagem - o relatório traz só km, cidade base e pedágio. */
+  /** V58: a empresa ocultou deste motorista a tarifa por viagem - o relatório traz só km, cidade base e pedágio. */
   tarifaOculta?: boolean;
 };
 

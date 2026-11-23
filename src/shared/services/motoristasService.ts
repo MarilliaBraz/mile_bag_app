@@ -5,7 +5,7 @@ import type { LinhaLote, Motorista, ResultadoLote } from "../types/motoristas";
 import { caminhoApi } from "./caminhoApi";
 
 export const listarMotoristas = () => requisitar<Motorista[]>("/api/v1/motoristas");
-export const criarMotorista = (corpo: { nome: string; login: string; senha: string; baseId?: string }) =>
+export const criarMotorista = (corpo: { nome: string; login: string; senha: string; baseId?: string; ocultarTarifa?: boolean }) =>
   requisitar<Motorista>("/api/v1/motoristas", { metodo: "POST", corpo });
 
 /** V52: o lote vai inteiro para a base escolhida. */
@@ -17,7 +17,7 @@ export const criarMotoristasEmLote = (linhas: LinhaLote[], baseId?: string) =>
 export const definirAtivoMotorista = (id: string, ativo: boolean) =>
   requisitar<Motorista>(caminhoApi`/api/v1/motoristas/${id}`, { metodo: "PATCH", corpo: { ativo } });
 /** PATCH parcial (HU23/HU26): só os campos informados mudam; trocar o login cancela pedidos de redefinição de senha pendentes. */
-export const atualizarMotorista = (id: string, corpo: { nome?: string; login?: string; baseId?: string }) =>
+export const atualizarMotorista = (id: string, corpo: { nome?: string; login?: string; baseId?: string; ocultarTarifa?: boolean }) =>
   requisitar<Motorista>(caminhoApi`/api/v1/motoristas/${id}`, { metodo: "PATCH", corpo });
 export const redefinirSenhaMotorista = (id: string, senha: string) =>
   requisitar<void>(caminhoApi`/api/v1/motoristas/${id}/senha`, { metodo: "PUT", corpo: { senha } });
@@ -39,4 +39,5 @@ export const servicoMotoristas: ServicoContas = {
   atualizar: atualizarMotorista,
   redefinirSenha: redefinirSenhaMotorista,
   listarBases: () => requisitar<BaseOpcao[]>("/api/v1/configuracoes/bases-aeroportuarias"),
+  tarifaPorConta: true,
 };
