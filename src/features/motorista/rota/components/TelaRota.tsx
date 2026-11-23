@@ -14,6 +14,7 @@ import { limparRetiradaLocal } from "../../../../shared/utils/retiradaLocal";
 import { JustificativaDivergencia } from "../../../../shared/components/JustificativaDivergencia";
 import { MapaRotas } from "./MapaRotas";
 import { MarcosProgresso } from "./MarcosProgresso";
+import { NavegarComWaze } from "./NavegarComWaze";
 import { ResumoViagem } from "./ResumoViagem";
 import { RotaEmUso } from "./RotaEmUso";
 import { RotaPropria } from "./RotaPropria";
@@ -127,6 +128,7 @@ export function TelaRota() {
       )}
 
       {rotaEmUso && <RotaEmUso calculo={rotaEmUso} />}
+      {emExecucao && rota.calculo && <NavegarComWaze destino={rota.calculo.destino} />}
 
       {rota.precisaDestinoManual ? (
         <AjusteDestinoManual
@@ -148,6 +150,11 @@ export function TelaRota() {
                 titulo={emExecucao ? t.rota.trocarDeRota : undefined}
               >
                 {emExecucao && <p className="texto-apoio">{t.rota.rotasDaPosicao}</p>}
+                {/* Sem rota escolhida não há "Iniciar viagem": sem este aviso, o motorista via a linha no mapa e
+                    achava que já podia seguir (entrega GYNLA25237, homologação). */}
+                {!rota.trajeto && !rota.selecao && !rota.pendenteDeSincronizacao && rota.calculo.alternativas.length > 0 && (
+                  <Alerta tipo="aviso">{t.rota.escolhaParaIniciar}</Alerta>
+                )}
               </MapaRotas>
               <ConfirmarAcao
                 aberto={alternativaParaTrocar !== null}

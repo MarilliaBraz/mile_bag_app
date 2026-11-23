@@ -154,6 +154,8 @@ export const motorista = {
     ajuda:
       "Calcule as rotas, compare distância e tempo e escolha uma. Você também pode traçar uma rota própria. Ao recalcular, o cálculo anterior fica guardado no histórico da viagem.",
     escolhaRota: "Escolha a rota",
+    escolhaParaIniciar: "Toque numa das rotas abaixo para escolhê-la. O botão Iniciar viagem só aparece depois da escolha.",
+    navegarComWaze: "Navegar com o Waze",
     mapaPosicaoEndereco: "Mapa com a sua posição e o endereço de entrega",
     suaPosicao: "Sua posição",
     enderecoEntrega: "Endereço de entrega",
