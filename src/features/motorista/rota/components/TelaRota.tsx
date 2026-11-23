@@ -11,8 +11,8 @@ import { AjusteDestinoManual } from "./AjusteDestinoManual";
 import { IniciarViagem } from "./IniciarViagem";
 import { useRetiradaFeita } from "../hooks/useRetiradaFeita";
 import { limparRetiradaLocal } from "../../../../shared/utils/retiradaLocal";
-import { MapaRotas } from "./MapaRotas";
-import { MarcosProgresso } from "./MarcosProgresso";
+import { ListaRotas, MapaRotas } from "./MapaRotas";
+import { MarcoChegada } from "./MarcoChegada";
 import { NavegarComWaze } from "./NavegarComWaze";
 import { ResumoViagem } from "./ResumoViagem";
 import { RotaEmUso } from "./RotaEmUso";
@@ -27,10 +27,12 @@ type RotaPropriaPendente = { tracado: Coordenada[]; justificativa: string };
 const CENTRO_PADRAO = { latitude: -16.6869, longitude: -49.2648 };
 
 /**
- * Tela de rota e viagem (HU03 + HU04) - cálculo, escolha (sugerida ou
- * própria), início da viagem e encerramento numa única tela, acessível
- * durante toda a execução para permitir recálculo a qualquer momento
- * (RI03), não só antes de iniciar.
+ * Tela de rota e viagem (HU03 + HU04), "um passo de cada vez" (2026-11-22): o motorista vê só o próximo passo em
+ * destaque e o resto fica recolhido em "Ver outras rotas" e "Mais opções".
+ *
+ * - Antes da viagem: mapa, a rota mais rápida já escolhida e "Iniciar viagem".
+ * - Em viagem: "Navegar com o Waze" e "Cheguei ao endereço" (que leva ao registro da entrega); depois da chegada,
+ *   "Registrar entrega". Trocar de rota, recalcular (RI03) e rota própria continuam em "Mais opções".
  */
 export function TelaRota() {
   const { entregaId } = useParams<{ entregaId: string }>();
@@ -59,6 +61,8 @@ export function TelaRota() {
   const emExecucao = rota.trajeto?.status === "EM_EXECUCAO";
   // Os cálculos vêm em ordem cronológica: o último é o que está valendo.
   const rotaEmUso = emExecucao ? rota.trajeto?.calculosRota.at(-1) : undefined;
+  const chegou = !!rota.trajeto?.checkpoints.some((checkpoint) => checkpoint.tipo === "CHEGADA");
+  const alternativaSelecionada = rota.selecao?.rotaEscolhida.id ?? null;
 
   async function trocarParaSugerida(alternativa: RotaAlternativa) {
     setAvisoRota(null);
@@ -78,6 +82,55 @@ export function TelaRota() {
     }
   }
 
+  const linkRegistrarEntrega = (destaque: boolean) => (
+    <Link
+      to={`/motorista/entregas/${entregaId}/comprovante`}
+      viewTransition
+      className={`botao bloco mt-3${destaque ? " sucesso grande" : " secundario"}`}
+    >
+      <Icone nome="checkCirculo" /> {t.detalhe.registrarEntrega}
+    </Link>
+  );
+
+  // Recalcular e rota própria: raros, ficam fora do caminho principal - antes e durante a viagem.
+  const maisOpcoes = rota.calculo && (!rota.trajeto || emExecucao) && (
+    <details className="ajuda sem-icone mt-4">
+      <summary>{t.rota.maisOpcoes}</summary>
+      {emExecucao && rotaEmUso && <RotaEmUso calculo={rotaEmUso} />}
+      {emExecucao && (
+        <>
+          <h2>{t.rota.trocarDeRota}</h2>
+          <ListaRotas calculo={rota.calculo} alternativaSelecionada={alternativaSelecionada} aoSelecionar={setAlternativaParaTrocar}>
+            <p className="texto-apoio">{t.rota.rotasDaPosicao}</p>
+          </ListaRotas>
+        </>
+      )}
+      <button type="button" className="secundario bloco mt-3" onClick={() => rota.recalcular()} disabled={rota.ocupado}>
+        <Icone nome="sincronizar" /> {rota.ocupado ? t.rota.recalculando : t.rota.recalcular}
+      </button>
+      <details
+        className="ajuda sem-icone mt-4"
+        open={rotaPropriaAberta}
+        onToggle={(evento) => setRotaPropriaAberta(evento.currentTarget.open)}
+      >
+        <summary>{t.rota.usarUmaPropria}</summary>
+        <RotaPropria
+          key={versaoRotaPropria}
+          origem={rota.calculo.origem}
+          destino={rota.calculo.destino}
+          // Durante a viagem, a rota própria também troca a rota em uso: pede confirmação.
+          aoConfirmar={(tracado, justificativa) =>
+            emExecucao ? setRotaPropriaParaTrocar({ tracado, justificativa }) : usarRotaPropria({ tracado, justificativa })
+          }
+          desabilitado={rota.ocupado}
+        />
+      </details>
+      {/* Esqueceu o "Cheguei": a entrega pode ser registrada daqui também. */}
+      {emExecucao && !chegou && linkRegistrarEntrega(false)}
+      {emExecucao && rota.trajeto && <ResumoViagem trajeto={rota.trajeto} />}
+    </details>
+  );
+
   return (
     <TelaMotorista
       titulo={emExecucao ? t.rota.tituloViagem : t.rota.tituloRota}
@@ -85,29 +138,28 @@ export function TelaRota() {
       rotuloVoltar={t.geral.voltarEntrega}
     >
       {rota.erro && <Alerta tipo="erro">{rota.erro}</Alerta>}
-
-      {avisoChegada && <Alerta tipo="sucesso">{avisoChegada}</Alerta>}
+      {/* O aviso de quem trouxe até aqui (ex.: "retirada registrada") só vale antes da viagem. */}
+      {avisoChegada && !viagemIniciada && <Alerta tipo="sucesso">{avisoChegada}</Alerta>}
       {rota.pendenteDeSincronizacao && <Alerta tipo="aviso">{t.rota.pendenteSincronizacao}</Alerta>}
-
-      {/* Durante a viagem, o que importa primeiro são os marcos e o encerramento - a escolha de rota desce. */}
-      {emExecucao && <MarcosProgresso entregaId={entregaId} checkpoints={rota.trajeto?.checkpoints} aoRegistrar={rota.recarregarTrajeto} />}
-
-      {/* A viagem termina ao registrar a entrega (o comprovante encerra a viagem): um "Encerrar viagem" separado
-          fechava a viagem antes e a entrega não conseguia mais ser finalizada (GYNLA25237). */}
-      {emExecucao && (
-        <Link to={`/motorista/entregas/${entregaId}/comprovante`} viewTransition className="botao sucesso grande bloco mt-4">
-          <Icone nome="checkCirculo" /> {t.detalhe.registrarEntrega}
-        </Link>
-      )}
-
       {avisoRota && (
         <Alerta tipo="sucesso" aoFechar={() => setAvisoRota(null)}>
           {avisoRota}
         </Alerta>
       )}
 
-      {rotaEmUso && <RotaEmUso calculo={rotaEmUso} />}
-      {emExecucao && rota.calculo && <NavegarComWaze destino={rota.calculo.destino} />}
+      {emExecucao && (
+        <section>
+          <p className="texto-apoio mb-0">{chegou ? t.rota.passoRegistrar : t.rota.passoEmViagem}</p>
+          {chegou ? (
+            linkRegistrarEntrega(true)
+          ) : (
+            <>
+              {rota.calculo && <NavegarComWaze destino={rota.calculo.destino} destaque />}
+              <MarcoChegada entregaId={entregaId} />
+            </>
+          )}
+        </section>
+      )}
 
       {rota.precisaDestinoManual ? (
         <AjusteDestinoManual
@@ -121,20 +173,36 @@ export function TelaRota() {
 
           {rota.calculo && (
             <>
-              <MapaRotas
-                calculo={rota.calculo}
-                alternativaSelecionada={rota.selecao?.rotaEscolhida.id ?? null}
-                // Durante a viagem, tocar numa alternativa troca a rota em uso: pede confirmação.
-                aoSelecionar={emExecucao ? setAlternativaParaTrocar : rota.selecionarSugerida}
-                titulo={emExecucao ? t.rota.trocarDeRota : undefined}
-              >
-                {emExecucao && <p className="texto-apoio">{t.rota.rotasDaPosicao}</p>}
-                {/* Sem rota escolhida não há "Iniciar viagem": sem este aviso, o motorista via a linha no mapa e
-                    achava que já podia seguir (entrega GYNLA25237, homologação). */}
-                {!rota.trajeto && !rota.selecao && !rota.pendenteDeSincronizacao && rota.calculo.alternativas.length > 0 && (
-                  <Alerta tipo="aviso">{t.rota.escolhaParaIniciar}</Alerta>
-                )}
-              </MapaRotas>
+              <MapaRotas calculo={rota.calculo} alternativaSelecionada={alternativaSelecionada} />
+
+              {!rota.trajeto && (
+                <>
+                  {/* Sem rota escolhida não há "Iniciar viagem" (a mais rápida vem escolhida; isto cobre a falha). */}
+                  {!rota.selecao && !rota.pendenteDeSincronizacao && rota.calculo.alternativas.length > 0 && (
+                    <Alerta tipo="aviso">{t.rota.escolhaParaIniciar}</Alerta>
+                  )}
+                  {rota.selecao && (
+                    <IniciarViagem
+                      entregaId={entregaId}
+                      selecao={rota.selecao}
+                      aoIniciar={rota.iniciar}
+                      ocupado={rota.ocupado}
+                      retiradaFeita={retiradaFeita}
+                    />
+                  )}
+                  <details className="ajuda sem-icone mt-4" open={!rota.selecao}>
+                    <summary>{t.rota.verOutrasRotas(rota.calculo.alternativas.length)}</summary>
+                    <ListaRotas
+                      calculo={rota.calculo}
+                      alternativaSelecionada={alternativaSelecionada}
+                      aoSelecionar={rota.selecionarSugerida}
+                    />
+                  </details>
+                </>
+              )}
+
+              {maisOpcoes}
+
               <ConfirmarAcao
                 aberto={alternativaParaTrocar !== null}
                 titulo={t.rota.trocarTitulo}
@@ -149,38 +217,6 @@ export function TelaRota() {
                 }}
                 aoCancelar={() => setAlternativaParaTrocar(null)}
               />
-
-              {!rota.trajeto && rota.selecao && (
-                <IniciarViagem
-                  entregaId={entregaId}
-                  selecao={rota.selecao}
-                  aoIniciar={rota.iniciar}
-                  ocupado={rota.ocupado}
-                  retiradaFeita={retiradaFeita}
-                />
-              )}
-
-              <button type="button" className="secundario bloco mt-3" onClick={() => rota.recalcular()} disabled={rota.ocupado}>
-                <Icone nome="sincronizar" /> {rota.ocupado ? t.rota.recalculando : t.rota.recalcular}
-              </button>
-
-              <details
-                className="ajuda sem-icone mt-4"
-                open={rotaPropriaAberta}
-                onToggle={(evento) => setRotaPropriaAberta(evento.currentTarget.open)}
-              >
-                <summary>{t.rota.usarUmaPropria}</summary>
-                <RotaPropria
-                  key={versaoRotaPropria}
-                  origem={rota.calculo.origem}
-                  destino={rota.calculo.destino}
-                  // Durante a viagem, a rota própria também troca a rota em uso: pede confirmação.
-                  aoConfirmar={(tracado, justificativa) =>
-                    emExecucao ? setRotaPropriaParaTrocar({ tracado, justificativa }) : usarRotaPropria({ tracado, justificativa })
-                  }
-                  desabilitado={rota.ocupado}
-                />
-              </details>
               <ConfirmarAcao
                 aberto={rotaPropriaParaTrocar !== null}
                 titulo={t.rota.propriaTitulo}
@@ -200,7 +236,8 @@ export function TelaRota() {
         </>
       )}
 
-      {rota.trajeto && <ResumoViagem trajeto={rota.trajeto} />}
+      {/* Viagem já encerrada (entrega registrada): só o resumo. */}
+      {rota.trajeto && !emExecucao && <ResumoViagem trajeto={rota.trajeto} />}
 
       <Ajuda>
         <p>{t.rota.ajuda}</p>

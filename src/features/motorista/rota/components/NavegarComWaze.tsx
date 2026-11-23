@@ -7,12 +7,12 @@ import type { Coordenada } from "../types";
  * Rota, quilometragem, pedágio e cobrança continuam sendo os calculados e registrados pelo Milebag. O link universal
  * abre o app do Waze se estiver instalado e, se não, a página do Waze no navegador.
  */
-export function NavegarComWaze({ destino }: { destino: Coordenada }) {
+export function NavegarComWaze({ destino, destaque = false }: { destino: Coordenada; destaque?: boolean }) {
   const t = useTextos().motorista.rota;
   const link = `https://waze.com/ul?ll=${destino.latitude},${destino.longitude}&navigate=yes`;
 
   return (
-    <a href={link} target="_blank" rel="noopener noreferrer" className="botao secundario bloco mt-3">
+    <a href={link} target="_blank" rel="noopener noreferrer" className={`botao bloco mt-3${destaque ? " grande" : " secundario"}`}>
       <Icone nome="carro" /> {t.navegarComWaze}
     </a>
   );
