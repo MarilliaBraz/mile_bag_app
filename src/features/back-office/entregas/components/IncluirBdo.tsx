@@ -5,6 +5,7 @@ import { Alerta } from "../../../../shared/components/Alerta";
 import { ConfirmarAcao } from "../../../../shared/components/ConfirmarAcao";
 import type { BdoResponse, CamposBdo } from "../../../../shared/types/bdo";
 import { buscarBdosPorNumero, incluirBdo, lerTextoBdo } from "../services/entregasService";
+import { CamposPassageiroBdo } from "./CamposPassageiroBdo";
 
 const TAMANHO_MAXIMO_TEXTO = 20000;
 
@@ -239,17 +240,7 @@ export function IncluirBdo({
               </ul>
             </Alerta>
           )}
-          <div className="form-linha">{campo("passageiroNome", t.passageiro, { obrigatorio: true, maximo: 200 })}</div>
-          <div className="form-linha">{campo("enderecoEntrega", t.endereco, { obrigatorio: true, maximo: 300 })}</div>
-          <div className="form-linha">
-            {campo("cidade", t.cidade, { maximo: 100 })}
-            {campo("uf", t.uf, { maximo: 2 })}
-            {campo("cep", t.cep, { maximo: 9 })}
-          </div>
-          <div className="form-linha">
-            {campo("telefonePassageiro", t.telefone, { maximo: 30, tipo: "tel" })}
-            {campo("emailPassageiro", t.email, { maximo: 200, tipo: "email" })}
-          </div>
+          <CamposPassageiroBdo valores={campos} alterar={alterar} prefixo="bdo" />
           <div className="form-linha">
             {campo("etiquetaBagagem", t.etiquetas, { maximo: 300 })}
             <div>

@@ -35,3 +35,12 @@ export type BdoResponse = {
   dataCaptura: string;
   pendenciasContato: PendenciaContatoBdo[];
 };
+
+/**
+ * Espelha com.marillia.milebag.business.bdo.model.DadosPassageiroBdo (mile_bag_api, V59): o que a empresa pode corrigir
+ * num BDO já registrado. `enderecoEntrega` é só o logradouro; cidade, UF e CEP vêm separados, como na inclusão.
+ */
+export type DadosPassageiroBdo = Pick<
+  CamposBdo,
+  "passageiroNome" | "enderecoEntrega" | "cidade" | "uf" | "cep" | "telefonePassageiro" | "emailPassageiro"
+>;

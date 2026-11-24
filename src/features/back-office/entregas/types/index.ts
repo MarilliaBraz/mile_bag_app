@@ -37,7 +37,9 @@ export type TipoEventoRastreabilidade =
   /** V51: etapa corrigida pelo motorista; `descricao` é a etapa (FOTO_PORTA...), `detalhe` o motivo, antes e depois. */
   | "CORRECAO"
   /** V52: a empresa trocou a base do BDO; `descricao` "GYN -> BSB", `detalhe` o motivo. */
-  | "BASE_ALTERADA";
+  | "BASE_ALTERADA"
+  /** V59: a empresa corrigiu os dados do passageiro; `descricao` "Endereco: antes -> depois; ...", `detalhe` o motivo. */
+  | "DADOS_ALTERADOS";
 
 /** Espelha EventoRastreabilidade: um fato da vida da mala, na ordem em que aconteceu. */
 export type EventoRastreabilidade = {

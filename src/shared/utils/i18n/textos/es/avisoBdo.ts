@@ -9,6 +9,8 @@ export const avisoBdo: Textos["avisoBdo"] = {
   fechar: "Cerrar",
   /** V47: a empresa cancelou uma entrega que estava com o motorista. */
   cancelada: "Entrega cancelada por la empresa",
+  /** V59: la empresa corrigió los datos del pasajero de una entrega del conductor. */
+  dadosAlterados: "Datos de la entrega cambiados por la empresa",
   notificacoes: {
     titulo: "Avisos de equipaje nuevo con la app cerrada",
     explicacao: "Con la app abierta, el aviso sonoro ya funciona. Actívelo para recibir el aviso también con la app cerrada.",

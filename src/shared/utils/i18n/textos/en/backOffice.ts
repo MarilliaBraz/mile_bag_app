@@ -554,6 +554,20 @@ export const backOffice: Textos["backOffice"] = {
     seloTarifaOculta: "Rate hidden",
   },
   entregas: {
+    alterarDados: {
+      titulo: "Correct passenger details",
+      descricao:
+        "Name, address, phone and e-mail can be corrected until the delivery is completed. The correction stays in the bag history, and the driver handling the delivery is notified.",
+      abrir: "Correct details",
+      carregando: "Loading…",
+      motivo: "Reason for the correction",
+      salvar: "Save correction",
+      salvando: "Saving…",
+      desistir: "Cancel",
+      falha: "Could not correct the details.",
+      falhaCarregar: "Could not load the passenger details.",
+      alterados: (bdo: string) => `Passenger details of BDO ${bdo} corrected.`,
+    },
     trocarBase: {
       titulo: "Change the BDO base",
       descricao: (atual: string) =>
@@ -632,6 +646,7 @@ export const backOffice: Textos["backOffice"] = {
     carregandoHistorico: "Loading history…",
     eventos: {
       BDO_RECEBIDO: "BDO received",
+      DADOS_ALTERADOS: "Passenger details corrected",
       BASE_ALTERADA: "BDO base changed",
       CORRECAO: "Step corrected",
       SEGUNDA_VIA_ENVIADA: "BDO copy sent by e-mail",

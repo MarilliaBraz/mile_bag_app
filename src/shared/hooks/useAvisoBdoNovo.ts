@@ -7,7 +7,7 @@ import { prepararSom, tocarAvisoSonoro } from "../utils/som";
 import { useIntervaloEmPrimeiroPlano } from "./useIntervaloEmPrimeiroPlano";
 
 const INTERVALO_MS = 30_000;
-/** Avisa o painel de que a lista mudou (BDO novo ou entrega cancelada, V47), para ele recarregar. */
+/** Avisa o painel de que a lista mudou (BDO novo, entrega cancelada V47 ou corrigida V59), para ele recarregar. */
 export const EVENTO_BDOS_NOVOS = "milebag:bdos-novos";
 
 export type AvisoBdoNovo = { quantidade: number; numero: string | null };
@@ -18,8 +18,11 @@ type BdosDisponiveis = { bdos: { bdoId: string; origem: string; bdoNumero: strin
 // O aviso fica fora do componente: o layout do motorista é montado de novo a cada tela e o aviso precisa
 // continuar visível até ser fechado.
 let avisoAtual: AvisoBdoNovo | null = null;
-/** V47: texto do aviso de entrega cancelada pela empresa (vem pronto no push). */
-let cancelamentoAtual: string | null = null;
+/** Aviso da empresa sobre uma entrega do motorista: cancelada (V47) ou com os dados do passageiro corrigidos (V59). */
+export type AvisoEmpresa = { tipo: "cancelada" | "dadosAlterados"; corpo: string };
+
+/** O texto vem pronto no push. */
+let avisoEmpresaAtual: AvisoEmpresa | null = null;
 const ouvintes = new Set<() => void>();
 let ultimaConsulta = 0;
 let consultando = false;
@@ -30,8 +33,8 @@ function definirAviso(aviso: AvisoBdoNovo | null) {
   ouvintes.forEach((ouvinte) => ouvinte());
 }
 
-function definirCancelamento(texto: string | null) {
-  cancelamentoAtual = texto;
+function definirAvisoEmpresa(aviso: AvisoEmpresa | null) {
+  avisoEmpresaAtual = aviso;
   ouvintes.forEach((ouvinte) => ouvinte());
 }
 
@@ -79,9 +82,12 @@ const assinar = (ouvinte: () => void) => {
   };
 };
 
-/** V47: a empresa cancelou uma entrega deste motorista - mostra o aviso, toca o som e recarrega o painel. */
-function avisarCancelamento(corpo: string | undefined) {
-  definirCancelamento(corpo || obterTextos().avisoBdo.cancelada);
+/** V47/V59: a empresa cancelou ou corrigiu uma entrega deste motorista - mostra o aviso, toca o som e recarrega o painel. */
+function avisarDaEmpresa(tipo: AvisoEmpresa["tipo"], corpo: string | undefined) {
+  // Um cancelamento ainda aberto não some por causa de uma correção de dados (de outra entrega, ou da mesma antes).
+  if (!(tipo === "dadosAlterados" && avisoEmpresaAtual?.tipo === "cancelada")) {
+    definirAvisoEmpresa({ tipo, corpo: corpo || obterTextos().avisoBdo[tipo] });
+  }
   tocarAvisoSonoro();
   navigator.vibrate?.([200, 100, 200]);
   window.dispatchEvent(new Event(EVENTO_BDOS_NOVOS));
@@ -89,7 +95,7 @@ function avisarCancelamento(corpo: string | undefined) {
 
 export function useAvisoBdoNovo() {
   const aviso = useSyncExternalStore(assinar, () => avisoAtual);
-  const cancelamento = useSyncExternalStore(assinar, () => cancelamentoAtual);
+  const avisoEmpresa = useSyncExternalStore(assinar, () => avisoEmpresaAtual);
 
   useIntervaloEmPrimeiroPlano(verificar, INTERVALO_MS);
 
@@ -106,7 +112,9 @@ export function useAvisoBdoNovo() {
       if (mensagem?.tipo === "bdo-novo") {
         void verificar(true);
       } else if (mensagem?.tipo === "bdo-cancelado") {
-        avisarCancelamento(mensagem.corpo);
+        avisarDaEmpresa("cancelada", mensagem.corpo);
+      } else if (mensagem?.tipo === "bdo-dados-alterados") {
+        avisarDaEmpresa("dadosAlterados", mensagem.corpo);
       }
     };
     navigator.serviceWorker?.addEventListener("message", aoReceberMensagem);
@@ -116,5 +124,5 @@ export function useAvisoBdoNovo() {
     };
   }, []);
 
-  return { aviso, fechar: limparAvisoBdoNovo, cancelamento, fecharCancelamento: () => definirCancelamento(null) };
+  return { aviso, fechar: limparAvisoBdoNovo, avisoEmpresa, fecharAvisoEmpresa: () => definirAvisoEmpresa(null) };
 }

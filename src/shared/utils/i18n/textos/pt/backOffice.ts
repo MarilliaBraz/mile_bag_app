@@ -550,6 +550,20 @@ export const backOffice = {
     seloTarifaOculta: "Tarifa oculta",
   },
   entregas: {
+    alterarDados: {
+      titulo: "Corrigir dados do passageiro",
+      descricao:
+        "Nome, endereço, telefone e e-mail podem ser corrigidos até a entrega ser concluída. A correção fica no histórico da mala, e o motorista que está com a entrega é avisado.",
+      abrir: "Corrigir dados",
+      carregando: "Carregando…",
+      motivo: "Motivo da correção",
+      salvar: "Salvar correção",
+      salvando: "Salvando…",
+      desistir: "Desistir",
+      falha: "Não foi possível corrigir os dados.",
+      falhaCarregar: "Não foi possível carregar os dados do passageiro.",
+      alterados: (bdo: string) => `Dados do passageiro do BDO ${bdo} corrigidos.`,
+    },
     trocarBase: {
       titulo: "Trocar a base do BDO",
       descricao: (atual: string) => `Base atual: ${atual}. Os motoristas da base nova são avisados, e a troca fica no histórico da mala.`,
@@ -627,6 +641,7 @@ export const backOffice = {
     carregandoHistorico: "Carregando histórico…",
     eventos: {
       BDO_RECEBIDO: "BDO recebido",
+      DADOS_ALTERADOS: "Dados do passageiro corrigidos",
       BASE_ALTERADA: "Base do BDO alterada",
       CORRECAO: "Etapa corrigida",
       SEGUNDA_VIA_ENVIADA: "Segunda via do BDO enviada por e-mail",
