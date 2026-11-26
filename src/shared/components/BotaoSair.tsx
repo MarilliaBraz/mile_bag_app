@@ -8,13 +8,14 @@ import { desativarNotificacoes } from "../services/notificacoesPush";
  * Encerra a sessão local (descarta o token). O que ainda está na fila offline do motorista fica guardado para o próximo login.
  * Antes, desinscreve o aparelho dos avisos de bagagem nova (HU32): quem sai não deve continuar recebendo.
  */
-export function BotaoSair({ className = "secundario" }: { className?: string }) {
+export function BotaoSair({ className = "secundario", title }: { className?: string; title?: string }) {
   const navigate = useNavigate();
   const t = useTextos().sessao;
   return (
     <button
       type="button"
       className={className}
+      title={title}
       onClick={async () => {
         await desativarNotificacoes();
         limparToken();

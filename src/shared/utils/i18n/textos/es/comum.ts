@@ -168,6 +168,9 @@ export const comum: TextosComuns = {
     TEMPO_ESGOTADO: "La ubicación tardó demasiado en responder. Vaya a un lugar abierto, si es posible, y toque “Intentar de nuevo”.",
   },
   menu: {
+    recolherMenu: "Contraer menú",
+    expandirMenu: "Expandir menú",
+    larguraMenu: "Ancho del menú. Use las flechas para ajustar y Enter para contraer o expandir.",
     inicio: "Inicio",
     menuMotorista: "Menú del conductor",
     entregas: "Entregas",
