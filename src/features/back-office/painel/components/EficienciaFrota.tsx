@@ -76,73 +76,71 @@ export function EficienciaFrota() {
           para="/admin/fechamentos"
         />
       </div>
-      <div className="grade-paineis">
-        <Painel titulo={t.pracas}>
+      <Painel titulo={t.pracas}>
+        <div className="tabela-rolavel">
+          <table className="tabela">
+            <thead>
+              <tr>
+                <th scope="col">{t.colPraca}</th>
+                <th scope="col">{t.colEmRota}</th>
+                <th scope="col">{t.colDisponiveis}</th>
+                <th scope="col">{t.colOffline}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {frota.pracas.map((praca) => (
+                <tr key={praca.base}>
+                  <th scope="row">{praca.base || t.semBase}</th>
+                  <td>{praca.emRota}</td>
+                  <td>{praca.disponiveis}</td>
+                  <td>{praca.offline}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Painel>
+      <Painel titulo={t.motoristasRanking}>
+        {frota.motoristas.length === 0 ? (
+          <p className="texto-apoio">{t.motoristasVazio}</p>
+        ) : (
           <div className="tabela-rolavel">
             <table className="tabela">
               <thead>
                 <tr>
-                  <th scope="col">{t.colPraca}</th>
-                  <th scope="col">{t.colEmRota}</th>
-                  <th scope="col">{t.colDisponiveis}</th>
-                  <th scope="col">{t.colOffline}</th>
+                  <th scope="col">{t.colMotorista}</th>
+                  <th scope="col">{t.colSituacao}</th>
+                  <th scope="col">{t.colEntregas}</th>
+                  <th scope="col">{t.colPontualidade}</th>
+                  <th scope="col">{t.colPrimeiraTentativa}</th>
+                  <th scope="col">{t.colMalasSaida}</th>
                 </tr>
               </thead>
               <tbody>
-                {frota.pracas.map((praca) => (
-                  <tr key={praca.base}>
-                    <th scope="row">{praca.base || t.semBase}</th>
-                    <td>{praca.emRota}</td>
-                    <td>{praca.disponiveis}</td>
-                    <td>{praca.offline}</td>
+                {frota.motoristas.map((motorista) => (
+                  <tr key={motorista.id}>
+                    <th scope="row">
+                      {motorista.nome ?? "–"}
+                      <span className="texto-apoio em-bloco">
+                        {[motorista.base, motorista.ultimoAcesso && `${t.colUltimoAcesso}: ${formatarDataHora(motorista.ultimoAcesso)}`]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </span>
+                    </th>
+                    <td>
+                      <span className={`selo ${SELO[motorista.situacao]}`.trim()}>{t.situacoesMotorista[motorista.situacao]}</span>
+                    </td>
+                    <td>{motorista.entregas}</td>
+                    <td>{formatarPercentual(motorista.pontualidade)}</td>
+                    <td>{formatarPercentual(motorista.primeiraTentativa)}</td>
+                    <td>{motorista.malasPorSaida === null ? "–" : formatarNumero(motorista.malasPorSaida, 1)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </Painel>
-        <Painel titulo={t.motoristasRanking}>
-          {frota.motoristas.length === 0 ? (
-            <p className="texto-apoio">{t.motoristasVazio}</p>
-          ) : (
-            <div className="tabela-rolavel">
-              <table className="tabela">
-                <thead>
-                  <tr>
-                    <th scope="col">{t.colMotorista}</th>
-                    <th scope="col">{t.colSituacao}</th>
-                    <th scope="col">{t.colEntregas}</th>
-                    <th scope="col">{t.colPontualidade}</th>
-                    <th scope="col">{t.colPrimeiraTentativa}</th>
-                    <th scope="col">{t.colMalasSaida}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {frota.motoristas.map((motorista) => (
-                    <tr key={motorista.id}>
-                      <th scope="row">
-                        {motorista.nome ?? "–"}
-                        <span className="texto-apoio em-bloco">
-                          {[motorista.base, motorista.ultimoAcesso && `${t.colUltimoAcesso}: ${formatarDataHora(motorista.ultimoAcesso)}`]
-                            .filter(Boolean)
-                            .join(" · ")}
-                        </span>
-                      </th>
-                      <td>
-                        <span className={`selo ${SELO[motorista.situacao]}`.trim()}>{t.situacoesMotorista[motorista.situacao]}</span>
-                      </td>
-                      <td>{motorista.entregas}</td>
-                      <td>{formatarPercentual(motorista.pontualidade)}</td>
-                      <td>{formatarPercentual(motorista.primeiraTentativa)}</td>
-                      <td>{motorista.malasPorSaida === null ? "–" : formatarNumero(motorista.malasPorSaida, 1)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Painel>
-      </div>
+        )}
+      </Painel>
     </section>
   );
 }
