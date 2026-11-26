@@ -22,7 +22,9 @@ export function AcessibilidadeDeRota() {
         principal.id = "principal";
         principal.tabIndex = -1;
       }
-      const titulo = document.querySelector("h1")?.textContent?.trim();
+      // `data-titulo` no <h1>: o nome da tela quando o título visível é uma frase (ex.: o resumo do Início).
+      const h1 = document.querySelector<HTMLElement>("h1");
+      const titulo = (h1?.dataset.titulo ?? h1?.textContent)?.trim();
       document.title = titulo && titulo !== NOME_SISTEMA ? `${titulo} | ${NOME_SISTEMA}` : NOME_SISTEMA;
     };
 

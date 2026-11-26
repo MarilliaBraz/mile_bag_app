@@ -21,7 +21,7 @@ export function CabecalhoCockpit({ gestao }: { gestao: PainelGestao }) {
   return (
     <header className="cockpit-cabecalho">
       <p className="cockpit-marca">{t.titulo}</p>
-      <h1>{frase}</h1>
+      <h1 data-titulo={t.titulo}>{frase}</h1>
       <p className="texto-apoio">{t.resumoDetalhe(hoje, malasNoDia, formatarHora(gestao.geradoEm))}</p>
     </header>
   );

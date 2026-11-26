@@ -57,8 +57,15 @@ export function GraficoOtdVolume({ dias, meta, rotulo }: { dias: DiaOperacao[]; 
       {isolados.map(({ dia, i }) => (
         <circle key={dia.dia} cx={centro(i)} cy={yOtd(dia.otd as number)} r="4" fill="var(--acao)" />
       ))}
-      {rotulosX.map((i) => (
-        <text key={i} x={centro(i)} y={ALTURA - 4} textAnchor="middle" fontSize="12" fill="var(--texto-suave)">
+      {rotulosX.map((i, pos) => (
+        <text
+          key={i}
+          x={pos === 0 ? 0 : pos === rotulosX.length - 1 ? LARGURA : centro(i)}
+          y={ALTURA - 4}
+          textAnchor={pos === 0 ? "start" : pos === rotulosX.length - 1 ? "end" : "middle"}
+          fontSize="12"
+          fill="var(--texto-suave)"
+        >
           {formatarData(dias[i].dia).slice(0, 5)}
         </text>
       ))}
