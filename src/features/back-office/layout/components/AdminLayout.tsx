@@ -33,7 +33,7 @@ export function AdminLayout({ titulo, itens, comPendencias = false }: { titulo: 
               <span>{t[item.rotulo]}</span>
               {item.contador && pendencias[item.contador] > 0 && (
                 <>
-                  <span className={`contador-menu contador-${item.contador}`} aria-hidden="true">
+                  <span className="contador-menu" aria-hidden="true">
                     {pendencias[item.contador]}
                   </span>
                   <span className="visualmente-oculto">{t.pendencias(pendencias[item.contador])}</span>

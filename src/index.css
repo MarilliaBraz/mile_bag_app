@@ -1651,8 +1651,8 @@ details.ajuda.sem-icone summary::before {
   color: var(--acao);
 }
 
-/* Balão de pendências no item do menu (emergências abertas, BDOs sem motorista além do prazo). Forma e número,
- * não só cor: lido também no alto contraste. */
+/* Balão de pendências no item do menu (emergências abertas, BDOs sem motorista além do prazo). Urgente é sempre
+ * vermelho. Forma e número, não só cor: lido também no alto contraste. */
 .contador-menu {
   min-width: 1.375rem;
   margin-left: auto;
@@ -1663,17 +1663,8 @@ details.ajuda.sem-icone summary::before {
   line-height: 1.25rem;
   text-align: center;
   font-variant-numeric: tabular-nums;
-}
-
-.contador-emergencias {
   background: var(--erro-fundo);
   color: #fff;
-}
-
-.contador-entregas {
-  border: 1px solid var(--aviso);
-  background: var(--aviso-suave);
-  color: var(--aviso);
 }
 
 .admin-lateral-rodape {
@@ -2014,7 +2005,7 @@ details.ajuda.sem-icone summary::before {
 }
 
 .tabela tr.linha-pendente {
-  background: var(--aviso-suave);
+  background: var(--erro-suave);
 }
 
 .tabela tr.linha-detalhe > td {
