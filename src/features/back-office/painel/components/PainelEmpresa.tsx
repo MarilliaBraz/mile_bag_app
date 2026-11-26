@@ -16,6 +16,7 @@ import { listarPagamentosPendentes, obterPainelGeografico, obterPainelGestao } f
 import type { ItemMala } from "../types";
 import { bdosAtrasados, pagamentoVencido, tarefasEmpresa, type DadosPainel } from "../utils/tarefasEmpresa";
 import { BasesOperacao } from "./BasesOperacao";
+import { EficienciaFrota } from "./EficienciaFrota";
 import { ExcecoesCriticas } from "./ExcecoesCriticas";
 import { ListaMalas } from "./ListaMalas";
 import { PulsoOperacao, type AbrirLista } from "./PulsoOperacao";
@@ -116,6 +117,7 @@ export function PainelEmpresa() {
       ) : (
         <Alerta tipo="erro">{t.falhaGeografico}</Alerta>
       )}
+      <EficienciaFrota />
       <div className="indicadores secao-painel">
         <CartaoIndicador
           rotulo={t.fechamentosPendencia}

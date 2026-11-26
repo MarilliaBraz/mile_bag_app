@@ -87,3 +87,40 @@ export type RotaAtiva = {
 
 /** Espelha PainelGeograficoResponse (fase 2). */
 export type PainelGeografico = { geradoEm: string; bases: BaseOperacao[]; ranking: BaseOperacao[]; rotas: RotaAtiva[] };
+
+/** Espelha PainelFrotaResponse.Custo: custo das viagens encerradas no período sobre as malas entregues. */
+export type CustoPeriodo = {
+  total: number;
+  pagamentoMotoristas: number;
+  pedagios: number;
+  viagens: number;
+  viagensSemValor: number;
+  malasEntregues: number;
+  porMala: number | null;
+  km: number;
+  porKm: number | null;
+};
+
+export type SituacaoMotorista = "EM_ROTA" | "DISPONIVEL" | "OFFLINE";
+
+export type MotoristaStatus = {
+  id: string;
+  nome: string | null;
+  base: string | null;
+  situacao: SituacaoMotorista;
+  ultimoAcesso: string | null;
+  entregas: number;
+  pontualidade: number | null;
+  primeiraTentativa: number | null;
+  malasPorSaida: number | null;
+};
+
+/** Espelha PainelFrotaResponse (fase 3). */
+export type PainelFrota = {
+  geradoEm: string;
+  custoHoje: CustoPeriodo;
+  custo30Dias: CustoPeriodo;
+  ocupacao30Dias: { saidas: number; malasPorSaida: number | null; saidasComUmaMala: number };
+  pracas: { base: string; emRota: number; disponiveis: number; offline: number }[];
+  motoristas: MotoristaStatus[];
+};

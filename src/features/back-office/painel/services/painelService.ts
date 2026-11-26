@@ -1,5 +1,5 @@
 import { requisitar } from "../../../../shared/services/httpClient";
-import type { ConfigPainelGestao, PagamentoPendente, PainelGeografico, PainelGestao } from "../types";
+import type { ConfigPainelGestao, PagamentoPendente, PainelFrota, PainelGeografico, PainelGestao } from "../types";
 
 /** Motoristas com quinzena calculada ainda não paga, de todos os fechamentos (agendados primeiro). */
 export const listarPagamentosPendentes = () => requisitar<PagamentoPendente[]>("/api/v1/fechamentos/pagamentos-pendentes");
@@ -13,3 +13,6 @@ export const salvarConfigPainelGestao = (corpo: ConfigPainelGestao) =>
 
 /** Fase 2: situação de cada base, as 5 piores do dia e as viagens em andamento. */
 export const obterPainelGeografico = () => requisitar<PainelGeografico>("/api/v1/gestao/painel/geografico");
+
+/** Fase 3: custo por mala, ocupação das saídas e situação dos motoristas. */
+export const obterPainelFrota = () => requisitar<PainelFrota>("/api/v1/gestao/painel/frota");
