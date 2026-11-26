@@ -5,7 +5,8 @@ import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import type { PainelFrota, SituacaoMotorista } from "../types";
 import { formatarPercentual } from "../utils/formatarPainel";
 
-const SELO: Record<SituacaoMotorista, string> = { EM_ROTA: "selo-info", DISPONIVEL: "selo-sucesso", OFFLINE: "" };
+/** Disponível (online e livre) em verde, offline em vermelho; em rota em azul: também online, mas ocupado. */
+const SELO: Record<SituacaoMotorista, string> = { EM_ROTA: "selo-info", DISPONIVEL: "selo-sucesso", OFFLINE: "selo-erro" };
 
 /**
  * Frota: motoristas por praça e ranking de pontualidade e primeira tentativa. Custo por mala e malas por saída ficam
