@@ -6,6 +6,7 @@ import type { PainelFrota, SituacaoMotorista } from "../types";
 import { formatarPercentual } from "../utils/formatarPainel";
 
 /** Disponível (online e livre) em verde, offline em vermelho; em rota em azul: também online, mas ocupado. */
+/** Disponível (online e livre) em verde, offline em vermelho; em rota em azul: também online, mas ocupado. */
 const SELO: Record<SituacaoMotorista, string> = { EM_ROTA: "selo-info", DISPONIVEL: "selo-sucesso", OFFLINE: "selo-erro" };
 
 /**
@@ -50,8 +51,8 @@ export function EficienciaFrota({ frota, falhou }: { frota: PainelFrota | null; 
                 <tr key={praca.base}>
                   <th scope="row">{praca.base || t.semBase}</th>
                   <td>{praca.emRota}</td>
-                  <td>{praca.disponiveis}</td>
-                  <td>{praca.offline}</td>
+                  <td className={praca.disponiveis > 0 ? "numero-sucesso" : undefined}>{praca.disponiveis}</td>
+                  <td className={praca.offline > 0 ? "numero-erro" : undefined}>{praca.offline}</td>
                 </tr>
               ))}
             </tbody>
