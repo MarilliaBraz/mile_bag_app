@@ -10,6 +10,7 @@ export function SecaoPainelGestao() {
   const t = useTextos().backOffice.configuracoes;
   const [prazo, setPrazo] = useState("");
   const [horas, setHoras] = useState("");
+  const [meta, setMeta] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [salvo, setSalvo] = useState(false);
   const [ocupado, setOcupado] = useState(false);
@@ -19,6 +20,7 @@ export function SecaoPainelGestao() {
       (config) => {
         setPrazo(String(config.prazoEntregaHoras));
         setHoras(String(config.horasSemAtualizacao));
+        setMeta(String(config.metaOtd));
       },
       (excecao) => setErro(mensagemDeErro(excecao, t.falhaPainelGestao)),
     );
@@ -30,9 +32,14 @@ export function SecaoPainelGestao() {
     setSalvo(false);
     setOcupado(true);
     try {
-      const config = await salvarConfigPainelGestao({ prazoEntregaHoras: Number(prazo), horasSemAtualizacao: Number(horas) });
+      const config = await salvarConfigPainelGestao({
+        prazoEntregaHoras: Number(prazo),
+        horasSemAtualizacao: Number(horas),
+        metaOtd: Number(meta),
+      });
       setPrazo(String(config.prazoEntregaHoras));
       setHoras(String(config.horasSemAtualizacao));
+      setMeta(String(config.metaOtd));
       setSalvo(true);
     } catch (excecao) {
       setErro(mensagemDeErro(excecao, t.falhaPainelGestao));
@@ -66,7 +73,11 @@ export function SecaoPainelGestao() {
             onChange={(e) => setHoras(e.target.value)}
           />
         </div>
-        <button type="submit" disabled={ocupado || !prazo || !horas}>
+        <div>
+          <label htmlFor="metaOtd">{t.metaOtd}</label>
+          <input id="metaOtd" type="number" min={50} max={100} required value={meta} onChange={(e) => setMeta(e.target.value)} />
+        </div>
+        <button type="submit" disabled={ocupado || !prazo || !horas || !meta}>
           {t.salvarPainelGestao}
         </button>
       </form>
