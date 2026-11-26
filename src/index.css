@@ -361,6 +361,38 @@ button.perigo-contorno {
   box-shadow: none;
 }
 
+/*
+ * Padrão de cores das ações (orientação de usabilidade): remover, excluir, descartar e desativar em vermelho; ativar e
+ * reativar em verde. As versões "fantasma" são as leves das tabelas: só texto e ícone coloridos, fundo claro no hover.
+ */
+button.perigo-contorno:not(:disabled):hover,
+.botao.perigo-contorno:hover {
+  background: var(--erro-suave);
+}
+
+button.perigo-fantasma,
+button.sucesso-fantasma {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+button.perigo-fantasma {
+  color: var(--erro);
+}
+
+button.perigo-fantasma:not(:disabled):hover {
+  background: var(--erro-suave);
+}
+
+button.sucesso-fantasma {
+  color: var(--confirmacao);
+}
+
+button.sucesso-fantasma:not(:disabled):hover {
+  background: var(--confirmacao-suave);
+}
+
 /* Ação principal da tela: maior e em largura total, fácil de acertar com o polegar. */
 .grande {
   min-height: var(--alvo-g);
@@ -395,6 +427,14 @@ button.perigo-contorno {
 .botao-icone .icone {
   width: 1.5rem;
   height: 1.5rem;
+}
+
+.botao-icone.botao-icone-perigo {
+  color: var(--erro);
+}
+
+.botao-icone.botao-icone-perigo:not(:disabled):hover {
+  background: var(--erro-suave);
 }
 
 /* ---------- Estrutura das telas do motorista ---------- */

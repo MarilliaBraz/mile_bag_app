@@ -57,7 +57,7 @@ export function SecaoMotivos({ finalidade }: { finalidade: FinalidadeMotivo }) {
             </span>
             <button
               type="button"
-              className="fantasma compacto"
+              className="perigo-fantasma compacto"
               aria-label={t.desativarMotivoRotulo(motivo.descricao)}
               onClick={() => executar(() => desativarMotivo(motivo.id), t.falhaDesativarMotivo)}
             >

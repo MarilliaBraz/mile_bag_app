@@ -159,7 +159,7 @@ export function VincularBagagemCarona({
                 {!encerrada && (
                   <button
                     type="button"
-                    className="fantasma"
+                    className="perigo-fantasma"
                     onClick={() => desvincular(bagagem.id)}
                     disabled={ocupado}
                     aria-label={t.bagagem.desvincularRotulo(bagagem.etiquetaBagagem)}

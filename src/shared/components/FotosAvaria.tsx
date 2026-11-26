@@ -39,7 +39,7 @@ export function FotosAvaria({ id, fotos, aoMudarFotos, observacao, aoMudarObserv
               <img src={url} alt={t.foto(indice + 1)} />
               <button
                 type="button"
-                className="botao-icone"
+                className="botao-icone botao-icone-perigo"
                 aria-label={t.remover(indice + 1)}
                 title={t.remover(indice + 1)}
                 onClick={() => aoMudarFotos((atuais) => atuais.filter((_, i) => i !== indice))}

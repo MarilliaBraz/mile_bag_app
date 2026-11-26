@@ -60,7 +60,12 @@ export function AvisosBdoNovo() {
       {estado === "indisponivel" && <p className="texto-apoio">{t.indisponivelAjuda}</p>}
       {falhou && <Alerta tipo="erro">{t.falha}</Alerta>}
       {(estado === "ativado" || estado === "desativado") && (
-        <button type="button" className={estado === "ativado" ? "secundario bloco" : "bloco"} onClick={alternar} disabled={ocupado}>
+        <button
+          type="button"
+          className={estado === "ativado" ? "perigo-contorno bloco" : "sucesso bloco"}
+          onClick={alternar}
+          disabled={ocupado}
+        >
           {ocupado ? t.aguarde : estado === "ativado" ? t.desativar : t.ativar}
         </button>
       )}
