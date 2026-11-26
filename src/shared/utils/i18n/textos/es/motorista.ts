@@ -484,6 +484,8 @@ export const motorista: Textos["motorista"] = {
     kmPeriodo: "Km del período",
     totalPedagio: (valor) => `Peaje: ${valor}`,
     entregaLocal: "Entrega local",
+    pagamentoAgendado: (data) => `Pago programado para ${data}`,
+    pagoEm: (data) => `Pagado el ${data}`,
     ajudaSemTarifa:
       "Revise los kilometrajes y los peajes del período. Las entregas en la ciudad de la base aparecen como “Entrega local”. Para corregir un valor, use “Corregir valor” y explique el motivo: el valor original sigue visible en el historial. “Imprimir” genera una versión limpia para papel o PDF.",
     semTarifa: (quantidade) =>

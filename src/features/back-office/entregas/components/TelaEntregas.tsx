@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { formatarDataHora } from "../../../../shared/utils/formatar";
+import { formatarData, formatarDataHora, mensagemDeErro } from "../../../../shared/utils/formatar";
 import { KmDaViagem } from "./KmDaViagem";
 import { useRecurso } from "../../../../shared/hooks/useRecurso";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
@@ -9,7 +9,13 @@ import { ConfirmarAcao } from "../../../../shared/components/ConfirmarAcao";
 import { Gaveta, Pagina, Painel } from "../../../../shared/components/Pagina";
 import type { EntregaStatus } from "../../../motorista/painel-entregas/types";
 import { TOM_STATUS_ENTREGA } from "../../../motorista/painel-entregas/utils/statusEntrega";
-import { baixarSegundaVia, consultarHistorico, enviarSegundaVia, listarEntregas } from "../services/entregasService";
+import {
+  baixarSegundaVia,
+  buscarEntregasPorNumero,
+  consultarHistorico,
+  enviarSegundaVia,
+  listarEntregas,
+} from "../services/entregasService";
 import type { EntregaGestao } from "../types";
 import { AlterarDadosBdo } from "./AlterarDadosBdo";
 import { CancelarBdo } from "./CancelarBdo";
@@ -46,6 +52,22 @@ export function TelaEntregas() {
   const [sucesso, setSucesso] = useState<string | null>(null);
   const [filtro, setFiltro] = useState<EntregaStatus | "">("");
   const [busca, setBusca] = useState("");
+  // V60: resultado da busca em todas as entregas (inclusive pagas e canceladas há tempo, que saíram da lista).
+  const [emTodas, setEmTodas] = useState<EntregaGestao[] | null>(null);
+  const [buscandoEmTodas, setBuscandoEmTodas] = useState(false);
+  const [erroBusca, setErroBusca] = useState<string | null>(null);
+
+  async function buscarEmTodas() {
+    setBuscandoEmTodas(true);
+    setErroBusca(null);
+    try {
+      setEmTodas(await buscarEntregasPorNumero(busca.trim()));
+    } catch (excecao) {
+      setErroBusca(mensagemDeErro(excecao, t.agrupar.falhaBuscar));
+    } finally {
+      setBuscandoEmTodas(false);
+    }
+  }
   const [agruparPor, setAgruparPor] = useState<Agrupamento>("");
   const [aberta, setAberta] = useState<EntregaGestao | null>(null);
   const [incluindo, setIncluindo] = useState(false);
@@ -112,7 +134,10 @@ export function TelaEntregas() {
                 id="busca-bdo"
                 type="search"
                 value={busca}
-                onChange={(evento) => setBusca(evento.target.value)}
+                onChange={(evento) => {
+                  setBusca(evento.target.value);
+                  setEmTodas(null);
+                }}
                 placeholder={t.agrupar.buscarExemplo}
                 autoComplete="off"
                 spellCheck={false}
@@ -140,6 +165,36 @@ export function TelaEntregas() {
               </select>
             </div>
           </div>
+
+          {busca.trim() && (
+            <div className="pilha">
+              <button type="button" className="secundario" disabled={buscandoEmTodas} onClick={() => void buscarEmTodas()}>
+                <Icone nome="busca" /> {t.agrupar.buscarEmTodas}
+              </button>
+              {erroBusca && <Alerta tipo="erro">{erroBusca}</Alerta>}
+              {emTodas && emTodas.length === 0 && <p className="texto-apoio">{t.agrupar.nenhumaEmTodas}</p>}
+              {emTodas && emTodas.length > 0 && (
+                <div className="tabela-rolavel">
+                  <table className="tabela">
+                    <caption className="texto-apoio">{t.agrupar.resultadoEmTodas(emTodas.length)}</caption>
+                    <tbody>
+                      {emTodas.map((entrega) => (
+                        <LinhaEntrega
+                          key={entrega.bdoId}
+                          entrega={entrega}
+                          agora={agora}
+                          aoAbrir={() => {
+                            setSucesso(null);
+                            setAberta(entrega);
+                          }}
+                        />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
 
           {visiveis.length === 0 ? (
             <Vazio icone="mala" titulo={t.nenhuma} />
@@ -289,6 +344,7 @@ function LinhaEntrega({ entrega, agora, aoAbrir }: { entrega: EntregaGestao; ago
         {entrega.corrigida && <span className="selo selo-aviso">{t.corrigida}</span>}
         {entrega.baseCodigo && <span className="selo selo-info codigo">{entrega.baseCodigo}</span>}
         <SeloPrazo minutos={minutosParaVencer(entrega, agora)} />
+        {entrega.pagoEm && <span className="selo selo-sucesso">{t.agrupar.pagaEm(formatarData(entrega.pagoEm))}</span>}
         {entrega.mesmoEnderecoQue && entrega.mesmoEnderecoQue.length > 0 && (
           <span className="selo selo-sucesso selo-quebra" title={entrega.mesmoEnderecoQue.join(", ")}>
             {t.mesmoEndereco(

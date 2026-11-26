@@ -32,3 +32,28 @@ export type ItemFechamento = {
 export type FechamentoDetalhe = Omit<Fechamento, "totaisPorMotorista"> & { itens: ItemFechamento[] };
 
 export type RelatorioPdf = "relatorio-pagamento-entregas" | "relatorio-reembolso-pedagios";
+
+/** V60: pagamento da quinzena de um motorista no fechamento. */
+export type SituacaoPagamento = "A_AGENDAR" | "AGENDADO" | "PAGO";
+
+export type TipoEventoPagamento = "AGENDADO" | "PAGO" | "PAGAMENTO_DESFEITO";
+
+/** Espelha EventoPagamentoResponse: o rastro (quem, quando e o motivo ao desfazer). */
+export type EventoPagamento = {
+  tipo: TipoEventoPagamento;
+  dataReferencia: string | null;
+  motivo: string | null;
+  usuarioId: string;
+  dataHora: string;
+};
+
+/** Espelha PagamentoMotoristaResponse: totais das entregas calculadas (pagamento e pedágio separados) e a situação. */
+export type PagamentoMotorista = {
+  motoristaId: string;
+  totalPagamentoEntregas: number;
+  totalReembolsoPedagios: number;
+  situacao: SituacaoPagamento;
+  dataAgendada: string | null;
+  pagoEm: string | null;
+  eventos: EventoPagamento[];
+};

@@ -10,6 +10,9 @@ const BASE = "/api/v1/gestao/entregas";
 export const listarEntregas = (status: EntregaStatus | null) =>
   requisitar<EntregaGestao[]>(status ? BASE + caminhoApi`?status=${status}` : BASE);
 
+/** V60: busca pelo número em todas as entregas, inclusive as que já saíram da tela (pagas ou canceladas há tempo). */
+export const buscarEntregasPorNumero = (numero: string) => requisitar<EntregaGestao[]>(BASE + caminhoApi`?bdoNumero=${numero}`);
+
 /** POST /api/v1/gestao/bdos/{bdoId}/cancelamento (V47) - motivo obrigatório da lista de cancelamento da empresa. */
 export const cancelarBdo = (bdoId: string, motivoId: string, complemento: string | null) =>
   requisitar<unknown>(caminhoApi`/api/v1/gestao/bdos/${bdoId}/cancelamento`, { metodo: "POST", corpo: { motivoId, complemento } });

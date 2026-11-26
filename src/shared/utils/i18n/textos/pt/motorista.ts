@@ -481,6 +481,8 @@ export const motorista = {
     kmPeriodo: "Km do período",
     totalPedagio: (valor: string) => `Pedágio: ${valor}`,
     entregaLocal: "Entrega local",
+    pagamentoAgendado: (data: string) => `Pagamento agendado para ${data}`,
+    pagoEm: (data: string) => `Pago em ${data}`,
     ajudaSemTarifa:
       "Confira as quilometragens e os pedágios do período. Entregas na cidade da base aparecem como “Entrega local”. Para corrigir um valor, use “Corrigir valor” e explique o motivo: o valor original continua visível no histórico. “Imprimir” gera uma versão limpa para papel ou PDF.",
     semTarifa: (quantidade: number) =>

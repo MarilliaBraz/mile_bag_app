@@ -25,6 +25,8 @@ export type RelatorioQuinzenal = {
   entregas: ItemRelatorio[];
   /** V58: a empresa ocultou deste motorista a tarifa por viagem - o relatório traz só km, cidade base e pedágio. */
   tarifaOculta?: boolean;
+  /** V60: pagamento da quinzena (agendado para, pago em); nulo se a empresa ainda não fechou exatamente este período. */
+  pagamento?: { situacao: "A_AGENDAR" | "AGENDADO" | "PAGO"; dataAgendada: string | null; pagoEm: string | null } | null;
 };
 
 /** Espelha com.marillia.milebag.business.viagem.model.AjusteViagemResponse. */

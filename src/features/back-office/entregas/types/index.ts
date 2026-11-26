@@ -21,6 +21,8 @@ export type EntregaGestao = {
   baseCodigo: string | null;
   /** Item 8: números dos outros BDOs em aberto que vão para o mesmo endereço. Ausente em respostas antigas. */
   mesmoEnderecoQue?: string[];
+  /** V60: dia em que a empresa pagou a entrega ao motorista (só vem na busca pelo número; a paga sai da lista). */
+  pagoEm?: string | null;
 };
 
 export type TipoEventoRastreabilidade =

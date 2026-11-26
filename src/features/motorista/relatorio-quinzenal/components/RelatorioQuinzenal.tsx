@@ -95,6 +95,15 @@ export function RelatorioQuinzenal() {
       {relatorio && totais && (
         <>
           <p className="texto-apoio">{t.periodo(formatarData(periodo.inicio), formatarData(periodo.fim))}</p>
+          {relatorio.pagamento && relatorio.pagamento.situacao !== "A_AGENDAR" && (
+            <p>
+              <span className={`selo ${relatorio.pagamento.situacao === "PAGO" ? "selo-sucesso" : "selo-info"}`}>
+                {relatorio.pagamento.situacao === "PAGO"
+                  ? t.pagoEm(formatarData(relatorio.pagamento.pagoEm))
+                  : t.pagamentoAgendado(formatarData(relatorio.pagamento.dataAgendada))}
+              </span>
+            </p>
+          )}
           {relatorio.entregas.length === 0 ? (
             <Vazio icone="documento" titulo={t.nenhuma}>
               {t.outrasDatas}
