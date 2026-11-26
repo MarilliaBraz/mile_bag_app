@@ -1945,6 +1945,48 @@ details.ajuda.sem-icone summary::before {
   font-variant-numeric: tabular-nums;
 }
 
+.indicador-link {
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.indicador-link:hover,
+.indicador-link:focus-visible {
+  border-color: var(--borda);
+  box-shadow: var(--sombra-2);
+}
+
+/* Painel de atividades: tarefas mais urgentes primeiro, cada uma com link para resolver. */
+.lista-tarefas {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lista-tarefas a {
+  display: flex;
+  gap: 0.625rem;
+  align-items: center;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--raio-p);
+  color: inherit;
+  text-decoration: none;
+  background: var(--superficie-2);
+}
+.lista-tarefas a:hover,
+.lista-tarefas a:focus-visible {
+  background: color-mix(in srgb, var(--superficie-2) 70%, var(--borda));
+}
+.lista-tarefas .tarefa-urgente {
+  background: var(--erro-suave);
+}
+.lista-tarefas a > span {
+  flex: 1;
+}
+
 .indicador-aviso {
   border-left: 4px solid var(--aviso);
 }
