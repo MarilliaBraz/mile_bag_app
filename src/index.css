@@ -3650,3 +3650,34 @@ fieldset.sem-moldura {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
 }
+
+/* ---------- Painel de gestão, fase 2: mapa das bases ---------- */
+.marcador-situacao {
+  display: grid;
+  place-items: center;
+  border-radius: var(--raio-pilula);
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
+  color: #ffffff;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.marcador-situacao-sucesso {
+  background: var(--confirmacao-fundo);
+}
+.marcador-situacao-aviso {
+  background: #92400e;
+}
+.marcador-situacao-erro {
+  background: var(--erro-fundo);
+}
+
+.legenda-situacao {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}

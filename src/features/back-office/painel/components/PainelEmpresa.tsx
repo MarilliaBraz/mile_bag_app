@@ -12,12 +12,14 @@ import { hojeIso } from "../../../../shared/utils/formatar";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { listarEntregas } from "../../entregas/services/entregasService";
 import { listarFechamentos } from "../../fechamento/services/fechamentoService";
-import { listarPagamentosPendentes, obterPainelGestao } from "../services/painelService";
+import { listarPagamentosPendentes, obterPainelGeografico, obterPainelGestao } from "../services/painelService";
 import type { ItemMala } from "../types";
 import { bdosAtrasados, pagamentoVencido, tarefasEmpresa, type DadosPainel } from "../utils/tarefasEmpresa";
+import { BasesOperacao } from "./BasesOperacao";
 import { ExcecoesCriticas } from "./ExcecoesCriticas";
 import { ListaMalas } from "./ListaMalas";
 import { PulsoOperacao, type AbrirLista } from "./PulsoOperacao";
+import { RotasViagem } from "./RotasViagem";
 
 const INTERVALO_MS = 30_000;
 const TAREFAS_VISIVEIS = 10;
@@ -30,7 +32,8 @@ function carregarPainel(atual: DadosPainel | null) {
     listarFechamentos(),
     listarPagamentosPendentes(),
     obterPainelGestao(),
-  ]).then(([alertas, entregas, fechamentos, pagamentos, gestao]) => {
+    obterPainelGeografico(),
+  ]).then(([alertas, entregas, fechamentos, pagamentos, gestao, geografico]) => {
     const valor = <T,>(resultado: PromiseSettledResult<T>, anterior: T | undefined, vazio: T) =>
       resultado.status === "fulfilled" ? resultado.value : (anterior ?? vazio);
     const dados: DadosPainel = {
@@ -39,8 +42,9 @@ function carregarPainel(atual: DadosPainel | null) {
       fechamentos: valor(fechamentos, atual?.fechamentos, []),
       pagamentos: valor(pagamentos, atual?.pagamentos, []),
       gestao: valor(gestao, atual?.gestao ?? undefined, null),
+      geografico: valor(geografico, atual?.geografico ?? undefined, null),
     };
-    const falhou = [alertas, entregas, fechamentos, pagamentos, gestao].some((resultado) => resultado.status === "rejected");
+    const falhou = [alertas, entregas, fechamentos, pagamentos, gestao, geografico].some((resultado) => resultado.status === "rejected");
     return { dados, falhou };
   });
 }
@@ -103,6 +107,14 @@ export function PainelEmpresa() {
         </>
       ) : (
         <Alerta tipo="erro">{t.falhaGestao}</Alerta>
+      )}
+      {dados.geografico ? (
+        <>
+          <BasesOperacao bases={dados.geografico.bases} ranking={dados.geografico.ranking} />
+          <RotasViagem rotas={dados.geografico.rotas} />
+        </>
+      ) : (
+        <Alerta tipo="erro">{t.falhaGeografico}</Alerta>
       )}
       <div className="indicadores secao-painel">
         <CartaoIndicador

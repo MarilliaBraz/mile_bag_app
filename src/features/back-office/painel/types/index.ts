@@ -42,3 +42,48 @@ export type PainelGestao = {
 
 /** Espelha ConfigPainelGestao (V61). */
 export type ConfigPainelGestao = { prazoEntregaHoras: number; horasSemAtualizacao: number };
+
+export type SituacaoBase = "NORMAL" | "RETENCAO" | "CRITICO";
+export type SituacaoRota = "NORMAL" | "PARADO" | "SEM_SINAL" | "DESVIO";
+
+/** Espelha PainelGeograficoResponse.BaseOperacao. */
+export type BaseOperacao = {
+  codigo: string;
+  nome: string | null;
+  cidade: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  situacao: SituacaoBase;
+  aguardandoColeta: number;
+  retidas: number;
+  esperaMediaMinutos: number | null;
+  maiorEsperaMinutos: number | null;
+  emAlerta: number;
+  atrasadas: number;
+  retiradasHoje: number;
+  coletaMediaHojeMinutos: number | null;
+};
+
+/** Espelha PainelGeograficoResponse.RotaAtiva. */
+export type RotaAtiva = {
+  trajetoId: string;
+  entregaId: string;
+  numero: string | null;
+  motorista: string | null;
+  base: string | null;
+  destino: string | null;
+  inicio: string;
+  kmPrevistos: number | null;
+  pedagio: boolean;
+  pracas: number;
+  entregue: boolean;
+  kmPercorridos: number;
+  ultimaPosicao: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  longa: boolean;
+  situacao: SituacaoRota;
+};
+
+/** Espelha PainelGeograficoResponse (fase 2). */
+export type PainelGeografico = { geradoEm: string; bases: BaseOperacao[]; ranking: BaseOperacao[]; rotas: RotaAtiva[] };
