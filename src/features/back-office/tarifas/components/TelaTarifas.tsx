@@ -121,7 +121,7 @@ export function TelaTarifas() {
                         </button>
                         <button
                           type="button"
-                          className="fantasma compacto"
+                          className="perigo-fantasma compacto"
                           onClick={() => setExcluindo(tarifa)}
                           aria-label={t.excluirRotulo(ROTULO_ESCOPO[tarifa.escopo], alvoDe(tarifa, motoristas))}
                         >

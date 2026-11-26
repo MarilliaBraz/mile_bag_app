@@ -363,7 +363,7 @@ function TelaContas() {
                       </div>
                     </td>
                     <td>
-                      <span className={`selo ${conta.ativo ? "selo-sucesso" : ""}`}>{conta.ativo ? t.ativo : t.desativado}</span>
+                      <span className={`selo ${conta.ativo ? "selo-sucesso" : "selo-erro"}`}>{conta.ativo ? t.ativo : t.desativado}</span>
                       {servico.tarifaPorConta && conta.ocultarTarifa && <span className="selo">{tb.seloTarifaOculta}</span>}
                     </td>
                     <td>{formatarData(conta.criadoEm)}</td>
@@ -387,7 +387,7 @@ function TelaContas() {
                         </button>
                         <button
                           type="button"
-                          className="fantasma compacto"
+                          className={conta.ativo ? "perigo-fantasma compacto" : "sucesso-fantasma compacto"}
                           onClick={() => (conta.ativo ? setDesativando(conta) : alternar(conta))}
                           aria-label={t.acaoRotulo(conta.ativo ? t.desativar : t.reativar, conta.nome)}
                         >

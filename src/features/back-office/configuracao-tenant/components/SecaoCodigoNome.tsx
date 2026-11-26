@@ -79,7 +79,7 @@ export function SecaoCodigoNome({
             )}
             <button
               type="button"
-              className="fantasma compacto"
+              className="perigo-fantasma compacto"
               aria-label={t.removerRotulo(item.codigoIata, item.nome)}
               onClick={() => executar(() => removerCodigoNome(categoria, item.id), t.falhaRemover)}
             >

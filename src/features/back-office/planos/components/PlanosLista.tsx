@@ -96,7 +96,7 @@ export function PlanosLista() {
                       ) : (
                         <button
                           type="button"
-                          className="fantasma compacto"
+                          className="perigo-fantasma compacto"
                           onClick={() => setExcluindo(item)}
                           aria-label={t.removerRotulo(item.plano.nome)}
                         >
