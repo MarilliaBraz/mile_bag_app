@@ -4042,3 +4042,44 @@ button.link-botao:not(:disabled):hover {
   color: var(--erro);
   font-weight: 700;
 }
+
+/* Botão de recolher no topo do menu (seta simples): no celular não existe e a marca segue como antes. */
+.admin-topo {
+  display: contents;
+}
+.admin-recolher-topo {
+  display: none;
+}
+@media (min-width: 960px) {
+  .admin-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .admin-recolher-topo {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 2.25rem;
+    height: 2.25rem;
+    min-height: 0;
+    padding: 0;
+    border-radius: var(--raio-p);
+    color: var(--texto-suave);
+  }
+  .admin-recolher-topo:not(:disabled):hover {
+    color: var(--texto);
+  }
+  .admin-recolher-topo .icone {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  /* Aberto, a seta aponta para a esquerda (recolher); recolhido, para a direita (expandir). */
+  .admin:not(.admin-recolhido) .admin-recolher-topo .icone {
+    transform: rotate(180deg);
+  }
+  .admin-recolhido .admin-topo {
+    justify-content: center;
+  }
+}
