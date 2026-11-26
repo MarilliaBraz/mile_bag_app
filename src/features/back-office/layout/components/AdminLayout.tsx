@@ -27,9 +27,22 @@ export function AdminLayout({ titulo, itens, comPendencias = false }: { titulo: 
   return (
     <div className={`admin${menu.recolhido ? " admin-recolhido" : ""}`} style={{ "--largura-menu": `${menu.largura}px` } as CSSProperties}>
       <aside className="admin-lateral">
-        <span className="marca">
-          <Marca />
-        </span>
+        <div className="admin-topo">
+          <span className="marca">
+            <Marca />
+          </span>
+          {/* Atalho no topo para recolher/expandir: a mesma função do botão do rodapé, onde o olho já está. */}
+          <button
+            type="button"
+            className="fantasma admin-recolher-topo"
+            onClick={menu.alternar}
+            aria-expanded={!menu.recolhido}
+            aria-label={menu.recolhido ? t.expandirMenu : t.recolherMenu}
+            title={menu.recolhido ? t.expandirMenu : t.recolherMenu}
+          >
+            <Icone nome="chevron" />
+          </button>
+        </div>
         <span className="admin-area texto-apoio">{titulo}</span>
 
         <nav aria-label={t.secoes} className="menu-admin">
