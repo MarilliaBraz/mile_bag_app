@@ -1695,6 +1695,12 @@ details.ajuda.sem-icone summary::before {
   margin-top: 2.5rem;
 }
 
+/* Item 6: a alça de arraste e o botão de recolher só existem no computador (no celular o menu é a faixa do topo). */
+.admin-alca,
+.admin-recolher {
+  display: none;
+}
+
 /* No celular as preferências ficam no fim da página; no computador, no rodapé da barra lateral. */
 .admin-lateral-preferencias {
   display: none;
@@ -1703,7 +1709,7 @@ details.ajuda.sem-icone summary::before {
 @media (min-width: 960px) {
   .admin {
     display: grid;
-    grid-template-columns: 16rem minmax(0, 1fr);
+    grid-template-columns: var(--largura-menu, 16rem) minmax(0, 1fr);
   }
 
   .admin-lateral {
@@ -3395,4 +3401,128 @@ fieldset.sem-moldura {
   padding: 0;
   margin: 0;
   min-width: 0;
+}
+
+/* ---------- Item 6: menu lateral com largura ajustável, até só os ícones ---------- */
+@media (min-width: 960px) {
+  .admin-lateral {
+    overflow-x: hidden;
+  }
+
+  .admin-alca {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 100%;
+    cursor: col-resize;
+    touch-action: none;
+  }
+
+  .admin-alca::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 3px;
+    background: transparent;
+    transition: background-color var(--rapido) var(--curva);
+  }
+
+  .admin-alca:hover::after,
+  .admin-alca:focus-visible::after,
+  .arrastando-menu .admin-alca::after {
+    background: var(--acao-fundo);
+  }
+
+  .admin-alca:focus-visible {
+    outline: none;
+  }
+
+  .admin-alca:focus-visible::after {
+    width: 5px;
+  }
+
+  /* Durante o arraste: o cursor não pisca entre os elementos e o texto não é selecionado. */
+  .arrastando-menu,
+  .arrastando-menu * {
+    cursor: col-resize !important;
+    user-select: none;
+  }
+
+  .admin-recolher {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.625rem;
+    padding-left: 0.875rem;
+    color: var(--texto);
+  }
+
+  .menu-admin a,
+  .admin-link-conta,
+  .admin-recolher,
+  .admin-sair {
+    overflow: hidden;
+  }
+
+  .admin-recolhido .admin-lateral {
+    padding-inline: 0.625rem;
+  }
+
+  /* Só ícones: marca, área e preferências saem da barra; as preferências voltam no fim da página, como no celular. */
+  .admin-recolhido .admin-lateral .marca,
+  .admin-recolhido .admin-area,
+  .admin-recolhido .admin-lateral-preferencias {
+    display: none;
+  }
+
+  .admin-recolhido .admin-preferencias {
+    display: block;
+  }
+
+  /* O nome some da vista, mas segue para leitores de tela; ao passar o mouse, o title mostra o nome. */
+  .admin-recolhido .menu-rotulo,
+  .admin-recolhido .admin-link-conta span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .admin-recolhido .menu-admin a,
+  .admin-recolhido .admin-link-conta,
+  .admin-recolhido .admin-recolher,
+  .admin-recolhido .admin-sair {
+    position: relative;
+    justify-content: center;
+    padding-inline: 0;
+  }
+
+  /* O texto "Sair" é um nó solto do botão: some com font-size 0, e o ícone mantém o tamanho. */
+  .admin-recolhido .admin-sair {
+    gap: 0;
+    font-size: 0;
+  }
+
+  .admin-recolhido .admin-sair .icone {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* O balão de pendências vira uma bolinha sobre o ícone, ainda com o número e em vermelho. */
+  .admin-recolhido .contador-menu {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    min-width: 1.125rem;
+    margin: 0;
+    padding: 0 0.25rem;
+    font-size: 0.6875rem;
+    line-height: 1.125rem;
+  }
 }

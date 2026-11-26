@@ -166,6 +166,9 @@ export const comum = {
     TEMPO_ESGOTADO: "A localização demorou demais para responder. Vá para um local aberto, se possível, e toque em “Tentar novamente”.",
   },
   menu: {
+    recolherMenu: "Recolher menu",
+    expandirMenu: "Expandir menu",
+    larguraMenu: "Largura do menu. Use as setas para ajustar e Enter para recolher ou expandir.",
     inicio: "Início",
     menuMotorista: "Menu do motorista",
     entregas: "Entregas",
