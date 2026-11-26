@@ -4,7 +4,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { TelaAcompanhamento } from "./features/acompanhamento";
 import { EsqueciSenha, Login, RedefinirSenha, TrocarSenha } from "./features/auth";
 import { IdentidadeVisualForm, TelaConfiguracoes } from "./features/back-office/configuracao-tenant";
-import { AvisoEmergenciasAbertas, TelaEmergencias } from "./features/back-office/emergencias";
+import { TelaEmergencias } from "./features/back-office/emergencias";
 import { TelaEntregas } from "./features/back-office/entregas";
 import { DetalheFechamento, TelaFechamentos } from "./features/back-office/fechamento";
 import { AdminLayout, ITENS_COMPANHIA, ITENS_FUNCIONARIO_COMPANHIA, ITENS_PLATAFORMA, ITENS_TENANT } from "./features/back-office/layout";
@@ -95,7 +95,7 @@ export function App() {
             path="/admin"
             element={
               <RequireAuth papeis={["ADMINISTRADOR_TENANT"]}>
-                <AdminLayout titulo={t.menu.administracao} itens={ITENS_TENANT} aviso={<AvisoEmergenciasAbertas />} />
+                <AdminLayout titulo={t.menu.administracao} itens={ITENS_TENANT} comPendencias />
               </RequireAuth>
             }
           >

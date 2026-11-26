@@ -175,6 +175,7 @@ export const comum: TextosComuns = {
     emergencia: "Emergency",
     secoes: "Sections",
     atalho: (tecla) => `Shortcut: Alt+Shift+${tecla}`,
+    pendencias: (quantidade) => (quantidade === 1 ? "1 pending" : `${quantidade} pending`),
     minhaSenha: "My password",
     administracao: "Administration",
     plataforma: "Platform",

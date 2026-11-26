@@ -674,6 +674,8 @@ export const backOffice: Textos["backOffice"] = {
       AVARIAS_ENTREGA: "Averías de la entrega",
     } as Record<string, string>,
     corrigida: "Corregida",
+    pendente: (minutos) => `Pendiente hace ${minutos} min`,
+    faltam: (minutos) => `Faltan ${minutos} min para asumir`,
     km: {
       titulo: "Kilometraje del viaje",
       calculado: (ida: string, volta: string) => `Calculado: ${ida} km ida + ${volta} km vuelta`,
