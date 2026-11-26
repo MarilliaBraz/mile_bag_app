@@ -18,6 +18,9 @@ export type MarcadorMapa = {
   rotulo: string;
   /** Círculo em vez do alfinete: distingue quem está em movimento (ex.: o motorista, HU31) do destino. */
   destaque?: boolean;
+  /** Ponto de situação (painel de gestão): círculo na cor do tom, com um texto curto (código da base) dentro. */
+  tom?: "sucesso" | "aviso" | "erro";
+  texto?: string;
 };
 
 // Vite não resolve as URLs que o Leaflet monta sozinho em tempo de execução:
@@ -32,6 +35,19 @@ const ICONE_PADRAO = new Icon({
   popupAnchor: [1, -34],
   shadowSize: [41, 41],
 });
+
+const escaparHtml = (texto: string) =>
+  texto.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] ?? c);
+
+/** Ícone de situação: a cor diz o estado e o texto (ex.: GYN) diz o lugar, sem depender só da cor. */
+const iconeSituacao = (tom: NonNullable<MarcadorMapa["tom"]>, texto = "") =>
+  new DivIcon({
+    className: `marcador-situacao marcador-situacao-${tom}`,
+    html: `<span>${escaparHtml(texto)}</span>`,
+    iconSize: [40, 24],
+    iconAnchor: [20, 12],
+    popupAnchor: [0, -12],
+  });
 
 const ICONE_DESTAQUE = new DivIcon({ className: "marcador-destaque", iconSize: [22, 22], iconAnchor: [11, 11], popupAnchor: [0, -12] });
 
@@ -84,7 +100,7 @@ export function MapaBase({
           <Marker
             key={`${marcador.rotulo}-${marcador.posicao.latitude}-${marcador.posicao.longitude}`}
             position={[marcador.posicao.latitude, marcador.posicao.longitude]}
-            icon={marcador.destaque ? ICONE_DESTAQUE : ICONE_PADRAO}
+            icon={marcador.tom ? iconeSituacao(marcador.tom, marcador.texto) : marcador.destaque ? ICONE_DESTAQUE : ICONE_PADRAO}
           >
             <Popup>{marcador.rotulo}</Popup>
           </Marker>
