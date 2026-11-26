@@ -4032,3 +4032,13 @@ button.link-botao:not(:disabled):hover {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
+
+/* Frota: na tabela por praça, disponíveis (online) em verde e offline em vermelho, quando houver. */
+.tabela td.numero-sucesso {
+  color: var(--confirmacao);
+  font-weight: 700;
+}
+.tabela td.numero-erro {
+  color: var(--erro);
+  font-weight: 700;
+}
