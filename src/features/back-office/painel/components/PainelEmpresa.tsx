@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Alerta, Carregando } from "../../../../shared/components/Alerta";
 import { CartaoIndicador } from "../../../../shared/components/CartaoIndicador";
 import { Icone } from "../../../../shared/components/Icone";
-import { Pagina, Painel } from "../../../../shared/components/Pagina";
+import { Gaveta, Pagina, Painel } from "../../../../shared/components/Pagina";
 import { useIntervaloEmPrimeiroPlano } from "../../../../shared/hooks/useIntervaloEmPrimeiroPlano";
 import { listarAlertas } from "../../../../shared/services/emergenciaService";
 import { listarMotoristas, nomeDoMotorista } from "../../../../shared/services/motoristasService";
@@ -12,37 +12,53 @@ import { hojeIso } from "../../../../shared/utils/formatar";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { listarEntregas } from "../../entregas/services/entregasService";
 import { listarFechamentos } from "../../fechamento/services/fechamentoService";
-import { listarPagamentosPendentes } from "../services/painelService";
-import { bdosAtrasados, pagamentoVencido, STATUS_EM_ANDAMENTO, tarefasEmpresa, type DadosPainel } from "../utils/tarefasEmpresa";
+import { listarPagamentosPendentes, obterPainelGestao } from "../services/painelService";
+import type { ItemMala } from "../types";
+import { bdosAtrasados, pagamentoVencido, tarefasEmpresa, type DadosPainel } from "../utils/tarefasEmpresa";
+import { ExcecoesCriticas } from "./ExcecoesCriticas";
+import { ListaMalas } from "./ListaMalas";
+import { PulsoOperacao, type AbrirLista } from "./PulsoOperacao";
 
 const INTERVALO_MS = 30_000;
 const TAREFAS_VISIVEIS = 10;
 
 /** Cada consulta que falhar deixa o número como estava; o aviso aparece, mas o resto do painel continua útil. */
 function carregarPainel(atual: DadosPainel | null) {
-  return Promise.allSettled([listarAlertas("ABERTO"), listarEntregas(null), listarFechamentos(), listarPagamentosPendentes()]).then(
-    ([alertas, entregas, fechamentos, pagamentos]) => {
-      const valor = <T,>(resultado: PromiseSettledResult<T>, anterior: T | undefined, vazio: T) =>
-        resultado.status === "fulfilled" ? resultado.value : (anterior ?? vazio);
-      const dados: DadosPainel = {
-        alertas: valor(alertas, atual?.alertas, []),
-        entregas: valor(entregas, atual?.entregas, []),
-        fechamentos: valor(fechamentos, atual?.fechamentos, []),
-        pagamentos: valor(pagamentos, atual?.pagamentos, []),
-      };
-      const falhou = [alertas, entregas, fechamentos, pagamentos].some((resultado) => resultado.status === "rejected");
-      return { dados, falhou };
-    },
-  );
+  return Promise.allSettled([
+    listarAlertas("ABERTO"),
+    listarEntregas(null),
+    listarFechamentos(),
+    listarPagamentosPendentes(),
+    obterPainelGestao(),
+  ]).then(([alertas, entregas, fechamentos, pagamentos, gestao]) => {
+    const valor = <T,>(resultado: PromiseSettledResult<T>, anterior: T | undefined, vazio: T) =>
+      resultado.status === "fulfilled" ? resultado.value : (anterior ?? vazio);
+    const dados: DadosPainel = {
+      alertas: valor(alertas, atual?.alertas, []),
+      entregas: valor(entregas, atual?.entregas, []),
+      fechamentos: valor(fechamentos, atual?.fechamentos, []),
+      pagamentos: valor(pagamentos, atual?.pagamentos, []),
+      gestao: valor(gestao, atual?.gestao ?? undefined, null),
+    };
+    const falhou = [alertas, entregas, fechamentos, pagamentos, gestao].some((resultado) => resultado.status === "rejected");
+    return { dados, falhou };
+  });
 }
 
-/** Item 5: início da empresa de entrega - os números do que está pendente e a lista do que fazer, mais urgente primeiro. */
+type ListaAberta = { titulo: string; itens: ItemMala[]; mostrar: "prazo" | "referencia" };
+
+/**
+ * Início da empresa de entrega: pulso da operação (SLA, funil, OTD, ciclo), exceções críticas e a lista do que
+ * fazer, mais urgente primeiro. Cada número abre a lista das malas para agir.
+ */
 export function PainelEmpresa() {
   const t = useTextos().backOffice.painel;
   const [dados, setDados] = useState<DadosPainel | null>(null);
   const [falhou, setFalhou] = useState(false);
   const [motoristas, setMotoristas] = useState<Motorista[] | null>(null);
   const [agora, setAgora] = useState(() => Date.now());
+  const [lista, setLista] = useState<ListaAberta | null>(null);
+  const abrirLista: AbrirLista = (titulo, itens, mostrar) => setLista({ titulo, itens, mostrar });
 
   // Última leitura boa: uma consulta que falhar no ciclo mantém o número anterior.
   const ultimos = useRef<DadosPainel | null>(null);
@@ -75,21 +91,20 @@ export function PainelEmpresa() {
   return (
     <Pagina titulo={t.titulo} descricao={t.descricao}>
       {falhou && <Alerta tipo="aviso">{t.falhaCarregar}</Alerta>}
-      <div className="indicadores">
-        <CartaoIndicador
-          rotulo={t.bdosPendentes}
-          valor={bdosAtrasados(dados.entregas, agora).length}
-          detalhe={t.bdosPendentesAjuda}
-          tom="erro"
-          para="/admin/entregas"
-        />
-        <CartaoIndicador rotulo={t.emergencias} valor={dados.alertas.length} tom="erro" para="/admin/emergencias" />
-        <CartaoIndicador
-          rotulo={t.emAndamento}
-          valor={dados.entregas.filter((entrega) => STATUS_EM_ANDAMENTO.has(entrega.status)).length}
-          detalhe={t.emAndamentoAjuda}
-          para="/admin/entregas"
-        />
+      {dados.gestao ? (
+        <>
+          <PulsoOperacao painel={dados.gestao} abrirLista={abrirLista} />
+          <ExcecoesCriticas
+            painel={dados.gestao}
+            bdosSemMotorista={bdosAtrasados(dados.entregas, agora).length}
+            emergencias={dados.alertas.length}
+            abrirLista={abrirLista}
+          />
+        </>
+      ) : (
+        <Alerta tipo="erro">{t.falhaGestao}</Alerta>
+      )}
+      <div className="indicadores secao-painel">
         <CartaoIndicador
           rotulo={t.fechamentosPendencia}
           valor={dados.fechamentos.filter((fechamento) => fechamento.status === "COM_PENDENCIAS").length}
@@ -122,6 +137,9 @@ export function PainelEmpresa() {
         )}
         {tarefas.length > TAREFAS_VISIVEIS && <p className="texto-apoio">{t.maisTarefas(tarefas.length - TAREFAS_VISIVEIS)}</p>}
       </Painel>
+      <Gaveta aberta={lista !== null} titulo={lista?.titulo ?? ""} aoFechar={() => setLista(null)}>
+        {lista && <ListaMalas itens={lista.itens} mostrar={lista.mostrar} />}
+      </Gaveta>
     </Pagina>
   );
 }

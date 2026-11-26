@@ -4,7 +4,7 @@ import type { Textos } from "../../../../shared/utils/i18n/textos/pt";
 import type { EntregaGestao } from "../../entregas/types";
 import { minutosParaVencer } from "../../entregas/utils/prioridadeBdo";
 import type { Fechamento } from "../../fechamento/types";
-import type { PagamentoPendente } from "../types";
+import type { PagamentoPendente, PainelGestao } from "../types";
 
 export type Tarefa = { chave: string; texto: string; para: string; urgente: boolean };
 
@@ -13,6 +13,8 @@ export type DadosPainel = {
   entregas: EntregaGestao[];
   fechamentos: Fechamento[];
   pagamentos: PagamentoPendente[];
+  /** Painel de gestão (fase 1); nulo até a primeira leitura dar certo. */
+  gestao: PainelGestao | null;
 };
 
 /** Situações em que o BDO já está com um motorista e a entrega segue. */

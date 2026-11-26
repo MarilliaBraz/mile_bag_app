@@ -1992,6 +1992,63 @@ details.ajuda.sem-icone summary::before {
   font-variant-numeric: tabular-nums;
 }
 
+/* Indicador que abre uma lista: botão com a cara do cartão (sem o azul dos botões). */
+button.indicador {
+  min-height: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  justify-content: stretch;
+  align-items: start;
+  background: var(--superficie);
+  border: 1px solid var(--borda-suave);
+  box-shadow: var(--sombra-1);
+}
+button.indicador:not(:disabled):hover {
+  background: var(--superficie);
+}
+button.indicador.indicador-erro {
+  border-left: 4px solid var(--erro);
+}
+button.indicador.indicador-aviso {
+  border-left: 4px solid var(--aviso);
+}
+button.indicador.indicador-sucesso {
+  border-left: 4px solid var(--confirmacao);
+}
+
+/* Lista de malas do painel (gaveta): número e prazo/hora numa linha, detalhes abaixo. */
+.lista-malas {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lista-malas a {
+  display: grid;
+  gap: 0.125rem;
+  padding: 0.75rem;
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--raio-p);
+  color: inherit;
+  text-decoration: none;
+}
+.lista-malas a:hover,
+.lista-malas a:focus-visible {
+  border-color: var(--acao);
+}
+.lista-malas .linha-mala {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+}
+
+.secao-painel + .secao-painel {
+  margin-top: 1.5rem;
+}
+
 .indicador-link {
   color: inherit;
   text-decoration: none;
