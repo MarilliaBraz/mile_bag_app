@@ -51,6 +51,11 @@ function lerPreferencias(): Preferencias {
 // useSyncExternalStore exige o mesmo objeto enquanto nada muda.
 let atual = lerPreferencias();
 
+// O CSS só conhece "claro" e "escuro": "automático" é resolvido aqui, consultando o sistema.
+function resolveEscuro(tema: Tema): boolean {
+  return tema === "escuro" || (tema === "automatico" && window.matchMedia(CONSULTA_ESCURO).matches);
+}
+
 function aplicar({ fonte, contraste, tema }: Preferencias) {
   const raiz = document.documentElement;
   raiz.style.fontSize = fonte === 100 ? "" : `${fonte}%`;
@@ -59,9 +64,7 @@ function aplicar({ fonte, contraste, tema }: Preferencias) {
   } else {
     delete raiz.dataset.altoContraste;
   }
-  // O CSS só conhece "claro" e "escuro": "automático" é resolvido aqui, consultando o sistema.
-  const escuro = tema === "escuro" || (tema === "automatico" && window.matchMedia(CONSULTA_ESCURO).matches);
-  raiz.dataset.tema = escuro ? "escuro" : "claro";
+  raiz.dataset.tema = resolveEscuro(tema) ? "escuro" : "claro";
   // Cor da barra do sistema (app instalado): a mesma do fundo definido no CSS, sem repetir o valor aqui.
   const fundo = getComputedStyle(raiz).getPropertyValue("--fundo-app").trim();
   document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]').forEach((meta) => {
@@ -95,8 +98,9 @@ export function alternarContraste() {
   atualizar({ contraste: !atual.contraste });
 }
 
+/** O alto contraste é sempre claro: quem escolhe um tema que resulta em escuro quer vê-lo, então o contraste é desligado junto. */
 export function escolherTema(tema: Tema) {
-  atualizar({ tema });
+  atualizar(resolveEscuro(tema) ? { tema, contraste: false } : { tema });
 }
 
 /** Reaplica ao abrir o app as preferências salvas (chamado em main.tsx, antes de renderizar) e acompanha o tema do sistema. */
