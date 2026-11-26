@@ -1959,6 +1959,13 @@ details.ajuda.sem-icone summary::before {
   transition: background-color var(--rapido) var(--curva);
 }
 
+/* Grid zebrada: linhas pares com fundo levemente mais escuro para seguir a linha com o olho. :where() deixa a
+ * especificidade baixa, então hover, linha pendente e linha de detalhe continuam vencendo. No alto contraste
+ * --superficie-2 é branco e a zebra some de propósito: lá valem as bordas pretas. */
+.tabela tbody tr:where(:nth-child(even)) {
+  background: color-mix(in srgb, var(--superficie-2) 65%, transparent);
+}
+
 .tabela tbody tr:hover {
   background: color-mix(in srgb, var(--acao-suave) 45%, transparent);
 }
