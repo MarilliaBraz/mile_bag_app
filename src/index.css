@@ -3909,6 +3909,32 @@ button.link-botao:not(:disabled):hover {
   gap: 0.25rem 0.75rem;
   font-size: 0.8125rem;
 }
+/* Com malas na lista, o cartão fica nas cores do filtro "Desativados": fundo vermelho claro, texto vermelho escuro.
+ * As malas viram cartões brancos com borda vermelha, para não sumirem no fundo. */
+.agir-agora-ativo.painel {
+  background: var(--erro-suave);
+  border-color: color-mix(in srgb, var(--erro) 35%, transparent);
+  color: var(--erro);
+}
+.agir-agora-ativo .painel-cabecalho h2,
+.agir-agora-ativo .texto-apoio {
+  color: var(--erro);
+}
+.agir-agora-ativo .lista-agir a,
+.agir-agora-ativo .lista-agir a.agir-urgente,
+.agir-agora-ativo .lista-agir a.agir-atencao {
+  background: var(--superficie);
+  border-color: color-mix(in srgb, var(--erro) 45%, transparent);
+  color: var(--texto);
+}
+.agir-agora-ativo .lista-agir .texto-apoio {
+  color: var(--texto-suave);
+}
+.agir-agora-ativo .lista-agir a:hover,
+.agir-agora-ativo .lista-agir a:focus-visible {
+  border-color: var(--erro);
+}
+
 .agir-urgente .agir-motivo {
   color: var(--erro);
   font-weight: 700;

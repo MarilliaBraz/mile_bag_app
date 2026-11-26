@@ -15,7 +15,8 @@ export function AgirAgora({ itens }: { itens: ItemAgir[] }) {
     return t.atrasoDe(formatarDuracao(Math.max(0, item.minutos)));
   };
   return (
-    <Painel titulo={t.agirAgora} className="agir-agora">
+    // Vermelho só com algo na lista: vazio, o cartão fica neutro (vermelho sempre quer dizer urgência).
+    <Painel titulo={t.agirAgora} className={itens.length > 0 ? "agir-agora agir-agora-ativo" : "agir-agora"}>
       {itens.length === 0 ? (
         <p className="texto-apoio">{t.agirAgoraVazio}</p>
       ) : (
