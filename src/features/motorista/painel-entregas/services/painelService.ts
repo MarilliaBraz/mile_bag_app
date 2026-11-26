@@ -1,5 +1,5 @@
 import { baixarArquivo, requisitar } from "../../../../shared/services/httpClient";
-import type { BdosDisponiveis, ItemPainelDetalhe, PainelEntregas } from "../types";
+import type { BdosDisponiveis, EntregaStatus, ItemPainelDetalhe, PainelEntregas } from "../types";
 import { caminhoApi } from "../../../../shared/services/caminhoApi";
 
 /** GET /api/v1/motorista/painel-entregas (HU19, FR-002). */
@@ -28,3 +28,17 @@ export const baixarSegundaViaDaEntrega = (entregaId: string) => baixarArquivo(ca
 /** POST /api/v1/entregas/{id}/segunda-via-bdo/email (V50) - envia o PDF para imprimir onde houver impressora. */
 export const enviarSegundaViaDaEntrega = (entregaId: string, email: string) =>
   requisitar<void>(caminhoApi`/api/v1/entregas/${entregaId}/segunda-via-bdo/email`, { metodo: "POST", corpo: { email } });
+
+/** Item 4c: uma entrega do motorista achada pelo número do BDO (espelha EntregaEncontradaResponse). */
+export type EntregaEncontrada = {
+  entregaId: string;
+  bdoNumero: string | null;
+  status: EntregaStatus;
+  passageiroNome: string | null;
+  atualizadoEm: string;
+  pagoEm: string | null;
+};
+
+/** GET /api/v1/motorista/entregas?bdoNumero= - só as entregas em que o motorista é o responsável. */
+export const buscarMinhasEntregasPorNumero = (numero: string) =>
+  requisitar<EntregaEncontrada[]>(caminhoApi`/api/v1/motorista/entregas?bdoNumero=${numero}`);

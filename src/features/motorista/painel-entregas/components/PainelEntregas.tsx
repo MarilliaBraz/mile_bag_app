@@ -14,6 +14,7 @@ import { consultarBdosDisponiveis, consultarPainel } from "../services/painelSer
 import { consultarSugestoesCarona } from "../bagagem-carona/services/bagagemCaronaService";
 import type { BdosDisponiveis, ItemPainel, PainelEntregas as PainelEntregasResposta } from "../types";
 import { ListaBdosDisponiveis } from "./ListaBdosDisponiveis";
+import { BuscaBdoMotorista } from "./BuscaBdoMotorista";
 import { EntregasCorrigiveis } from "../../correcao";
 import { TOM_STATUS_ENTREGA } from "../utils/statusEntrega";
 import { Marca } from "../../../../shared/components/Marca";
@@ -170,6 +171,8 @@ export function PainelEntregas() {
           </div>
 
           <EntregasCorrigiveis />
+
+          <BuscaBdoMotorista />
 
           <h2>{t.painel.paraEntregar}</h2>
           {painel.entregas.length === 0 ? (
