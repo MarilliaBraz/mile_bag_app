@@ -35,12 +35,11 @@ export function bdosAtrasados(entregas: EntregaGestao[], agora: number) {
 }
 
 /**
- * Lista "A fazer" da empresa, da mais urgente para a menos: emergências, BDOs sem motorista além do prazo,
- * pagamentos vencidos, quinzenas com pendência e pagamentos ainda por agendar.
+ * Lista administrativa da empresa: pagamentos vencidos, quinzenas com pendência e pagamentos por agendar. O que é da
+ * operação (emergências, BDOs sem motorista, malas atrasadas) fica em "Agir agora".
  */
 export function tarefasEmpresa(
   dados: DadosPainel,
-  agora: number,
   hoje: string,
   nomeMotorista: (id: string) => string,
   t: Textos["backOffice"]["painel"],
@@ -48,18 +47,6 @@ export function tarefasEmpresa(
   const periodo = (inicio: string, fim: string) => t.periodo(formatarData(inicio), formatarData(fim));
   const doFechamento = (id: string) => `/admin/fechamentos/${id}`;
   return [
-    ...dados.alertas.map((alerta) => ({
-      chave: `alerta-${alerta.id}`,
-      texto: t.tarefaEmergencia(alerta.motoristaNome),
-      para: "/admin/emergencias",
-      urgente: true,
-    })),
-    ...bdosAtrasados(dados.entregas, agora).map(({ entrega, minutos }) => ({
-      chave: `bdo-${entrega.bdoId}`,
-      texto: t.tarefaBdo(entrega.bdoNumero ?? "–", -minutos),
-      para: "/admin/entregas",
-      urgente: true,
-    })),
     ...dados.pagamentos
       .filter((pagamento) => pagamentoVencido(pagamento, hoje))
       .map((pagamento) => ({

@@ -28,6 +28,8 @@ export type PainelGestao = {
   geradoEm: string;
   prazoPadraoHoras: number;
   horasSemAtualizacao: number;
+  /** Meta de entregas no prazo (OTD), em %. */
+  metaOtd: number;
   radar: { noPrazo: number; alerta: ItemMala[]; atrasadas: ItemMala[] };
   funil: { aguardandoColeta: number; emTransito: number; entreguesHoje: number; comOcorrencia: number };
   otd: { hoje: number | null; trintaDias: number | null; entreguesHoje: number; entregues30Dias: number };
@@ -38,10 +40,15 @@ export type PainelGestao = {
     evidenciasPendentes: ItemMala[];
     avarias: { naRetirada: number; naEntrega: number; entregues30Dias: number; itens: ItemMala[] };
   };
+  /** Últimos 30 dias, do mais antigo a hoje (horário de Brasília). */
+  serie: DiaOperacao[];
 };
 
+/** Espelha PainelGestaoResponse.DiaOperacao. */
+export type DiaOperacao = { dia: string; entregues: number; otd: number | null; cicloMinutos: number | null };
+
 /** Espelha ConfigPainelGestao (V61). */
-export type ConfigPainelGestao = { prazoEntregaHoras: number; horasSemAtualizacao: number };
+export type ConfigPainelGestao = { prazoEntregaHoras: number; horasSemAtualizacao: number; metaOtd: number };
 
 export type SituacaoBase = "NORMAL" | "RETENCAO" | "CRITICO";
 export type SituacaoRota = "NORMAL" | "PARADO" | "SEM_SINAL" | "DESVIO";
@@ -123,4 +130,9 @@ export type PainelFrota = {
   ocupacao30Dias: { saidas: number; malasPorSaida: number | null; saidasComUmaMala: number };
   pracas: { base: string; emRota: number; disponiveis: number; offline: number }[];
   motoristas: MotoristaStatus[];
+  /** Últimos 30 dias, do mais antigo a hoje. */
+  serie: { dia: string; custoPorMala: number | null; malasPorSaida: number | null }[];
 };
+
+/** Abre a gaveta com a lista de malas de um número do painel. */
+export type AbrirLista = (titulo: string, itens: ItemMala[], mostrar: "prazo" | "referencia") => void;

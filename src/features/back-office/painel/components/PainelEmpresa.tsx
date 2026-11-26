@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Alerta, Carregando } from "../../../../shared/components/Alerta";
 import { CartaoIndicador } from "../../../../shared/components/CartaoIndicador";
 import { Icone } from "../../../../shared/components/Icone";
-import { Gaveta, Pagina, Painel } from "../../../../shared/components/Pagina";
+import { Gaveta, Painel } from "../../../../shared/components/Pagina";
 import { useIntervaloEmPrimeiroPlano } from "../../../../shared/hooks/useIntervaloEmPrimeiroPlano";
 import { listarAlertas } from "../../../../shared/services/emergenciaService";
 import { listarMotoristas, nomeDoMotorista } from "../../../../shared/services/motoristasService";
@@ -12,14 +12,20 @@ import { hojeIso } from "../../../../shared/utils/formatar";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { listarEntregas } from "../../entregas/services/entregasService";
 import { listarFechamentos } from "../../fechamento/services/fechamentoService";
+import { usePainelFrota } from "../hooks/usePainelFrota";
 import { listarPagamentosPendentes, obterPainelGeografico, obterPainelGestao } from "../services/painelService";
-import type { ItemMala } from "../types";
-import { bdosAtrasados, pagamentoVencido, tarefasEmpresa, type DadosPainel } from "../utils/tarefasEmpresa";
+import type { AbrirLista, ItemMala } from "../types";
+import { itensAgirAgora } from "../utils/cockpit";
+import { pagamentoVencido, tarefasEmpresa, type DadosPainel } from "../utils/tarefasEmpresa";
+import { AgirAgora } from "./AgirAgora";
 import { BasesOperacao } from "./BasesOperacao";
+import { CabecalhoCockpit } from "./CabecalhoCockpit";
+import { CartoesMetas } from "./CartoesMetas";
 import { EficienciaFrota } from "./EficienciaFrota";
 import { ExcecoesCriticas } from "./ExcecoesCriticas";
+import { FunilEspera } from "./FunilEspera";
+import { GraficoPainel } from "./GraficoPainel";
 import { ListaMalas } from "./ListaMalas";
-import { PulsoOperacao, type AbrirLista } from "./PulsoOperacao";
 import { RotasViagem } from "./RotasViagem";
 
 const INTERVALO_MS = 30_000;
@@ -53,8 +59,8 @@ function carregarPainel(atual: DadosPainel | null) {
 type ListaAberta = { titulo: string; itens: ItemMala[]; mostrar: "prazo" | "referencia" };
 
 /**
- * Início da empresa de entrega: pulso da operação (SLA, funil, OTD, ciclo), exceções críticas e a lista do que
- * fazer, mais urgente primeiro. Cada número abre a lista das malas para agir.
+ * Início da empresa de entrega, no formato cockpit: frase-resumo, metas com tendência, gráfico de 30 dias e "Agir
+ * agora" no topo; exceções, funil e espera por base; depois bases, rotas, frota e o administrativo.
  */
 export function PainelEmpresa() {
   const t = useTextos().backOffice.painel;
@@ -64,6 +70,7 @@ export function PainelEmpresa() {
   const [agora, setAgora] = useState(() => Date.now());
   const [lista, setLista] = useState<ListaAberta | null>(null);
   const abrirLista: AbrirLista = (titulo, itens, mostrar) => setLista({ titulo, itens, mostrar });
+  const { frota, falhou: frotaFalhou } = usePainelFrota();
 
   // Última leitura boa: uma consulta que falhar no ciclo mantém o número anterior.
   const ultimos = useRef<DadosPainel | null>(null);
@@ -83,77 +90,83 @@ export function PainelEmpresa() {
 
   if (!dados) {
     return (
-      <Pagina titulo={t.titulo} descricao={t.descricao}>
+      <main className="pagina">
         <Carregando />
-      </Pagina>
+      </main>
     );
   }
 
+  const { gestao, geografico } = dados;
   const hoje = hojeIso();
-  const tarefas = tarefasEmpresa(dados, agora, hoje, (id) => nomeDoMotorista(motoristas, id), t);
+  const tarefas = tarefasEmpresa(dados, hoje, (id) => nomeDoMotorista(motoristas, id), t);
   const vencidos = dados.pagamentos.filter((pagamento) => pagamentoVencido(pagamento, hoje)).length;
+  const agir = itensAgirAgora(gestao, geografico, dados.alertas, dados.entregas, agora);
 
   return (
-    <Pagina titulo={t.titulo} descricao={t.descricao}>
+    <main className="pagina cockpit">
+      {gestao ? <CabecalhoCockpit gestao={gestao} /> : <h1>{t.titulo}</h1>}
       {falhou && <Alerta tipo="aviso">{t.falhaCarregar}</Alerta>}
-      {dados.gestao ? (
+      {gestao ? (
         <>
-          <PulsoOperacao painel={dados.gestao} abrirLista={abrirLista} />
-          <ExcecoesCriticas
-            painel={dados.gestao}
-            bdosSemMotorista={bdosAtrasados(dados.entregas, agora).length}
-            emergencias={dados.alertas.length}
-            abrirLista={abrirLista}
-          />
+          <CartoesMetas gestao={gestao} frota={frota} verAtrasadas={() => abrirLista(t.atrasadas, gestao.radar.atrasadas, "prazo")} />
+          <div className="cockpit-meio">
+            <GraficoPainel gestao={gestao} />
+            <AgirAgora itens={agir} />
+          </div>
+          <ExcecoesCriticas painel={gestao} rotas={geografico?.rotas ?? []} abrirLista={abrirLista} />
+          <FunilEspera gestao={gestao} bases={geografico?.bases ?? []} />
         </>
       ) : (
         <Alerta tipo="erro">{t.falhaGestao}</Alerta>
       )}
-      {dados.geografico ? (
+      {geografico ? (
         <>
-          <BasesOperacao bases={dados.geografico.bases} ranking={dados.geografico.ranking} />
-          <RotasViagem rotas={dados.geografico.rotas} />
+          <BasesOperacao bases={geografico.bases} ranking={geografico.ranking} />
+          <RotasViagem rotas={geografico.rotas} />
         </>
       ) : (
         <Alerta tipo="erro">{t.falhaGeografico}</Alerta>
       )}
-      <EficienciaFrota />
-      <div className="indicadores secao-painel">
-        <CartaoIndicador
-          rotulo={t.fechamentosPendencia}
-          valor={dados.fechamentos.filter((fechamento) => fechamento.status === "COM_PENDENCIAS").length}
-          tom="aviso"
-          para="/admin/fechamentos"
-        />
-        <CartaoIndicador
-          rotulo={t.pagamentosAFazer}
-          valor={dados.pagamentos.length}
-          detalhe={vencidos > 0 ? t.pagamentosVencidos(vencidos) : undefined}
-          tom={vencidos > 0 ? "aviso" : undefined}
-          para="/admin/fechamentos"
-        />
-      </div>
-      <Painel titulo={t.aFazer}>
-        {tarefas.length === 0 ? (
-          <p className="texto-apoio">{t.nadaAFazer}</p>
-        ) : (
-          <ul className="lista-tarefas">
-            {tarefas.slice(0, TAREFAS_VISIVEIS).map((tarefa) => (
-              <li key={tarefa.chave}>
-                <Link to={tarefa.para} className={tarefa.urgente ? "tarefa-urgente" : undefined}>
-                  <Icone nome={tarefa.urgente ? "alerta" : "check"} />
-                  <span>{tarefa.texto}</span>
-                  <Icone nome="chevron" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-        {tarefas.length > TAREFAS_VISIVEIS && <p className="texto-apoio">{t.maisTarefas(tarefas.length - TAREFAS_VISIVEIS)}</p>}
-      </Painel>
+      <EficienciaFrota frota={frota} falhou={frotaFalhou} />
+      <section className="secao-painel pilha" aria-labelledby="administrativo-titulo">
+        <h2 id="administrativo-titulo">{t.administrativo}</h2>
+        <div className="indicadores">
+          <CartaoIndicador
+            rotulo={t.fechamentosPendencia}
+            valor={dados.fechamentos.filter((fechamento) => fechamento.status === "COM_PENDENCIAS").length}
+            tom="aviso"
+            para="/admin/fechamentos"
+          />
+          <CartaoIndicador
+            rotulo={t.pagamentosAFazer}
+            valor={dados.pagamentos.length}
+            detalhe={vencidos > 0 ? t.pagamentosVencidos(vencidos) : undefined}
+            tom={vencidos > 0 ? "aviso" : undefined}
+            para="/admin/fechamentos"
+          />
+        </div>
+        <Painel titulo={t.aFazer}>
+          {tarefas.length === 0 ? (
+            <p className="texto-apoio">{t.nadaAFazer}</p>
+          ) : (
+            <ul className="lista-tarefas">
+              {tarefas.slice(0, TAREFAS_VISIVEIS).map((tarefa) => (
+                <li key={tarefa.chave}>
+                  <Link to={tarefa.para} className={tarefa.urgente ? "tarefa-urgente" : undefined}>
+                    <Icone nome={tarefa.urgente ? "alerta" : "check"} />
+                    <span>{tarefa.texto}</span>
+                    <Icone nome="chevron" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+          {tarefas.length > TAREFAS_VISIVEIS && <p className="texto-apoio">{t.maisTarefas(tarefas.length - TAREFAS_VISIVEIS)}</p>}
+        </Painel>
+      </section>
       <Gaveta aberta={lista !== null} titulo={lista?.titulo ?? ""} aoFechar={() => setLista(null)}>
         {lista && <ListaMalas itens={lista.itens} mostrar={lista.mostrar} />}
       </Gaveta>
-    </Pagina>
+    </main>
   );
 }

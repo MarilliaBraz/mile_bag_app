@@ -3711,3 +3711,298 @@ fieldset.sem-moldura {
   padding: 0;
   list-style: none;
 }
+
+/* ---------- Início em formato cockpit (modelo B + "Agir agora") ---------- */
+.cockpit > * + * {
+  margin-top: 1.5rem;
+}
+
+.cockpit-cabecalho {
+  display: grid;
+  gap: 0.375rem;
+}
+.cockpit-cabecalho h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.2;
+  color: var(--texto-titulo);
+}
+.cockpit-cabecalho p {
+  margin: 0;
+}
+.cockpit-marca {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--marca-destino);
+}
+
+/* Linha de metas: o cartão do OTD é mais largo; todos com a mesma altura. */
+.cockpit-metas {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+}
+@media (max-width: 1100px) {
+  .cockpit-metas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .cockpit-metas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.cartao-otd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--raio-g);
+  background: var(--painel-marca);
+  color: var(--texto-sobre-painel);
+  box-shadow: var(--sombra-1);
+}
+.cartao-otd-texto {
+  display: grid;
+  gap: 0.5rem;
+  flex: 1 1 10rem;
+  font-size: 0.9375rem;
+}
+.cartao-otd .cartao-meta-rotulo {
+  color: inherit;
+  opacity: 0.85;
+}
+.anel-progresso {
+  flex: none;
+  color: var(--texto-sobre-painel);
+}
+
+.cartao-meta {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 0.375rem;
+  padding: 1.125rem 1.25rem;
+  border-radius: var(--raio-g);
+  background: var(--superficie);
+  border: 1px solid var(--borda-suave);
+  box-shadow: var(--sombra-1);
+  font-size: 0.8125rem;
+}
+.cartao-meta-rotulo {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+.cartao-meta-valor {
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--texto-titulo);
+  font-variant-numeric: tabular-nums;
+}
+.mini-grafico {
+  width: 100%;
+  height: 44px;
+  align-self: end;
+}
+.mini-barras {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 44px;
+  align-self: end;
+}
+.mini-barras > span {
+  flex: 1;
+  border-radius: 3px;
+  background: var(--superficie-3);
+}
+.mini-barras > span:last-child {
+  background: var(--acao);
+}
+.comparacao-melhor {
+  color: var(--confirmacao);
+  font-weight: 600;
+}
+.comparacao-pior {
+  color: var(--erro);
+  font-weight: 600;
+}
+
+/* Botão com cara de link (dentro do cartão marinho do OTD). */
+button.link-botao {
+  justify-self: start;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--destaque);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+button.link-botao:not(:disabled):hover {
+  background: none;
+  color: var(--texto-sobre-painel);
+}
+
+/* Gráfico (esquerda) e "Agir agora" (direita). */
+.cockpit-meio {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1.6fr) minmax(18rem, 1fr);
+  align-items: stretch;
+}
+@media (max-width: 1000px) {
+  .cockpit-meio {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.cockpit-meio > .painel {
+  margin: 0;
+}
+.grafico-otd {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.lista-agir {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lista-agir a {
+  display: grid;
+  gap: 0.125rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--raio-p);
+  border: 1px solid var(--borda-suave);
+  color: inherit;
+  text-decoration: none;
+}
+.lista-agir a:hover,
+.lista-agir a:focus-visible {
+  border-color: var(--acao);
+}
+.lista-agir a.agir-urgente {
+  background: var(--erro-suave);
+  border-color: color-mix(in srgb, var(--erro) 35%, transparent);
+}
+.lista-agir a.agir-atencao {
+  background: var(--aviso-suave);
+  border-color: color-mix(in srgb, var(--aviso) 30%, transparent);
+}
+.agir-linha {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+  font-size: 0.8125rem;
+}
+.agir-urgente .agir-motivo {
+  color: var(--erro);
+  font-weight: 700;
+}
+.agir-atencao .agir-motivo {
+  color: var(--aviso);
+  font-weight: 700;
+}
+
+/* Funil numa barra só. */
+.barra-funil {
+  display: flex;
+  height: 2.25rem;
+  border-radius: var(--raio-p);
+  overflow: hidden;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+.barra-funil > span {
+  display: flex;
+  align-items: center;
+  padding-left: 0.625rem;
+  min-width: 2rem;
+  color: #fff;
+}
+.funil-aguardando {
+  background: #4a5368;
+}
+.funil-transito {
+  background: #1f3f86;
+}
+.funil-entregues {
+  background: #15803d;
+}
+.funil-ocorrencia {
+  background: #92400e;
+}
+.legenda-funil {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+}
+.legenda-funil li {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+.ponto-funil {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 3px;
+}
+
+/* Espera para coleta por base. */
+.barras-base {
+  display: grid;
+  gap: 0.625rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.barras-base li {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr) 4.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+.barra-trilho {
+  height: 0.875rem;
+  border-radius: var(--raio-pilula);
+  background: var(--superficie-2);
+  overflow: hidden;
+}
+.barra-trilho > span {
+  display: block;
+  height: 100%;
+  border-radius: var(--raio-pilula);
+}
+.barra-normal {
+  background: var(--acao);
+}
+.barra-retencao {
+  background: #b45309;
+}
+.barra-critico {
+  background: var(--erro-fundo);
+}
+.barra-valor {
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
