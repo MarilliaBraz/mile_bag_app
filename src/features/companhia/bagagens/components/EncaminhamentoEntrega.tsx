@@ -29,6 +29,11 @@ function FormularioEncaminhamento({
   const [endereco, setEndereco] = useState("");
   const [telefone, setTelefone] = useState("");
   const [email, setEmail] = useState("");
+  // V64: abertura do processo (PIR) e tipo de voo, para o prazo da ANAC; vazio = registro da bagagem e doméstico.
+  const [abertoEm, setAbertoEm] = useState("");
+  // Limite do campo de data: agora, no horário do aparelho (formato do datetime-local), calculado uma vez.
+  const [agoraLocal] = useState(() => new Date(Date.now() - new Date().getTimezoneOffset() * 60_000).toISOString().slice(0, 16));
+  const [tipoVoo, setTipoVoo] = useState<"DOMESTICO" | "INTERNACIONAL">("DOMESTICO");
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const pronto = empresaId && PROCESSO.test(processo) && passageiro.trim() && endereco.trim() && (!email.trim() || email.includes("@"));
@@ -45,6 +50,8 @@ function FormularioEncaminhamento({
         endereco: endereco.trim(),
         telefone: telefone.trim() || undefined,
         email: email.trim() || undefined,
+        processoAbertoEm: abertoEm ? new Date(abertoEm).toISOString() : undefined,
+        tipoVoo,
       });
       aoEncaminhar(atualizada, empresas.find((e) => e.id === empresaId)?.nome ?? "");
     } catch (excecao) {
@@ -94,6 +101,27 @@ function FormularioEncaminhamento({
           value={passageiro}
           onChange={(e) => setPassageiro(e.target.value)}
         />
+      </div>
+      <div>
+        <label htmlFor={`${uid}-aberto`}>{t.processoAbertoEm}</label>
+        <input
+          id={`${uid}-aberto`}
+          type="datetime-local"
+          value={abertoEm}
+          max={agoraLocal}
+          onChange={(e) => setAbertoEm(e.target.value)}
+          aria-describedby={`${uid}-aberto-ajuda`}
+        />
+        <span id={`${uid}-aberto-ajuda`} className="texto-apoio">
+          {t.processoAbertoEmAjuda}
+        </span>
+      </div>
+      <div>
+        <label htmlFor={`${uid}-voo`}>{t.tipoVoo}</label>
+        <select id={`${uid}-voo`} value={tipoVoo} onChange={(e) => setTipoVoo(e.target.value as "DOMESTICO" | "INTERNACIONAL")}>
+          <option value="DOMESTICO">{t.voos.DOMESTICO}</option>
+          <option value="INTERNACIONAL">{t.voos.INTERNACIONAL}</option>
+        </select>
       </div>
       <div>
         <label htmlFor={`${uid}-endereco`}>{t.endereco}</label>

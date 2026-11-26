@@ -74,6 +74,9 @@ export type EncaminharBagagem = {
   endereco: string;
   telefone?: string;
   email?: string;
+  /** V64: abertura do processo (PIR), ISO; vazio = registro da bagagem. */
+  processoAbertoEm?: string;
+  tipoVoo?: "DOMESTICO" | "INTERNACIONAL";
 };
 
 export type Aeroporto = { codigo: string; nome: string; cidade: string; uf: string };
