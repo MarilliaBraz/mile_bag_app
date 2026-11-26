@@ -173,6 +173,7 @@ export const comum = {
     emergencia: "Emergência",
     secoes: "Seções",
     atalho: (tecla: number) => `Atalho: Alt+Shift+${tecla}`,
+    pendencias: (quantidade: number) => (quantidade === 1 ? "1 pendência" : `${quantidade} pendências`),
     minhaSenha: "Minha senha",
     administracao: "Administração",
     plataforma: "Plataforma",

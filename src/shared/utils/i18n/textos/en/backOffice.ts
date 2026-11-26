@@ -673,6 +673,8 @@ export const backOffice: Textos["backOffice"] = {
       AVARIAS_ENTREGA: "Delivery damage",
     } as Record<string, string>,
     corrigida: "Corrected",
+    pendente: (minutos) => `Pending for ${minutos} min`,
+    faltam: (minutos) => `${minutos} min left to take`,
     km: {
       titulo: "Trip mileage",
       calculado: (ida: string, volta: string) => `Calculated: ${ida} km out + ${volta} km back`,

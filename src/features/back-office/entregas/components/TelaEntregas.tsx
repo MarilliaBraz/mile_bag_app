@@ -17,11 +17,16 @@ import { FotosDaMala } from "./FotosDaMala";
 import { IncluirBdo } from "./IncluirBdo";
 import { SegundaViaBdo } from "../../../../shared/components/SegundaViaBdo";
 import { TrocarBaseBdo } from "./TrocarBaseBdo";
+import { useIntervaloEmPrimeiroPlano } from "../../../../shared/hooks/useIntervaloEmPrimeiroPlano";
+import { minutosParaVencer, priorizarPendentes } from "../utils/prioridadeBdo";
 
 const STATUS: EntregaStatus[] = ["AGUARDANDO_ATRIBUICAO", "ATRIBUIDA", "EM_ANDAMENTO", "REABERTA", "ENCERRADA_COM_SUCESSO", "CANCELADA"];
 
 /** Item 8: o selo "Mesmo endereço" mostra até estes números; o resto vira "e mais N" (a lista toda fica no title). */
 const NUMEROS_NO_SELO = 3;
+
+/** O selo "faltam N min" e a ordem dos pendentes se atualizam a cada minuto. */
+const RELOGIO_MS = 60_000;
 
 /** V47/V59: só cabe cancelar ou corrigir os dados do passageiro do que ainda não foi concluído nem cancelado. */
 const emAberto = (linha: EntregaGestao) => linha.status !== "ENCERRADA_COM_SUCESSO" && linha.status !== "CANCELADA";
@@ -44,6 +49,11 @@ export function TelaEntregas() {
   const [estadoInclusao, setEstadoInclusao] = useState({ preenchido: false, ocupado: false });
   const [descartando, setDescartando] = useState(false);
   const aoMudarEstadoInclusao = useCallback((estado: { preenchido: boolean; ocupado: boolean }) => setEstadoInclusao(estado), []);
+  const [agora, setAgora] = useState(() => Date.now());
+  useIntervaloEmPrimeiroPlano(
+    useCallback(() => setAgora(Date.now()), []),
+    RELOGIO_MS,
+  );
 
   /** Fechar a inclusão: nunca no meio do envio; com dados preenchidos, pergunta antes de descartar. */
   function fecharInclusao() {
@@ -56,8 +66,8 @@ export function TelaEntregas() {
     }
     setIncluindo(false);
   }
-  // Item 8: os BDOs do mesmo endereço ficam juntos, logo depois do primeiro do grupo.
-  const visiveis = agruparMesmoEndereco(dados?.filter((entrega) => !filtro || entrega.status === filtro) ?? []);
+  // BDO sem motorista além do prazo sobe para o topo; item 8: os do mesmo endereço ficam juntos, logo depois do primeiro.
+  const visiveis = agruparMesmoEndereco(priorizarPendentes(dados?.filter((entrega) => !filtro || entrega.status === filtro) ?? [], agora));
 
   return (
     <Pagina
@@ -111,7 +121,7 @@ export function TelaEntregas() {
                 </thead>
                 <tbody>
                   {visiveis.map((entrega) => (
-                    <tr key={entrega.bdoId}>
+                    <tr key={entrega.bdoId} className={(minutosParaVencer(entrega, agora) ?? 1) <= 0 ? "linha-pendente" : undefined}>
                       <td>
                         <button
                           type="button"
@@ -127,6 +137,7 @@ export function TelaEntregas() {
                         {entrega.bagagemCarona && <span className="selo selo-info">{t.carona}</span>}
                         {entrega.corrigida && <span className="selo selo-aviso">{t.corrigida}</span>}
                         {entrega.baseCodigo && <span className="selo selo-info codigo">{entrega.baseCodigo}</span>}
+                        <SeloPrazo minutos={minutosParaVencer(entrega, agora)} />
                         {entrega.mesmoEnderecoQue && entrega.mesmoEnderecoQue.length > 0 && (
                           <span className="selo selo-sucesso selo-quebra" title={entrega.mesmoEnderecoQue.join(", ")}>
                             {t.mesmoEndereco(
@@ -240,6 +251,18 @@ export function TelaEntregas() {
       />
     </Pagina>
   );
+}
+
+/** BDO sem motorista: quanto falta para vencer o prazo de assumir, ou há quanto tempo está pendente. */
+function SeloPrazo({ minutos }: { minutos: number | null }) {
+  const t = useTextos().backOffice.entregas;
+  if (minutos === null) {
+    return null;
+  }
+  if (minutos <= 0) {
+    return <span className="selo selo-erro">{t.pendente(Math.max(1, -minutos))}</span>;
+  }
+  return <span className="selo selo-info">{t.faltam(minutos)}</span>;
 }
 
 /** A linha do tempo de uma mala, carregada ao abrir a gaveta. */

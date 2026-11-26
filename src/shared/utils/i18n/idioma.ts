@@ -17,7 +17,7 @@ export const IDIOMAS: Idioma[] = ["pt-BR", "es", "en"];
 const TEXTOS: Record<Idioma, Textos> = { "pt-BR": pt, es, en };
 
 /** Item de menu: guarda a chave do texto, e o rótulo sai no idioma da vez. */
-export type ChaveMenu = Exclude<keyof Textos["menu"], "atalho">;
+export type ChaveMenu = Exclude<keyof Textos["menu"], "atalho" | "pendencias">;
 
 const CHAVE_IDIOMA = "milebag_idioma";
 const EVENTO = "milebag:idioma";
