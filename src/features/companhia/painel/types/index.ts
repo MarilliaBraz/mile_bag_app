@@ -1,2 +1,31 @@
 /** Espelha PainelCompanhiaResponse: o que ainda pede ação da companhia aérea. */
 export type PainelCompanhia = { rascunhos: number; semEncaminhamento: number; emAndamento: number; naoEntregues: number };
+
+/** Espelha PainelCompanhiaGestaoResponse.ItemAgir. */
+export type ItemAgirCompanhia = {
+  bagagemId: string;
+  motivo: "ESTOURADO" | "NAO_ENTREGUE" | "ATENCAO" | "PARADA_NA_SALA";
+  processo: string | null;
+  passageiro: string | null;
+  aeroporto: string | null;
+  empresa: string | null;
+  referencia: string | null;
+};
+
+/** Espelha PainelCompanhiaGestaoResponse (fase 1). Tempos em minutos; nulos sem dado. */
+export type PainelCompanhiaGestao = {
+  geradoEm: string;
+  regulatorio: { noPrazo: number; atencao: number; estourados: number };
+  tempos: { localizacaoMinutos: number | null; entregaMinutos: number | null; resolucao24h: number | null; entregues30Dias: number };
+  custodia: { naSala: number; aguardandoColeta: number; emRota: number; entreguesHoje: number; naoEntregues: number };
+  aeroportos: {
+    codigo: string;
+    naSala: number;
+    aguardandoColeta: number;
+    emRota: number;
+    naoEntregues: number;
+    estourados: number;
+    entregaMinutos: number | null;
+  }[];
+  agirAgora: ItemAgirCompanhia[];
+};
