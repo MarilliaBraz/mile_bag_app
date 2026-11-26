@@ -19,6 +19,7 @@ import { SegundaViaBdo } from "../../../../shared/components/SegundaViaBdo";
 import { TrocarBaseBdo } from "./TrocarBaseBdo";
 import { useIntervaloEmPrimeiroPlano } from "../../../../shared/hooks/useIntervaloEmPrimeiroPlano";
 import { minutosParaVencer, priorizarPendentes } from "../utils/prioridadeBdo";
+import { AGRUPAMENTOS, agruparLinhas, filtrarPorNumero, type Agrupamento, type GrupoLinhas } from "../utils/agruparLinhas";
 
 const STATUS: EntregaStatus[] = ["AGUARDANDO_ATRIBUICAO", "ATRIBUIDA", "EM_ANDAMENTO", "REABERTA", "ENCERRADA_COM_SUCESSO", "CANCELADA"];
 
@@ -44,6 +45,8 @@ export function TelaEntregas() {
   const { dados, erro, recarregar } = useRecurso(() => listarEntregas(null), t.falhaCarregar);
   const [sucesso, setSucesso] = useState<string | null>(null);
   const [filtro, setFiltro] = useState<EntregaStatus | "">("");
+  const [busca, setBusca] = useState("");
+  const [agruparPor, setAgruparPor] = useState<Agrupamento>("");
   const [aberta, setAberta] = useState<EntregaGestao | null>(null);
   const [incluindo, setIncluindo] = useState(false);
   const [estadoInclusao, setEstadoInclusao] = useState({ preenchido: false, ocupado: false });
@@ -67,7 +70,18 @@ export function TelaEntregas() {
     setIncluindo(false);
   }
   // BDO sem motorista além do prazo sobe para o topo; item 8: os do mesmo endereço ficam juntos, logo depois do primeiro.
-  const visiveis = agruparMesmoEndereco(priorizarPendentes(dados?.filter((entrega) => !filtro || entrega.status === filtro) ?? [], agora));
+  const filtradas = filtrarPorNumero(dados?.filter((entrega) => !filtro || entrega.status === filtro) ?? [], busca);
+  const visiveis = agruparMesmoEndereco(priorizarPendentes(filtradas, agora));
+  const grupos = agruparLinhas(visiveis, agruparPor);
+
+  /** Título da faixa do grupo, no idioma da vez. */
+  function tituloDoGrupo(grupo: GrupoLinhas): string {
+    const nome =
+      agruparPor === "status"
+        ? rotuloStatus[grupo.chave as EntregaStatus]
+        : grupo.chave || (agruparPor === "motorista" ? t.semMotorista : t.agrupar.semBase);
+    return t.agrupar.grupo(nome, grupo.linhas.length);
+  }
 
   return (
     <Pagina
@@ -93,12 +107,34 @@ export function TelaEntregas() {
         <Painel titulo={t.titulo}>
           <div className="form-linha">
             <div>
+              <label htmlFor="busca-bdo">{t.agrupar.buscar}</label>
+              <input
+                id="busca-bdo"
+                type="search"
+                value={busca}
+                onChange={(evento) => setBusca(evento.target.value)}
+                placeholder={t.agrupar.buscarExemplo}
+                autoComplete="off"
+                spellCheck={false}
+              />
+            </div>
+            <div>
               <label htmlFor="filtro-status">{t.filtroStatus}</label>
               <select id="filtro-status" value={filtro} onChange={(evento) => setFiltro(evento.target.value as EntregaStatus | "")}>
                 <option value="">{t.todas}</option>
                 {STATUS.map((status) => (
                   <option key={status} value={status}>
                     {rotuloStatus[status]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="agrupar-por">{t.agrupar.rotulo}</label>
+              <select id="agrupar-por" value={agruparPor} onChange={(evento) => setAgruparPor(evento.target.value as Agrupamento)}>
+                {AGRUPAMENTOS.map((opcao) => (
+                  <option key={opcao} value={opcao}>
+                    {t.agrupar.opcoes[opcao || "nenhum"]}
                   </option>
                 ))}
               </select>
@@ -119,43 +155,28 @@ export function TelaEntregas() {
                     <th scope="col">{t.atualizadaEm}</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {visiveis.map((entrega) => (
-                    <tr key={entrega.bdoId} className={(minutosParaVencer(entrega, agora) ?? 1) <= 0 ? "linha-pendente" : undefined}>
-                      <td>
-                        <button
-                          type="button"
-                          className="fantasma compacto"
-                          aria-label={t.verHistorico(entrega.bdoNumero ?? t.semNumero)}
-                          onClick={() => {
-                            setSucesso(null);
-                            setAberta(entrega);
-                          }}
-                        >
-                          <Icone nome="historico" /> <span className="codigo">{entrega.bdoNumero ?? t.semNumero}</span>
-                        </button>
-                        {entrega.bagagemCarona && <span className="selo selo-info">{t.carona}</span>}
-                        {entrega.corrigida && <span className="selo selo-aviso">{t.corrigida}</span>}
-                        {entrega.baseCodigo && <span className="selo selo-info codigo">{entrega.baseCodigo}</span>}
-                        <SeloPrazo minutos={minutosParaVencer(entrega, agora)} />
-                        {entrega.mesmoEnderecoQue && entrega.mesmoEnderecoQue.length > 0 && (
-                          <span className="selo selo-sucesso selo-quebra" title={entrega.mesmoEnderecoQue.join(", ")}>
-                            {t.mesmoEndereco(
-                              entrega.mesmoEnderecoQue.slice(0, NUMEROS_NO_SELO).join(", "),
-                              Math.max(0, entrega.mesmoEnderecoQue.length - NUMEROS_NO_SELO),
-                            )}
-                          </span>
-                        )}
-                      </td>
-                      <td>{entrega.passageiroNome ?? "—"}</td>
-                      <td>{entrega.motoristaNome ?? <span className="texto-apoio">{t.semMotorista}</span>}</td>
-                      <td>
-                        <span className={`selo selo-${TOM_STATUS_ENTREGA[entrega.status]}`}>{rotuloStatus[entrega.status]}</span>
-                      </td>
-                      <td>{formatarDataHora(entrega.atualizadoEm)}</td>
-                    </tr>
-                  ))}
-                </tbody>
+                {grupos.map((grupo) => (
+                  <tbody key={grupo.chave || "todas"}>
+                    {agruparPor && (
+                      <tr className="linha-grupo">
+                        <th scope="colgroup" colSpan={5}>
+                          {tituloDoGrupo(grupo)}
+                        </th>
+                      </tr>
+                    )}
+                    {grupo.linhas.map((entrega) => (
+                      <LinhaEntrega
+                        key={entrega.bdoId}
+                        entrega={entrega}
+                        agora={agora}
+                        aoAbrir={() => {
+                          setSucesso(null);
+                          setAberta(entrega);
+                        }}
+                      />
+                    ))}
+                  </tbody>
+                ))}
               </table>
             </div>
           )}
@@ -250,6 +271,40 @@ export function TelaEntregas() {
         aoCancelar={() => setDescartando(false)}
       />
     </Pagina>
+  );
+}
+
+/** Uma linha da grid: número (abre o histórico), selos, passageiro, motorista, situação e última movimentação. */
+function LinhaEntrega({ entrega, agora, aoAbrir }: { entrega: EntregaGestao; agora: number; aoAbrir: () => void }) {
+  const textos = useTextos();
+  const t = textos.backOffice.entregas;
+  const rotuloStatus = textos.motorista.status;
+  return (
+    <tr className={(minutosParaVencer(entrega, agora) ?? 1) <= 0 ? "linha-pendente" : undefined}>
+      <td>
+        <button type="button" className="fantasma compacto" aria-label={t.verHistorico(entrega.bdoNumero ?? t.semNumero)} onClick={aoAbrir}>
+          <Icone nome="historico" /> <span className="codigo">{entrega.bdoNumero ?? t.semNumero}</span>
+        </button>
+        {entrega.bagagemCarona && <span className="selo selo-info">{t.carona}</span>}
+        {entrega.corrigida && <span className="selo selo-aviso">{t.corrigida}</span>}
+        {entrega.baseCodigo && <span className="selo selo-info codigo">{entrega.baseCodigo}</span>}
+        <SeloPrazo minutos={minutosParaVencer(entrega, agora)} />
+        {entrega.mesmoEnderecoQue && entrega.mesmoEnderecoQue.length > 0 && (
+          <span className="selo selo-sucesso selo-quebra" title={entrega.mesmoEnderecoQue.join(", ")}>
+            {t.mesmoEndereco(
+              entrega.mesmoEnderecoQue.slice(0, NUMEROS_NO_SELO).join(", "),
+              Math.max(0, entrega.mesmoEnderecoQue.length - NUMEROS_NO_SELO),
+            )}
+          </span>
+        )}
+      </td>
+      <td>{entrega.passageiroNome ?? "—"}</td>
+      <td>{entrega.motoristaNome ?? <span className="texto-apoio">{t.semMotorista}</span>}</td>
+      <td>
+        <span className={`selo selo-${TOM_STATUS_ENTREGA[entrega.status]}`}>{rotuloStatus[entrega.status]}</span>
+      </td>
+      <td>{formatarDataHora(entrega.atualizadoEm)}</td>
+    </tr>
   );
 }
 

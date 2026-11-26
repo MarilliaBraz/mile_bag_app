@@ -2008,6 +2008,17 @@ details.ajuda.sem-icone summary::before {
   background: var(--erro-suave);
 }
 
+/* Faixa de título do grupo (Agrupar por, na grid de entregas): o nome e a quantidade do grupo. */
+.tabela tr.linha-grupo > th {
+  background: var(--superficie-3);
+  border-top: 1px solid var(--borda-suave);
+  color: var(--texto-titulo);
+  font-size: 0.875rem;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
 .tabela tr.linha-detalhe > td {
   background: var(--superficie-2);
 }

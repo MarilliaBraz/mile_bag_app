@@ -676,6 +676,14 @@ export const backOffice: Textos["backOffice"] = {
     corrigida: "Corregida",
     pendente: (minutos) => `Pendiente hace ${minutos} min`,
     faltam: (minutos) => `Faltan ${minutos} min para asumir`,
+    agrupar: {
+      rotulo: "Agrupar por",
+      opcoes: { nenhum: "Ninguno", motorista: "Conductor", status: "Situación", base: "Base" },
+      semBase: "Sin base",
+      grupo: (nome, quantidade) => `${nome} · ${quantidade}`,
+      buscar: "Buscar BDO por número",
+      buscarExemplo: "Ej.: GYNLA25537",
+    },
     km: {
       titulo: "Kilometraje del viaje",
       calculado: (ida: string, volta: string) => `Calculado: ${ida} km ida + ${volta} km vuelta`,
