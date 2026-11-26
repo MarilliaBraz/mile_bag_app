@@ -19,6 +19,15 @@ export const motorista: Textos["motorista"] = {
     CANCELADA: "Cancelada",
   },
   painel: {
+    busca: {
+      rotulo: "Buscar BDO por número",
+      exemplo: "Ej.: GYNLA25537",
+      buscar: "Buscar",
+      nenhuma: "Ninguna entrega suya con este número.",
+      falha: "No fue posible buscar el BDO.",
+      semConexao: "Sin conexión. Intente de nuevo cuando vuelva internet.",
+      pagaEm: (data) => `Pagada el ${data}`,
+    },
     titulo: "Mis entregas",
     falhaAoCarregar: "No fue posible cargar el panel. Inténtelo de nuevo.",
     carregando: "Cargando entregas",
