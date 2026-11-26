@@ -168,6 +168,7 @@ export const comum: TextosComuns = {
     TEMPO_ESGOTADO: "Location took too long to respond. Move to an open area, if possible, and tap “Try again”.",
   },
   menu: {
+    inicio: "Home",
     menuMotorista: "Driver menu",
     entregas: "Deliveries",
     relatorio: "Report",

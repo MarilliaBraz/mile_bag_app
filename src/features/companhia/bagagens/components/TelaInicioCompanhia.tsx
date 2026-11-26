@@ -7,6 +7,7 @@ import { SeletorIdioma } from "../../../../shared/components/SeletorIdioma";
 import { useRecurso } from "../../../../shared/hooks/useRecurso";
 import { formatarDataHora } from "../../../../shared/utils/formatar";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
+import { IndicadoresCompanhia } from "../../painel";
 import { listarRascunhos, listarRecentes } from "../services/bagagensService";
 import type { BagagemEncontrada } from "../types";
 
@@ -36,6 +37,8 @@ export function TelaInicioCompanhia() {
             {aviso}
           </Alerta>
         )}
+
+        <IndicadoresCompanhia />
 
         <Link to="/companhia/registrar" className="cartao-link destaque-acao">
           <Icone nome="camera" />

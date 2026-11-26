@@ -11,6 +11,8 @@ import { AdminLayout, ITENS_COMPANHIA, ITENS_FUNCIONARIO_COMPANHIA, ITENS_PLATAF
 import { TelaCompanhias } from "./features/back-office/companhias-aereas";
 import { TelaMotoristas } from "./features/back-office/motoristas";
 import { TelaFuncionarios } from "./features/companhia/funcionarios";
+import { TelaPainelCompanhia } from "./features/companhia/painel";
+import { PainelEmpresa } from "./features/back-office/painel";
 import {
   TelaBuscaNacional,
   TelaConsultaBagagens,
@@ -99,7 +101,8 @@ export function App() {
               </RequireAuth>
             }
           >
-            <Route index element={<Navigate to="tarifas" replace />} />
+            <Route index element={<Navigate to="inicio" replace />} />
+            <Route path="inicio" element={<PainelEmpresa />} />
             <Route path="motoristas" element={<TelaMotoristas />} />
             <Route path="entregas" element={<TelaEntregas />} />
             <Route path="emergencias" element={<TelaEmergencias />} />
@@ -137,8 +140,9 @@ export function App() {
               </RequireAuth>
             }
           >
-            <Route index element={<Navigate to="funcionarios" replace />} />
+            <Route index element={<Navigate to="painel" replace />} />
             <Route element={<RequireAuth papeis={["ADMINISTRADOR_COMPANHIA"]} />}>
+              <Route path="painel" element={<TelaPainelCompanhia />} />
               <Route path="funcionarios" element={<TelaFuncionarios />} />
             </Route>
             <Route path="bagagens" element={<TelaConsultaBagagens />} />

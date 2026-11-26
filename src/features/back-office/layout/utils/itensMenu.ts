@@ -1,6 +1,7 @@
 import type { ItemMenu } from "../types";
 
 export const ITENS_TENANT: ItemMenu[] = [
+  { para: "/admin/inicio", rotulo: "inicio", icone: "casa" },
   { para: "/admin/entregas", rotulo: "entregas", icone: "mala", contador: "entregas" },
   { para: "/admin/motoristas", rotulo: "motoristas", icone: "usuarios" },
   { para: "/admin/emergencias", rotulo: "emergencias", icone: "alerta", contador: "emergencias" },
@@ -19,13 +20,17 @@ export const ITENS_PLATAFORMA: ItemMenu[] = [
 
 /** HU33: administrador da companhia aérea; HU36: consulta e busca nacional, também para o funcionário. */
 export const ITENS_COMPANHIA: ItemMenu[] = [
+  { para: "/companhia/painel", rotulo: "inicio", icone: "casa" },
   { para: "/companhia/funcionarios", rotulo: "funcionarios", icone: "usuarios" },
   { para: "/companhia/bagagens", rotulo: "bagagensEncontradas", icone: "mala" },
   { para: "/companhia/busca-nacional", rotulo: "buscaNacional", icone: "busca" },
 ];
 
-/** O funcionário não cadastra funcionários: no lugar, volta ao registro de bagagens (o seu início). */
+/**
+ * O funcionário não cadastra funcionários e o seu início é o registro de bagagens (com os mesmos números do painel no
+ * topo): no lugar do Início e de Funcionários, volta ao registro.
+ */
 export const ITENS_FUNCIONARIO_COMPANHIA: ItemMenu[] = [
   { para: "/companhia/inicio", rotulo: "registrarBagagens", icone: "camera" },
-  ...ITENS_COMPANHIA.slice(1),
+  ...ITENS_COMPANHIA.slice(2),
 ];
