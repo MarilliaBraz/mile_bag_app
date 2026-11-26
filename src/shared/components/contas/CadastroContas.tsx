@@ -258,10 +258,11 @@ function TelaContas() {
         (!termo || m.nome.toLocaleLowerCase("pt-BR").includes(termo) || m.login.toLocaleLowerCase("pt-BR").includes(termo)),
     ) ?? [];
 
-  const FILTROS: { valor: Filtro; rotulo: string }[] = [
+  // Mesmas cores dos selos de situação: Ativos em verde, Desativados em vermelho (padrão de cores das ações).
+  const FILTROS: { valor: Filtro; rotulo: string; classe?: string }[] = [
     { valor: "TODOS", rotulo: t.filtroTodos(contas?.length ?? 0) },
-    { valor: "ATIVOS", rotulo: t.filtroAtivos(ativos) },
-    { valor: "DESATIVADOS", rotulo: t.filtroDesativados(desativados) },
+    { valor: "ATIVOS", rotulo: t.filtroAtivos(ativos), classe: "filtro-sucesso" },
+    { valor: "DESATIVADOS", rotulo: t.filtroDesativados(desativados), classe: "filtro-erro" },
   ];
 
   return (
@@ -305,7 +306,13 @@ function TelaContas() {
           </div>
           <div className="segmentado" role="group" aria-label={t.filtrarSituacao}>
             {FILTROS.map((opcao) => (
-              <button key={opcao.valor} type="button" aria-pressed={filtro === opcao.valor} onClick={() => setFiltro(opcao.valor)}>
+              <button
+                key={opcao.valor}
+                type="button"
+                className={opcao.classe}
+                aria-pressed={filtro === opcao.valor}
+                onClick={() => setFiltro(opcao.valor)}
+              >
                 {opcao.rotulo}
               </button>
             ))}

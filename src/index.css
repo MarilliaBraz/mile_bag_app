@@ -2276,6 +2276,36 @@ button.compacto.botao-icone {
   box-shadow: var(--sombra-1);
 }
 
+/* Filtro de situação (Motoristas, Funcionários): Ativos na cor do selo "Ativo", Desativados na do "Desativado". */
+.segmentado button.filtro-sucesso {
+  background: var(--confirmacao-suave);
+  color: var(--confirmacao);
+}
+.segmentado button.filtro-erro {
+  background: var(--erro-suave);
+  color: var(--erro);
+}
+/* O hover geral do segmentado troca o fundo para branco: aqui a cor se mantém, só escurece um pouco. */
+.segmentado button.filtro-sucesso:not(:disabled):hover {
+  background: var(--confirmacao-suave);
+  filter: brightness(0.96);
+}
+.segmentado button.filtro-erro:not(:disabled):hover {
+  background: var(--erro-suave);
+  filter: brightness(0.96);
+}
+/* Selecionado: borda e sombra na cor do botão, para não depender só do fundo. */
+.segmentado button.filtro-sucesso[aria-pressed="true"] {
+  box-shadow:
+    inset 0 0 0 2px var(--confirmacao),
+    var(--sombra-1);
+}
+.segmentado button.filtro-erro[aria-pressed="true"] {
+  box-shadow:
+    inset 0 0 0 2px var(--erro),
+    var(--sombra-1);
+}
+
 /* Bandeiras do idioma: pequenas, mas cada botão mantém a área de toque mínima. */
 .seletor-idioma button {
   min-width: var(--alvo);
