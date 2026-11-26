@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { formatarData, formatarDataHora, mensagemDeErro } from "../../../../shared/utils/formatar";
 import { KmDaViagem } from "./KmDaViagem";
 import { useRecurso } from "../../../../shared/hooks/useRecurso";
@@ -51,7 +52,9 @@ export function TelaEntregas() {
   const { dados, erro, recarregar } = useRecurso(() => listarEntregas(null), t.falhaCarregar);
   const [sucesso, setSucesso] = useState<string | null>(null);
   const [filtro, setFiltro] = useState<EntregaStatus | "">("");
-  const [busca, setBusca] = useState("");
+  // Painel de gestão: a mala clicada chega com ?busca=NUMERO e a lista já abre filtrada.
+  const [parametros] = useSearchParams();
+  const [busca, setBusca] = useState(() => parametros.get("busca") ?? "");
   // V60: resultado da busca em todas as entregas (inclusive pagas e canceladas há tempo, que saíram da lista).
   const [emTodas, setEmTodas] = useState<EntregaGestao[] | null>(null);
   const [buscandoEmTodas, setBuscandoEmTodas] = useState(false);
