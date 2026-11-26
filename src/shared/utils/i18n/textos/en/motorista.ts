@@ -487,6 +487,8 @@ export const motorista: Textos["motorista"] = {
     kmPeriodo: "Km in the period",
     totalPedagio: (valor) => `Tolls: ${valor}`,
     entregaLocal: "Local delivery",
+    pagamentoAgendado: (data) => `Payment scheduled for ${data}`,
+    pagoEm: (data) => `Paid on ${data}`,
     ajudaSemTarifa:
       "Check the mileage and tolls for the period. Deliveries in the base city show as “Local delivery”. To correct a value, use “Correct value” and explain why: the original value stays visible in the history. “Print” creates a clean version for paper or PDF.",
     semTarifa: (quantidade) =>

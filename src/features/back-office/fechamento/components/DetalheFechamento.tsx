@@ -5,6 +5,7 @@ import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { listarMotoristas, nomeDoMotorista } from "../../../../shared/services/motoristasService";
 import { detalharFechamento } from "../services/fechamentoService";
 import { FechamentoRelatorioCard } from "./FechamentoRelatorioCard";
+import { PagamentosMotoristas } from "./PagamentosMotoristas";
 import { Alerta, Carregando, Vazio } from "../../../../shared/components/Alerta";
 import { Indicador, Pagina, Painel } from "../../../../shared/components/Pagina";
 
@@ -49,6 +50,8 @@ export function DetalheFechamento() {
               detalhe={pendentes > 0 ? t.foraTotais : t.tudoCalculado}
             />
           </div>
+
+          <PagamentosMotoristas fechamentoId={dados.id} motoristas={motoristas} />
 
           <Painel titulo={t.relatoriosPdf} descricao={t.relatoriosPdfDescricao}>
             <FechamentoRelatorioCard fechamento={dados} />
