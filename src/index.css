@@ -1912,7 +1912,8 @@ details.ajuda.sem-icone summary::before {
   display: grid;
   gap: 1.25rem;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
-  align-items: start;
+  /* Painéis da mesma linha com a mesma altura: as bordas de baixo se encontram. */
+  align-items: stretch;
 }
 
 .grade-paineis > .painel {
@@ -3525,4 +3526,30 @@ fieldset.sem-moldura {
     font-size: 0.6875rem;
     line-height: 1.125rem;
   }
+}
+
+/* ---------- Cartões em perfeito alinhamento ---------- */
+
+/*
+ * Indicadores da mesma linha dividem três faixas (rótulo, número, texto de apoio): rótulo de duas linhas ou cartão sem
+ * texto de apoio não desalinham os números. Sem subgrid (navegador antigo), cada cartão segue como antes.
+ */
+@supports (grid-template-rows: subgrid) {
+  .indicador {
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    row-gap: 0.25rem;
+    align-content: start;
+  }
+}
+
+/* Cartões empilhados num contêiner que já tem espaçamento (gap) não somam a margem: o espaço fica um só. */
+:is(.pilha, .lista, .grade-paineis, .grade-acoes, .indicadores, .linha-acoes) > .cartao + .cartao {
+  margin-top: 0;
+}
+
+/* Cartões de atalho lado a lado: colunas iguais, e o que cai sozinho na linha de baixo não estica na largura toda. */
+.linha-acoes:has(> .cartao-link) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
 }
