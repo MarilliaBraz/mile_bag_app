@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Painel } from "../../../../shared/components/Pagina";
-import { formatarDataHora } from "../../../../shared/utils/formatar";
+import { CartaoIndicador } from "../../../../shared/components/CartaoIndicador";
+import { formatarDataHora, formatarMoeda, formatarNumero } from "../../../../shared/utils/formatar";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { formatarDuracao, formatarPercentual } from "../../../back-office/painel/utils/formatarPainel";
 import type { PainelCompanhiaGestao } from "../types";
@@ -220,5 +221,74 @@ export function ParceirosCompanhia({ painel }: { painel: PainelCompanhiaGestao }
         </div>
       )}
     </Painel>
+  );
+}
+
+/** Fase 3: custos dos processos (30 dias) e quanto se economiza resolvendo em até 24 h. */
+export function FinanceiroCompanhia({ painel }: { painel: PainelCompanhiaGestao }) {
+  const t = useTextos().companhia.painelGestao;
+  const { financeiro } = painel;
+  const dinheiro = (valor: number | null) => (valor === null ? "–" : formatarMoeda(valor));
+  const tipos = Object.entries(financeiro.porTipo).filter(([, valor]) => (valor ?? 0) > 0);
+  return (
+    <section className="secao-painel pilha" aria-labelledby="financeiro-titulo">
+      <div>
+        <h2 id="financeiro-titulo">{t.financeiro}</h2>
+        <p className="texto-apoio">{t.financeiroDescricao}</p>
+      </div>
+      <div className="indicadores">
+        <CartaoIndicador
+          rotulo={t.custoTotal}
+          valor={formatarMoeda(financeiro.total)}
+          detalhe={
+            tipos.length > 0 ? tipos.map(([tipo, valor]) => `${t.tiposCusto[tipo]}: ${formatarMoeda(valor ?? 0)}`).join(" · ") : undefined
+          }
+        />
+        <CartaoIndicador
+          rotulo={t.custoPorProcesso}
+          valor={dinheiro(financeiro.porProcesso)}
+          detalhe={t.custoPorProcessoAjuda(financeiro.processos)}
+        />
+        <CartaoIndicador
+          rotulo={t.economia24h}
+          valor={
+            financeiro.porProcessoAte24h !== null && financeiro.porProcessoAcima24h !== null
+              ? formatarMoeda(financeiro.porProcessoAcima24h - financeiro.porProcessoAte24h)
+              : "–"
+          }
+          detalhe={t.economia24hAjuda(dinheiro(financeiro.porProcessoAte24h), dinheiro(financeiro.porProcessoAcima24h))}
+          tom="sucesso"
+        />
+      </div>
+    </section>
+  );
+}
+
+/** Fase 3: NPS e respostas da pesquisa do passageiro (30 dias). */
+export function SatisfacaoCompanhia({ painel }: { painel: PainelCompanhiaGestao }) {
+  const t = useTextos().companhia.painelGestao;
+  const { satisfacao } = painel;
+  const npsTom = satisfacao.nps === null ? undefined : satisfacao.nps >= 50 ? "sucesso" : satisfacao.nps >= 0 ? "aviso" : "erro";
+  return (
+    <section className="secao-painel pilha" aria-labelledby="satisfacao-titulo">
+      <div>
+        <h2 id="satisfacao-titulo">{t.satisfacao}</h2>
+        <p className="texto-apoio">{satisfacao.respostas === 0 ? t.semRespostas : t.satisfacaoDescricao}</p>
+      </div>
+      <div className="indicadores">
+        <CartaoIndicador
+          rotulo={t.nps}
+          valor={satisfacao.nps === null ? "–" : formatarNumero(satisfacao.nps, 0)}
+          detalhe={t.npsAjuda(satisfacao.respostas)}
+          tom={npsTom}
+        />
+        <CartaoIndicador rotulo={t.notaMedia} valor={satisfacao.notaMedia === null ? "–" : formatarNumero(satisfacao.notaMedia, 1)} />
+        <CartaoIndicador
+          rotulo={t.cordialidade}
+          valor={satisfacao.cordialidadeMedia === null ? "–" : `${formatarNumero(satisfacao.cordialidadeMedia, 1)} / 5`}
+        />
+        <CartaoIndicador rotulo={t.malasDanificadas} valor={satisfacao.malasDanificadas} tom="erro" />
+      </div>
+    </section>
   );
 }

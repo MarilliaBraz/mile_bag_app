@@ -5,7 +5,15 @@ import { formatarHora } from "../../../../shared/utils/formatar";
 import { useTextos } from "../../../../shared/utils/i18n/idioma";
 import { obterPainelCompanhiaGestao } from "../services/painelCompanhiaService";
 import type { PainelCompanhiaGestao } from "../types";
-import { AeroportosCompanhia, AgirAgoraCompanhia, CustodiaCompanhia, MetasCompanhia, ParceirosCompanhia } from "./BlocosCompanhia";
+import {
+  AeroportosCompanhia,
+  AgirAgoraCompanhia,
+  CustodiaCompanhia,
+  FinanceiroCompanhia,
+  MetasCompanhia,
+  ParceirosCompanhia,
+  SatisfacaoCompanhia,
+} from "./BlocosCompanhia";
 import { IndicadoresCompanhia } from "./IndicadoresCompanhia";
 
 const INTERVALO_MS = 30_000;
@@ -58,6 +66,8 @@ export function TelaPainelCompanhia() {
       </div>
       <AeroportosCompanhia painel={painel} />
       <ParceirosCompanhia painel={painel} />
+      <FinanceiroCompanhia painel={painel} />
+      <SatisfacaoCompanhia painel={painel} />
       <section className="secao-painel pilha" aria-labelledby="registro-titulo">
         <h2 id="registro-titulo">{t.registro}</h2>
         <IndicadoresCompanhia rascunhosPara="/companhia/bagagens?situacao=RASCUNHO" />

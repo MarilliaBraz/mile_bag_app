@@ -19,4 +19,9 @@ export type Acompanhamento = {
   posicao?: Coordenada & { registradaEm: string };
   destino?: Coordenada;
   janelaReagendamento?: JanelaReagendamento;
+  /** V65: só na etapa ENTREGUE - se o passageiro já respondeu a pesquisa de satisfação. */
+  avaliada?: boolean;
 };
+
+/** V65: pesquisa de satisfação depois da entrega. */
+export type Avaliacao = { nota: number; cordialidade?: number; malaEmBomEstado?: boolean; comentario?: string };

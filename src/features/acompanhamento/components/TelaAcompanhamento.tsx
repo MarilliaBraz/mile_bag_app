@@ -11,6 +11,7 @@ import { useTextos } from "../../../shared/utils/i18n/idioma";
 import { consultarAcompanhamento } from "../services/acompanhamentoService";
 import { ETAPAS_ENCERRADAS, type Acompanhamento } from "../types";
 import { EnquadrarPontos } from "./EnquadrarPontos";
+import { PesquisaSatisfacao } from "./PesquisaSatisfacao";
 
 const INTERVALO_MS = 15_000;
 // Acima disso a posição deixa de ser "atual" para o passageiro (RI19).
@@ -64,14 +65,24 @@ export function TelaAcompanhamento() {
             <Carregando texto={t.carregando} />
           )
         ) : (
-          <Conteudo dados={dados} consultadoEm={consultadoEm} falhou={falhou} />
+          <Conteudo codigo={codigo} dados={dados} consultadoEm={consultadoEm} falhou={falhou} />
         )}
       </main>
     </div>
   );
 }
 
-function Conteudo({ dados, consultadoEm, falhou }: { dados: Acompanhamento; consultadoEm: number; falhou: boolean }) {
+function Conteudo({
+  codigo,
+  dados,
+  consultadoEm,
+  falhou,
+}: {
+  codigo: string;
+  dados: Acompanhamento;
+  consultadoEm: number;
+  falhou: boolean;
+}) {
   const t = useTextos().acompanhamento;
   const { empresa, etapa, posicao, destino } = dados;
   const encerrada = ETAPAS_ENCERRADAS.includes(etapa);
@@ -118,6 +129,8 @@ function Conteudo({ dados, consultadoEm, falhou }: { dados: Acompanhamento; cons
         )}
         {falhou && <Alerta tipo="aviso">{t.falha}</Alerta>}
       </section>
+
+      {etapa === "ENTREGUE" && <PesquisaSatisfacao codigo={codigo} avaliada={dados.avaliada === true} />}
 
       {!encerrada && marcadores.length > 0 && (
         <div className="pilha">
