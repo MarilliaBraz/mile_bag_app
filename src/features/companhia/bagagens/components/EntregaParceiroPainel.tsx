@@ -71,14 +71,16 @@ export function EntregaParceiroPainel({ bagagem }: { bagagem: BagagemEncontrada 
   const passos = [
     { rotulo: t.encaminhada, quando: entrega.encaminhadoEm },
     { rotulo: t.coletada, quando: entrega.coletadoEm },
-    naoEntregue ? { rotulo: t.naoEntregue, quando: entrega.naoEntregueEm } : { rotulo: t.entregue, quando: entrega.entregueEm },
+    naoEntregue
+      ? { rotulo: t.naoEntregue, quando: entrega.naoEntregueEm, falhou: true }
+      : { rotulo: t.entregue, quando: entrega.entregueEm },
   ];
   const { comprovante } = entrega;
   return (
     <Painel titulo={t.titulo} descricao={t.descricao}>
       <ol className="passos-entrega">
         {passos.map((passo) => (
-          <li key={passo.rotulo} className={passo.quando ? "passo-feito" : undefined}>
+          <li key={passo.rotulo} className={passo.quando ? ("falhou" in passo ? "passo-falhou" : "passo-feito") : undefined}>
             <strong>{passo.rotulo}</strong>
             <span className="texto-apoio">{passo.quando ? formatarDataHora(passo.quando) : t.pendente}</span>
           </li>

@@ -4155,6 +4155,12 @@ button.link-botao:not(:disabled):hover {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+/* Não entregue: o passo aconteceu, mas deu errado (vermelho, a cor de urgência). */
+.passos-entrega li.passo-falhou {
+  border-color: color-mix(in srgb, var(--erro) 45%, transparent);
+  background: var(--erro-suave);
+  color: var(--erro);
+}
 .alerta-nao-entregue {
   display: grid;
   gap: 0.25rem;
