@@ -159,16 +159,16 @@ export function TelaFichaBagagem() {
                 />
                 <Dado
                   rotulo={t.distancia}
-                  valor={b.aeroporto?.distanciaMetros !== undefined ? formatarDistancia(b.aeroporto.distanciaMetros) : undefined}
+                  valor={b.aeroporto?.distanciaMetros != null ? formatarDistancia(b.aeroporto.distanciaMetros) : undefined}
                 />
                 <Dado
                   rotulo={t.coordenadas}
-                  valor={latitude !== undefined && longitude !== undefined ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : undefined}
+                  valor={latitude != null && longitude != null ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : undefined}
                   mono
                 />
                 <Dado rotulo={t.origem} valor={textos.bagagens.localizacao[b.localizacao.origem]} />
               </dl>
-              {latitude !== undefined && longitude !== undefined ? (
+              {latitude != null && longitude != null ? (
                 <MapaBase
                   centro={{ latitude, longitude }}
                   zoom={16}
