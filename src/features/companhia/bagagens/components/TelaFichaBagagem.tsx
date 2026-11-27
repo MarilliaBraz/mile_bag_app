@@ -10,6 +10,7 @@ import { baixarFicha, buscarBagagem } from "../services/bagagensService";
 import type { BagagemEncontrada } from "../types";
 import { formatarDistancia } from "../utils/formatarDistancia";
 import { BotaoEncaminhar, PainelEntrega } from "./EncaminhamentoEntrega";
+import { EntregaParceiroPainel } from "./EntregaParceiroPainel";
 import { FotoBagagem } from "./FotoBagagem";
 
 /** Dado com o rótulo; vazio aparece como "-", para a ficha ter sempre os mesmos campos. */
@@ -142,6 +143,7 @@ export function TelaFichaBagagem() {
         <>
           {b.situacao === "RASCUNHO" && <Alerta tipo="aviso">{t.rascunho}</Alerta>}
           <PainelEntrega bagagem={b} aoCancelar={recarregar} />
+          {b.encaminhamento && <EntregaParceiroPainel bagagem={b} />}
           <div className="grade-paineis">
             <Painel>
               <FotoBagagem bagagem={b} alt={b.descricao ? textos.semEtiqueta.fotoAlt : textos.bagagens.fotoAlt} />

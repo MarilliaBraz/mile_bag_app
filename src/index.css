@@ -4128,3 +4128,61 @@ button.link-botao:not(:disabled):hover {
 .funil-erro {
   background: var(--erro-fundo);
 }
+
+/* Ficha da bagagem (companhia): passos da entrega do parceiro, alerta de não entregue e fotos do comprovante. */
+.passos-entrega {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+.passos-entrega li {
+  display: grid;
+  gap: 0.125rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--raio-p);
+  border: 1px solid var(--borda-suave);
+  background: var(--superficie-2);
+}
+.passos-entrega li.passo-feito {
+  border-color: color-mix(in srgb, var(--confirmacao) 45%, transparent);
+  background: var(--confirmacao-suave);
+}
+@media (max-width: 600px) {
+  .passos-entrega {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.alerta-nao-entregue {
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  padding: 0.875rem 1rem;
+  border-radius: var(--raio-p);
+  border: 1px solid color-mix(in srgb, var(--erro) 40%, transparent);
+  background: var(--erro-suave);
+  color: var(--erro);
+}
+.fotos-entrega {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.foto-entrega {
+  display: grid;
+  gap: 0.25rem;
+}
+.foto-entrega img,
+.foto-entrega-carregando {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--raio-p);
+  background: var(--superficie-2);
+}
