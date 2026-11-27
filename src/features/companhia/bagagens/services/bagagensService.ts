@@ -9,6 +9,7 @@ import type {
   Descrever,
   EmpresaEntrega,
   EncaminharBagagem,
+  EntregaParceiro,
   FiltrosConsulta,
   PaginaBagagens,
 } from "../types";
@@ -49,6 +50,11 @@ export const listarAeroportos = () => requisitar<Aeroporto[]>("/api/v1/aeroporto
 export const baixarFoto = (bagagem: BagagemEncontrada) => baixarArquivo(bagagem.fotoUrl);
 /** QR code do código SID (HU35), também com o cabeçalho de autorização. */
 export const baixarQr = (bagagem: BagagemEncontrada) => baixarArquivo(bagagem.qrUrl ?? "");
+
+/** Painel da companhia (fase 2): comprovante, última tentativa, contato e rastreio da entrega do parceiro. */
+export const obterEntregaParceiro = (id: string) => requisitar<EntregaParceiro>(BASE + caminhoApi`/${id}/entrega`);
+/** Foto da entrega: exige o cabeçalho de autorização, então vem como arquivo. */
+export const baixarFotoEntrega = (id: string, fotoId: string) => baixarArquivo(BASE + caminhoApi`/${id}/entrega/fotos/${fotoId}`);
 
 /** HU36: consulta da companhia com filtros, 50 por página. */
 export const consultarBagagens = (filtros: FiltrosConsulta, pagina: number) =>

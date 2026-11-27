@@ -28,4 +28,15 @@ export type PainelCompanhiaGestao = {
     entregaMinutos: number | null;
   }[];
   agirAgora: ItemAgirCompanhia[];
+  /** Fase 2: SLA por transportadora e aeroporto, últimos 30 dias. */
+  parceiros: {
+    empresa: string;
+    aeroporto: string;
+    entregues: number;
+    coletaMinutos: number | null;
+    entregaMinutos: number | null;
+    resolucao24h: number | null;
+    naoEntregues: number;
+    emAberto: number;
+  }[];
 };

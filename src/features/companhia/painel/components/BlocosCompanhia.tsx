@@ -179,3 +179,46 @@ export function AeroportosCompanhia({ painel }: { painel: PainelCompanhiaGestao 
     </Painel>
   );
 }
+
+/** Fase 2: SLA por transportadora e aeroporto (30 dias); o pior tempo de entrega primeiro. */
+export function ParceirosCompanhia({ painel }: { painel: PainelCompanhiaGestao }) {
+  const t = useTextos().companhia.painelGestao;
+  return (
+    <Painel titulo={t.parceiros} descricao={t.parceirosDescricao} className="secao-painel">
+      {painel.parceiros.length === 0 ? (
+        <p className="texto-apoio">{t.parceirosVazio}</p>
+      ) : (
+        <div className="tabela-rolavel">
+          <table className="tabela">
+            <thead>
+              <tr>
+                <th scope="col">{t.colTransportadora}</th>
+                <th scope="col">{t.colAeroporto}</th>
+                <th scope="col">{t.colEntregues}</th>
+                <th scope="col">{t.colColeta}</th>
+                <th scope="col">{t.colEntregaMedia}</th>
+                <th scope="col">{t.colEm24h}</th>
+                <th scope="col">{t.colNaoEntregues}</th>
+                <th scope="col">{t.colEmAberto}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {painel.parceiros.map((parceiro) => (
+                <tr key={`${parceiro.empresa}-${parceiro.aeroporto}`}>
+                  <th scope="row">{parceiro.empresa || "–"}</th>
+                  <td>{parceiro.aeroporto || t.semAeroporto}</td>
+                  <td>{parceiro.entregues}</td>
+                  <td>{formatarDuracao(parceiro.coletaMinutos)}</td>
+                  <td>{formatarDuracao(parceiro.entregaMinutos)}</td>
+                  <td>{formatarPercentual(parceiro.resolucao24h)}</td>
+                  <td className={parceiro.naoEntregues > 0 ? "numero-erro" : undefined}>{parceiro.naoEntregues}</td>
+                  <td>{parceiro.emAberto}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Painel>
+  );
+}

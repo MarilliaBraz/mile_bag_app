@@ -101,3 +101,25 @@ export type BagagemNacional = {
   daMinhaCompanhia: boolean;
   id?: string;
 };
+
+/** Espelha EntregaParceiroResponse (painel da companhia, fase 2): a entrega do parceiro, sem o motorista. */
+export type EntregaParceiro = {
+  etapa: EtapaEntrega;
+  empresa: string | null;
+  encaminhadoEm: string;
+  coletadoEm: string | null;
+  entregueEm: string | null;
+  naoEntregueEm: string | null;
+  comprovante: {
+    dataHora: string;
+    nomeRecebedor: string | null;
+    tipoRecebedor: string | null;
+    latitude: number | null;
+    longitude: number | null;
+  } | null;
+  ultimaTentativa: { dataHora: string; motivo: string | null; observacao: string | null } | null;
+  telefonePassageiro: string | null;
+  emailPassageiro: string | null;
+  linkAcompanhamento: string | null;
+  fotos: { id: string; tipo: string; dataHora: string | null }[];
+};
