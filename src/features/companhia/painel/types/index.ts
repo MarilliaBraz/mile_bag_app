@@ -39,4 +39,21 @@ export type PainelCompanhiaGestao = {
     naoEntregues: number;
     emAberto: number;
   }[];
+  /** Fase 3: custos dos últimos 30 dias (valores em reais; nulos sem dado). */
+  financeiro: {
+    total: number;
+    porTipo: Partial<Record<"FRETE" | "VOUCHER" | "REEMBOLSO_EMERGENCIAL" | "INDENIZACAO" | "OUTRO", number>>;
+    processos: number;
+    porProcesso: number | null;
+    porProcessoAte24h: number | null;
+    porProcessoAcima24h: number | null;
+  };
+  /** Fase 3: pesquisa de satisfação dos últimos 30 dias. */
+  satisfacao: {
+    respostas: number;
+    nps: number | null;
+    notaMedia: number | null;
+    cordialidadeMedia: number | null;
+    malasDanificadas: number;
+  };
 };

@@ -123,3 +123,8 @@ export type EntregaParceiro = {
   linkAcompanhamento: string | null;
   fotos: { id: string; tipo: string; dataHora: string | null }[];
 };
+
+export type TipoCusto = "FRETE" | "VOUCHER" | "REEMBOLSO_EMERGENCIAL" | "INDENIZACAO" | "OUTRO";
+
+/** Espelha CustoProcessoResponse (V65). */
+export type CustoProcesso = { id: string; tipo: TipoCusto; valor: number; descricao: string | null; data: string; lancadoEm: string };

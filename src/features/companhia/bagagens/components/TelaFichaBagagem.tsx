@@ -10,6 +10,7 @@ import { baixarFicha, buscarBagagem } from "../services/bagagensService";
 import type { BagagemEncontrada } from "../types";
 import { formatarDistancia } from "../utils/formatarDistancia";
 import { BotaoEncaminhar, PainelEntrega } from "./EncaminhamentoEntrega";
+import { CustosProcesso } from "./CustosProcesso";
 import { EntregaParceiroPainel } from "./EntregaParceiroPainel";
 import { FotoBagagem } from "./FotoBagagem";
 
@@ -144,6 +145,7 @@ export function TelaFichaBagagem() {
           {b.situacao === "RASCUNHO" && <Alerta tipo="aviso">{t.rascunho}</Alerta>}
           <PainelEntrega bagagem={b} aoCancelar={recarregar} />
           {b.encaminhamento && <EntregaParceiroPainel bagagem={b} />}
+          {b.situacao === "REGISTRADA" && <CustosProcesso bagagemId={b.id} />}
           <div className="grade-paineis">
             <Painel>
               <FotoBagagem bagagem={b} alt={b.descricao ? textos.semEtiqueta.fotoAlt : textos.bagagens.fotoAlt} />

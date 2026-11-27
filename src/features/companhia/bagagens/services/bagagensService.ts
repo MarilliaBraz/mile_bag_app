@@ -9,9 +9,11 @@ import type {
   Descrever,
   EmpresaEntrega,
   EncaminharBagagem,
+  CustoProcesso,
   EntregaParceiro,
   FiltrosConsulta,
   PaginaBagagens,
+  TipoCusto,
 } from "../types";
 import { consultaQuery } from "../utils/filtrosConsulta";
 import { salvarArquivo } from "../utils/salvarArquivo";
@@ -55,6 +57,13 @@ export const baixarQr = (bagagem: BagagemEncontrada) => baixarArquivo(bagagem.qr
 export const obterEntregaParceiro = (id: string) => requisitar<EntregaParceiro>(BASE + caminhoApi`/${id}/entrega`);
 /** Foto da entrega: exige o cabeçalho de autorização, então vem como arquivo. */
 export const baixarFotoEntrega = (id: string, fotoId: string) => baixarArquivo(BASE + caminhoApi`/${id}/entrega/fotos/${fotoId}`);
+
+/** Painel da companhia (fase 3): custos do processo (frete, vouchers, reembolsos, indenização). */
+export const listarCustos = (id: string) => requisitar<CustoProcesso[]>(BASE + caminhoApi`/${id}/custos`);
+export const lancarCusto = (id: string, corpo: { tipo: TipoCusto; valor: number; descricao?: string; data?: string }) =>
+  requisitar<CustoProcesso>(BASE + caminhoApi`/${id}/custos`, { metodo: "POST", corpo });
+export const removerCusto = (id: string, custoId: string) =>
+  requisitar<void>(BASE + caminhoApi`/${id}/custos/${custoId}`, { metodo: "DELETE" });
 
 /** HU36: consulta da companhia com filtros, 50 por página. */
 export const consultarBagagens = (filtros: FiltrosConsulta, pagina: number) =>
